@@ -9,7 +9,7 @@ model:
   device: auto
   dtype: auto
 path_patching:
-  max_examples: 64
+  max_examples: 200
   layer_start: 0
   layer_end: null
 output:
