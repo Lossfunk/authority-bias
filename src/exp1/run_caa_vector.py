@@ -139,11 +139,20 @@ def select_best_vector(
                         device=device,
                     )
                 effects.append(base - steered["D_syc"])
+            if effects:
+                effects_tensor = torch.tensor(effects, dtype=torch.float32, device=device)
+                mean_effect = float(effects_tensor.mean().item())
+                std_effect = float(effects_tensor.std(unbiased=False).item())
+                n_effect = len(effects)
+            else:
+                mean_effect, std_effect, n_effect = 0.0, 0.0, 0
             grid_results.append(
                 {
                     "layer": layer,
                     "alpha": alpha,
-                    "mean_effect": float(sum(effects) / max(len(effects), 1)),
+                    "mean_effect": mean_effect,
+                    "std_effect": std_effect,
+                    "n": n_effect,
                 }
             )
     best = max(grid_results, key=lambda x: x["mean_effect"])
@@ -273,4 +282,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

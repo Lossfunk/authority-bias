@@ -93,7 +93,7 @@ def run_path_patching(cfg: Dict) -> None:
             prompt_wrong = ex.user_wrong_prompt
             prompt_neutral = make_neutral_prompt(ex)
             inputs_wrong = tokenize_text(tokenizer, prompt_wrong, device)
-            pos_idx = inputs_wrong["input_ids"].shape[1] - 1
+            pos_wrong = inputs_wrong["input_ids"].shape[1] - 1
 
             baseline = compute_D_syc(
                 model=model,
@@ -106,13 +106,14 @@ def run_path_patching(cfg: Dict) -> None:
 
             # Cache head contexts on neutral prompt
             inputs_neutral = tokenize_text(tokenizer, prompt_neutral, device)
-            with cache_mode(registry, ex.uid, pos_idx):
+            pos_neutral = inputs_neutral["input_ids"].shape[1] - 1
+            with cache_mode(registry, ex.uid, pos_neutral):
                 with torch.no_grad():
                     model(**inputs_neutral)
 
             for layer_idx in layer_range:
                 for head_idx in range(num_heads):
-                    with patch_mode(registry, ex.uid, layer_idx, head_idx, pos_idx):
+                    with patch_mode(registry, ex.uid, layer_idx, head_idx, pos_wrong):
                         patched = compute_D_syc(
                             model=model,
                             tokenizer=tokenizer,
@@ -123,11 +124,12 @@ def run_path_patching(cfg: Dict) -> None:
                         )
                     record = {
                         "example_id": ex.uid,
-                        "layer": layer_idx,
-                        "head": head_idx,
-                        "pos_idx": pos_idx,
-                        "D_syc_orig": baseline["D_syc"],
-                        "D_syc_patched": patched["D_syc"],
+                            "layer": layer_idx,
+                            "head": head_idx,
+                            "pos_idx_wrong": pos_wrong,
+                            "pos_idx_neutral": pos_neutral,
+                            "D_syc_orig": baseline["D_syc"],
+                            "D_syc_patched": patched["D_syc"],
                         "delta": baseline["D_syc"] - patched["D_syc"],
                         "logP_wrong_orig": baseline["logP_wrong"],
                         "logP_right_orig": baseline["logP_right"],
@@ -148,5 +150,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
