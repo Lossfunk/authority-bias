@@ -8,7 +8,7 @@ import argparse
 import json
 from contextlib import ExitStack
 from pathlib import Path
-from statistics import mean, pstdev
+from statistics import mean, median, pstdev
 from typing import Dict, List, Tuple
 
 import torch
@@ -68,6 +68,8 @@ def compute_head_means(
     device: torch.device,
     max_examples: int,
 ) -> Dict[Tuple[int, int], torch.Tensor]:
+    if not head_tuples:
+        return {}
     values: Dict[Tuple[int, int], List[torch.Tensor]] = {key: [] for key in head_tuples}
     subset = examples[:max_examples]
     for idx, ex in enumerate(tqdm(subset, desc="Head mean reference")):
@@ -158,6 +160,17 @@ def main():
 
     syc_heads = load_head_list(Path(cfg["exp3"]["syc_heads_path"]))
     rand_heads = load_head_list(Path(cfg["exp3"]["rand_heads_path"]))
+    if not syc_heads or not rand_heads:
+        output_dir = Path(cfg["exp3"]["output_dir"])
+        output_dir.mkdir(parents=True, exist_ok=True)
+        summary = {
+            "num_examples": len(split_c_examples),
+            "num_examples_valid": 0,
+            "reason": "Missing syc or random head sets; run Exp2 with more examples.",
+        }
+        with (output_dir / "mediation_summary.json").open("w") as f:
+            json.dump(summary, f, indent=2)
+        return
     head_means = compute_head_means(
         model=model,
         tokenizer=tokenizer,
@@ -167,8 +180,30 @@ def main():
         device=device,
         max_examples=cfg["exp3"]["head_means_max_examples"],
     )
+    if not head_means:
+        output_dir = Path(cfg["exp3"]["output_dir"])
+        output_dir.mkdir(parents=True, exist_ok=True)
+        summary = {
+            "num_examples": len(split_c_examples),
+            "num_examples_valid": 0,
+            "reason": "Failed to compute head means (empty head list or zero captures).",
+        }
+        with (output_dir / "mediation_summary.json").open("w") as f:
+            json.dump(summary, f, indent=2)
+        return
     syc_ablation = {head: head_means[head] for head in syc_heads if head in head_means}
     rand_ablation = {head: head_means[head] for head in rand_heads if head in head_means}
+    if not syc_ablation or not rand_ablation:
+        output_dir = Path(cfg["exp3"]["output_dir"])
+        output_dir.mkdir(parents=True, exist_ok=True)
+        summary = {
+            "num_examples": len(split_c_examples),
+            "num_examples_valid": 0,
+            "reason": "Head means missing for syc or random set; rerun Exp2/means with more coverage.",
+        }
+        with (output_dir / "mediation_summary.json").open("w") as f:
+            json.dump(summary, f, indent=2)
+        return
 
     output_dir = Path(cfg["exp3"]["output_dir"])
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -251,7 +286,17 @@ def main():
             records.append(row)
 
     # Summary statistics
-    threshold = cfg["exp3"]["delta_E_threshold"]
+    # Data-driven threshold: default relative to median |E_clean|
+    threshold_mode = cfg["exp3"].get("delta_E_mode", "relative")
+    E_clean_values = [row["D_base"] - row["D_vec"] for row in records]
+    if threshold_mode == "absolute":
+        threshold = cfg["exp3"]["delta_E_threshold"]
+    else:
+        median_abs = median([abs(x) for x in E_clean_values]) if E_clean_values else 0.0
+        threshold = max(
+            cfg["exp3"].get("delta_E_min", 0.05),
+            cfg["exp3"].get("delta_E_multiplier", 0.25) * median_abs,
+        )
     ras_syc_values = []
     ras_rand_values = []
     for row in records:
@@ -284,6 +329,9 @@ def main():
         "cohens_d": cohens_d,
         "p_value": p_value,
         "threshold": threshold,
+        "threshold_mode": threshold_mode,
+        "delta_E_values_median_abs": median([abs(x) for x in E_clean_values]) if E_clean_values else 0.0,
+        "E_clean_values": E_clean_values,
     }
     with (output_dir / "mediation_summary.json").open("w") as f:
         json.dump(summary, f, indent=2)
@@ -291,5 +339,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

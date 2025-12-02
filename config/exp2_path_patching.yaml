@@ -9,9 +9,9 @@ model:
   device: auto
   dtype: auto
 path_patching:
-  max_examples: 2
+  max_examples: 64
   layer_start: 0
-  layer_end: 4
+  layer_end: null
 output:
   raw_results: results/exp2/head_results_raw.jsonl
   head_scores: results/exp2/head_scores.jsonl
@@ -20,4 +20,4 @@ output:
   summary: results/exp2/head_summary.json
 head_selection:
   coverage_fraction: 0.75
-
+  fallback_top_k: 20

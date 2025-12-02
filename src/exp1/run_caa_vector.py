@@ -43,14 +43,36 @@ def tokenize_prompt(tokenizer, prompt: str, device: torch.device):
     return {k: v.to(device) for k, v in enc.items()}
 
 
-def determine_margin(values: List[float], min_per_class: int) -> float:
-    pos = sorted([v for v in values if v >= 0], reverse=True)
-    neg = sorted([v for v in values if v <= 0])
-    if len(pos) < min_per_class or len(neg) < min_per_class:
-        raise RuntimeError("Insufficient examples to satisfy min_per_class requirement.")
-    m_pos = pos[min_per_class - 1]
-    m_neg = abs(neg[min_per_class - 1])
-    return min(m_pos, m_neg)
+def determine_margin(
+    values: List[float],
+    min_per_class: int,
+    start_percentile: float = 0.8,
+    step: float = 0.05,
+) -> float:
+    """
+    Choose a symmetric |D_syc| margin that yields at least `min_per_class`
+    examples on each side. Start from a high percentile of |D_syc| and relax
+    until both classes have enough samples.
+    """
+    assert 0 < start_percentile <= 1.0
+    assert 0 < step < 1.0
+    abs_values = sorted(abs(v) for v in values)
+    if not abs_values:
+        raise RuntimeError("No D_syc values provided for margin selection.")
+
+    def percentile(p: float) -> float:
+        idx = max(0, min(len(abs_values) - 1, int(p * (len(abs_values) - 1))))
+        return abs_values[idx]
+
+    p = start_percentile
+    while p >= 0:
+        m = percentile(p)
+        pos = sum(1 for v in values if v >= m)
+        neg = sum(1 for v in values if v <= -m)
+        if pos >= min_per_class and neg >= min_per_class:
+            return m
+        p -= step
+    raise RuntimeError("Unable to find margin that satisfies min_per_class for both labels.")
 
 
 def collect_activations(
@@ -169,11 +191,41 @@ def main():
         records.append({"example": ex, "metric": metric, "pos_idx": pos_idx})
         d_values.append(metric["D_syc"])
 
-    margin = determine_margin(d_values, cfg["exp1"]["min_per_class"])
+    margin = determine_margin(
+        d_values,
+        min_per_class=cfg["exp1"]["min_per_class"],
+        start_percentile=cfg["exp1"].get("margin_start_percentile", 0.8),
+        step=cfg["exp1"].get("margin_step", 0.05),
+    )
     syc_records = [rec for rec in records if rec["metric"]["D_syc"] >= margin]
     truth_records = [rec for rec in records if rec["metric"]["D_syc"] <= -margin]
     if not syc_records or not truth_records:
         raise RuntimeError("Failed to obtain labeled examples for both classes.")
+
+    # Optional subsampling to rebalance classes and stabilize means.
+    max_per_class = cfg["exp1"].get("max_per_class")
+    rebalance = cfg["exp1"].get("subsample_majority", True)
+    if rebalance or max_per_class:
+        rng = torch.Generator().manual_seed(seed)
+        syc_n = len(syc_records)
+        truth_n = len(truth_records)
+        target = min(syc_n, truth_n)
+        if max_per_class:
+            target = min(target, max_per_class)
+
+        def downsample(records: List[Dict], target_size: int) -> List[Dict]:
+            if len(records) <= target_size:
+                return records
+            idx = torch.randperm(len(records), generator=rng)[:target_size].tolist()
+            return [records[i] for i in idx]
+
+        if rebalance:
+            syc_records = downsample(syc_records, target)
+            truth_records = downsample(truth_records, target)
+        else:
+            if max_per_class:
+                syc_records = downsample(syc_records, max_per_class)
+                truth_records = downsample(truth_records, max_per_class)
 
     head_summary_path = Path(cfg["exp1"]["head_summary_path"])
     layer_limit = cfg["exp1"].get("layer_limit_override")
@@ -221,5 +273,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 

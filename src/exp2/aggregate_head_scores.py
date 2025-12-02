@@ -76,6 +76,24 @@ def select_heads(
         running += hs["delta_sum"]
         if running >= threshold:
             break
+    return selected, [], {}
+
+
+def ensure_non_empty_sets(
+    selected: List[Dict],
+    head_scores: List[Dict],
+    fallback_top_k: int,
+    rng: random.Random,
+    num_heads: int,
+) -> Tuple[List[Dict], List[Dict], Dict]:
+    if not selected:
+        # Fallback: take top-K positive heads (if any), else empty.
+        positive_heads = [hs for hs in head_scores if hs["delta_sum"] > 0]
+        positive_heads.sort(key=lambda x: x["delta_sum"], reverse=True)
+        selected = [
+            {"layer": hs["layer"], "head": hs["head"], "delta_sum": hs["delta_sum"]}
+            for hs in positive_heads[:fallback_top_k]
+        ]
     if not selected:
         return [], [], {}
 
@@ -115,7 +133,15 @@ def main():
     coverage = cfg["head_selection"]["coverage_fraction"]
     rng = random.Random(cfg.get("seed", 42))
     num_heads = rows[0]["num_heads"]
-    syc_heads, rand_heads, bounds = select_heads(head_scores, coverage, rng, num_heads)
+    syc_heads_initial, _, _ = select_heads(head_scores, coverage, rng, num_heads)
+    syc_heads, rand_heads, bounds = ensure_non_empty_sets(
+        syc_heads_initial,
+        head_scores,
+        fallback_top_k=cfg["head_selection"].get("fallback_top_k", 0),
+        rng=rng,
+        num_heads=num_heads,
+    )
+    used_fallback = not syc_heads_initial and bool(syc_heads)
 
     (Path(output_cfg["syc_heads"]).parent).mkdir(parents=True, exist_ok=True)
     with Path(output_cfg["syc_heads"]).open("w") as f:
@@ -129,6 +155,7 @@ def main():
         "coverage_fraction": coverage,
         "syc_head_count": len(syc_heads),
         "rand_head_count": len(rand_heads),
+        "used_fallback_top_k": used_fallback,
     }
     summary.update(bounds)
     with Path(output_cfg["summary"]).open("w") as f:
@@ -137,5 +164,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

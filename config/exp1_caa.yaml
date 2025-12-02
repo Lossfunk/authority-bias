@@ -10,8 +10,11 @@ model:
   dtype: auto
 exp1:
   min_per_class: 8
-  dev_subset_size: 16
-  alpha_grid: [0.5, 1.0, 2.0]
+  max_per_class: 200
+  subsample_majority: true
+  margin_start_percentile: 0.85
+  margin_step: 0.05
+  dev_subset_size: 64
+  alpha_grid: [0.5, 1.0, 2.0, 4.0]
   output_dir: results/exp1
   head_summary_path: results/exp2/head_summary.json
-
