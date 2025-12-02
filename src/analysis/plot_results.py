@@ -67,13 +67,18 @@ def plot_baseline(fig_dir: Path):
     ax.text(
         0.98,
         0.95,
-        f"Syc rate: {syc_rate:.2f}\nOutliers >99p: {outlier_count}",
+        f"N={len(df)}\nSyc rate: {syc_rate:.2f}\nOutliers >99p: {outlier_count}",
         transform=ax.transAxes,
         ha="right",
         va="top",
         fontsize=11,
         bbox=dict(facecolor="white", alpha=0.8, edgecolor="none"),
     )
+    # Optionally constrain x-axis for readability when outliers exist.
+    if outlier_count > 0:
+        xmin = clipped.quantile(0.01)
+        xmax = min(clipped.quantile(0.99), xmin + 15)
+        ax.set_xlim(xmin, xmax)
     fig.tight_layout()
     fig.savefig(fig_dir / "baseline_dsyc_hist.png", dpi=300)
     plt.close(fig)
@@ -104,6 +109,7 @@ def plot_caa_grid(fig_dir: Path):
         dodge=0.2,
         markers="o",
         linestyles="-",
+        errorbar=("se", 1.0) if "std_effect" in df_top.columns else None,
         ax=ax,
     )
     if L_star is not None and alpha_star is not None:
@@ -144,7 +150,10 @@ def plot_head_deltas(fig_dir: Path):
         return
     df_pos = df[df["delta_sum"] > 0].copy()
     df_top = df_pos.nlargest(20, "delta_sum").copy()
+    if df_top.empty:
+        return
     df_top["label"] = df_top.apply(lambda r: f"L{r.layer}-H{r.head}", axis=1)
+    df_top["pos_fraction"] = df_top.get("pos_fraction", 0.0)
     fig, ax = plt.subplots()
     sns.barplot(
         data=df_top,
@@ -158,6 +167,16 @@ def plot_head_deltas(fig_dir: Path):
     ax.set_title("Top heads by cumulative Δ$D_{syc}$ (patched from neutral)")
     ax.set_xlabel("Cumulative Δ$D_{syc}$")
     ax.set_ylabel("Layer–Head")
+    # Annotate consistency (fraction of examples with positive delta)
+    for i, (_, row) in enumerate(df_top.iterrows()):
+        ax.text(
+            row["delta_sum"],
+            i,
+            f"{row['pos_fraction']:.2f}",
+            va="center",
+            ha="left",
+            fontsize=9,
+        )
     fig.tight_layout()
     fig.savefig(fig_dir / "exp2_head_deltas.png", dpi=300)
     plt.close(fig)
@@ -210,6 +229,38 @@ def plot_mediation_grid(fig_dir: Path):
     plt.close(fig)
 
 
+def plot_mediation_scatter(fig_dir: Path):
+    results_path = Path("results/exp3/mediation_results.jsonl")
+    if not results_path.exists():
+        return
+    df = pd.read_json(results_path, lines=True)
+    if df.empty:
+        return
+    df = df.copy()
+    df["E_clean"] = df["D_base"] - df["D_vec"]
+    df["E_syc"] = df["D_syc_abl"] - df["D_vec_syc"]
+    df["E_rand"] = df["D_rand_abl"] - df["D_vec_rand"]
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharex=True, sharey=True)
+    sns.scatterplot(data=df, x="E_clean", y="E_syc", hue="example_id", ax=axes[0])
+    axes[0].axhline(0, color="k", linestyle="--", linewidth=1)
+    axes[0].axvline(0, color="k", linestyle="--", linewidth=1)
+    axes[0].set_title("E_syc vs E_clean")
+    axes[0].set_xlabel("E_clean = D_base − D_vec")
+    axes[0].set_ylabel("E_syc = D_syc_abl − D_vec_syc")
+
+    sns.scatterplot(data=df, x="E_clean", y="E_rand", hue="example_id", ax=axes[1], legend=False)
+    axes[1].axhline(0, color="k", linestyle="--", linewidth=1)
+    axes[1].axvline(0, color="k", linestyle="--", linewidth=1)
+    axes[1].set_title("E_rand vs E_clean")
+    axes[1].set_xlabel("E_clean = D_base − D_vec")
+    axes[1].set_ylabel("E_rand = D_rand_abl − D_vec_rand")
+
+    fig.tight_layout()
+    fig.savefig(fig_dir / "exp3_mediation_scatter.png", dpi=300)
+    plt.close(fig)
+
+
 def main():
     _set_theme()
     fig_dir = Path("results/figures")
@@ -218,9 +269,9 @@ def main():
     plot_caa_grid(fig_dir)
     plot_head_deltas(fig_dir)
     plot_mediation_grid(fig_dir)
+    plot_mediation_scatter(fig_dir)
     print(f"Saved figures to {fig_dir.resolve()}")
 
 
 if __name__ == "__main__":
     main()
-

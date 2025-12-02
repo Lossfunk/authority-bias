@@ -40,11 +40,13 @@ def load_raw_rows(raw_path: Path) -> List[Dict]:
 
 
 def aggregate_head_scores(rows: List[Dict]) -> List[Dict]:
-    agg = defaultdict(lambda: {"delta_sum": 0.0, "count": 0})
+    agg = defaultdict(lambda: {"delta_sum": 0.0, "count": 0, "pos_count": 0})
     for row in rows:
         key = (row["layer"], row["head"])
         agg[key]["delta_sum"] += row["delta"]
         agg[key]["count"] += 1
+        if row["delta"] > 0:
+            agg[key]["pos_count"] += 1
     head_scores = []
     for (layer, head), info in agg.items():
         head_scores.append(
@@ -54,6 +56,7 @@ def aggregate_head_scores(rows: List[Dict]) -> List[Dict]:
                 "delta_sum": info["delta_sum"],
                 "delta_mean": info["delta_sum"] / max(info["count"], 1),
                 "count": info["count"],
+                "pos_fraction": info["pos_count"] / max(info["count"], 1),
             }
         )
     return head_scores
