@@ -1,0 +1,39 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# OS / editor files
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Python tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+
+# Coverage / test reports
+.coverage
+.coverage.*
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Project data & results (generated / large)
+results/
+data/
+
+#documents
+plan.md
+Do Persona Vectors and Attention Circuits Align.pdf

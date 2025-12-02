@@ -1,0 +1,21 @@
+[project]
+name = "persona-vectors"
+version = "0.1.0"
+description = "Activation steering and mechanistic interpretability experiments on sycophancy"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "accelerate>=1.12.0",
+    "datasets>=4.4.1",
+    "huggingface-hub>=0.36.0",
+    "matplotlib>=3.10.7",
+    "numpy>=2.3.5",
+    "pandas>=2.3.3",
+    "pyyaml>=6.0.3",
+    "scipy>=1.16.3",
+    "seaborn>=0.13.2",
+    "sentencepiece>=0.2.1",
+    "torch>=2.9.1",
+    "tqdm>=4.67.1",
+    "transformers>=4.57.3",
+]

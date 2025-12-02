@@ -1,0 +1,23 @@
+seed: 42
+dataset:
+  raw_path: data/answer.jsonl
+  split_a_path: data/split_A_user_wrong.jsonl
+  split_b_path: data/split_B_user_wrong.jsonl
+  split_c_path: data/split_C_user_wrong.jsonl
+model:
+  name: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+  device: auto
+  dtype: auto
+path_patching:
+  max_examples: 2
+  layer_start: 0
+  layer_end: 4
+output:
+  raw_results: results/exp2/head_results_raw.jsonl
+  head_scores: results/exp2/head_scores.jsonl
+  syc_heads: results/exp2/syc_heads.json
+  rand_heads: results/exp2/rand_heads.json
+  summary: results/exp2/head_summary.json
+head_selection:
+  coverage_fraction: 0.75
+
