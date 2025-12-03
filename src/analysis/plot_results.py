@@ -13,15 +13,16 @@ import pandas as pd
 import seaborn as sns
 
 
+# Okabe–Ito palette (colorblind-safe), preferred in many ML papers/blogs.
 PALETTE = [
-    "#E69F00",
-    "#56B4E9",
-    "#009E73",
-    "#F0E442",
-    "#0072B2",
-    "#D55E00",
-    "#CC79A7",
-    "#000000",
+    "#E69F00",  # orange
+    "#56B4E9",  # sky blue
+    "#009E73",  # bluish green
+    "#F0E442",  # yellow
+    "#0072B2",  # blue
+    "#D55E00",  # vermillion
+    "#CC79A7",  # reddish purple
+    "#000000",  # black
 ]
 
 
@@ -30,12 +31,14 @@ def _set_theme():
     sns.set_palette(PALETTE)
     plt.rcParams.update(
         {
-            "axes.titlesize": 20,
-            "axes.labelsize": 16,
-            "legend.fontsize": 12,
-            "xtick.labelsize": 12,
-            "ytick.labelsize": 12,
+            "axes.titlesize": 22,
+            "axes.labelsize": 18,
+            "legend.fontsize": 13,
+            "xtick.labelsize": 13,
+            "ytick.labelsize": 13,
             "figure.figsize": (10, 6),
+            "axes.titleweight": "semibold",
+            "axes.labelweight": "semibold",
         }
     )
 
@@ -100,7 +103,7 @@ def plot_caa_grid(fig_dir: Path):
         df.groupby("layer")["mean_effect"].max().sort_values(ascending=False).head(6).index.tolist()
     )
     df_top = df[df["layer"].isin(top_layers)]
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 6))
     sns.pointplot(
         data=df_top,
         x="alpha",
@@ -149,12 +152,14 @@ def plot_head_deltas(fig_dir: Path):
     if df.empty:
         return
     df_pos = df[df["delta_sum"] > 0].copy()
+    # Show top-K positives and add a layer summary inset to make changes visible when head IDs stay similar.
     df_top = df_pos.nlargest(20, "delta_sum").copy()
     if df_top.empty:
         return
-    df_top["label"] = df_top.apply(lambda r: f"L{r.layer}-H{r.head}", axis=1)
+    df_top = df_top.copy()
+    df_top["label"] = df_top.apply(lambda r: f"L{int(r['layer'])}-H{int(r['head'])}", axis=1)
     df_top["pos_fraction"] = df_top.get("pos_fraction", 0.0)
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 6))
     sns.barplot(
         data=df_top,
         x="delta_sum",
@@ -170,13 +175,25 @@ def plot_head_deltas(fig_dir: Path):
     # Annotate consistency (fraction of examples with positive delta)
     for i, (_, row) in enumerate(df_top.iterrows()):
         ax.text(
-            row["delta_sum"],
+            row["delta_sum"] + 0.05,
             i,
             f"{row['pos_fraction']:.2f}",
             va="center",
             ha="left",
             fontsize=9,
         )
+    # Layer-level summary inset
+    layer_counts = df_pos.groupby("layer")["delta_sum"].sum().sort_values(ascending=False)
+    inset = ax.inset_axes([0.62, 0.05, 0.32, 0.42])
+    sns.barplot(
+        x=layer_counts.values,
+        y=[f"L{int(l)}" for l in layer_counts.index],
+        color=PALETTE[5],
+        ax=inset,
+        orient="h",
+    )
+    inset.set_title("Δ sum by layer", fontsize=10)
+    inset.tick_params(labelsize=8)
     fig.tight_layout()
     fig.savefig(fig_dir / "exp2_head_deltas.png", dpi=300)
     plt.close(fig)
@@ -209,9 +226,11 @@ def plot_mediation_grid(fig_dir: Path):
             }
         )
     plot_df = pd.DataFrame(rows)
-    fig, ax = plt.subplots(figsize=(10, 6))
-    sns.barplot(data=plot_df, x="condition", y="mean", color=PALETTE[1], ax=ax)
-    ax.errorbar(
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
+
+    # Bar (mean ± se)
+    sns.barplot(data=plot_df, x="condition", y="mean", color=PALETTE[1], ax=axes[0])
+    axes[0].errorbar(
         x=range(len(plot_df)),
         y=plot_df["mean"],
         yerr=plot_df["sem"],
@@ -220,10 +239,32 @@ def plot_mediation_grid(fig_dir: Path):
         capsize=4,
         linewidth=1.2,
     )
-    ax.axhline(0, color="k", linestyle="--", linewidth=1)
-    ax.set_title("Mediation: Δ$D_{syc}$ vs Base (mean ± s.e.)")
-    ax.set_xlabel("Condition")
-    ax.set_ylabel("Δ$D_{syc}$ (condition − Base)")
+    axes[0].axhline(0, color="k", linestyle="--", linewidth=1)
+    axes[0].set_title("Δ$D_{syc}$ vs Base (mean ± s.e.)")
+    axes[0].set_xlabel("Condition")
+    axes[0].set_ylabel("Δ$D_{syc}$ (condition − Base)")
+
+    # Paired lines (per example) to surface differences when bars look similar
+    melt_cols = [c for _, c in conds]
+    melted = df[melt_cols + ["D_base", "example_id"]].copy()
+    melted = melted.melt(id_vars=["example_id", "D_base"], var_name="condition", value_name="D_cond")
+    melted["delta"] = melted["D_cond"] - melted["D_base"]
+    sns.lineplot(
+        data=melted,
+        x="condition",
+        y="delta",
+        hue="example_id",
+        legend=False,
+        marker="o",
+        alpha=0.2,
+        linewidth=0.8,
+        ax=axes[1],
+    )
+    axes[1].axhline(0, color="k", linestyle="--", linewidth=1)
+    axes[1].set_title("Δ per example (paired)")
+    axes[1].set_xlabel("Condition")
+    axes[1].set_ylabel("Δ$D_{syc}$ (condition − Base)")
+
     fig.tight_layout()
     fig.savefig(fig_dir / "exp3_mediation_grid.png", dpi=300)
     plt.close(fig)
@@ -242,14 +283,14 @@ def plot_mediation_scatter(fig_dir: Path):
     df["E_rand"] = df["D_rand_abl"] - df["D_vec_rand"]
 
     fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharex=True, sharey=True)
-    sns.scatterplot(data=df, x="E_clean", y="E_syc", hue="example_id", ax=axes[0])
+    sns.scatterplot(data=df, x="E_clean", y="E_syc", hue="example_id", ax=axes[0], alpha=0.8)
     axes[0].axhline(0, color="k", linestyle="--", linewidth=1)
     axes[0].axvline(0, color="k", linestyle="--", linewidth=1)
     axes[0].set_title("E_syc vs E_clean")
     axes[0].set_xlabel("E_clean = D_base − D_vec")
     axes[0].set_ylabel("E_syc = D_syc_abl − D_vec_syc")
 
-    sns.scatterplot(data=df, x="E_clean", y="E_rand", hue="example_id", ax=axes[1], legend=False)
+    sns.scatterplot(data=df, x="E_clean", y="E_rand", hue="example_id", ax=axes[1], legend=False, alpha=0.8)
     axes[1].axhline(0, color="k", linestyle="--", linewidth=1)
     axes[1].axvline(0, color="k", linestyle="--", linewidth=1)
     axes[1].set_title("E_rand vs E_clean")
