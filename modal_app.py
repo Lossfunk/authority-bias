@@ -21,7 +21,7 @@ from pathlib import Path
 import modal
 
 def _make_image() -> modal.Image:
-    # Modal 1.x removed Mount; use add_local_dir to include source.
+    # VERSION: 2 - force rebuild after head_patch_hooks tensor shape fix
     return (
         modal.Image.debian_slim(python_version="3.12")
         .pip_install(
@@ -43,7 +43,7 @@ def _make_image() -> modal.Image:
         .add_local_dir(
             ".",
             remote_path="/workspace",
-            ignore=lambda p: ".git" in str(p) or "/results/" in str(p) or "/.venv" in str(p),
+            ignore=lambda p: ".git" in str(p) or "/results/" in str(p) or "/.venv" in str(p) or "__pycache__" in str(p),
         )
     )
 
@@ -59,7 +59,7 @@ def _run(cmd: list[str], cwd: Path) -> None:
     subprocess.run(cmd, cwd=cwd, check=True)
 
 
-@app.function(image=image, gpu="L4", timeout=60 * 60, volumes={"/volume": volume})
+@app.function(image=image, gpu="L4", timeout=3 * 60 * 60, volumes={"/volume": volume})
 def run_exp(exp: str = "exp2"):
     """
     Run one of the experiments on a GPU.
@@ -79,6 +79,7 @@ def run_exp(exp: str = "exp2"):
         "exp0": ["python", "-m", "src.exp0.run_baseline"],
         "exp1": ["python", "-m", "src.exp1.run_caa_vector"],
         "exp2": ["python", "-m", "src.exp2.run_path_patching"],
+        "exp2_agg": ["python", "-m", "src.exp2.aggregate_head_scores"],
         "exp3": ["python", "-m", "src.exp3.run_mediation_grid"],
     }
     if exp not in cmd_map:

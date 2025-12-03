@@ -138,7 +138,6 @@ def instrument_model_for_head_patching(model, registry: HeadPatchRegistry) -> No
             continue
         original_forward = attn.forward
         config = attn.config
-        layer_idx_copy = layer_idx
 
         def patched_forward(
             self,
@@ -147,6 +146,7 @@ def instrument_model_for_head_patching(model, registry: HeadPatchRegistry) -> No
             attention_mask: Optional[torch.Tensor],
             past_key_values: Optional[Cache] = None,
             cache_position: Optional[torch.LongTensor] = None,
+            _layer_idx=layer_idx,
             **kwargs,
         ):
             input_shape = hidden_states.shape[:-1]
@@ -180,8 +180,7 @@ def instrument_model_for_head_patching(model, registry: HeadPatchRegistry) -> No
                 **kwargs,
             )
 
-            attn_output = attn_output.transpose(1, 2).contiguous()
-            attn_output = registry.process(layer_idx_copy, attn_output)
+            attn_output = registry.process(_layer_idx, attn_output)
             attn_output = attn_output.transpose(1, 2).contiguous()
             attn_output = attn_output.reshape(*input_shape, -1).contiguous()
             attn_output = self.o_proj(attn_output)
