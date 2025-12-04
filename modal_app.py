@@ -20,10 +20,14 @@ from pathlib import Path
 
 import modal
 
+# Bump BUILD_VERSION to force Modal to rebuild the image when dependencies or hooks change.
+BUILD_VERSION: int = 3
+
+
 def _make_image() -> modal.Image:
-    # VERSION: 2 - force rebuild after head_patch_hooks tensor shape fix
     return (
         modal.Image.debian_slim(python_version="3.12")
+        .env({"IMAGE_BUILD_VERSION": str(BUILD_VERSION)})
         .pip_install(
             "accelerate>=1.12.0",
             "datasets>=4.4.1",

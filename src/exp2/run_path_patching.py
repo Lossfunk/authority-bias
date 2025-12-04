@@ -107,13 +107,17 @@ def run_path_patching(cfg: Dict) -> None:
             # Cache head contexts on neutral prompt
             inputs_neutral = tokenize_text(tokenizer, prompt_neutral, device)
             pos_neutral = inputs_neutral["input_ids"].shape[1] - 1
-            with cache_mode(registry, ex.uid, pos_neutral):
+
+            # Align position for cache/patch (neutral prompt might be shorter).
+            pos_aligned = min(pos_wrong, pos_neutral)
+
+            with cache_mode(registry, ex.uid, pos_aligned):
                 with torch.no_grad():
                     model(**inputs_neutral)
 
             for layer_idx in layer_range:
                 for head_idx in range(num_heads):
-                    with patch_mode(registry, ex.uid, layer_idx, head_idx, pos_wrong):
+                    with patch_mode(registry, ex.uid, layer_idx, head_idx, pos_aligned):
                         patched = compute_D_syc(
                             model=model,
                             tokenizer=tokenizer,
@@ -128,6 +132,7 @@ def run_path_patching(cfg: Dict) -> None:
                             "head": head_idx,
                             "pos_idx_wrong": pos_wrong,
                             "pos_idx_neutral": pos_neutral,
+                            "pos_idx_aligned": pos_aligned,
                             "D_syc_orig": baseline["D_syc"],
                             "D_syc_patched": patched["D_syc"],
                         "delta": baseline["D_syc"] - patched["D_syc"],
@@ -150,4 +155,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
