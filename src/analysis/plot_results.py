@@ -142,11 +142,9 @@ def plot_caa_grid(fig_dir: Path):
     if L_star is not None and alpha_star is not None:
         col_idx = list(pivot_df.columns).index(alpha_star)
         row_idx = list(pivot_df.index).index(L_star)
-        chosen_val = pivot_df.loc[L_star, alpha_star]
-
         ax.add_patch(Rectangle((col_idx, row_idx), 1, 1, fill=False, edgecolor=PALETTE["orange"], lw=4, clip_on=False))
         ax.annotate(
-            f"Selected: L{L_star}, α={alpha_star}\nEffect = {chosen_val:.3f}",
+            f"Selected: L{L_star}, α={alpha_star}\nEffect = {pivot_df.loc[L_star, alpha_star]:.3f}",
             xy=(col_idx + 0.5, row_idx + 0.5),
             xytext=(col_idx + 2.5, row_idx - 3),
             fontsize=10,
@@ -205,12 +203,11 @@ def plot_head_deltas(fig_dir: Path):
     ax2.grid(axis="x", linestyle="--", alpha=0.4)
 
     dominant_layer = layer_sums.index[0]
-    dominant_pct = layer_sums.iloc[0] / layer_sums.sum() * 100
     ax1.text(
         0.95, 0.05,
         f"Key Finding:\n"
         f"• Layer {int(dominant_layer)} accounts for\n"
-        f"  {dominant_pct:.0f}% of total effect\n"
+        f"  {layer_sums.iloc[0] / layer_sums.sum() * 100:.0f}% of total effect\n"
         f"• Top 5 heads are all in L{int(dominant_layer)}",
         transform=ax1.transAxes, ha="right", va="bottom", fontsize=9,
         bbox=dict(facecolor=PALETTE["yellow"], alpha=0.3, edgecolor=PALETTE["orange"], boxstyle="round,pad=0.4"),
