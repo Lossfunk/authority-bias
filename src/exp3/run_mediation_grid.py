@@ -158,8 +158,32 @@ def main():
     alpha_star = selection["alpha_star"]
     steering_vector = layer_vectors[L_star].to(device)
 
-    syc_heads = load_head_list(Path(cfg["exp3"]["syc_heads_path"]))
-    rand_heads = load_head_list(Path(cfg["exp3"]["rand_heads_path"]))
+    # Choose head set: exploratory (cross-layer) or syc (coverage-based)
+    use_exploratory = cfg["exp3"].get("use_exploratory_heads", False)
+    head_set_name = "syc_heads"
+    if use_exploratory and "exploratory_heads_path" in cfg["exp3"]:
+        exp_path = Path(cfg["exp3"]["exploratory_heads_path"])
+        if exp_path.exists():
+            syc_heads = load_head_list(exp_path)
+            head_set_name = "exploratory_heads"
+            print(f"Using exploratory heads ({len(syc_heads)} heads from {exp_path})")
+        else:
+            syc_heads = load_head_list(Path(cfg["exp3"]["syc_heads_path"]))
+            print(f"Exploratory heads not found, falling back to syc_heads")
+    else:
+        syc_heads = load_head_list(Path(cfg["exp3"]["syc_heads_path"]))
+    
+    # Generate random control heads matching the layer distribution of selected heads
+    import random
+    rng = random.Random(cfg.get("seed", 42))
+    num_heads = model.config.num_attention_heads
+    syc_head_set = set(syc_heads)
+    rand_heads = []
+    for layer, head in syc_heads:
+        excluded = {h for (l, h) in syc_head_set if l == layer}
+        candidates = [h for h in range(num_heads) if h not in excluded]
+        if candidates:
+            rand_heads.append((layer, rng.choice(candidates)))
     if not syc_heads or not rand_heads:
         output_dir = Path(cfg["exp3"]["output_dir"])
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -323,6 +347,9 @@ def main():
     summary = {
         "num_examples": len(records),
         "num_examples_valid": len(ras_syc_values),
+        "head_set_used": head_set_name,
+        "num_heads_tested": len(syc_heads),
+        "num_unique_layers": len(set(l for l, h in syc_heads)),
         "mean_RAS_syc": mean(ras_syc_values) if ras_syc_values else 0.0,
         "mean_RAS_rand": mean(ras_rand_values) if ras_rand_values else 0.0,
         "mean_diff": mean_diff,

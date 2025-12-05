@@ -106,24 +106,28 @@ class HeadPatchRegistry:
         """
         if self.mode in {"cache", "patch"} and self.example_id is not None and self.pos_idx is not None:
             pos = min(self.pos_idx, attn_output.shape[2] - 1)
+            num_heads = attn_output.shape[1]
             if self.mode == "cache":
-                for head_idx in range(attn_output.shape[1]):
+                for head_idx in range(num_heads):
                     key = HeadKey(self.example_id, layer_idx, head_idx)
                     self.cache.set(key, attn_output[0, head_idx, pos, :])
             elif self.mode == "patch" and layer_idx == self.target_layer:
-                key = HeadKey(self.example_id, layer_idx, self.target_head)
-                cached = self.cache.get(key)
-                if cached is not None:
-                    attn_output = attn_output.clone()
-                    attn_output[:, self.target_head, pos, :] = cached.to(attn_output.device)
+                if self.target_head < num_heads:
+                    key = HeadKey(self.example_id, layer_idx, self.target_head)
+                    cached = self.cache.get(key)
+                    if cached is not None:
+                        attn_output = attn_output.clone()
+                        attn_output[:, self.target_head, pos, :] = cached.to(attn_output.device)
 
         ablation_layer = self.mean_ablation.get(layer_idx) if self.mean_ablation else None
         ablation_pos = self.ablation_pos_idx if self.ablation_pos_idx is not None else self.pos_idx
         if ablation_layer and ablation_pos is not None:
             pos = min(ablation_pos, attn_output.shape[2] - 1)
+            num_heads = attn_output.shape[1]
             attn_output = attn_output.clone()
             for head_idx, vec in ablation_layer.items():
-                attn_output[:, head_idx, pos, :] = vec.to(attn_output.device)
+                if head_idx < num_heads:
+                    attn_output[:, head_idx, pos, :] = vec.to(attn_output.device)
 
         return attn_output
 
