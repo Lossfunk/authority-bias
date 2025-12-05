@@ -148,7 +148,7 @@ def main():
         dtype=model_cfg.get("dtype", "auto"),
     )
     device = next(model.parameters()).device
-    registry = ensure_head_patching(model)
+    registry = ensure_head_patching(model, force=True)
 
     # Load steering vector
     layer_vectors = torch.load(cfg["exp3"]["layer_vectors_path"], map_location=device)

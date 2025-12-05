@@ -21,7 +21,7 @@ from pathlib import Path
 import modal
 
 # Bump BUILD_VERSION to force Modal to rebuild the image when dependencies or hooks change.
-BUILD_VERSION: int = 4
+BUILD_VERSION: int = 5
 
 
 def _make_image() -> modal.Image:

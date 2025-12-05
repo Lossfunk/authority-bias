@@ -132,16 +132,15 @@ class HeadPatchRegistry:
         return attn_output
 
 
-def instrument_model_for_head_patching(model, registry: HeadPatchRegistry) -> None:
+def instrument_model_for_head_patching(model, registry: HeadPatchRegistry, force: bool = False) -> None:
     """
     Monkey-patch attention modules to intercept head contexts.
     """
     for layer_idx, layer in enumerate(model.model.layers):
         attn = layer.self_attn
-        if getattr(attn, "_head_patch_wrapped", False):
+        if getattr(attn, "_head_patch_wrapped", False) and not force:
             continue
-        original_forward = attn.forward
-        config = attn.config
+        original_forward = attn.forward  # noqa: F841 - kept for potential future use
 
         def patched_forward(
             self,
@@ -231,12 +230,12 @@ def mean_ablation_mode(
         registry.clear_mean_ablation()
 
 
-def ensure_head_patching(model, registry: Optional[HeadPatchRegistry] = None) -> HeadPatchRegistry:
+def ensure_head_patching(model, registry: Optional[HeadPatchRegistry] = None, force: bool = False) -> HeadPatchRegistry:
     """
     Ensure the model has been instrumented and return the registry used.
     """
     registry = registry or HeadPatchRegistry()
-    instrument_model_for_head_patching(model, registry)
+    instrument_model_for_head_patching(model, registry, force=force)
     return registry
 
 
