@@ -13,11 +13,11 @@ path_patching:
   layer_start: 0
   layer_end: null
 output:
-  raw_results: results/exp2/head_results_raw.jsonl
-  head_scores: results/exp2/head_scores.jsonl
-  syc_heads: results/exp2/syc_heads.json
-  rand_heads: results/exp2/rand_heads.json
-  summary: results/exp2/head_summary.json
+  raw_results: updated-results/exp2/head_results_raw.jsonl
+  head_scores: updated-results/exp2/head_scores.jsonl
+  syc_heads: updated-results/exp2/syc_heads.json
+  rand_heads: updated-results/exp2/rand_heads.json
+  summary: updated-results/exp2/head_summary.json
 head_selection:
   coverage_fraction: 0.75
   fallback_top_k: 20

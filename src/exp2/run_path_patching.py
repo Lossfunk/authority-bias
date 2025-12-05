@@ -79,7 +79,7 @@ def run_path_patching(cfg: Dict) -> None:
         dtype=model_cfg.get("dtype", "auto"),
     )
     device = next(model.parameters()).device
-    registry = ensure_head_patching(model)
+    registry = ensure_head_patching(model, force=True)
 
     num_heads = model.config.num_attention_heads
     layer_range = list(iter_layers(model, cfg["path_patching"]))

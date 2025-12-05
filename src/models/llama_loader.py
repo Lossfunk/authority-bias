@@ -49,6 +49,7 @@ def load_model_and_tokenizer(
         device_map=device_map,
         trust_remote_code=False,
         use_auth_token=use_auth_token,
+        attn_implementation="eager",  # Required for consistent head tensor shapes
     )
     if target_device:
         model.to(torch.device(target_device))

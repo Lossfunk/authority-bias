@@ -16,5 +16,5 @@ exp1:
   margin_step: 0.05
   dev_subset_size: 128
   alpha_grid: [0.5, 1.0, 2.0, 4.0]
-  output_dir: results/exp1
-  head_summary_path: results/exp2/head_summary.json
+  output_dir: updated-results/exp1
+  head_summary_path: updated-results/exp2/head_summary.json
