@@ -21,3 +21,16 @@ output:
 head_selection:
   coverage_fraction: 0.75
   fallback_top_k: 20
+  # Selection modes: positive_coverage | top_k_per_layer | global_top_k_abs
+  selection_mode: positive_coverage
+  # Ranking metric: delta_sum | delta_mean | abs_delta_sum
+  rank_metric: delta_sum
+  # For global_top_k_abs mode
+  top_k: 20
+  # For top_k_per_layer mode
+  top_k_per_layer: 3
+  # If true, don't filter on delta_sum > 0
+  bypass_positive_filter: false
+  # Whether to write exploratory_heads.json (top 2 per layer by abs effect)
+  emit_exploratory_set: true
+  exploratory_top_k_per_layer: 2

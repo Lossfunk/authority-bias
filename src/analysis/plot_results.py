@@ -52,7 +52,7 @@ def _ensure_dir(path: Path):
 
 
 def plot_baseline(fig_dir: Path):
-    records_path = Path("results/exp0/baseline_records.jsonl")
+    records_path = Path("updated-results/exp0/baseline_records.jsonl")
     if not records_path.exists():
         return
     df = pd.read_json(records_path, lines=True)
@@ -93,6 +93,7 @@ def plot_baseline(fig_dir: Path):
         f"• N = {len(df)} examples",
         transform=ax.transAxes, ha="right", va="top", fontsize=10,
         bbox=dict(facecolor="white", alpha=0.95, edgecolor=PALETTE["gray"], boxstyle="round,pad=0.5"),
+        zorder=10
     )
 
     ax.legend(loc="upper right", framealpha=0.9)
@@ -103,7 +104,7 @@ def plot_baseline(fig_dir: Path):
 
 
 def plot_caa_grid(fig_dir: Path):
-    selection_path = Path("results/exp1/vector_selection.json")
+    selection_path = Path("updated-results/exp1/vector_selection.json")
     if not selection_path.exists():
         return
     with selection_path.open("r") as f:
@@ -146,11 +147,12 @@ def plot_caa_grid(fig_dir: Path):
         ax.annotate(
             f"Selected: L{L_star}, α={alpha_star}\nEffect = {pivot_df.loc[L_star, alpha_star]:.3f}",
             xy=(col_idx + 0.5, row_idx + 0.5),
-            xytext=(col_idx + 2.5, row_idx - 3),
+            xytext=(col_idx + 0.5, row_idx - 2),  # Moved closer to avoid overlap
             fontsize=10,
             ha="center",
             arrowprops=dict(arrowstyle="->", color=PALETTE["orange"], lw=2),
             bbox=dict(facecolor="white", edgecolor=PALETTE["orange"], boxstyle="round,pad=0.3"),
+            zorder=10
         )
 
     ax.text(
@@ -165,7 +167,7 @@ def plot_caa_grid(fig_dir: Path):
 
 
 def plot_head_deltas(fig_dir: Path):
-    head_scores_path = Path("results/exp2/head_scores.jsonl")
+    head_scores_path = Path("updated-results/exp2/head_scores.jsonl")
     if not head_scores_path.exists():
         return
     df = pd.read_json(head_scores_path, lines=True)
@@ -189,6 +191,8 @@ def plot_head_deltas(fig_dir: Path):
     ax1.set_title("(a) Top 10 Attention Heads by Impact")
     ax1.invert_yaxis()
     ax1.grid(axis="x", linestyle="--", alpha=0.4)
+    # Add margin for text
+    ax1.margins(x=0.15)
 
     for bar, val in zip(bars, df_top["delta_sum"]):
         ax1.text(val + 0.3, bar.get_y() + bar.get_height() / 2, f"{val:.1f}",
@@ -220,7 +224,7 @@ def plot_head_deltas(fig_dir: Path):
 
 
 def plot_mediation_grid(fig_dir: Path):
-    results_path = Path("results/exp3/mediation_results.jsonl")
+    results_path = Path("updated-results/exp3/mediation_results.jsonl")
     if not results_path.exists():
         return
     df = pd.read_json(results_path, lines=True)
@@ -305,7 +309,7 @@ def plot_mediation_grid(fig_dir: Path):
 
 
 def plot_mediation_scatter(fig_dir: Path):
-    results_path = Path("results/exp3/mediation_results.jsonl")
+    results_path = Path("updated-results/exp3/mediation_results.jsonl")
     if not results_path.exists():
         return
     df = pd.read_json(results_path, lines=True)
@@ -328,10 +332,12 @@ def plot_mediation_scatter(fig_dir: Path):
 
     lim_min = min(df["E_clean"].min(), df["E_syc"].min()) - 0.2
     lim_max = max(df["E_clean"].max(), df["E_syc"].max()) + 0.2
-    g.ax_joint.plot([lim_min, lim_max], [lim_min, lim_max], color=PALETTE["gray"], linestyle="--", linewidth=1.5, alpha=0.7, label="y = x (Perfect Mediation)")
+    g.ax_joint.plot([lim_min, lim_max], [lim_min, lim_max], color=PALETTE["gray"], linestyle="--", linewidth=1.5, alpha=0.7, label="y = x (No Mediation / Independent)")
 
     g.ax_joint.axhline(0, color=PALETTE["black"], linestyle="-", linewidth=1, alpha=0.5)
     g.ax_joint.axvline(0, color=PALETTE["black"], linestyle="-", linewidth=1, alpha=0.5)
+    # Add line for perfect mediation (y=0)
+    g.ax_joint.axhline(0, color=PALETTE["orange"], linestyle=":", linewidth=2, alpha=0.8, label="y = 0 (Full Mediation)")
 
     g.plot_marginals(sns.histplot, kde=True, color=PALETTE["sky_blue"], alpha=0.4, linewidth=0)
 
@@ -347,16 +353,18 @@ def plot_mediation_scatter(fig_dir: Path):
     )
 
     if corr > 0.8:
-        interpretation = "Strong positive correlation:\nSyc heads mediate most of the vector's effect."
+        interpretation = "Strong positive correlation:\nVector works independently of syc heads."
     elif corr > 0.5:
         interpretation = "Moderate correlation:\nSyc heads partially mediate the effect."
     else:
-        interpretation = "Weak correlation:\nSyc heads do not mediate the vector's effect."
+        interpretation = "Weak correlation:\nSyc heads mediate the vector's effect."
 
+    # Position text outside or in corner with better spacing
     g.ax_joint.text(
         0.05, 0.95, interpretation,
         transform=g.ax_joint.transAxes, ha="left", va="top", fontsize=10,
-        bbox=dict(facecolor=PALETTE["yellow"], alpha=0.3, edgecolor=PALETTE["orange"], boxstyle="round,pad=0.4"),
+        bbox=dict(facecolor=PALETTE["yellow"], alpha=0.5, edgecolor=PALETTE["orange"], boxstyle="round,pad=0.4"),
+        zorder=10
     )
 
     g.figure.suptitle("Mediation Analysis: Do Sycophancy Heads Explain the Vector's Effect?", y=1.02, fontsize=14, fontweight="bold")
@@ -367,7 +375,7 @@ def plot_mediation_scatter(fig_dir: Path):
 
 def main():
     _set_theme()
-    fig_dir = Path("results/figures")
+    fig_dir = Path("updated-results/figures")
     _ensure_dir(fig_dir)
     plot_baseline(fig_dir)
     plot_caa_grid(fig_dir)
