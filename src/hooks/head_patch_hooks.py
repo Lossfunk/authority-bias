@@ -6,7 +6,9 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, Optional, Tuple
+import os
 
 import torch
 
@@ -61,6 +63,30 @@ class HeadPatchRegistry:
         self.cache = HeadCache()
         self.mean_ablation: Dict[int, Dict[int, torch.Tensor]] = {}
         self.ablation_pos_idx: Optional[int] = None
+        # Debug logging path can be set via env HEAD_PATCH_DEBUG_LOG; defaults fall back to RESULTS_DIR/exp2 or results/exp2 locally.
+        self.debug_log_path = self._resolve_debug_path()
+
+    @staticmethod
+    def _resolve_debug_path() -> Optional[Path]:
+        # Priority: explicit env; RESULTS_DIR (Modal volume); local results.
+        if os.environ.get("HEAD_PATCH_DEBUG_LOG"):
+            return Path(os.environ["HEAD_PATCH_DEBUG_LOG"])
+        if os.environ.get("RESULTS_DIR"):
+            return Path(os.environ["RESULTS_DIR"]) / "exp2" / "patch_debug.log"
+        return Path("results/exp2/patch_debug.log")
+
+    def _append_debug(self, line: str) -> None:
+        """Best-effort append to debug log; never raise."""
+        path = self.debug_log_path
+        if not path:
+            return
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("a") as f:
+                f.write(line + "\n")
+        except Exception:
+            # Swallow all errors to avoid interfering with model forward.
+            pass
 
     def reset(self):
         self.mode = "off"
@@ -116,8 +142,21 @@ class HeadPatchRegistry:
                     key = HeadKey(self.example_id, layer_idx, self.target_head)
                     cached = self.cache.get(key)
                     if cached is not None:
+                        # DEBUG: measure how different the cached vs original values are
+                        original = attn_output[0, self.target_head, pos, :].clone()
+                        cached_tensor = cached.to(attn_output.device)
+                        diff_norm = (original - cached_tensor).norm().item()
+                        orig_norm = original.norm().item()
+                        ratio = diff_norm / orig_norm if orig_norm > 0 else float("nan")
+                        # Log only a small subset to avoid huge files
+                        if layer_idx <= 2 and self.target_head == 0:
+                            self._append_debug(
+                                f"PATCH L{layer_idx}H{self.target_head} pos={pos}: "
+                                f"diff_norm={diff_norm:.6f}, orig_norm={orig_norm:.6f}, ratio={ratio:.6f}, "
+                                f"cache_shape={tuple(cached_tensor.shape)}"
+                            )
                         attn_output = attn_output.clone()
-                        attn_output[:, self.target_head, pos, :] = cached.to(attn_output.device)
+                        attn_output[:, self.target_head, pos, :] = cached_tensor
 
         ablation_layer = self.mean_ablation.get(layer_idx) if self.mean_ablation else None
         ablation_pos = self.ablation_pos_idx if self.ablation_pos_idx is not None else self.pos_idx

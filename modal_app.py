@@ -21,7 +21,7 @@ from pathlib import Path
 import modal
 
 # Bump BUILD_VERSION to force Modal to rebuild the image when dependencies or hooks change.
-BUILD_VERSION: int = 5
+BUILD_VERSION: int = 10
 
 
 def _make_image() -> modal.Image:
@@ -63,7 +63,7 @@ def _run(cmd: list[str], cwd: Path) -> None:
     subprocess.run(cmd, cwd=cwd, check=True)
 
 
-@app.function(image=image, gpu="L4", timeout=3 * 60 * 60, volumes={"/volume": volume})
+@app.function(image=image, gpu="L4", timeout=12 * 60 * 60, volumes={"/volume": volume})
 def run_exp(exp: str = "exp2"):
     """
     Run one of the experiments on a GPU.
