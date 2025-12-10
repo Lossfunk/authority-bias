@@ -17,8 +17,8 @@ exp3:
   output_dir: updated-results/exp3
   head_means_reference_split: data/split_B_user_wrong.jsonl
   head_means_max_examples: 128
-  layer_vectors_path: updated-results/exp1/layer_vectors.pt
-  vector_selection_path: updated-results/exp1/vector_selection.json
+  layer_vectors_path: updated-results/exp1_v2/layer_vectors_exp1_v2.pt
+  vector_selection_path: updated-results/exp1_v2/vector_selection_exp1_v2.json
   syc_heads_path: updated-results/exp2/syc_heads.json
   rand_heads_path: updated-results/exp2/rand_heads.json
   exploratory_heads_path: updated-results/exp2/exploratory_heads.json

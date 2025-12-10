@@ -88,6 +88,8 @@ def run_path_patching(cfg: Dict) -> None:
     raw_path = Path(output_cfg["raw_results"])
     raw_path.parent.mkdir(parents=True, exist_ok=True)
 
+    patch_positions = cfg["path_patching"].get("patch_positions", ["prompt_last"])
+
     with raw_path.open("w") as writer:
         for ex in tqdm(examples, desc="Exp2 path patching"):
             prompt_wrong = ex.user_wrong_prompt
@@ -116,34 +118,49 @@ def run_path_patching(cfg: Dict) -> None:
             # Patch at the wrong prompt's last token (its decision point)
             # This answers: "What if the head output at wrong's decision point
             # came from neutral's decision point instead?"
-            for layer_idx in layer_range:
-                for head_idx in range(num_heads):
-                    with patch_mode(registry, ex.uid, layer_idx, head_idx, pos_wrong):
-                        patched = compute_D_syc(
-                            model=model,
-                            tokenizer=tokenizer,
-                            prompt_text=prompt_wrong,
-                            wrong_answer=ex.wrong_answer,
-                            right_answer=ex.correct_answer,
-                            device=device,
-                        )
-                    record = {
-                        "example_id": ex.uid,
-                        "layer": layer_idx,
-                        "head": head_idx,
-                        "pos_idx_wrong": pos_wrong,
-                        "pos_idx_neutral": pos_neutral,
-                        "D_syc_orig": baseline["D_syc"],
-                        "D_syc_patched": patched["D_syc"],
-                        "delta": baseline["D_syc"] - patched["D_syc"],
-                        "logP_wrong_orig": baseline["logP_wrong"],
-                        "logP_right_orig": baseline["logP_right"],
-                        "logP_wrong_patched": patched["logP_wrong"],
-                        "logP_right_patched": patched["logP_right"],
-                        "num_heads": num_heads,
-                        "num_layers": model.config.num_hidden_layers,
-                    }
-                    writer.write(json.dumps(record) + "\n")
+            # Derive additional patch positions
+            pos_indices = {}
+            for label in patch_positions:
+                if label == "prompt_last":
+                    pos_indices[label] = pos_wrong
+                elif label == "first_answer":
+                    pos_indices[label] = pos_wrong + 1  # first generated token position
+                else:
+                    continue
+
+            for pos_label, pos_idx in pos_indices.items():
+                if pos_idx >= inputs_wrong["input_ids"].shape[1]:
+                    # skip if answer token not present (shouldn’t happen with teacher forcing)
+                    continue
+                for layer_idx in layer_range:
+                    for head_idx in range(num_heads):
+                        with patch_mode(registry, ex.uid, layer_idx, head_idx, pos_idx):
+                            patched = compute_D_syc(
+                                model=model,
+                                tokenizer=tokenizer,
+                                prompt_text=prompt_wrong,
+                                wrong_answer=ex.wrong_answer,
+                                right_answer=ex.correct_answer,
+                                device=device,
+                            )
+                        record = {
+                            "example_id": ex.uid,
+                            "layer": layer_idx,
+                            "head": head_idx,
+                            "pos_label": pos_label,
+                            "pos_idx_wrong": pos_idx,
+                            "pos_idx_neutral": pos_neutral,
+                            "D_syc_orig": baseline["D_syc"],
+                            "D_syc_patched": patched["D_syc"],
+                            "delta": baseline["D_syc"] - patched["D_syc"],
+                            "logP_wrong_orig": baseline["logP_wrong"],
+                            "logP_right_orig": baseline["logP_right"],
+                            "logP_wrong_patched": patched["logP_wrong"],
+                            "logP_right_patched": patched["logP_right"],
+                            "num_heads": num_heads,
+                            "num_layers": model.config.num_hidden_layers,
+                        }
+                        writer.write(json.dumps(record) + "\n")
             registry.cache.clear_example(ex.uid)
 
 

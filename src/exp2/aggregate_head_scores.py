@@ -31,12 +31,14 @@ def load_config(path: Path) -> Dict:
         return yaml.safe_load(f)
 
 
-def load_raw_rows(raw_path: Path) -> List[Dict]:
+def load_raw_rows(raw_path: Path, pos_label: str | None = None) -> List[Dict]:
     rows: List[Dict] = []
     with raw_path.open("r") as f:
         for line in f:
             if line.strip():
-                rows.append(json.loads(line))
+                row = json.loads(line)
+                if pos_label is None or row.get("pos_label") == pos_label:
+                    rows.append(row)
     return rows
 
 
@@ -179,6 +181,29 @@ def select_global_top_k_abs(
     return selected
 
 
+def select_abs_top_k_per_layer(
+    head_scores: List[Dict],
+    top_k: int,
+) -> List[Dict]:
+    """Select top-K per layer by absolute delta_sum."""
+    by_layer: Dict[int, List[Dict]] = defaultdict(list)
+    for hs in head_scores:
+        by_layer[hs["layer"]].append(hs)
+    selected: List[Dict] = []
+    for layer in sorted(by_layer.keys()):
+        layer_heads = sorted(by_layer[layer], key=lambda x: abs(x["delta_sum"]), reverse=True)
+        for hs in layer_heads[:top_k]:
+            selected.append(
+                {
+                    "layer": hs["layer"],
+                    "head": hs["head"],
+                    "delta_sum": hs["delta_sum"],
+                    "delta_mean": hs["delta_mean"],
+                }
+            )
+    return selected
+
+
 def generate_random_controls(
     selected: List[Dict],
     num_heads: int,
@@ -222,7 +247,8 @@ def main():
     output_cfg = cfg["output"]
     sel_cfg = cfg["head_selection"]
 
-    rows = load_raw_rows(Path(output_cfg["raw_results"]))
+    pos_label_filter = sel_cfg.get("pos_label")  # None means use all positions
+    rows = load_raw_rows(Path(output_cfg["raw_results"]), pos_label=pos_label_filter)
     if not rows:
         raise RuntimeError("No rows found in raw results")
 
@@ -247,6 +273,9 @@ def main():
     elif mode == "top_k_per_layer":
         top_k = sel_cfg.get("top_k_per_layer", 3)
         syc_heads = select_top_k_per_layer(head_scores, top_k, rank_metric)
+    elif mode == "abs_top_k_per_layer":
+        top_k = sel_cfg.get("top_k_per_layer", 2)
+        syc_heads = select_abs_top_k_per_layer(head_scores, top_k)
     elif mode == "global_top_k_abs":
         top_k = sel_cfg.get("top_k", 20)
         syc_heads = select_global_top_k_abs(head_scores, top_k, rank_metric)
@@ -296,3 +325,24 @@ def main():
 
 if __name__ == "__main__":
     main()
+def select_abs_top_k_per_layer(
+    head_scores: List[Dict],
+    top_k: int,
+) -> List[Dict]:
+    """Select top-K per layer by absolute delta_sum."""
+    by_layer: Dict[int, List[Dict]] = defaultdict(list)
+    for hs in head_scores:
+        by_layer[hs["layer"]].append(hs)
+    selected: List[Dict] = []
+    for layer in sorted(by_layer.keys()):
+        layer_heads = sorted(by_layer[layer], key=lambda x: abs(x["delta_sum"]), reverse=True)
+        for hs in layer_heads[:top_k]:
+            selected.append(
+                {
+                    "layer": hs["layer"],
+                    "head": hs["head"],
+                    "delta_sum": hs["delta_sum"],
+                    "delta_mean": hs["delta_mean"],
+                }
+            )
+    return selected

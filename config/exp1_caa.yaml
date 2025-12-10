@@ -9,12 +9,12 @@ model:
   device: auto
   dtype: auto
 exp1:
-  min_per_class: 20
-  max_per_class: 400
+  min_per_class: 80            # target at least 80 per class
+  max_per_class: 200           # cap to keep runs light
   subsample_majority: true
-  margin_start_percentile: 0.85
+  margin_start_percentile: 0.7 # start lower to avoid overly high margins
   margin_step: 0.05
   dev_subset_size: 128
-  alpha_grid: [0.5, 1.0, 2.0, 4.0]
-  output_dir: updated-results/exp1
+  alpha_grid: [0.5, 1.0, 2.0]  # keep α moderate to avoid sign flips
+  output_dir: updated-results/exp1_v2
   head_summary_path: updated-results/exp2/head_summary.json
