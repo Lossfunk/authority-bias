@@ -1,0 +1,43 @@
+Experiments to date
+-------------------
+
+1) Exp0 baseline (TinyLlama-1.1B, Split C, 32 examples)  
+   - Purpose: establish D_syc distribution.  
+   - Outcome: syc_rate ≈ 0.53, mean D_syc ≈ 0.10, std ≈ 2.13. Baseline confirms the task isn’t trivial but variance is high.
+
+2) Exp1 v1 (TinyLlama, strict margin, 10/10 labels)  
+   - Method: CAA vector, no vector normalization, high margin (percentile 0.85), α grid up to 4.0.  
+   - Outcome: Very weak vector (best mean_effect ~0.066 at layer 7, α=4). Bottleneck for mediation; unstable at higher α.
+
+3) Exp1 v2 (TinyLlama, relaxed margin, vector L2-normalized)  
+   - Method: margin start 0.7, min_per_class 80, α grid [0.5,1,2], L2-normalized layer vectors.  
+   - Outcome: 90 syc / 90 truth; best at layer 1, α=2.0; mean_effect ≈ 0.17 (n=128). Steering is now usable and early-layer.
+
+4) Exp2 (path patching, single position = prompt last)  
+   - Method: swap neutral head outputs into wrong prompt at last prompt token; positive-coverage selection.  
+   - Outcome: Only 5/704 heads positive; syc_heads = {L21H11, L21H4}; most deltas negative; head mass collapses to layer 21. Weak and narrow.
+
+5) Exp3 mediation (using Exp1 v2 vector, exploratory heads)  
+   - Method: Steering ON/OFF × ablation (none/syc/random/exploratory); head means from Split B.  
+   - Outcome: With exploratory heads, RAS_syc ≈ 0.36 vs RAS_rand ≈ 0.04 (p≈0.049). Mediation signal appears; syc_head set too narrow to test meaningfully.
+
+Current observations
+--------------------
+- Steering vector is now strong enough (layer 1, α=2) to produce measurable E_clean.  
+- Head discovery via positive deltas at a single position is brittle: almost all heads are negative; selection collapses to late layer 21.  
+- Exploratory (abs-based per-layer) heads mediate the steering effect significantly, suggesting a distributed causal set across layers.  
+- Patch-debug logs showed early-layer patches do change logits, so hooks are working; the issue is head selection, not patch application.
+
+Next planned actions (why and how)
+----------------------------------
+1) Diversify head selection (principled: capture both positive and negative causal effects, avoid layer collapse).  
+   - Change Exp2 aggregation to abs_top_k_per_layer (k=2) with optional pos_label filtering.  
+   - Include multiple patch positions (prompt_last and first_answer) to catch heads that fire after generation starts.
+
+2) Re-run Exp2 with the above; re-aggregate syc_heads and rand_heads.  
+   - Expect: a broader, multi-layer syc set rather than two late heads.
+
+3) Re-run Exp3 using the new syc_heads and the existing strong vector (L1, α=2).  
+   - Goal: test whether steering is mediated specifically by the revised syc set (not just exploratory controls).
+
+If head signal remains weak after the above, escalate to a larger model (3B–7B) for clearer path-patching effects.
