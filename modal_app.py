@@ -10,18 +10,28 @@ Notes:
 - Results are synced to a persistent Modal volume named "persona-vectors".
 - Place large artifacts (e.g., data/answer.jsonl) in that volume beforehand:
     modal volume put persona-vectors data/answer.jsonl /data/answer.jsonl
+- Warm pool defaults: MODAL_MIN_CONTAINERS=1 keeps one GPU container warm to avoid cold starts.
+  Override via environment variables if you want to change pool size or scaledown window.
 """
 
 from __future__ import annotations
 
 import shutil
 import subprocess
+import os
 from pathlib import Path
 
 import modal
 
 # Bump BUILD_VERSION to force Modal to rebuild the image when dependencies or hooks change.
-BUILD_VERSION: int = 10
+BUILD_VERSION: int = 17
+
+# Warm container configuration: keep a small pool alive to avoid cold starts.
+# Set env vars to 0 to disable if you don't want to pay for idle GPU time.
+# These can be overridden via environment variables when running `modal run`.
+WARM_MIN_CONTAINERS = int(os.environ.get("MODAL_MIN_CONTAINERS", "1"))
+WARM_BUFFER_CONTAINERS = int(os.environ.get("MODAL_BUFFER_CONTAINERS", "0"))
+WARM_SCALEDOWN_WINDOW = int(os.environ.get("MODAL_SCALEDOWN_WINDOW", "300"))
 
 
 def _make_image() -> modal.Image:
@@ -47,7 +57,19 @@ def _make_image() -> modal.Image:
         .add_local_dir(
             ".",
             remote_path="/workspace",
-            ignore=lambda p: ".git" in str(p) or "/results/" in str(p) or "/.venv" in str(p) or "__pycache__" in str(p),
+            # Keep noisy/generated artifacts out of the build context so Modal doesn't
+            # abort when they change mid-build. Modal passes a PurePath; compare on str.
+            ignore=lambda p: (
+                (rel := p.as_posix())
+                and (
+                    rel.startswith(".git/")
+                    or rel.startswith(".venv/")
+                    or rel.startswith("results/")
+                    or rel.startswith("updated-results/")
+                    or rel.startswith("data/")
+                    or "__pycache__" in rel
+                )
+            ),
         )
     )
 
@@ -59,11 +81,19 @@ volume = modal.Volume.from_name("persona-vectors", create_if_missing=True)
 app = modal.App("persona-vectors")
 
 
-def _run(cmd: list[str], cwd: Path) -> None:
-    subprocess.run(cmd, cwd=cwd, check=True)
+def _run(cmd: list[str], cwd: Path, env: dict | None = None) -> None:
+    subprocess.run(cmd, cwd=cwd, env=env, check=True)
 
 
-@app.function(image=image, gpu="L4", timeout=12 * 60 * 60, volumes={"/volume": volume})
+@app.function(
+    image=image,
+    gpu="L4",
+    timeout=12 * 60 * 60,
+    volumes={"/volume": volume},
+    min_containers=WARM_MIN_CONTAINERS,
+    buffer_containers=WARM_BUFFER_CONTAINERS,
+    scaledown_window=WARM_SCALEDOWN_WINDOW,
+)
 def run_exp(exp: str = "exp2"):
     """
     Run one of the experiments on a GPU.
@@ -72,7 +102,18 @@ def run_exp(exp: str = "exp2"):
     workdir = Path("/workspace")
     data_dir = Path("/volume/data")
     results_dir = Path("/volume/results")
+    data_dir.mkdir(parents=True, exist_ok=True)
     results_dir.mkdir(parents=True, exist_ok=True)
+
+    # Make volume data visible at the expected repo-relative path.
+    repo_data_link = workdir / "data"
+    if not repo_data_link.exists():
+        repo_data_link.symlink_to(data_dir)
+
+    # Route updated-results/* writes to the persistent results volume.
+    repo_updated_results_link = workdir / "updated-results"
+    if not repo_updated_results_link.exists():
+        repo_updated_results_link.symlink_to(results_dir)
 
     env = {
         "DATA_DIR": str(data_dir),
@@ -89,7 +130,8 @@ def run_exp(exp: str = "exp2"):
     if exp not in cmd_map:
         raise ValueError(f"Unknown exp '{exp}', choose from {list(cmd_map)}")
 
-    _run(cmd_map[exp], cwd=workdir)
+    merged_env = {**os.environ, **env}
+    _run(cmd_map[exp], cwd=workdir, env=merged_env)
 
     # Sync results to persistent volume
     src_results = workdir / "results"
