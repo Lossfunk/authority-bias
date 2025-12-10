@@ -68,17 +68,21 @@ class HeadPatchRegistry:
 
     @staticmethod
     def _resolve_debug_path() -> Optional[Path]:
-        # Priority: explicit env; RESULTS_DIR (Modal volume); local results.
+        """
+        Opt-in debug logging. Set HEAD_PATCH_DEBUG_LOG explicitly to enable.
+        Defaults to None to avoid creating local files (e.g., during builds).
+        """
         if os.environ.get("HEAD_PATCH_DEBUG_LOG"):
             return Path(os.environ["HEAD_PATCH_DEBUG_LOG"])
         if os.environ.get("RESULTS_DIR"):
             return Path(os.environ["RESULTS_DIR"]) / "exp2" / "patch_debug.log"
-        return Path("results/exp2/patch_debug.log")
+        # Default: no debug log
+        return None
 
     def _append_debug(self, line: str) -> None:
         """Best-effort append to debug log; never raise."""
         path = self.debug_log_path
-        if not path:
+        if path is None:
             return
         try:
             path.parent.mkdir(parents=True, exist_ok=True)

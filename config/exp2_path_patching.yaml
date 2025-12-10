@@ -9,9 +9,10 @@ model:
   device: auto
   dtype: auto
 path_patching:
-  max_examples: 200
+  max_examples: 120
   layer_start: 0
   layer_end: null
+  patch_positions: [prompt_last, first_answer]
 output:
   raw_results: updated-results/exp2/head_results_raw.jsonl
   head_scores: updated-results/exp2/head_scores.jsonl
@@ -21,14 +22,16 @@ output:
 head_selection:
   coverage_fraction: 0.75
   fallback_top_k: 20
-  # Selection modes: positive_coverage | top_k_per_layer | global_top_k_abs
-  selection_mode: positive_coverage
+  # Selection modes: positive_coverage | top_k_per_layer | global_top_k_abs | abs_top_k_per_layer
+  selection_mode: abs_top_k_per_layer
   # Ranking metric: delta_sum | delta_mean | abs_delta_sum
   rank_metric: delta_sum
   # For global_top_k_abs mode
   top_k: 20
-  # For top_k_per_layer mode
-  top_k_per_layer: 3
+  # For top_k_per_layer / abs_top_k_per_layer modes
+  top_k_per_layer: 2
+  # Filter rows to a specific patch position label (e.g., prompt_last, first_answer); null = all
+  pos_label: null
   # If true, don't filter on delta_sum > 0
   bypass_positive_filter: false
   # Whether to write exploratory_heads.json (top 2 per layer by abs effect)

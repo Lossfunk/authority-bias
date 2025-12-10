@@ -106,7 +106,12 @@ def compute_layer_vectors(
     for layer in syc_acts:
         mu_syc = torch.stack(syc_acts[layer]).mean(dim=0)
         mu_truth = torch.stack(truth_acts[layer]).mean(dim=0)
-        vectors[layer] = (mu_truth - mu_syc)
+        # L2-normalize the difference to reduce scale sensitivity across layers
+        vec = mu_truth - mu_syc
+        norm = vec.norm()
+        if norm > 0:
+            vec = vec / norm
+        vectors[layer] = vec
     return vectors
 
 
