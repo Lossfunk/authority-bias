@@ -2,29 +2,30 @@
 """
 plot_results.py
 
-Publication-quality plots for:
-  1) Steering grid (layer × alpha).
-  2) Top sycophancy heads (path patching).
-  3) Mediation bar plot (vector effect under ablations).
-  4) Mediation scatter (intact vs ablated vector effect).
+Generates publication-quality visualizations for the Persona Vectors project.
+Covers Exp1 (Steering), Exp2 (Path Patching), and Exp3 (Mediation).
 
-Assumes results are in the JSON/JSONL formats defined in experiment.md.
+Figures:
+  1. Sycophancy Shift (KDE): Baseline vs. Steered distributions.
+  2. Steering Grid (Heatmap): Efficacy across Layers x Alpha.
+  3. Sycophancy Circuit (Heatmap): Head importance map.
+  4. Mediation Scatter (Scatter): Decoupling of vector effect and circuit.
+
+Style: Okabe-Ito palette, minimalist aesthetic.
 """
 
 import json
-import math
-from pathlib import Path
-from typing import Dict, List, Tuple
-
 import numpy as np
 import pandas as pd
-import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+import seaborn as sns
+from pathlib import Path
 from matplotlib.colors import LinearSegmentedColormap
-
+from typing import Dict, Any
 
 # ---------------------------------------------------------------------
-# Global style: Okabe–Ito palette + rcParams
+# Configuration & Style
 # ---------------------------------------------------------------------
 
 OKABE_ITO = {
@@ -39,594 +40,254 @@ OKABE_ITO = {
     "black": "#000000",
 }
 
-mpl.rcParams.update(
-    {
-        "figure.dpi": 150,
-        "savefig.dpi": 300,
-        "axes.spines.top": False,
-        "axes.spines.right": False,
-        "axes.grid": False,
-        "axes.titlesize": 14,
-        "axes.labelsize": 12,
-        "font.size": 11,
-        "legend.fontsize": 10,
-        "xtick.labelsize": 10,
-        "ytick.labelsize": 10,
-        "axes.titlepad": 8,
-        "figure.autolayout": True,
-    }
-)
+# Set global style for "Publication Quality"
+mpl.rcParams.update({
+    "figure.dpi": 300,
+    "font.family": "sans-serif",
+    "font.sans-serif": ["Arial", "DejaVu Sans", "sans-serif"],
+    "font.size": 10,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "axes.titleweight": "bold",
+    "axes.titlesize": 12,
+    "axes.labelweight": "normal",
+    "legend.frameon": False,
+    "xtick.direction": "out",
+    "ytick.direction": "out",
+})
 
-
-def okabe_diverging() -> LinearSegmentedColormap:
-    """
-    Diverging colormap: 'good' (negative ΔD_syc) in blue/green,
-    'bad' (positive) in vermillion, neutral near light grey.
-    """
+def get_diverging_cmap():
+    """Custom diverging map: Blue (Good) <-> White <-> Vermillion (Bad/Sycophantic)"""
     return LinearSegmentedColormap.from_list(
         "okabe_div",
-        [
-            OKABE_ITO["blue"],
-            "#f5f5f5",
-            OKABE_ITO["vermillion"],
-        ],
+        [OKABE_ITO["blue"], "#FFFFFF", OKABE_ITO["vermillion"]]
     )
 
-
 # ---------------------------------------------------------------------
-# Utilities to load results
-# ---------------------------------------------------------------------
-
-def load_steering_grid(path: Path) -> pd.DataFrame:
-    """
-    Expect JSONL or CSV with columns:
-      - layer (int)
-      - alpha (float)
-      - delta_D_syc_mean (float)  # mean D_base - D_vec
-    """
-    if path.suffix == ".csv":
-        df = pd.read_csv(path)
-    else:
-        rows = []
-        with path.open() as f:
-            for line in f:
-                rows.append(json.loads(line))
-        df = pd.DataFrame(rows)
-
-    required = {"layer", "alpha", "delta_D_syc_mean"}
-    missing = required - set(df.columns)
-    if missing:
-        raise ValueError(f"Steering grid file missing columns: {missing}")
-
-    return df
-
-
-def load_head_scores(path: Path) -> pd.DataFrame:
-    """
-    Expect JSONL or CSV with columns:
-      - layer (int)
-      - head (int)
-      - delta_sum (float)
-      - count (int)
-    """
-    if path.suffix == ".csv":
-        df = pd.read_csv(path)
-    else:
-        rows = []
-        with path.open() as f:
-            for line in f:
-                rows.append(json.loads(line))
-        df = pd.DataFrame(rows)
-
-    required = {"layer", "head", "delta_sum", "count"}
-    missing = required - set(df.columns)
-    if missing:
-        raise ValueError(f"Head score file missing columns: {missing}")
-
-    return df
-
-
-def load_mediation_results(path: Path) -> pd.DataFrame:
-    """
-    Expect JSONL or CSV with columns per example:
-      - example_id
-      - D_base
-      - D_vec
-      - D_syc_abl
-      - D_rand_abl
-      - D_vec_syc
-      - D_vec_rand
-    """
-    if path.suffix == ".csv":
-        df = pd.read_csv(path)
-    else:
-        rows = []
-        with path.open() as f:
-            for line in f:
-                rows.append(json.loads(line))
-        df = pd.DataFrame(rows)
-
-    required = {
-        "example_id",
-        "D_base",
-        "D_vec",
-        "D_syc_abl",
-        "D_rand_abl",
-        "D_vec_syc",
-        "D_vec_rand",
-    }
-    missing = required - set(df.columns)
-    if missing:
-        raise ValueError(f"Mediation file missing columns: {missing}")
-
-    return df
-
-
-def load_vector_selection_grid(path: Path) -> pd.DataFrame:
-    """
-    Fallback for Exp1: vector_selection.json with a 'grid' list of dicts
-    containing layer/alpha/mean_effect.
-    """
-    data = json.loads(path.read_text())
-    grid = data.get("grid", [])
-    if not grid:
-        raise ValueError("vector_selection.json has no 'grid' entries")
-
-    df = pd.DataFrame(grid)
-    # Standardize column name expected by downstream plotting
-    if "mean_effect" in df.columns:
-        df = df.rename(columns={"mean_effect": "delta_D_syc_mean"})
-
-    required = {"layer", "alpha", "delta_D_syc_mean"}
-    missing = required - set(df.columns)
-    if missing:
-        raise ValueError(f"Vector selection grid missing columns: {missing}")
-
-    return df
-
-
-# ---------------------------------------------------------------------
-# Locate results root
+# Data Loading
 # ---------------------------------------------------------------------
 
+def load_jsonl(path: Path) -> pd.DataFrame:
+    with path.open("r") as f:
+        return pd.DataFrame([json.loads(line) for line in f])
 
-def find_results_root() -> Path:
-    """
-    Prefer a populated results directory; fall back to updated-results.
-    """
-    candidates = [Path("results"), Path("updated-results")]
-    for p in candidates:
-        if any((p / f"exp{i}").exists() for i in (1, 2, 3)):
-            return p
-    return candidates[0]
-
+def load_exp1_grid(path: Path) -> pd.DataFrame:
+    """Load grid search results from vector_selection.json"""
+    with path.open("r") as f:
+        data = json.load(f)
+    return pd.DataFrame(data["grid"])
 
 # ---------------------------------------------------------------------
-# 1. Steering grid
+# Plotting Functions
 # ---------------------------------------------------------------------
 
-def plot_steering_grid(
-    df: pd.DataFrame,
-    selected_layer: int,
-    selected_alpha: float,
-    out_path: Path,
-) -> None:
+def plot_fig1_shift(df: pd.DataFrame, out_path: Path):
     """
-    Heatmap of mean ΔD_syc (D_base - D_vec) by (layer, alpha).
-    Negative = reduction in sycophancy (good).
+    Figure 1: The Sycophancy Shift.
+    KDE of D_syc scores for Baseline vs. Steered (Vector).
     """
-    # Pivot into matrix
-    grid = (
-        df.pivot_table(
-            index="layer",
-            columns="alpha",
-            values="delta_D_syc_mean",
-            aggfunc="mean",
-        )
-        .sort_index()
-        .sort_index(axis=1)
-    )
-
-    layers = grid.index.values
-    alphas = grid.columns.values
-    data = grid.values
-
-    fig, ax = plt.subplots(figsize=(6.5, 7.0))
-
-    vmax = np.nanmax(np.abs(data))
-    im = ax.imshow(
-        data,
-        cmap=okabe_diverging(),
-        vmin=-vmax,
-        vmax=vmax,
-        aspect="auto",
-        origin="lower",
-    )
-
-    # Axis ticks
-    ax.set_xticks(np.arange(len(alphas)))
-    ax.set_xticklabels([str(a) for a in alphas])
-    ax.set_xlabel("Steering strength α")
-
-    ax.set_yticks(np.arange(len(layers)))
-    ax.set_yticklabels(layers)
-    ax.set_ylabel("Layer index")
-
-    # Outline the selected (layer, alpha)
-    if selected_layer in layers and selected_alpha in alphas:
-        li = np.where(layers == selected_layer)[0][0]
-        ai = np.where(alphas == selected_alpha)[0][0]
-        rect = plt.Rectangle(
-            (ai - 0.5, li - 0.5),
-            1.0,
-            1.0,
-            fill=False,
-            linewidth=2.0,
-            edgecolor=OKABE_ITO["orange"],
-        )
-        ax.add_patch(rect)
-        ax.text(
-            ai,
-            li + 0.35,
-            "chosen",
-            ha="center",
-            va="center",
-            fontsize=9,
-            color=OKABE_ITO["black"],
-            bbox=dict(
-                facecolor="white",
-                edgecolor="none",
-                boxstyle="round,pad=0.15",
-                alpha=0.8,
-            ),
-        )
-
-    # Only annotate cells with |Δ| above small threshold to avoid clutter
-    thresh = 0.03
-    for i, l in enumerate(layers):
-        for j, a in enumerate(alphas):
-            val = data[i, j]
-            if np.isnan(val) or abs(val) < thresh:
-                continue
-            txt_color = "white" if abs(val) > 0.5 * vmax else OKABE_ITO["black"]
-            ax.text(
-                j,
-                i,
-                f"{val:+.2f}",
-                ha="center",
-                va="center",
-                fontsize=8,
-                color=txt_color,
-            )
-
-    cbar = fig.colorbar(im, ax=ax, pad=0.015)
-    cbar.set_label("ΔD$_{syc}$ (D$_{base}$ − D$_{steered}$)")
-
-    ax.set_title("Steering efficacy by layer and strength")
-
-    fig.savefig(out_path)
-    plt.close(fig)
-
-
-# ---------------------------------------------------------------------
-# 2. Top sycophancy heads
-# ---------------------------------------------------------------------
-
-def plot_top_heads(
-    df: pd.DataFrame,
-    top_k: int,
-    out_path: Path,
-) -> None:
-    """
-    Horizontal bar plot of top-k heads by cumulative ΔD_syc,
-    plus inset showing cumulative impact per layer.
-    """
-    # Only heads with positive contribution
-    df_pos = df[df["delta_sum"] > 0].copy()
-    if df_pos.empty:
-        raise ValueError("No heads with positive delta_sum found")
-
-    # Top-k by delta_sum
-    df_top = df_pos.sort_values("delta_sum", ascending=False).head(top_k)
-    df_top["head_label"] = [
-        f"L{l}.H{h}" for l, h in zip(df_top["layer"], df_top["head"])
-    ]
-
-    # Layer-wise totals (for inset)
-    layer_totals = (
-        df_pos.groupby("layer")["delta_sum"].sum().reset_index(name="total_delta")
-    )
-
-    fig = plt.figure(figsize=(7.5, 5.5))
-    gs = fig.add_gridspec(1, 2, width_ratios=[3.0, 1.3], wspace=0.35)
-
-    # Main bar plot (horizontal for readability)
-    ax = fig.add_subplot(gs[0, 0])
-
-    y_pos = np.arange(len(df_top))[::-1]  # top at top
-    ax.barh(
-        y_pos,
-        df_top["delta_sum"],
-        color=OKABE_ITO["vermillion"],
-    )
-    ax.set_yticks(y_pos)
-    ax.set_yticklabels(df_top["head_label"])
-    ax.set_xlabel("Cumulative impact ΣΔD$_{syc}$")
-    ax.set_title(f"Top {top_k} heads driving sycophancy")
-
-    for yi, val in zip(y_pos, df_top["delta_sum"]):
-        ax.text(
-            val,
-            yi,
-            f"{val:.2f}",
-            va="center",
-            ha="left",
-            fontsize=9,
-            color=OKABE_ITO["black"],
-        )
-
-    # Inset: per-layer impact
-    ax_in = fig.add_subplot(gs[0, 1])
-    ax_in.bar(
-        layer_totals["layer"],
-        layer_totals["total_delta"],
-        color=OKABE_ITO["sky_blue"],
-    )
-    ax_in.set_xlabel("Layer")
-    ax_in.set_ylabel("ΣΔD$_{syc}$")
-    ax_in.set_title("Total impact per layer", fontsize=11)
-
-    fig.suptitle("Circuit identification via path patching", y=1.02, fontsize=15)
-
-    fig.savefig(out_path, bbox_inches="tight")
-    plt.close(fig)
-
-
-# ---------------------------------------------------------------------
-# 3. Mediation bar plot
-# ---------------------------------------------------------------------
-
-def summarise_mediation(df: pd.DataFrame) -> Dict[str, Tuple[float, float]]:
-    """
-    Return mean and standard error of vector effect (D_base - D_condition)
-    for three relevant conditions:
-      - 'vec'       : D_base - D_vec
-      - 'vec_rand'  : D_rand_abl - D_vec_rand
-      - 'vec_syc'   : D_syc_abl - D_vec_syc
-    """
-    effects = {}
-    # Clean steering effect in intact model
-    e_clean = df["D_base"] - df["D_vec"]
-    effects["Vector only"] = (e_clean.mean(), e_clean.std(ddof=1) / math.sqrt(len(e_clean)))
-
-    e_rand = df["D_rand_abl"] - df["D_vec_rand"]
-    effects["Vector + rand ablation"] = (
-        e_rand.mean(),
-        e_rand.std(ddof=1) / math.sqrt(len(e_rand)),
-    )
-
-    e_syc = df["D_syc_abl"] - df["D_vec_syc"]
-    effects["Vector + syc ablation"] = (
-        e_syc.mean(),
-        e_syc.std(ddof=1) / math.sqrt(len(e_syc)),
-    )
-
-    return effects
-
-
-def plot_mediation_bars(
-    df: pd.DataFrame,
-    out_path: Path,
-) -> None:
-    """
-    Bar plot comparing mean vector effect across conditions with 95% CIs.
-    """
-    effects = summarise_mediation(df)
-
-    labels = list(effects.keys())
-    means = np.array([effects[k][0] for k in labels])
-    ses = np.array([effects[k][1] for k in labels])
-    cis = 1.96 * ses
-
-    x = np.arange(len(labels))
-
-    colors = [
-        OKABE_ITO["bluish_green"],      # Vector only
-        OKABE_ITO["grey"],             # Vec + rand ablation
-        OKABE_ITO["vermillion"],       # Vec + syc ablation
-    ]
-
-    fig, ax = plt.subplots(figsize=(6.5, 4.5))
-    ax.bar(
-        x,
-        means,
-        yerr=cis,
-        capsize=4,
-        color=colors,
-        edgecolor=OKABE_ITO["black"],
-        linewidth=0.6,
-    )
-
-    ax.set_xticks(x)
-    ax.set_xticklabels(labels, rotation=15, ha="right")
-    ax.set_ylabel("Reduction in sycophancy (ΔD$_{syc}$)")
-    ax.set_title("Does ablating sycophancy heads weaken the steering vector?")
-
-    # Annotate relative change syc vs rand
-    mean_rand = means[1]
-    mean_syc = means[2]
-    if mean_rand != 0:
-        rel_change = 100 * (mean_syc - mean_rand) / abs(mean_rand)
-        ax.text(
-            1.5,
-            max(means[1], means[2]) * 1.10,
-            f"Relative change syc vs rand: {rel_change:+.1f}%",
-            ha="center",
-            va="bottom",
-            fontsize=10,
-        )
-
-    ax.axhline(0.0, color=OKABE_ITO["black"], linewidth=0.7)
-
-    n = len(df)
+    fig, ax = plt.subplots(figsize=(6, 4))
+    
+    # Data
+    base = df["D_base"]
+    vec = df["D_vec"]
+    
+    # Plot KDEs
+    sns.kdeplot(base, fill=True, color=OKABE_ITO["grey"], label="Baseline", alpha=0.4, ax=ax, linewidth=1.5)
+    sns.kdeplot(vec, fill=True, color=OKABE_ITO["blue"], label="Steered (L1, α=2)", alpha=0.4, ax=ax, linewidth=1.5)
+    
+    # Mean lines
+    ax.axvline(base.mean(), color=OKABE_ITO["grey"], linestyle="--", alpha=0.8)
+    ax.axvline(vec.mean(), color=OKABE_ITO["blue"], linestyle="--", alpha=0.8)
+    
+    # Annotate shift
+    shift = base.mean() - vec.mean()
     ax.text(
-        0.01,
-        0.98,
-        f"n = {n} examples",
-        ha="left",
-        va="top",
-        transform=ax.transAxes,
-        fontsize=9,
-        color=OKABE_ITO["grey"],
+        (base.mean() + vec.mean()) / 2, 
+        ax.get_ylim()[1] * 0.9, 
+        f"Δ = {shift:.3f}", 
+        ha="center", 
+        color=OKABE_ITO["black"],
+        fontweight="bold"
     )
 
-    fig.savefig(out_path, bbox_inches="tight")
-    plt.close(fig)
+    ax.set_xlabel("Sycophancy Score ($D_{syc}$)")
+    ax.set_ylabel("Density")
+    ax.set_title("Steering Reduces Sycophancy Distribution")
+    ax.legend(loc="upper left")
+    
+    plt.tight_layout()
+    plt.savefig(out_path)
+    print(f"Saved {out_path}")
+    plt.close()
 
-
-# ---------------------------------------------------------------------
-# 4. Mediation scatter
-# ---------------------------------------------------------------------
-
-def plot_mediation_scatter(
-    df: pd.DataFrame,
-    out_path: Path,
-) -> None:
+def plot_fig2_grid(df: pd.DataFrame, out_path: Path, selected_layer=1, selected_alpha=2.0):
     """
-    Scatter of vector effect in intact vs syc-ablated models.
-      x = E_clean = D_base - D_vec
-      y = E_syc   = D_syc_abl - D_vec_syc
+    Figure 2: Steering Grid Search.
+    Heatmap of Mean Effect by Layer and Alpha.
     """
-    e_clean = df["D_base"] - df["D_vec"]
-    e_syc = df["D_syc_abl"] - df["D_vec_syc"]
+    # Pivot for heatmap: Rows=Layer, Cols=Alpha
+    pivot = df.pivot(index="layer", columns="alpha", values="mean_effect")
+    pivot = pivot.sort_index(ascending=False) # Layer 0 at bottom typically, but heatmap puts index 0 at top. Let's keep 0 at top for matrix.
+    # Actually, standard is 0 at top. Let's sort index ascending so L0 is top.
+    pivot = pivot.sort_index(ascending=True)
 
-    x = e_clean.values
-    y = e_syc.values
-
-    # Filter to finite values
-    mask = np.isfinite(x) & np.isfinite(y)
-    x = x[mask]
-    y = y[mask]
-
-    # Basic correlation
-    r = np.corrcoef(x, y)[0, 1]
-
-    fig, ax = plt.subplots(figsize=(6.0, 6.0))
-
-    ax.scatter(
-        x,
-        y,
-        s=26,
-        alpha=0.85,
-        linewidth=0.4,
-        edgecolor="white",
-        color=OKABE_ITO["sky_blue"],
+    fig, ax = plt.subplots(figsize=(6, 8))
+    
+    # Heatmap
+    # Note: mean_effect > 0 means D_base > D_vec (Reduction in sycophancy). 
+    # So Positive = Good (Blue). Negative = Bad (Red).
+    sns.heatmap(
+        pivot, 
+        cmap=get_diverging_cmap(), 
+        center=0, 
+        annot=True, 
+        fmt=".2f", 
+        cbar_kws={"label": "Mean Reduction ($\Delta D_{syc}$)"},
+        linewidths=0.5,
+        ax=ax
     )
 
-    lim_min = min(x.min(), y.min())
-    lim_max = max(x.max(), y.max())
-    pad = 0.1 * (lim_max - lim_min)
-    ax.set_xlim(lim_min - pad, lim_max + pad)
-    ax.set_ylim(lim_min - pad, lim_max + pad)
+    # Highlight selection
+    # Find integer coordinates for the selected cell
+    # columns are alphas, index is layers
+    col_idx = list(pivot.columns).index(selected_alpha)
+    row_idx = list(pivot.index).index(selected_layer)
+    
+    from matplotlib.patches import Rectangle
+    rect = Rectangle((col_idx, row_idx), 1, 1, fill=False, edgecolor=OKABE_ITO["black"], lw=2)
+    ax.add_patch(rect)
 
-    # y = x (ablation has no effect)
-    ax.plot(
-        [lim_min - pad, lim_max + pad],
-        [lim_min - pad, lim_max + pad],
-        linestyle="--",
-        linewidth=1.0,
-        color=OKABE_ITO["grey"],
-        label="Independence (no effect of ablation)",
+    ax.set_title("Steering Efficacy by Layer & Alpha")
+    ax.set_xlabel("Alpha (Steering Strength)")
+    ax.set_ylabel("Layer")
+    
+    plt.tight_layout()
+    plt.savefig(out_path)
+    print(f"Saved {out_path}")
+    plt.close()
+
+def plot_fig3_circuit(df: pd.DataFrame, out_path: Path):
+    """
+    Figure 3: Sycophancy Circuit Map.
+    Heatmap of 32 Layers x 32 Heads showing delta_sum.
+    """
+    # Create full 32x32 grid (fill missing with 0)
+    grid = np.zeros((32, 32))
+    
+    for _, row in df.iterrows():
+        l, h = int(row["layer"]), int(row["head"])
+        if 0 <= l < 32 and 0 <= h < 32:
+            grid[l, h] = row["delta_sum"]
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+    
+    # Diverging map: Positive delta_sum means removing head reduced sycophancy? 
+    # Wait, check metric definition. 
+    # Usually: delta = D_orig - D_patched. 
+    # If head CAUSES sycophancy, patching it (neutralizing) reduces sycophancy -> D_patched < D_orig -> delta > 0.
+    # So Positive = Sycophancy Head.
+    # Let's map Positive to Red (Bad/Active Head) and near-zero to White.
+    
+    # Custom map for this: White -> Red
+    cmap = LinearSegmentedColormap.from_list("white_red", ["#FFFFFF", OKABE_ITO["vermillion"]])
+    
+    # We allow bidirectional just in case (some heads might oppose sycophancy)
+    # So use diverging: Blue (Anti-Syc) <-> White <-> Red (Syc)
+    sns.heatmap(
+        grid, 
+        cmap=get_diverging_cmap(), 
+        center=0,
+        square=True,
+        cbar_kws={"label": "Cumulative Impact ($\Sigma \Delta D_{syc}$)"},
+        vmax=np.max(np.abs(grid)), # Symmetric range
+        vmin=-np.max(np.abs(grid)),
+        ax=ax
     )
 
-    # y = 0 (full mediation)
-    ax.axhline(
-        0.0,
-        linestyle=(0, (3, 3)),
-        linewidth=1.0,
-        color=OKABE_ITO["vermillion"],
-        label="Full mediation (vector killed)",
-    )
+    ax.set_title("The Sycophancy Circuit (Llama-3.1-8B)")
+    ax.set_xlabel("Head Index")
+    ax.set_ylabel("Layer Index")
+    ax.invert_yaxis() # Layer 0 at bottom
+    
+    plt.tight_layout()
+    plt.savefig(out_path)
+    print(f"Saved {out_path}")
+    plt.close()
 
-    ax.set_xlabel("Vector effect in intact model ΔD$_{syc}$")
-    ax.set_ylabel("Vector effect in syc-ablated model ΔD$_{syc}$")
-    ax.set_title("Vector efficacy: intact vs. syc-ablated")
-
-    ax.legend(frameon=False, loc="upper left")
-
-    n = len(x)
-    ax.text(
-        0.98,
-        0.02,
-        f"n = {n}\nPearson r = {r:.2f}",
-        ha="right",
-        va="bottom",
-        transform=ax.transAxes,
-        fontsize=9,
-        bbox=dict(
-            facecolor="white",
-            edgecolor=OKABE_ITO["grey"],
-            boxstyle="round,pad=0.2",
-            alpha=0.9,
-        ),
-    )
-
-    fig.savefig(out_path, bbox_inches="tight")
-    plt.close(fig)
-
+def plot_fig4_mediation(df: pd.DataFrame, out_path: Path):
+    """
+    Figure 4: Mediation Scatter.
+    X: Vector Effect (Intact). Y: Vector Effect (Syc-Ablated).
+    """
+    fig, ax = plt.subplots(figsize=(6, 6))
+    
+    # Calculate effects
+    # Effect = D_base - D_vec (How much steering reduced sycophancy)
+    eff_intact = df["D_base"] - df["D_vec"]
+    
+    # Effect in ablated model = D_syc_abl - D_vec_syc
+    eff_ablated = df["D_syc_abl"] - df["D_vec_syc"]
+    
+    ax.scatter(eff_intact, eff_ablated, alpha=0.6, color=OKABE_ITO["sky_blue"], edgecolor="white", s=60)
+    
+    # Limits
+    lims = [
+        min(ax.get_xlim()[0], ax.get_ylim()[0]),
+        max(ax.get_xlim()[1], ax.get_ylim()[1]),
+    ]
+    
+    # Diagonal y=x (No Mediation)
+    ax.plot(lims, lims, color=OKABE_ITO["grey"], linestyle="--", label="Independence (y=x)")
+    
+    # Horizontal y=0 (Full Mediation)
+    ax.axhline(0, color=OKABE_ITO["vermillion"], linestyle=":", label="Full Mediation (y=0)")
+    
+    ax.set_aspect('equal')
+    ax.set_xlim(lims)
+    ax.set_ylim(lims)
+    
+    ax.set_xlabel("Vector Effect (Intact Model)")
+    ax.set_ylabel("Vector Effect (Syc-Ablated Model)")
+    ax.set_title("Decoupling of Steering & Circuit")
+    ax.legend()
+    
+    plt.tight_layout()
+    plt.savefig(out_path)
+    print(f"Saved {out_path}")
+    plt.close()
 
 # ---------------------------------------------------------------------
-# Entrypoint
+# Main
 # ---------------------------------------------------------------------
 
 def main():
-    root = find_results_root()
-    root.mkdir(parents=True, exist_ok=True)
+    base_dir = Path("llama-results")
+    
+    # 1. Mediation / Shift
+    path_exp3 = base_dir / "exp3" / "mediation_results.jsonl"
+    if path_exp3.exists():
+        df_med = load_jsonl(path_exp3)
+        plot_fig1_shift(df_med, base_dir / "Fig1_Shift.png")
+        plot_fig4_mediation(df_med, base_dir / "Fig4_Mediation.png")
+    else:
+        print(f"Skipping Figs 1&4: {path_exp3} not found")
 
-    # 1. Steering grid
-    steering_path = root / "exp1" / "steering_grid.jsonl"
-    vector_selection_path = root / "exp1" / "vector_selection.json"
+    # 2. Grid
+    path_exp1 = base_dir / "exp1" / "vector_selection.json"
+    if path_exp1.exists():
+        df_grid = load_exp1_grid(path_exp1)
+        plot_fig2_grid(df_grid, base_dir / "Fig2_Grid.png")
+    else:
+        print(f"Skipping Fig 2: {path_exp1} not found")
 
-    grid_df = None
-    if steering_path.exists():
-        grid_df = load_steering_grid(steering_path)
-    elif vector_selection_path.exists():
-        grid_df = load_vector_selection_grid(vector_selection_path)
-
-    if grid_df is not None:
-        # These should match your chosen L* and alpha*
-        L_star = int(grid_df.loc[grid_df["delta_D_syc_mean"].idxmin(), "layer"])
-        alpha_star = float(grid_df.loc[grid_df["delta_D_syc_mean"].idxmin(), "alpha"])
-        plot_steering_grid(
-            grid_df,
-            selected_layer=L_star,
-            selected_alpha=alpha_star,
-            out_path=root / "fig_01_steering_grid.png",
-        )
-
-    # 2. Top heads
-    heads_path = root / "exp2" / "head_scores.jsonl"
-    if heads_path.exists():
-        head_df = load_head_scores(heads_path)
-        plot_top_heads(
-            head_df,
-            top_k=15,
-            out_path=root / "fig_02_top_heads.png",
-        )
-
-    # 3 + 4. Mediation
-    med_path = root / "exp3" / "mediation_results.jsonl"
-    if med_path.exists():
-        med_df = load_mediation_results(med_path)
-        plot_mediation_bars(
-            med_df,
-            out_path=root / "fig_03_mediation_bars.png",
-        )
-        plot_mediation_scatter(
-            med_df,
-            out_path=root / "fig_04_mediation_scatter.png",
-        )
-
+    # 3. Circuit
+    path_exp2 = base_dir / "exp2" / "head_scores.jsonl"
+    if path_exp2.exists():
+        df_heads = load_jsonl(path_exp2)
+        plot_fig3_circuit(df_heads, base_dir / "Fig3_Circuit.png")
+    else:
+        print(f"Skipping Fig 3: {path_exp2} not found")
 
 if __name__ == "__main__":
     main()
