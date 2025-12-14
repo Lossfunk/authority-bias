@@ -24,7 +24,7 @@ from pathlib import Path
 import modal
 
 # Bump BUILD_VERSION to force Modal to rebuild the image when dependencies or hooks change.
-BUILD_VERSION: int = 17
+BUILD_VERSION: int = 19
 
 # Warm container configuration: keep a small pool alive to avoid cold starts.
 # Set env vars to 0 to disable if you don't want to pay for idle GPU time.
@@ -79,6 +79,7 @@ image = _make_image()
 volume = modal.Volume.from_name("persona-vectors", create_if_missing=True)
 
 app = modal.App("persona-vectors")
+hf_secret = modal.Secret.from_name("huggingface-token")
 
 
 def _run(cmd: list[str], cwd: Path, env: dict | None = None) -> None:
@@ -87,9 +88,10 @@ def _run(cmd: list[str], cwd: Path, env: dict | None = None) -> None:
 
 @app.function(
     image=image,
-    gpu="L4",
+    gpu="A100-40GB",
     timeout=12 * 60 * 60,
     volumes={"/volume": volume},
+    secrets=[hf_secret],
     min_containers=WARM_MIN_CONTAINERS,
     buffer_containers=WARM_BUFFER_CONTAINERS,
     scaledown_window=WARM_SCALEDOWN_WINDOW,

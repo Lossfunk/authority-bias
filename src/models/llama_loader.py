@@ -4,6 +4,7 @@ Helpers for loading Llama-family models via Hugging Face Transformers.
 
 from __future__ import annotations
 
+import os
 from typing import Optional, Union
 
 import torch
@@ -31,7 +32,10 @@ def load_model_and_tokenizer(
     """
     Load a model + tokenizer pair with sensible defaults for this project.
     """
-    tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=use_auth_token)
+    # Prefer explicit token, otherwise fall back to common env vars set via Modal secret.
+    token = use_auth_token or os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACEHUB_API_TOKEN")
+
+    tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=token)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"
@@ -48,11 +52,10 @@ def load_model_and_tokenizer(
         dtype=resolved_dtype,
         device_map=device_map,
         trust_remote_code=False,
-        use_auth_token=use_auth_token,
+        use_auth_token=token,
         attn_implementation="eager",  # Required for consistent head tensor shapes
     )
     if target_device:
         model.to(torch.device(target_device))
     return model, tokenizer
-
 

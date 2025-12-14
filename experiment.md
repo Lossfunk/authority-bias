@@ -61,7 +61,7 @@ We run four main experiments on a sycophancy dataset using Llama-family models:
 * **Models**
 
   * `meta-llama/Meta-Llama-3-8B-Base`
-  * `meta-llama/Meta-Llama-3-8B-Instruct`
+  * `meta-llama/Llama-3.1-8B-Instruct`
 
 * Experiments run separately for each model.
 

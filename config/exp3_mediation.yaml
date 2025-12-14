@@ -5,7 +5,7 @@ dataset:
   split_b_path: data/split_B_user_wrong.jsonl
   split_c_path: data/split_C_user_wrong.jsonl
 model:
-  name: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+  name: meta-llama/Llama-3.1-8B-Instruct
   device: auto
   dtype: auto
 exp3:
@@ -23,4 +23,4 @@ exp3:
   rand_heads_path: updated-results/exp2/rand_heads.json
   exploratory_heads_path: updated-results/exp2/exploratory_heads.json
   # Set to true to use exploratory_heads instead of syc_heads for mediation
-  use_exploratory_heads: true
+  use_exploratory_heads: false

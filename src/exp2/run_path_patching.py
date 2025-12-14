@@ -89,6 +89,7 @@ def run_path_patching(cfg: Dict) -> None:
     raw_path.parent.mkdir(parents=True, exist_ok=True)
 
     patch_positions = cfg["path_patching"].get("patch_positions", ["prompt_last"])
+    print(f"DEBUG: patch_positions from config: {patch_positions}")
 
     with raw_path.open("w") as writer:
         for ex in tqdm(examples, desc="Exp2 path patching"):
@@ -129,9 +130,10 @@ def run_path_patching(cfg: Dict) -> None:
                     continue
 
             for pos_label, pos_idx in pos_indices.items():
-                if pos_idx >= inputs_wrong["input_ids"].shape[1]:
-                    # skip if answer token not present (shouldn’t happen with teacher forcing)
-                    continue
+                # We used to check if pos_idx >= inputs_wrong length, but compute_D_syc
+                # concatenates the answer, so the sequence is longer during the actual forward pass.
+                # As long as the answer is not empty, pos_idx (e.g. prompt_last + 1) is valid.
+                
                 for layer_idx in layer_range:
                     for head_idx in range(num_heads):
                         with patch_mode(registry, ex.uid, layer_idx, head_idx, pos_idx):

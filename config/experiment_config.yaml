@@ -5,11 +5,10 @@ dataset:
   split_b_path: data/split_B_user_wrong.jsonl
   split_c_path: data/split_C_user_wrong.jsonl
 model:
-  name: TinyLlama/TinyLlama-1.1B-Chat-v1.0
+  name: meta-llama/Llama-3.1-8B-Instruct
   device: auto
   dtype: auto
 exp0:
   output_dir: updated-results/exp0
   histogram_bins: 40
-  max_examples: 32
-
+  max_examples: 100
