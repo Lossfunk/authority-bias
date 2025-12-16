@@ -15,15 +15,15 @@ Figures:
 """
 
 import json
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-from matplotlib.patches import FancyBboxPatch
-from matplotlib.gridspec import GridSpec
-import seaborn as sns
-from pathlib import Path
-from scipy import stats
+import numpy as np # type: ignore
+import pandas as pd # type: ignore
+import matplotlib.pyplot as plt # type: ignore
+import matplotlib as mpl # type: ignore
+from matplotlib.patches import FancyBboxPatch # type: ignore
+from matplotlib.gridspec import GridSpec # type: ignore
+import seaborn as sns # type: ignore
+from pathlib import Path # type: ignore     
+from scipy import stats # type: ignore
 from textwrap import wrap
 
 # ---------------------------------------------------------------------
@@ -171,7 +171,7 @@ def plot_fig2_steering(df: pd.DataFrame, out_path: Path):
     ax_scatter.legend(loc="lower right", fontsize=8)
     
     # Color legend
-    from matplotlib.lines import Line2D
+    from matplotlib.lines import Line2D # type: ignore
     legend_elements = [
         Line2D([0], [0], marker='o', color='w', markerfacecolor=OKABE_ITO["bluish_green"], 
                markersize=8, label=f'Improved ({pct_improved:.0f}%)'),
