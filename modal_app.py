@@ -3,7 +3,7 @@ Modal GPU runner for persona-vectors experiments.
 
 Usage (locally, with Modal CLI configured):
     modal run modal_app.py --exp exp2
-Available exp values: exp0, exp1, exp2, exp3
+Available exp values: exp0, exp1, exp2, exp3, exp2_agg, validation
 
 Notes:
 - Code is mounted read-only from the local repo snapshot.
@@ -24,7 +24,7 @@ from pathlib import Path
 import modal
 
 # Bump BUILD_VERSION to force Modal to rebuild the image when dependencies or hooks change.
-BUILD_VERSION: int = 19
+BUILD_VERSION: int = 20
 
 # Warm container configuration: keep a small pool alive to avoid cold starts.
 # Set env vars to 0 to disable if you don't want to pay for idle GPU time.
@@ -66,6 +66,7 @@ def _make_image() -> modal.Image:
                     or rel.startswith(".venv/")
                     or rel.startswith("results/")
                     or rel.startswith("updated-results/")
+                    or rel.startswith("llama-results/")
                     or rel.startswith("data/")
                     or "__pycache__" in rel
                 )
@@ -99,13 +100,15 @@ def _run(cmd: list[str], cwd: Path, env: dict | None = None) -> None:
 def run_exp(exp: str = "exp2"):
     """
     Run one of the experiments on a GPU.
-    exp: exp0 | exp1 | exp2 | exp3
+    exp: exp0 | exp1 | exp2 | exp3 | exp2_agg | validation
     """
     workdir = Path("/workspace")
     data_dir = Path("/volume/data")
     results_dir = Path("/volume/results")
+    llama_results_dir = Path("/volume/llama-results")
     data_dir.mkdir(parents=True, exist_ok=True)
     results_dir.mkdir(parents=True, exist_ok=True)
+    llama_results_dir.mkdir(parents=True, exist_ok=True)
 
     # Make volume data visible at the expected repo-relative path.
     repo_data_link = workdir / "data"
@@ -117,9 +120,15 @@ def run_exp(exp: str = "exp2"):
     if not repo_updated_results_link.exists():
         repo_updated_results_link.symlink_to(results_dir)
 
+    # Route llama-results/* to the persistent volume (for validation experiments).
+    repo_llama_results_link = workdir / "llama-results"
+    if not repo_llama_results_link.exists():
+        repo_llama_results_link.symlink_to(llama_results_dir)
+
     env = {
         "DATA_DIR": str(data_dir),
         "RESULTS_DIR": str(results_dir),
+        "LLAMA_RESULTS_DIR": str(llama_results_dir),
     }
 
     cmd_map = {
@@ -128,6 +137,7 @@ def run_exp(exp: str = "exp2"):
         "exp2": ["python", "-m", "src.exp2.run_path_patching"],
         "exp2_agg": ["python", "-m", "src.exp2.aggregate_head_scores"],
         "exp3": ["python", "-m", "src.exp3.run_mediation_grid"],
+        "validation": ["python", "-m", "src.exp3.run_validation", "--output-dir", "llama-results/validation"],
     }
     if exp not in cmd_map:
         raise ValueError(f"Unknown exp '{exp}', choose from {list(cmd_map)}")
@@ -148,5 +158,6 @@ def main(exp: str = "exp2"):
     Local convenience wrapper. Examples:
         modal run modal_app.py --exp exp2
         modal run modal_app.py --exp exp3
+        modal run modal_app.py --exp validation
     """
     run_exp.remote(exp=exp)
