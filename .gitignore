@@ -31,9 +31,9 @@ htmlcov/
 .ipynb_checkpoints/
 
 # Project data & results (generated / large)
-results/
-updated-results/
-data/
+/results/
+/updated-results/
+/data/
 
 #documents
 plan.md

@@ -1,0 +1,72 @@
+seed: 42
+
+dataset:
+  raw_path: data/answer.jsonl
+  split_a_path: data/split_A_user_wrong.jsonl
+  split_b_path: data/split_B_user_wrong.jsonl
+  split_c_path: data/split_C_user_wrong.jsonl
+
+model:
+  name: meta-llama/Llama-3.1-8B-Instruct
+  device: auto
+  dtype: auto
+
+exp0:
+  output_dir: llama-results/llama31_instruct/exp0
+  histogram_bins: 40
+  max_examples: 200
+
+exp1:
+  min_per_class: 80
+  max_per_class: 200
+  subsample_majority: true
+  margin_start_percentile: 0.7
+  margin_step: 0.05
+  dev_subset_size: 128
+  alpha_grid: [0.5, 1.0, 2.0]
+  output_dir: llama-results/llama31_instruct/exp1
+  head_summary_path: llama-results/llama31_instruct/exp2/head_summary.json
+
+path_patching:
+  max_examples: 120
+  layer_start: 0
+  layer_end: null
+  patch_positions: [prompt_last]
+
+output:
+  raw_results: llama-results/llama31_instruct/exp2/head_results_raw.jsonl
+  head_scores: llama-results/llama31_instruct/exp2/head_scores.jsonl
+  syc_heads: llama-results/llama31_instruct/exp2/syc_heads.json
+  rand_heads: llama-results/llama31_instruct/exp2/rand_heads.json
+  summary: llama-results/llama31_instruct/exp2/head_summary.json
+
+head_selection:
+  coverage_fraction: 0.75
+  fallback_top_k: 20
+  selection_mode: abs_top_k_per_layer
+  rank_metric: delta_sum
+  top_k: 20
+  top_k_per_layer: 2
+  pos_label: prompt_last
+  bypass_positive_filter: false
+  emit_exploratory_set: true
+  exploratory_top_k_per_layer: 2
+
+exp3:
+  max_examples: 128
+  delta_E_mode: relative
+  delta_E_threshold: 0.5
+  delta_E_multiplier: 0.25
+  delta_E_min: 0.05
+  output_dir: llama-results/llama31_instruct/exp3
+  validation_output_dir: llama-results/llama31_instruct/validation
+  head_means_reference_split: data/split_B_user_wrong.jsonl
+  head_means_max_examples: 128
+  layer_vectors_path: llama-results/llama31_instruct/exp1/layer_vectors.pt
+  vector_selection_path: llama-results/llama31_instruct/exp1/vector_selection.json
+  syc_heads_path: llama-results/llama31_instruct/exp2/syc_heads.json
+  rand_heads_path: llama-results/llama31_instruct/exp2/rand_heads.json
+  exploratory_heads_path: llama-results/llama31_instruct/exp2/exploratory_heads.json
+  head_scores_path: llama-results/llama31_instruct/exp2/head_scores.jsonl
+  raw_results_path: llama-results/llama31_instruct/exp2/head_results_raw.jsonl
+  use_exploratory_heads: false

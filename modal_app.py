@@ -97,7 +97,7 @@ def _run(cmd: list[str], cwd: Path, env: dict | None = None) -> None:
     buffer_containers=WARM_BUFFER_CONTAINERS,
     scaledown_window=WARM_SCALEDOWN_WINDOW,
 )
-def run_exp(exp: str = "exp2"):
+def run_exp(exp: str = "exp2", config: str | None = None):
     """
     Run one of the experiments on a GPU.
     exp: exp0 | exp1 | exp2 | exp3 | exp2_agg | validation
@@ -137,13 +137,16 @@ def run_exp(exp: str = "exp2"):
         "exp2": ["python", "-m", "src.exp2.run_path_patching"],
         "exp2_agg": ["python", "-m", "src.exp2.aggregate_head_scores"],
         "exp3": ["python", "-m", "src.exp3.run_mediation_grid"],
-        "validation": ["python", "-m", "src.exp3.run_validation", "--output-dir", "llama-results/validation"],
+        "validation": ["python", "-m", "src.exp3.run_validation"],
     }
     if exp not in cmd_map:
         raise ValueError(f"Unknown exp '{exp}', choose from {list(cmd_map)}")
 
+    cmd = cmd_map[exp]
+    if config:
+        cmd = [*cmd, "--config", config]
     merged_env = {**os.environ, **env}
-    _run(cmd_map[exp], cwd=workdir, env=merged_env)
+    _run(cmd, cwd=workdir, env=merged_env)
 
     # Sync results to persistent volume
     src_results = workdir / "results"
@@ -153,11 +156,11 @@ def run_exp(exp: str = "exp2"):
 
 
 @app.local_entrypoint()
-def main(exp: str = "exp2"):
+def main(exp: str = "exp2", config: str | None = None):
     """
     Local convenience wrapper. Examples:
         modal run modal_app.py --exp exp2
         modal run modal_app.py --exp exp3
         modal run modal_app.py --exp validation
     """
-    run_exp.remote(exp=exp)
+    run_exp.remote(exp=exp, config=config)

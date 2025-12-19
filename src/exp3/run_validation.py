@@ -327,7 +327,7 @@ def run_sign_aware_mediation(
     # Generate random controls
     import random
     rng = random.Random(seed)
-    num_model_heads = 32  # Llama-3.1-8B has 32 heads per layer
+    num_model_heads = model.config.num_attention_heads
     syc_head_set = set(syc_head_tuples)
     rand_head_tuples = []
     for layer, head in syc_head_tuples:
@@ -494,7 +494,7 @@ def run_position_split_mediation(
         # Generate random controls
         import random
         rng = random.Random(seed)
-        num_model_heads = 32
+        num_model_heads = model.config.num_attention_heads
         syc_head_set = set(syc_head_tuples)
         rand_head_tuples = []
         for layer, head in syc_head_tuples:
@@ -603,8 +603,15 @@ def run_position_split_mediation(
 def main():
     args = parse_args()
     cfg = load_config(args.config)
-    
-    output_dir = args.output_dir or Path("llama-results/validation")
+
+    exp3_cfg = cfg.get("exp3", {})
+    default_output_dir: Path | None = None
+    if exp3_cfg.get("validation_output_dir"):
+        default_output_dir = Path(exp3_cfg["validation_output_dir"])
+    elif exp3_cfg.get("output_dir"):
+        default_output_dir = Path(exp3_cfg["output_dir"]).parent / "validation"
+
+    output_dir = args.output_dir or default_output_dir or Path("llama-results/validation")
     output_dir.mkdir(parents=True, exist_ok=True)
     
     print("="*60)
@@ -645,8 +652,8 @@ def main():
     
     # Load existing head data
     syc_heads_path = Path(cfg["exp3"]["syc_heads_path"])
-    head_scores_path = Path("llama-results/exp2/head_scores.jsonl")
-    raw_results_path = Path("llama-results/exp2/head_results_raw.jsonl")
+    head_scores_path = Path(exp3_cfg.get("head_scores_path", syc_heads_path.parent / "head_scores.jsonl"))
+    raw_results_path = Path(exp3_cfg.get("raw_results_path", syc_heads_path.parent / "head_results_raw.jsonl"))
     
     syc_heads = load_head_list(syc_heads_path)
     head_scores = load_head_scores(head_scores_path)
