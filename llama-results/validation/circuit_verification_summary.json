@@ -1,0 +1,13 @@
+{
+  "num_examples": 128,
+  "num_heads_ablated": 64,
+  "D_base_mean": 0.223388671875,
+  "D_ablated_mean": 0.249755859375,
+  "mean_reduction": -0.0263671875,
+  "syc_rate_base": 0.546875,
+  "syc_rate_ablated": 0.53125,
+  "syc_rate_reduction": 0.015625,
+  "t_stat": -0.5337731029697839,
+  "p_value": 0.5944315410967876,
+  "conclusion": "NOT VERIFIED"
+}
