@@ -11,6 +11,7 @@ Focused on the key narrative from findings.md:
 4. Summary: Tying it all together
 
 Style: Anthropic-inspired, clean, narrative-driven.
+Uses FancyBboxPatch for rounded bar charts.
 """
 
 import json
@@ -18,7 +19,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from matplotlib.patches import FancyBboxPatch, Rectangle
+from matplotlib.patches import FancyBboxPatch
 from matplotlib.gridspec import GridSpec
 from pathlib import Path
 from scipy import stats
@@ -69,72 +70,93 @@ def load_json(path: Path) -> dict:
         return json.load(f)
 
 
-def add_finding_box(ax, text: str, color: str, position: str = "top-right", fontsize: int = 10):
-    """Add a styled finding box using FancyBboxPatch."""
-    if position == "top-right":
-        x, y, ha, va = 0.97, 0.97, "right", "top"
-    elif position == "top-left":
-        x, y, ha, va = 0.03, 0.97, "left", "top"
-    elif position == "bottom-right":
-        x, y, ha, va = 0.97, 0.03, "right", "bottom"
-    else:
-        x, y, ha, va = 0.03, 0.03, "left", "bottom"
-    
-    ax.text(x, y, text, transform=ax.transAxes, fontsize=fontsize,
-            ha=ha, va=va, fontweight="bold",
-            bbox=dict(boxstyle="round,pad=0.4,rounding_size=0.2", 
-                     facecolor=color, edgecolor="none", alpha=0.15))
+def draw_rounded_bar(ax, x: float, height: float, width: float = 0.6, 
+                     color: str = "#000000", alpha: float = 0.85,
+                     rounding_size: float = 0.08, label: str = None):
+    """
+    Draw a bar with rounded top corners using FancyBboxPatch.
+    Based on matplotlib FancyBboxPatch documentation.
+    """
+    # Create a FancyBboxPatch with rounded corners
+    fancy_box = FancyBboxPatch(
+        (x - width/2, 0),  # (x, y) of lower-left corner
+        width,              # width
+        height,             # height
+        boxstyle=f"round,pad=0,rounding_size={rounding_size}",
+        facecolor=color,
+        edgecolor="white",
+        linewidth=1.5,
+        alpha=alpha,
+        label=label
+    )
+    ax.add_patch(fancy_box)
+    return fancy_box
+
+
+def draw_rounded_bars(ax, x_positions: list, heights: list, colors: list,
+                      width: float = 0.6, rounding_size: float = 0.08,
+                      labels: list = None):
+    """Draw multiple rounded bars."""
+    patches = []
+    for i, (x, h, c) in enumerate(zip(x_positions, heights, colors)):
+        label = labels[i] if labels else None
+        patch = draw_rounded_bar(ax, x, h, width, c, rounding_size=rounding_size, label=label)
+        patches.append(patch)
+    return patches
 
 
 # ---------------------------------------------------------------------
-# Figure 1: Baseline Sycophancy
+# Figure 1: Baseline Sycophancy (with rounded bars)
 # ---------------------------------------------------------------------
 
 def plot_fig1_baseline(baseline_records: pd.DataFrame, baseline_metrics: dict, out_path: Path):
     """
     The model is naturally sycophantic on 52% of examples.
-    Clean, simple visualization establishing the problem.
+    Uses a clean bar chart with rounded bars (FancyBboxPatch).
     """
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(7, 5.5))
     
     D_syc = baseline_records["D_syc"]
     syc_rate = baseline_metrics.get("syc_rate", (D_syc > 0).mean())
     
-    # Histogram with color split
-    bins = np.linspace(D_syc.min(), D_syc.max(), 35)
+    # Data for rounded bar chart
+    categories = ["Sycophantic\n(D > 0)", "Truthful\n(D ≤ 0)"]
+    values = [syc_rate * 100, (1 - syc_rate) * 100]
+    colors = [OKABE_ITO["vermillion"], OKABE_ITO["bluish_green"]]
     
-    # Split data
-    truthful = D_syc[D_syc <= 0]
-    sycophantic = D_syc[D_syc > 0]
+    # Draw rounded bars using FancyBboxPatch
+    x_positions = [0, 1]
+    draw_rounded_bars(ax, x_positions, values, colors, width=0.55, rounding_size=0.06)
     
-    ax.hist(truthful, bins=bins, color=OKABE_ITO["bluish_green"], 
-            alpha=0.85, label=f"Truthful: {(1-syc_rate)*100:.0f}%", edgecolor="white", linewidth=0.5)
-    ax.hist(sycophantic, bins=bins, color=OKABE_ITO["vermillion"], 
-            alpha=0.85, label=f"Sycophantic: {syc_rate*100:.0f}%", edgecolor="white", linewidth=0.5)
+    # Add value labels on top of bars
+    for x, val, color in zip(x_positions, values, colors):
+        ax.text(x, val + 2, f"{val:.0f}%", ha="center", va="bottom",
+                fontsize=16, fontweight="bold", color=color)
     
-    # Zero line
-    ax.axvline(0, color=OKABE_ITO["black"], linestyle="-", linewidth=2, zorder=10)
+    # Configure axes
+    ax.set_xlim(-0.6, 1.6)
+    ax.set_ylim(0, 75)
+    ax.set_xticks(x_positions)
+    ax.set_xticklabels(categories, fontsize=11)
+    ax.set_ylabel("Percentage of Responses", fontsize=11)
+    ax.set_title("Llama-3.1-8B Baseline Sycophancy Rate", fontsize=14, fontweight="bold", pad=15)
     
-    # Key finding box
-    finding_text = f"Baseline Rate\n{syc_rate*100:.0f}% sycophantic"
-    
-    # Use FancyBboxPatch for the annotation
-    bbox_props = dict(boxstyle="round,pad=0.5,rounding_size=0.3", 
-                     facecolor=OKABE_ITO["vermillion"], alpha=0.2, 
-                     edgecolor=OKABE_ITO["vermillion"], linewidth=2)
+    # Key finding annotation with rounded box
+    finding_text = f"52% of responses\nare sycophantic"
+    bbox_props = dict(
+        boxstyle="round,pad=0.5,rounding_size=0.15",
+        facecolor=OKABE_ITO["vermillion"], 
+        alpha=0.15,
+        edgecolor=OKABE_ITO["vermillion"], 
+        linewidth=2
+    )
     ax.text(0.97, 0.95, finding_text, transform=ax.transAxes,
-            fontsize=14, fontweight="bold", ha="right", va="top",
+            fontsize=12, fontweight="bold", ha="right", va="top",
             color=OKABE_ITO["vermillion"], bbox=bbox_props)
     
-    ax.set_xlabel(r"Sycophancy Score ($D_{syc}$) = log P(wrong) − log P(correct)", fontsize=11)
-    ax.set_ylabel("Number of Examples", fontsize=11)
-    ax.set_title("Llama-3.1-8B Exhibits Substantial Baseline Sycophancy", fontsize=13, pad=15)
-    ax.legend(loc="upper left", fontsize=10, framealpha=0.9)
-    
-    # Interpretation guide at bottom
-    ax.text(0.5, -0.12, "<-- Prefers correct answer          Prefers user's wrong answer -->",
-            transform=ax.transAxes, fontsize=9, color=OKABE_ITO["grey"], 
-            ha="center", style="italic")
+    # Remove top/right spines (already done via rcParams but being explicit)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
     
     plt.tight_layout()
     plt.savefig(out_path, bbox_inches="tight", facecolor="white")
@@ -232,7 +254,7 @@ def plot_fig2_steering(mediation_df: pd.DataFrame, out_path: Path):
 def plot_fig3_circuit_verification(circuit_results: pd.DataFrame, circuit_summary: dict, out_path: Path):
     """
     THE CRITICAL FINDING: Ablating 'sycophancy heads' does NOT reduce sycophancy.
-    This invalidates the circuit hypothesis.
+    This invalidates the circuit hypothesis. Uses FancyBboxPatch for rounded bars.
     """
     fig = plt.figure(figsize=(12, 6))
     gs = GridSpec(1, 2, width_ratios=[1.2, 1], wspace=0.25)
@@ -246,7 +268,6 @@ def plot_fig3_circuit_verification(circuit_results: pd.DataFrame, circuit_summar
     # Color by whether ablation helped
     helped = y < x
     hurt = y > x
-    same = ~helped & ~hurt
     
     ax_a.scatter(x[helped], y[helped], color=OKABE_ITO["bluish_green"], alpha=0.7, s=60,
                  label=f"Reduced sycophancy ({helped.sum()})", edgecolor="white", linewidth=0.5)
@@ -279,41 +300,53 @@ def plot_fig3_circuit_verification(circuit_results: pd.DataFrame, circuit_summar
     )
     
     box_color = OKABE_ITO["vermillion"]
-    bbox_props = dict(boxstyle="round,pad=0.5,rounding_size=0.3", 
-                     facecolor=box_color, alpha=0.15,
-                     edgecolor=box_color, linewidth=2)
+    bbox_props = dict(
+        boxstyle="round,pad=0.5,rounding_size=0.15",
+        facecolor=box_color, 
+        alpha=0.15,
+        edgecolor=box_color, 
+        linewidth=2
+    )
     ax_a.text(0.03, 0.97, finding_text, transform=ax_a.transAxes,
               fontsize=11, fontweight="bold", ha="left", va="top",
               color=box_color, bbox=bbox_props)
     
-    # Panel B: Rate Comparison
+    # Panel B: Rate Comparison with ROUNDED BARS
     ax_b = fig.add_subplot(gs[1])
     
     syc_base = circuit_summary.get("syc_rate_base", 0.55) * 100
     syc_abl = circuit_summary.get("syc_rate_ablated", 0.53) * 100
     
-    bars = ax_b.bar(["Baseline", "After\nAblation"], [syc_base, syc_abl],
-                    color=[OKABE_ITO["vermillion"], OKABE_ITO["orange"]], 
-                    alpha=0.85, edgecolor="white", linewidth=2, width=0.6)
+    # Draw rounded bars using FancyBboxPatch
+    x_positions = [0, 1]
+    values = [syc_base, syc_abl]
+    colors = [OKABE_ITO["vermillion"], OKABE_ITO["orange"]]
+    draw_rounded_bars(ax_b, x_positions, values, colors, width=0.55, rounding_size=0.05)
     
     # Value labels
-    for bar, val in zip(bars, [syc_base, syc_abl]):
-        ax_b.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1,
-                  f"{val:.1f}%", ha="center", fontsize=14, fontweight="bold")
+    for x, val, color in zip(x_positions, values, colors):
+        ax_b.text(x, val + 2, f"{val:.1f}%", ha="center", fontsize=14, fontweight="bold", color=color)
     
-    ax_b.set_ylabel("Sycophancy Rate (%)", fontsize=11)
+    ax_b.set_xlim(-0.5, 1.5)
     ax_b.set_ylim(0, 70)
+    ax_b.set_xticks(x_positions)
+    ax_b.set_xticklabels(["Baseline", "After\nAblation"], fontsize=10)
+    ax_b.set_ylabel("Sycophancy Rate (%)", fontsize=11)
     ax_b.set_title("B. No Significant Change", fontweight="bold", loc="left")
     
     # Add "Not Significant" annotation with fancy box
-    ax_b.annotate("", xy=(1, syc_abl + 3), xytext=(0, syc_base + 3),
+    ax_b.annotate("", xy=(1, syc_abl + 4), xytext=(0, syc_base + 4),
                   arrowprops=dict(arrowstyle="<->", color=OKABE_ITO["grey"], lw=2.5))
     
-    ns_bbox = dict(boxstyle="round,pad=0.3,rounding_size=0.2", 
-                  facecolor=OKABE_ITO["grey"], alpha=0.15,
-                  edgecolor=OKABE_ITO["grey"], linewidth=1)
-    ax_b.text(0.5, max(syc_base, syc_abl) + 8, "Not Significant",
-              ha="center", fontsize=11, fontweight="bold", 
+    ns_bbox = dict(
+        boxstyle="round,pad=0.4,rounding_size=0.15",
+        facecolor=OKABE_ITO["grey"], 
+        alpha=0.15,
+        edgecolor=OKABE_ITO["grey"], 
+        linewidth=1.5
+    )
+    ax_b.text(0.5, max(syc_base, syc_abl) + 10, "Not Significant\n(p = 0.59)",
+              ha="center", fontsize=10, fontweight="bold", 
               color=OKABE_ITO["grey"], bbox=ns_bbox)
     
     # Main conclusion as figure title
@@ -332,13 +365,14 @@ def plot_fig3_circuit_verification(circuit_results: pd.DataFrame, circuit_summar
 
 
 # ---------------------------------------------------------------------
-# Figure 4: Summary (The Complete Story)
+# Figure 4: Summary (The Complete Story) with Rounded Bars
 # ---------------------------------------------------------------------
 
 def plot_fig4_summary(baseline_metrics: dict, mediation_df: pd.DataFrame,
                       validation_summary: dict, out_path: Path):
     """
     Complete 2x2 summary telling the full story.
+    Uses FancyBboxPatch for rounded bars throughout.
     """
     fig = plt.figure(figsize=(12, 10))
     gs = GridSpec(2, 2, hspace=0.35, wspace=0.3)
@@ -346,21 +380,23 @@ def plot_fig4_summary(baseline_metrics: dict, mediation_df: pd.DataFrame,
     circuit = validation_summary.get("circuit_verification", {})
     sign_aware = validation_summary.get("sign_aware_mediation", {})
     
-    # ------ Panel A: Baseline ------
+    # ------ Panel A: Baseline with Rounded Bars ------
     ax_a = fig.add_subplot(gs[0, 0])
     syc_rate = baseline_metrics.get("syc_rate", 0.52)
     
-    bars = ax_a.bar(["Sycophantic", "Truthful"], 
-                    [syc_rate * 100, (1 - syc_rate) * 100],
-                    color=[OKABE_ITO["vermillion"], OKABE_ITO["bluish_green"]], 
-                    alpha=0.85, edgecolor="white", linewidth=2, width=0.6)
+    x_positions = [0, 1]
+    values = [syc_rate * 100, (1 - syc_rate) * 100]
+    colors = [OKABE_ITO["vermillion"], OKABE_ITO["bluish_green"]]
+    draw_rounded_bars(ax_a, x_positions, values, colors, width=0.55, rounding_size=0.05)
     
-    for bar, val in zip(bars, [syc_rate * 100, (1 - syc_rate) * 100]):
-        ax_a.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1, 
-                  f"{val:.0f}%", ha="center", fontsize=13, fontweight="bold")
+    for x, val, color in zip(x_positions, values, colors):
+        ax_a.text(x, val + 2, f"{val:.0f}%", ha="center", fontsize=13, fontweight="bold", color=color)
     
-    ax_a.set_ylabel("Percentage", fontsize=11)
+    ax_a.set_xlim(-0.5, 1.5)
     ax_a.set_ylim(0, 70)
+    ax_a.set_xticks(x_positions)
+    ax_a.set_xticklabels(["Sycophantic", "Truthful"], fontsize=10)
+    ax_a.set_ylabel("Percentage", fontsize=11)
     ax_a.set_title("A. Baseline: Model is Sycophantic", fontweight="bold", loc="left")
     
     # ------ Panel B: Steering is Weak ------
@@ -379,40 +415,51 @@ def plot_fig4_summary(baseline_metrics: dict, mediation_df: pd.DataFrame,
     ax_b.set_title("B. Steering: Weak Effect", fontweight="bold", loc="left")
     ax_b.legend(fontsize=9)
     
-    bbox_props = dict(boxstyle="round,pad=0.3,rounding_size=0.2", 
-                     facecolor=OKABE_ITO["orange"], alpha=0.2,
-                     edgecolor=OKABE_ITO["orange"], linewidth=1.5)
+    bbox_props = dict(
+        boxstyle="round,pad=0.4,rounding_size=0.15",
+        facecolor=OKABE_ITO["orange"], 
+        alpha=0.2,
+        edgecolor=OKABE_ITO["orange"], 
+        linewidth=1.5
+    )
     ax_b.text(0.97, 0.95, f"Effect: {mean_red:.3f}\n(~1% of σ)",
               transform=ax_b.transAxes, ha="right", va="top", fontsize=10, bbox=bbox_props)
     
-    # ------ Panel C: Circuit NOT Causal ------
+    # ------ Panel C: Circuit NOT Causal with Rounded Bars ------
     ax_c = fig.add_subplot(gs[1, 0])
     
     syc_base = circuit.get("syc_rate_base", 0.55) * 100
     syc_abl = circuit.get("syc_rate_ablated", 0.53) * 100
     
-    bars = ax_c.bar(["Baseline", "Ablated"], [syc_base, syc_abl],
-                    color=[OKABE_ITO["vermillion"], OKABE_ITO["orange"]], 
-                    alpha=0.85, edgecolor="white", linewidth=2, width=0.6)
+    x_positions = [0, 1]
+    values = [syc_base, syc_abl]
+    colors = [OKABE_ITO["vermillion"], OKABE_ITO["orange"]]
+    draw_rounded_bars(ax_c, x_positions, values, colors, width=0.55, rounding_size=0.05)
     
-    for bar, val in zip(bars, [syc_base, syc_abl]):
-        ax_c.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1,
-                  f"{val:.1f}%", ha="center", fontsize=12, fontweight="bold")
+    for x, val, color in zip(x_positions, values, colors):
+        ax_c.text(x, val + 2, f"{val:.1f}%", ha="center", fontsize=12, fontweight="bold", color=color)
     
-    ax_c.set_ylabel("Sycophancy Rate (%)", fontsize=11)
+    ax_c.set_xlim(-0.5, 1.5)
     ax_c.set_ylim(0, 70)
+    ax_c.set_xticks(x_positions)
+    ax_c.set_xticklabels(["Baseline", "Ablated"], fontsize=10)
+    ax_c.set_ylabel("Sycophancy Rate (%)", fontsize=11)
     ax_c.set_title("C. Circuit NOT Causal", fontweight="bold", loc="left",
                    color=OKABE_ITO["vermillion"])
     
     p_val = circuit.get("p_value", 0.59)
-    bbox_props = dict(boxstyle="round,pad=0.3,rounding_size=0.2", 
-                     facecolor=OKABE_ITO["vermillion"], alpha=0.15,
-                     edgecolor=OKABE_ITO["vermillion"], linewidth=1.5)
+    bbox_props = dict(
+        boxstyle="round,pad=0.4,rounding_size=0.15",
+        facecolor=OKABE_ITO["vermillion"], 
+        alpha=0.15,
+        edgecolor=OKABE_ITO["vermillion"], 
+        linewidth=1.5
+    )
     ax_c.text(0.97, 0.95, f"p = {p_val:.2f}\nNo effect",
               transform=ax_c.transAxes, ha="right", va="top", fontsize=10, 
               fontweight="bold", color=OKABE_ITO["vermillion"], bbox=bbox_props)
     
-    # ------ Panel D: Key Insights (Text) ------
+    # ------ Panel D: Key Insights (Text) with Rounded Boxes ------
     ax_d = fig.add_subplot(gs[1, 1])
     ax_d.axis("off")
     
@@ -433,10 +480,14 @@ def plot_fig4_summary(baseline_metrics: dict, mediation_df: pd.DataFrame,
     
     y_pos = 0.82
     for title, color, description in findings:
-        # Title with fancy box
-        bbox_props = dict(boxstyle="round,pad=0.3,rounding_size=0.15", 
-                         facecolor=color, alpha=0.15,
-                         edgecolor=color, linewidth=1.5)
+        # Title with fancy rounded box
+        bbox_props = dict(
+            boxstyle="round,pad=0.4,rounding_size=0.15",
+            facecolor=color, 
+            alpha=0.15,
+            edgecolor=color, 
+            linewidth=1.5
+        )
         ax_d.text(0.05, y_pos, title, transform=ax_d.transAxes,
                   fontsize=11, fontweight="bold", color=color, va="top", bbox=bbox_props)
         
