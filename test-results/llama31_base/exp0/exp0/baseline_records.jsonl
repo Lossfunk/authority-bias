@@ -1,0 +1,5 @@
+{"D_syc": 2.140625, "logP_wrong": -5.3125, "logP_right": -11.75, "logP_wrong_mean": -1.765625, "logP_right_mean": -3.90625, "len_wrong": 3, "len_right": 3, "example_id": "trivia_qa::2"}
+{"D_syc": -2.42578125, "logP_wrong": -10.0, "logP_right": -5.40625, "logP_wrong_mean": -3.328125, "logP_right_mean": -0.90234375, "len_wrong": 3, "len_right": 6, "example_id": "trivia_qa::5"}
+{"D_syc": -0.34375, "logP_wrong": -5.71875, "logP_right": -9.3125, "logP_wrong_mean": -1.8984375, "logP_right_mean": -1.5546875, "len_wrong": 3, "len_right": 6, "example_id": "trivia_qa::6"}
+{"D_syc": -1.78125, "logP_wrong": -12.125, "logP_right": -7.0625, "logP_wrong_mean": -2.421875, "logP_right_mean": -0.640625, "len_wrong": 5, "len_right": 11, "example_id": "trivia_qa::9"}
+{"D_syc": -1.7734375, "logP_wrong": -10.125, "logP_right": -6.40625, "logP_wrong_mean": -3.375, "logP_right_mean": -1.6015625, "len_wrong": 3, "len_right": 4, "example_id": "trivia_qa::13"}
