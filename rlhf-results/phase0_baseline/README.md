@@ -93,13 +93,6 @@ This result **strengthens our experimental setup** because:
 
 ---
 
-## Next Steps
-
-**Phase 1 (Days 2-3):** Generate Agree/Correct pairs and extract steering vectors
-- Use temperature sampling to get both behaviors from each model
-- Train logistic probe to extract steering directions
-- **Kill Switch 1:** Verify steering vectors work (|ΔD_syc| > 0.5)
-
 ---
 
 ## Files
