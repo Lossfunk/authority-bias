@@ -1,0 +1,19 @@
+seed: 42
+
+model:
+  name: meta-llama/Llama-3.1-8B-Instruct
+  device: auto
+  dtype: auto
+
+dataset:
+  test_path: data/split_C_user_wrong.jsonl
+
+steering_vector:
+  vectors_path: llama-results/exp1/layer_vectors.pt
+  layer: 2      # Best layer from exp1
+  alpha: 16.0   # Best alpha from exp1
+
+exp4:
+  max_examples: 50  # Limit for faster iteration; increase for final run
+  mlp_ablation_layers: [8, 16, 24]  # Middle/late layers to test
+  output_dir: llama-results/exp4
