@@ -21,6 +21,7 @@ from typing import Dict, List, Tuple
 
 import torch
 import yaml
+from scipy import stats
 from tqdm import tqdm
 
 from src.data.syc_dataset import load_user_wrong_split
@@ -190,6 +191,109 @@ def measure_steering_effect(
     }
 
 
+def compute_statistical_tests(results: Dict) -> Dict:
+    """Compute statistical tests for a single alpha's results."""
+    baseline_effects = results["baseline"]["effects"]
+    attn_effects = results["all_attn_ablated"]["effects"]
+    mlp_effects = results["mlp_ablated"]["effects"]
+
+    # Paired t-tests
+    t_stat_attn, p_val_attn = stats.ttest_rel(baseline_effects, attn_effects)
+    t_stat_mlp, p_val_mlp = stats.ttest_rel(baseline_effects, mlp_effects)
+    t_stat_attn_mlp, p_val_attn_mlp = stats.ttest_rel(attn_effects, mlp_effects)
+
+    # One-sample t-tests
+    t_stat_baseline, p_val_baseline = stats.ttest_1samp(baseline_effects, 0)
+    t_stat_attn_zero, p_val_attn_zero = stats.ttest_1samp(attn_effects, 0)
+    t_stat_mlp_zero, p_val_mlp_zero = stats.ttest_1samp(mlp_effects, 0)
+
+    # Cohen's d
+    def cohens_d_paired(x, y):
+        diff = [a - b for a, b in zip(x, y)]
+        mean_diff = sum(diff) / len(diff)
+        std_diff = (sum((d - mean_diff)**2 for d in diff) / (len(diff)-1))**0.5
+        return mean_diff / std_diff if std_diff > 0 else 0.0
+
+    d_attn = cohens_d_paired(baseline_effects, attn_effects)
+    d_mlp = cohens_d_paired(baseline_effects, mlp_effects)
+
+    return {
+        "one_sample": {
+            "baseline": {"t": float(t_stat_baseline), "p": float(p_val_baseline)},
+            "attn_ablated": {"t": float(t_stat_attn_zero), "p": float(p_val_attn_zero)},
+            "mlp_ablated": {"t": float(t_stat_mlp_zero), "p": float(p_val_mlp_zero)},
+        },
+        "paired": {
+            "baseline_vs_attn": {"t": float(t_stat_attn), "p": float(p_val_attn), "cohens_d": float(d_attn)},
+            "baseline_vs_mlp": {"t": float(t_stat_mlp), "p": float(p_val_mlp), "cohens_d": float(d_mlp)},
+            "attn_vs_mlp": {"t": float(t_stat_attn_mlp), "p": float(p_val_attn_mlp)},
+        },
+    }
+
+
+def run_single_alpha(
+    model,
+    tokenizer,
+    records: List[Dict],
+    steering_vector: torch.Tensor,
+    steering_layer: int,
+    steering_alpha: float,
+    device: torch.device,
+    registry: HeadPatchRegistry,
+    mlp_layers: List[int],
+) -> Dict:
+    """Run all conditions for a single alpha value."""
+    results = {}
+
+    # Condition 1: Baseline (no ablation)
+    print(f"\n  [1/3] Baseline (no ablation)...")
+    results["baseline"] = measure_steering_effect(
+        model=model,
+        tokenizer=tokenizer,
+        records=records,
+        steering_vector=steering_vector,
+        steering_layer=steering_layer,
+        steering_alpha=steering_alpha,
+        device=device,
+        registry=registry,
+        ablation_mode="none",
+    )
+    print(f"    Effect: {results['baseline']['mean_effect']:.4f} ± {results['baseline']['std_effect']:.4f}")
+
+    # Condition 2: All attention heads ablated
+    print(f"  [2/3] All attention heads ablated...")
+    results["all_attn_ablated"] = measure_steering_effect(
+        model=model,
+        tokenizer=tokenizer,
+        records=records,
+        steering_vector=steering_vector,
+        steering_layer=steering_layer,
+        steering_alpha=steering_alpha,
+        device=device,
+        registry=registry,
+        ablation_mode="all_attn",
+    )
+    print(f"    Effect: {results['all_attn_ablated']['mean_effect']:.4f} ± {results['all_attn_ablated']['std_effect']:.4f}")
+
+    # Condition 3: MLP layers ablated
+    print(f"  [3/3] MLP layers {mlp_layers} ablated...")
+    results["mlp_ablated"] = measure_steering_effect(
+        model=model,
+        tokenizer=tokenizer,
+        records=records,
+        steering_vector=steering_vector,
+        steering_layer=steering_layer,
+        steering_alpha=steering_alpha,
+        device=device,
+        registry=registry,
+        ablation_mode="mlp",
+        ablation_layers=mlp_layers,
+    )
+    print(f"    Effect: {results['mlp_ablated']['mean_effect']:.4f} ± {results['mlp_ablated']['std_effect']:.4f}")
+
+    return results
+
+
 def main():
     args = parse_args()
     cfg = load_config(args.config)
@@ -214,10 +318,16 @@ def main():
     vectors_path = Path(vector_cfg["vectors_path"])
     layer_vectors = torch.load(vectors_path, map_location="cpu", weights_only=True)
     steering_layer = vector_cfg["layer"]
-    steering_alpha = vector_cfg["alpha"]
     steering_vector = layer_vectors[steering_layer].to(device)
 
-    print(f"Loaded steering vector: Layer {steering_layer}, α={steering_alpha}")
+    # Get alpha values (support both single alpha and sweep)
+    if "alpha_sweep" in vector_cfg:
+        alpha_values = vector_cfg["alpha_sweep"]
+    else:
+        alpha_values = [vector_cfg["alpha"]]
+
+    print(f"Loaded steering vector: Layer {steering_layer}")
+    print(f"Alpha sweep: {alpha_values}")
 
     # Load test data
     dataset_cfg = cfg["dataset"]
@@ -237,107 +347,109 @@ def main():
 
     print(f"Testing on {len(records)} examples")
 
-    results = {}
-
-    # Condition 1: Baseline (no ablation)
-    print("\n[1/3] Baseline (no ablation)...")
-    results["baseline"] = measure_steering_effect(
-        model=model,
-        tokenizer=tokenizer,
-        records=records,
-        steering_vector=steering_vector,
-        steering_layer=steering_layer,
-        steering_alpha=steering_alpha,
-        device=device,
-        registry=registry,
-        ablation_mode="none",
-    )
-    print(f"  Effect: {results['baseline']['mean_effect']:.4f} ± {results['baseline']['std_effect']:.4f}")
-
-    # Condition 2: All attention heads ablated
-    print("\n[2/3] All attention heads ablated...")
-    results["all_attn_ablated"] = measure_steering_effect(
-        model=model,
-        tokenizer=tokenizer,
-        records=records,
-        steering_vector=steering_vector,
-        steering_layer=steering_layer,
-        steering_alpha=steering_alpha,
-        device=device,
-        registry=registry,
-        ablation_mode="all_attn",
-    )
-    print(f"  Effect: {results['all_attn_ablated']['mean_effect']:.4f} ± {results['all_attn_ablated']['std_effect']:.4f}")
-
-    # Condition 3: MLP layers ablated
     mlp_layers = cfg["exp4"].get("mlp_ablation_layers", [8, 16, 24])
-    print(f"\n[3/3] MLP layers {mlp_layers} ablated...")
-    results["mlp_ablated"] = measure_steering_effect(
-        model=model,
-        tokenizer=tokenizer,
-        records=records,
-        steering_vector=steering_vector,
-        steering_layer=steering_layer,
-        steering_alpha=steering_alpha,
-        device=device,
-        registry=registry,
-        ablation_mode="mlp",
-        ablation_layers=mlp_layers,
-    )
-    print(f"  Effect: {results['mlp_ablated']['mean_effect']:.4f} ± {results['mlp_ablated']['std_effect']:.4f}")
-
-    # Summary
-    print("\n" + "="*60)
-    print("SUMMARY")
-    print("="*60)
-    baseline_effect = results["baseline"]["mean_effect"]
-    attn_effect = results["all_attn_ablated"]["mean_effect"]
-    mlp_effect = results["mlp_ablated"]["mean_effect"]
-
-    attn_retention = attn_effect / baseline_effect if baseline_effect != 0 else float("nan")
-    mlp_retention = mlp_effect / baseline_effect if baseline_effect != 0 else float("nan")
-
-    print(f"Baseline steering effect:     {baseline_effect:.4f}")
-    print(f"With all attn ablated:        {attn_effect:.4f} ({attn_retention:.1%} retained)")
-    print(f"With MLP layers ablated:      {mlp_effect:.4f} ({mlp_retention:.1%} retained)")
-
-    print("\nINTERPRETATION:")
-    if attn_retention > 0.7:
-        print("  → Steering BYPASSES attention heads (effect retained with attn ablation)")
-    else:
-        print("  → Steering USES attention heads (effect reduced with attn ablation)")
-
-    if mlp_retention < 0.3:
-        print("  → Steering REQUIRES MLP layers (effect lost with MLP ablation)")
-    else:
-        print("  → Steering does NOT require these MLP layers")
-
-    # Save results
     output_dir = Path(cfg["exp4"]["output_dir"])
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    summary = {
+    all_alpha_results = {}
+
+    # Run for each alpha
+    for alpha_idx, steering_alpha in enumerate(alpha_values):
+        print(f"\n{'='*60}")
+        print(f"ALPHA = {steering_alpha} ({alpha_idx + 1}/{len(alpha_values)})")
+        print("="*60)
+
+        results = run_single_alpha(
+            model=model,
+            tokenizer=tokenizer,
+            records=records,
+            steering_vector=steering_vector,
+            steering_layer=steering_layer,
+            steering_alpha=steering_alpha,
+            device=device,
+            registry=registry,
+            mlp_layers=mlp_layers,
+        )
+
+        # Compute stats
+        baseline_effect = results["baseline"]["mean_effect"]
+        attn_effect = results["all_attn_ablated"]["mean_effect"]
+        mlp_effect = results["mlp_ablated"]["mean_effect"]
+
+        attn_retention = attn_effect / baseline_effect if baseline_effect != 0 else float("nan")
+        mlp_retention = mlp_effect / baseline_effect if baseline_effect != 0 else float("nan")
+
+        statistical_tests = compute_statistical_tests(results)
+
+        # Print summary for this alpha
+        print(f"\n  Summary for α={steering_alpha}:")
+        print(f"    Baseline effect:     {baseline_effect:+.4f} (p={statistical_tests['one_sample']['baseline']['p']:.4f})")
+        print(f"    Attn ablated effect: {attn_effect:+.4f} (p={statistical_tests['one_sample']['attn_ablated']['p']:.4f})")
+        print(f"    MLP ablated effect:  {mlp_effect:+.4f} (p={statistical_tests['one_sample']['mlp_ablated']['p']:.4f})")
+        print(f"    Baseline vs Attn: p={statistical_tests['paired']['baseline_vs_attn']['p']:.4f}")
+
+        all_alpha_results[str(steering_alpha)] = {
+            "alpha": steering_alpha,
+            "results": {
+                "baseline": {k: v for k, v in results["baseline"].items() if k != "effects"},
+                "all_attn_ablated": {k: v for k, v in results["all_attn_ablated"].items() if k != "effects"},
+                "mlp_ablated": {k: v for k, v in results["mlp_ablated"].items() if k != "effects"},
+            },
+            "retention": {
+                "attn_ablation": attn_retention,
+                "mlp_ablation": mlp_retention,
+            },
+            "statistical_tests": statistical_tests,
+            "full_effects": results,  # Keep for detailed analysis
+        }
+
+    # Final summary across all alphas
+    print("\n" + "="*60)
+    print("ALPHA SWEEP SUMMARY")
+    print("="*60)
+    print(f"\n{'Alpha':<8} {'Baseline':<12} {'p(≠0)':<10} {'Attn Abl':<12} {'p(vs base)':<12}")
+    print("-" * 54)
+
+    best_alpha = None
+    best_p = 1.0
+
+    for alpha_str, data in all_alpha_results.items():
+        alpha = data["alpha"]
+        baseline = data["results"]["baseline"]["mean_effect"]
+        p_baseline = data["statistical_tests"]["one_sample"]["baseline"]["p"]
+        attn = data["results"]["all_attn_ablated"]["mean_effect"]
+        p_vs_attn = data["statistical_tests"]["paired"]["baseline_vs_attn"]["p"]
+
+        sig_baseline = "*" if p_baseline < 0.05 else ""
+        sig_attn = "*" if p_vs_attn < 0.05 else ""
+
+        print(f"{alpha:<8} {baseline:+.4f}{sig_baseline:<4} {p_baseline:<10.4f} {attn:+.4f}{sig_attn:<4} {p_vs_attn:<12.4f}")
+
+        # Track best alpha (lowest p-value for baseline effect being non-zero)
+        if p_baseline < best_p:
+            best_p = p_baseline
+            best_alpha = alpha
+
+    print(f"\nBest alpha (lowest p for effect ≠ 0): {best_alpha} (p={best_p:.4f})")
+
+    # Save combined results
+    sweep_summary = {
         "steering_layer": steering_layer,
-        "steering_alpha": steering_alpha,
+        "alpha_sweep": alpha_values,
         "num_examples": len(records),
         "mlp_ablation_layers": mlp_layers,
-        "results": {
-            "baseline": {k: v for k, v in results["baseline"].items() if k != "effects"},
-            "all_attn_ablated": {k: v for k, v in results["all_attn_ablated"].items() if k != "effects"},
-            "mlp_ablated": {k: v for k, v in results["mlp_ablated"].items() if k != "effects"},
-        },
-        "retention": {
-            "attn_ablation": attn_retention,
-            "mlp_ablation": mlp_retention,
-        },
+        "best_alpha": best_alpha,
+        "best_p_value": best_p,
+        "per_alpha_results": {k: {kk: vv for kk, vv in v.items() if kk != "full_effects"} for k, v in all_alpha_results.items()},
     }
 
-    with (output_dir / "distributed_test_results.json").open("w") as f:
-        json.dump(summary, f, indent=2)
+    with (output_dir / "alpha_sweep_results.json").open("w") as f:
+        json.dump(sweep_summary, f, indent=2)
 
-    # Save full results with per-example effects
-    with (output_dir / "distributed_test_full.json").open("w") as f:
-        json.dump(results, f, indent=2)
+    # Save full results for each alpha
+    full_results = {k: v["full_effects"] for k, v in all_alpha_results.items()}
+    with (output_dir / "alpha_sweep_full.json").open("w") as f:
+        json.dump(full_results, f, indent=2)
 
     print(f"\nResults saved to {output_dir}")
 
