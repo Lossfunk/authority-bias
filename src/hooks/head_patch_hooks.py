@@ -7,10 +7,11 @@ from __future__ import annotations
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 import os
 
 import torch
+from torch import nn
 
 from transformers.models.llama.modeling_llama import (
     ALL_ATTENTION_FUNCTIONS,
@@ -63,6 +64,10 @@ class HeadPatchRegistry:
         self.cache = HeadCache()
         self.mean_ablation: Dict[int, Dict[int, torch.Tensor]] = {}
         self.ablation_pos_idx: Optional[int] = None
+        # MLP ablation state
+        self.mlp_ablation_layers: Set[int] = set()
+        self.mlp_ablation_mode: str = "zero"  # "zero" | "mean"
+        self.mlp_mean_cache: Dict[int, torch.Tensor] = {}
         # Debug logging path can be set via env HEAD_PATCH_DEBUG_LOG; defaults fall back to RESULTS_DIR/exp2 or results/exp2 locally.
         self.debug_log_path = self._resolve_debug_path()
 
@@ -125,6 +130,31 @@ class HeadPatchRegistry:
     def clear_mean_ablation(self):
         self.mean_ablation = {}
         self.ablation_pos_idx = None
+
+    def set_mlp_ablation(self, layers: List[int], mode: str = "zero", mean_cache: Optional[Dict[int, torch.Tensor]] = None):
+        """Set which MLP layers to ablate and how."""
+        self.mlp_ablation_layers = set(layers)
+        self.mlp_ablation_mode = mode
+        if mean_cache:
+            self.mlp_mean_cache = {k: v.detach().cpu() for k, v in mean_cache.items()}
+
+    def clear_mlp_ablation(self):
+        self.mlp_ablation_layers = set()
+        self.mlp_ablation_mode = "zero"
+        self.mlp_mean_cache = {}
+
+    def process_mlp(self, layer_idx: int, mlp_output: torch.Tensor) -> torch.Tensor:
+        """Process MLP output, applying ablation if configured."""
+        if layer_idx not in self.mlp_ablation_layers:
+            return mlp_output
+
+        if self.mlp_ablation_mode == "zero":
+            return torch.zeros_like(mlp_output)
+        elif self.mlp_ablation_mode == "mean" and layer_idx in self.mlp_mean_cache:
+            mean_vec = self.mlp_mean_cache[layer_idx].to(mlp_output.device)
+            # Broadcast mean across sequence
+            return mean_vec.unsqueeze(0).unsqueeze(0).expand_as(mlp_output)
+        return mlp_output
 
     def process(
         self,
@@ -279,6 +309,59 @@ def ensure_head_patching(model, registry: Optional[HeadPatchRegistry] = None, fo
     """
     registry = registry or HeadPatchRegistry()
     instrument_model_for_head_patching(model, registry, force=force)
+    return registry
+
+
+def instrument_model_for_mlp_ablation(model, registry: HeadPatchRegistry, force: bool = False) -> None:
+    """
+    Monkey-patch MLP modules to allow ablation.
+    """
+    for layer_idx, layer in enumerate(model.model.layers):
+        mlp = layer.mlp
+        if getattr(mlp, "_mlp_ablation_wrapped", False) and not force:
+            continue
+
+        original_forward = mlp.forward
+
+        def patched_mlp_forward(
+            self,
+            x: torch.Tensor,
+            _layer_idx=layer_idx,
+            _original=original_forward,
+        ):
+            output = _original(x)
+            return registry.process_mlp(_layer_idx, output)
+
+        mlp.forward = patched_mlp_forward.__get__(mlp, mlp.__class__)
+        mlp._mlp_ablation_wrapped = True
+
+
+@contextmanager
+def mlp_ablation_mode(
+    registry: HeadPatchRegistry,
+    layers: List[int],
+    mode: str = "zero",
+    mean_cache: Optional[Dict[int, torch.Tensor]] = None,
+):
+    """Context manager to ablate MLP layers."""
+    registry.set_mlp_ablation(layers, mode, mean_cache)
+    try:
+        yield registry
+    finally:
+        registry.clear_mlp_ablation()
+
+
+def ensure_full_instrumentation(
+    model,
+    registry: Optional[HeadPatchRegistry] = None,
+    force: bool = False,
+) -> HeadPatchRegistry:
+    """
+    Ensure both attention and MLP instrumentation are applied.
+    """
+    registry = registry or HeadPatchRegistry()
+    instrument_model_for_head_patching(model, registry, force=force)
+    instrument_model_for_mlp_ablation(model, registry, force=force)
     return registry
 
 
