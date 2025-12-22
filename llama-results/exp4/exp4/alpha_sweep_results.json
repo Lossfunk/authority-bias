@@ -1,0 +1,307 @@
+{
+  "steering_layer": 2,
+  "alpha_sweep": [
+    4.0,
+    8.0,
+    16.0,
+    24.0
+  ],
+  "num_examples": 200,
+  "mlp_ablation_layers": [
+    8,
+    16,
+    24
+  ],
+  "best_alpha": 24.0,
+  "best_p_value": 0.41355049393388565,
+  "per_alpha_results": {
+    "4.0": {
+      "alpha": 4.0,
+      "results": {
+        "baseline": {
+          "ablation_mode": "none",
+          "ablation_layers": null,
+          "n": 200,
+          "mean_effect": -0.013437500223517418,
+          "std_effect": 0.7449020147323608,
+          "mean_base_d_syc": 0.04453124850988388,
+          "mean_steered_d_syc": 0.05796875059604645
+        },
+        "all_attn_ablated": {
+          "ablation_mode": "all_attn",
+          "ablation_layers": null,
+          "n": 200,
+          "mean_effect": 0.04296875,
+          "std_effect": 0.7603158950805664,
+          "mean_base_d_syc": 0.16312499344348907,
+          "mean_steered_d_syc": 0.12015625089406967
+        },
+        "mlp_ablated": {
+          "ablation_mode": "mlp",
+          "ablation_layers": [
+            8,
+            16,
+            24
+          ],
+          "n": 200,
+          "mean_effect": 0.002812500111758709,
+          "std_effect": 1.0162689685821533,
+          "mean_base_d_syc": -0.07890625298023224,
+          "mean_steered_d_syc": -0.08171875029802322
+        }
+      },
+      "retention": {
+        "attn_ablation": -3.1976743654150015,
+        "mlp_ablation": -0.20930233041681803
+      },
+      "statistical_tests": {
+        "one_sample": {
+          "baseline": {
+            "t": -0.25511402610285894,
+            "p": 0.7988984969803166
+          },
+          "attn_ablated": {
+            "t": 0.7992334698925544,
+            "p": 0.4251079577608583
+          },
+          "mlp_ablated": {
+            "t": 0.03913802176048169,
+            "p": 0.9688195830518291
+          }
+        },
+        "paired": {
+          "baseline_vs_attn": {
+            "t": -0.9546779564037084,
+            "p": 0.3408988208839743,
+            "cohens_d": -0.06750592568223773
+          },
+          "baseline_vs_mlp": {
+            "t": -0.1787743945223108,
+            "p": 0.8582967271507786,
+            "cohens_d": -0.012641258666924515
+          },
+          "attn_vs_mlp": {
+            "t": 0.4475972214960691,
+            "p": 0.6549307548373052
+          }
+        }
+      }
+    },
+    "8.0": {
+      "alpha": 8.0,
+      "results": {
+        "baseline": {
+          "ablation_mode": "none",
+          "ablation_layers": null,
+          "n": 200,
+          "mean_effect": -0.034843750298023224,
+          "std_effect": 1.0283845663070679,
+          "mean_base_d_syc": 0.04453124850988388,
+          "mean_steered_d_syc": 0.0793749988079071
+        },
+        "all_attn_ablated": {
+          "ablation_mode": "all_attn",
+          "ablation_layers": null,
+          "n": 200,
+          "mean_effect": 0.013437500223517418,
+          "std_effect": 1.1248582601547241,
+          "mean_base_d_syc": 0.16312499344348907,
+          "mean_steered_d_syc": 0.1496874988079071
+        },
+        "mlp_ablated": {
+          "ablation_mode": "mlp",
+          "ablation_layers": [
+            8,
+            16,
+            24
+          ],
+          "n": 200,
+          "mean_effect": -0.08359374850988388,
+          "std_effect": 1.4675681591033936,
+          "mean_base_d_syc": -0.07890625298023224,
+          "mean_steered_d_syc": 0.004687500186264515
+        }
+      },
+      "retention": {
+        "attn_ablation": -0.38565022733157867,
+        "mlp_ablation": 2.399103075727941
+      },
+      "statistical_tests": {
+        "one_sample": {
+          "baseline": {
+            "t": -0.47916418290745505,
+            "p": 0.6323479528249492
+          },
+          "attn_ablated": {
+            "t": 0.16894123735265346,
+            "p": 0.8660144584204889
+          },
+          "mlp_ablated": {
+            "t": -0.8055463052058033,
+            "p": 0.4214659813088345
+          }
+        },
+        "paired": {
+          "baseline_vs_attn": {
+            "t": -0.5716318721208526,
+            "p": 0.5682164847552402,
+            "cohens_d": -0.040420477311901626
+          },
+          "baseline_vs_mlp": {
+            "t": 0.41564821759283443,
+            "p": 0.6781152874959095,
+            "cohens_d": 0.029390767324799488
+          },
+          "attn_vs_mlp": {
+            "t": 0.7601613075926802,
+            "p": 0.4480578286037088
+          }
+        }
+      }
+    },
+    "16.0": {
+      "alpha": 16.0,
+      "results": {
+        "baseline": {
+          "ablation_mode": "none",
+          "ablation_layers": null,
+          "n": 200,
+          "mean_effect": -0.0651562511920929,
+          "std_effect": 1.2787590026855469,
+          "mean_base_d_syc": 0.04453124850988388,
+          "mean_steered_d_syc": 0.10968749970197678
+        },
+        "all_attn_ablated": {
+          "ablation_mode": "all_attn",
+          "ablation_layers": null,
+          "n": 200,
+          "mean_effect": 0.07140625268220901,
+          "std_effect": 1.3197126388549805,
+          "mean_base_d_syc": 0.16312499344348907,
+          "mean_steered_d_syc": 0.09171874821186066
+        },
+        "mlp_ablated": {
+          "ablation_mode": "mlp",
+          "ablation_layers": [
+            8,
+            16,
+            24
+          ],
+          "n": 200,
+          "mean_effect": -0.11109375208616257,
+          "std_effect": 1.6320713758468628,
+          "mean_base_d_syc": -0.07890625298023224,
+          "mean_steered_d_syc": 0.03218749910593033
+        }
+      },
+      "retention": {
+        "attn_ablation": -1.0959232825057712,
+        "mlp_ablation": 1.7050359720456794
+      },
+      "statistical_tests": {
+        "one_sample": {
+          "baseline": {
+            "t": -0.7205802511763526,
+            "p": 0.47201339821320476
+          },
+          "attn_ablated": {
+            "t": 0.7651944852662426,
+            "p": 0.4450622735431703
+          },
+          "mlp_ablated": {
+            "t": -0.9626434589249435,
+            "p": 0.33689475204567354
+          }
+        },
+        "paired": {
+          "baseline_vs_attn": {
+            "t": -1.7257262293759248,
+            "p": 0.08594892690982464,
+            "cohens_d": -0.12202727192632079
+          },
+          "baseline_vs_mlp": {
+            "t": 0.3958513293508992,
+            "p": 0.6926387811411694,
+            "cohens_d": 0.027990915932573017
+          },
+          "attn_vs_mlp": {
+            "t": 1.3570364329124818,
+            "p": 0.1763068494582399
+          }
+        }
+      }
+    },
+    "24.0": {
+      "alpha": 24.0,
+      "results": {
+        "baseline": {
+          "ablation_mode": "none",
+          "ablation_layers": null,
+          "n": 200,
+          "mean_effect": -0.09437499940395355,
+          "std_effect": 1.6288728713989258,
+          "mean_base_d_syc": 0.04453124850988388,
+          "mean_steered_d_syc": 0.13890625536441803
+        },
+        "all_attn_ablated": {
+          "ablation_mode": "all_attn",
+          "ablation_layers": null,
+          "n": 200,
+          "mean_effect": 0.04218750074505806,
+          "std_effect": 1.561324119567871,
+          "mean_base_d_syc": 0.16312499344348907,
+          "mean_steered_d_syc": 0.12093749642372131
+        },
+        "mlp_ablated": {
+          "ablation_mode": "mlp",
+          "ablation_layers": [
+            8,
+            16,
+            24
+          ],
+          "n": 200,
+          "mean_effect": -0.12562499940395355,
+          "std_effect": 1.9062511920928955,
+          "mean_base_d_syc": -0.07890625298023224,
+          "mean_steered_d_syc": 0.04671875014901161
+        }
+      },
+      "retention": {
+        "attn_ablation": -0.44701987826757794,
+        "mlp_ablation": 1.3311258299058688
+      },
+      "statistical_tests": {
+        "one_sample": {
+          "baseline": {
+            "t": -0.8193789158622616,
+            "p": 0.41355049393388565
+          },
+          "attn_ablated": {
+            "t": 0.3821252280672471,
+            "p": 0.7027762433609837
+          },
+          "mlp_ablated": {
+            "t": -0.93198934246298,
+            "p": 0.352471362778051
+          }
+        },
+        "paired": {
+          "baseline_vs_attn": {
+            "t": -1.4193502328183145,
+            "p": 0.15736142057899538,
+            "cohens_d": -0.10036321745045351
+          },
+          "baseline_vs_mlp": {
+            "t": 0.20429574702249084,
+            "p": 0.8383311778490512,
+            "cohens_d": 0.014445890808717467
+          },
+          "attn_vs_mlp": {
+            "t": 1.00223188196299,
+            "p": 0.31744872257042833
+          }
+        }
+      }
+    }
+  }
+}

@@ -11,9 +11,9 @@ dataset:
 steering_vector:
   vectors_path: llama-results/exp1/layer_vectors.pt
   layer: 2      # Best layer from exp1
-  alpha: 16.0   # Best alpha from exp1
+  alpha_sweep: [4.0, 8.0, 16.0, 24.0]  # Sweep to find optimal alpha
 
 exp4:
-  max_examples: 50  # Limit for faster iteration; increase for final run
+  max_examples: 200  # Limit for faster iteration; increase for final run
   mlp_ablation_layers: [8, 16, 24]  # Middle/late layers to test
   output_dir: llama-results/exp4
