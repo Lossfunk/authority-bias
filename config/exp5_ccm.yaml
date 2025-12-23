@@ -1,0 +1,23 @@
+seed: 42
+
+model:
+  name: meta-llama/Llama-3.1-8B-Instruct
+  device: auto
+  dtype: auto
+
+dataset:
+  split_a_path: data/split_A_user_wrong.jsonl  # For computing mediation effects
+  split_c_path: data/split_C_user_wrong.jsonl  # For evaluation
+
+ccm:
+  # Mediation analysis settings
+  num_mediation_examples: 100  # Examples for computing head effects
+  top_k_heads: 50  # Number of heads to select for steering
+  
+  # Steering settings  
+  alpha_sweep: [1.0, 2.0, 4.0, 8.0]
+  
+  # Evaluation
+  num_eval_examples: 200
+  
+  output_dir: llama-results/exp5

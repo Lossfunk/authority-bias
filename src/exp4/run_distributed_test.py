@@ -313,12 +313,16 @@ def main():
     # Instrument model for ablation
     registry = ensure_full_instrumentation(model)
 
-    # Load steering vector
+    # Load steering vectors
     vector_cfg = cfg["steering_vector"]
     vectors_path = Path(vector_cfg["vectors_path"])
     layer_vectors = torch.load(vectors_path, map_location="cpu", weights_only=True)
-    steering_layer = vector_cfg["layer"]
-    steering_vector = layer_vectors[steering_layer].to(device)
+
+    # Get layer values (support both single layer and sweep)
+    if "layer_sweep" in vector_cfg:
+        layer_values = vector_cfg["layer_sweep"]
+    else:
+        layer_values = [vector_cfg["layer"]]
 
     # Get alpha values (support both single alpha and sweep)
     if "alpha_sweep" in vector_cfg:
@@ -326,8 +330,10 @@ def main():
     else:
         alpha_values = [vector_cfg["alpha"]]
 
-    print(f"Loaded steering vector: Layer {steering_layer}")
+    print(f"Loaded steering vectors from: {vectors_path}")
+    print(f"Layer sweep: {layer_values}")
     print(f"Alpha sweep: {alpha_values}")
+    print(f"Total configurations to test: {len(layer_values) * len(alpha_values)}")
 
     # Load test data
     dataset_cfg = cfg["dataset"]
@@ -351,69 +357,80 @@ def main():
     output_dir = Path(cfg["exp4"]["output_dir"])
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    all_alpha_results = {}
+    all_results = {}
+    config_idx = 0
+    total_configs = len(layer_values) * len(alpha_values)
 
-    # Run for each alpha
-    for alpha_idx, steering_alpha in enumerate(alpha_values):
-        print(f"\n{'='*60}")
-        print(f"ALPHA = {steering_alpha} ({alpha_idx + 1}/{len(alpha_values)})")
-        print("="*60)
+    # Run for each layer and alpha combination
+    for steering_layer in layer_values:
+        steering_vector = layer_vectors[steering_layer].to(device)
 
-        results = run_single_alpha(
-            model=model,
-            tokenizer=tokenizer,
-            records=records,
-            steering_vector=steering_vector,
-            steering_layer=steering_layer,
-            steering_alpha=steering_alpha,
-            device=device,
-            registry=registry,
-            mlp_layers=mlp_layers,
-        )
+        for steering_alpha in alpha_values:
+            config_idx += 1
+            config_key = f"L{steering_layer}_a{steering_alpha}"
 
-        # Compute stats
-        baseline_effect = results["baseline"]["mean_effect"]
-        attn_effect = results["all_attn_ablated"]["mean_effect"]
-        mlp_effect = results["mlp_ablated"]["mean_effect"]
+            print(f"\n{'='*60}")
+            print(f"Layer={steering_layer}, Alpha={steering_alpha} ({config_idx}/{total_configs})")
+            print("="*60)
 
-        attn_retention = attn_effect / baseline_effect if baseline_effect != 0 else float("nan")
-        mlp_retention = mlp_effect / baseline_effect if baseline_effect != 0 else float("nan")
+            results = run_single_alpha(
+                model=model,
+                tokenizer=tokenizer,
+                records=records,
+                steering_vector=steering_vector,
+                steering_layer=steering_layer,
+                steering_alpha=steering_alpha,
+                device=device,
+                registry=registry,
+                mlp_layers=mlp_layers,
+            )
 
-        statistical_tests = compute_statistical_tests(results)
+            # Compute stats
+            baseline_effect = results["baseline"]["mean_effect"]
+            attn_effect = results["all_attn_ablated"]["mean_effect"]
+            mlp_effect = results["mlp_ablated"]["mean_effect"]
 
-        # Print summary for this alpha
-        print(f"\n  Summary for α={steering_alpha}:")
-        print(f"    Baseline effect:     {baseline_effect:+.4f} (p={statistical_tests['one_sample']['baseline']['p']:.4f})")
-        print(f"    Attn ablated effect: {attn_effect:+.4f} (p={statistical_tests['one_sample']['attn_ablated']['p']:.4f})")
-        print(f"    MLP ablated effect:  {mlp_effect:+.4f} (p={statistical_tests['one_sample']['mlp_ablated']['p']:.4f})")
-        print(f"    Baseline vs Attn: p={statistical_tests['paired']['baseline_vs_attn']['p']:.4f}")
+            attn_retention = attn_effect / baseline_effect if baseline_effect != 0 else float("nan")
+            mlp_retention = mlp_effect / baseline_effect if baseline_effect != 0 else float("nan")
 
-        all_alpha_results[str(steering_alpha)] = {
-            "alpha": steering_alpha,
-            "results": {
-                "baseline": {k: v for k, v in results["baseline"].items() if k != "effects"},
-                "all_attn_ablated": {k: v for k, v in results["all_attn_ablated"].items() if k != "effects"},
-                "mlp_ablated": {k: v for k, v in results["mlp_ablated"].items() if k != "effects"},
-            },
-            "retention": {
-                "attn_ablation": attn_retention,
-                "mlp_ablation": mlp_retention,
-            },
-            "statistical_tests": statistical_tests,
-            "full_effects": results,  # Keep for detailed analysis
-        }
+            statistical_tests = compute_statistical_tests(results)
 
-    # Final summary across all alphas
+            # Print summary
+            print(f"\n  Summary for L={steering_layer}, α={steering_alpha}:")
+            print(f"    Baseline effect:     {baseline_effect:+.4f} (p={statistical_tests['one_sample']['baseline']['p']:.4f})")
+            print(f"    Attn ablated effect: {attn_effect:+.4f} (p={statistical_tests['one_sample']['attn_ablated']['p']:.4f})")
+            print(f"    MLP ablated effect:  {mlp_effect:+.4f} (p={statistical_tests['one_sample']['mlp_ablated']['p']:.4f})")
+            print(f"    Baseline vs Attn: p={statistical_tests['paired']['baseline_vs_attn']['p']:.4f}")
+
+            all_results[config_key] = {
+                "layer": steering_layer,
+                "alpha": steering_alpha,
+                "results": {
+                    "baseline": {k: v for k, v in results["baseline"].items() if k != "effects"},
+                    "all_attn_ablated": {k: v for k, v in results["all_attn_ablated"].items() if k != "effects"},
+                    "mlp_ablated": {k: v for k, v in results["mlp_ablated"].items() if k != "effects"},
+                },
+                "retention": {
+                    "attn_ablation": attn_retention,
+                    "mlp_ablation": mlp_retention,
+                },
+                "statistical_tests": statistical_tests,
+                "full_effects": results,
+            }
+
+    # Final summary across all configurations
     print("\n" + "="*60)
-    print("ALPHA SWEEP SUMMARY")
+    print("LAYER x ALPHA SWEEP SUMMARY")
     print("="*60)
-    print(f"\n{'Alpha':<8} {'Baseline':<12} {'p(≠0)':<10} {'Attn Abl':<12} {'p(vs base)':<12}")
-    print("-" * 54)
+    print(f"\n{'Layer':<6} {'Alpha':<8} {'Baseline':<12} {'p(≠0)':<10} {'Attn Abl':<12} {'p(vs base)':<12}")
+    print("-" * 70)
 
-    best_alpha = None
+    best_config = None
     best_p = 1.0
+    best_effect = 0.0
 
-    for alpha_str, data in all_alpha_results.items():
+    for config_key, data in all_results.items():
+        layer = data["layer"]
         alpha = data["alpha"]
         baseline = data["results"]["baseline"]["mean_effect"]
         p_baseline = data["statistical_tests"]["one_sample"]["baseline"]["p"]
@@ -423,32 +440,37 @@ def main():
         sig_baseline = "*" if p_baseline < 0.05 else ""
         sig_attn = "*" if p_vs_attn < 0.05 else ""
 
-        print(f"{alpha:<8} {baseline:+.4f}{sig_baseline:<4} {p_baseline:<10.4f} {attn:+.4f}{sig_attn:<4} {p_vs_attn:<12.4f}")
+        print(f"{layer:<6} {alpha:<8} {baseline:+.4f}{sig_baseline:<4} {p_baseline:<10.4f} {attn:+.4f}{sig_attn:<4} {p_vs_attn:<12.4f}")
 
-        # Track best alpha (lowest p-value for baseline effect being non-zero)
-        if p_baseline < best_p:
+        # Track best config (prioritize significant positive effect)
+        if baseline > 0 and p_baseline < best_p:
             best_p = p_baseline
-            best_alpha = alpha
+            best_config = config_key
+            best_effect = baseline
 
-    print(f"\nBest alpha (lowest p for effect ≠ 0): {best_alpha} (p={best_p:.4f})")
+    if best_config:
+        print(f"\nBest config: {best_config} (effect={best_effect:+.4f}, p={best_p:.4f})")
+    else:
+        print(f"\nNo configuration showed significant positive effect")
 
     # Save combined results
     sweep_summary = {
-        "steering_layer": steering_layer,
+        "layer_sweep": layer_values,
         "alpha_sweep": alpha_values,
         "num_examples": len(records),
         "mlp_ablation_layers": mlp_layers,
-        "best_alpha": best_alpha,
+        "best_config": best_config,
+        "best_effect": best_effect,
         "best_p_value": best_p,
-        "per_alpha_results": {k: {kk: vv for kk, vv in v.items() if kk != "full_effects"} for k, v in all_alpha_results.items()},
+        "per_config_results": {k: {kk: vv for kk, vv in v.items() if kk != "full_effects"} for k, v in all_results.items()},
     }
 
-    with (output_dir / "alpha_sweep_results.json").open("w") as f:
+    with (output_dir / "layer_alpha_sweep_results.json").open("w") as f:
         json.dump(sweep_summary, f, indent=2)
 
-    # Save full results for each alpha
-    full_results = {k: v["full_effects"] for k, v in all_alpha_results.items()}
-    with (output_dir / "alpha_sweep_full.json").open("w") as f:
+    # Save full results
+    full_results = {k: v["full_effects"] for k, v in all_results.items()}
+    with (output_dir / "layer_alpha_sweep_full.json").open("w") as f:
         json.dump(full_results, f, indent=2)
 
     print(f"\nResults saved to {output_dir}")

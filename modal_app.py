@@ -3,7 +3,7 @@ Modal GPU runner for persona-vectors experiments.
 
 Usage (locally, with Modal CLI configured):
     modal run modal_app.py --exp exp2
-Available exp values: exp0, exp1, exp2, exp3, exp4, exp2_agg, validation
+Available exp values: exp0, exp1, exp2, exp3, exp4, exp5, exp2_agg, validation
 
 Notes:
 - Code is mounted read-only from the local repo snapshot.
@@ -24,7 +24,7 @@ from pathlib import Path
 import modal
 
 # Bump BUILD_VERSION to force Modal to rebuild the image when dependencies or hooks change.
-BUILD_VERSION: int = 21
+BUILD_VERSION: int = 22
 
 # Warm container configuration: keep a small pool alive to avoid cold starts.
 # Set env vars to 0 to disable if you don't want to pay for idle GPU time.
@@ -100,7 +100,7 @@ def _run(cmd: list[str], cwd: Path, env: dict | None = None) -> None:
 def run_exp(exp: str = "exp2"):
     """
     Run one of the experiments on a GPU.
-    exp: exp0 | exp1 | exp2 | exp3 | exp4 | exp2_agg | validation
+    exp: exp0 | exp1 | exp2 | exp3 | exp4 | exp5 | exp2_agg | validation
     """
     workdir = Path("/workspace")
     data_dir = Path("/volume/data")
@@ -139,6 +139,7 @@ def run_exp(exp: str = "exp2"):
         "exp2_agg": ["python", "-m", "src.exp2.aggregate_head_scores"],
         "exp3": ["python", "-m", "src.exp3.run_mediation_grid"],
         "exp4": ["python", "-m", "src.exp4.run_distributed_test"],
+        "exp5": ["python", "-m", "src.exp5.run_ccm"],
         "validation": ["python", "-m", "src.exp3.run_validation", "--output-dir", "llama-results/validation"],
     }
     if exp not in cmd_map:
