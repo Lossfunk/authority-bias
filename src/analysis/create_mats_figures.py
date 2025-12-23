@@ -2,6 +2,7 @@
 Create publication-quality figures for MATS application.
 
 Visualizes the systematic failure of steering interventions on Llama-3.1-8B-Instruct.
+Uses Okabe-Ito colorblind-friendly palette.
 """
 
 import json
@@ -10,23 +11,37 @@ from typing import Dict, List, Tuple
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from matplotlib.patches import FancyBboxPatch
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 
 # ============================================================================
-# Style Configuration - Clean, modern aesthetic
+# Okabe-Ito Colorblind-Friendly Palette
 # ============================================================================
 
-# Color palette - muted, professional
+OKABE_ITO = {
+    'black': '#000000',
+    'orange': '#E69F00',
+    'sky_blue': '#56B4E9',
+    'bluish_green': '#009E73',
+    'yellow': '#F0E442',
+    'blue': '#0072B2',
+    'vermillion': '#D55E00',
+    'reddish_purple': '#CC79A7',
+}
+
+# Semantic color assignments
 COLORS = {
-    'negative': '#E74C3C',      # Red for wrong direction
-    'positive': '#27AE60',      # Green for correct direction  
-    'neutral': '#7F8C8D',       # Gray for noise/no effect
-    'primary': '#2C3E50',       # Dark blue-gray for primary elements
-    'secondary': '#3498DB',     # Blue for secondary elements
-    'background': '#FAFBFC',    # Light background
-    'grid': '#E8E8E8',          # Subtle grid
-    'text': '#2C3E50',          # Dark text
+    'negative': OKABE_ITO['vermillion'],     # Wrong direction
+    'positive': OKABE_ITO['bluish_green'],   # Correct direction
+    'neutral': OKABE_ITO['sky_blue'],        # Neutral/comparison
+    'primary': OKABE_ITO['blue'],            # Primary elements
+    'secondary': OKABE_ITO['orange'],        # Secondary elements
+    'accent': OKABE_ITO['reddish_purple'],   # Accent
+    'highlight': OKABE_ITO['yellow'],        # Highlights
+    'text': '#2C3E50',                        # Dark text
+    'background': '#FAFBFC',                  # Light background
+    'grid': '#E0E0E0',                        # Subtle grid
 }
 
 # Figure styling
@@ -40,12 +55,15 @@ plt.rcParams.update({
     'axes.labelweight': 'medium',
     'axes.spines.top': False,
     'axes.spines.right': False,
-    'axes.facecolor': COLORS['background'],
+    'axes.linewidth': 1.2,
+    'axes.facecolor': 'white',
     'figure.facecolor': 'white',
     'figure.dpi': 150,
     'savefig.dpi': 300,
     'savefig.bbox': 'tight',
     'savefig.facecolor': 'white',
+    'xtick.major.width': 1.0,
+    'ytick.major.width': 1.0,
 })
 
 
@@ -54,12 +72,32 @@ def load_json(path: Path) -> Dict:
         return json.load(f)
 
 
+def add_fancy_frame(ax, facecolor='white', edgecolor='#CCCCCC', linewidth=1.5, pad=0.02):
+    """Add a fancy rounded frame around the axes."""
+    # Get the axes position in figure coordinates
+    bbox = ax.get_position()
+    
+    # Create fancy box patch
+    fancy_box = FancyBboxPatch(
+        (bbox.x0 - pad, bbox.y0 - pad),
+        bbox.width + 2*pad,
+        bbox.height + 2*pad,
+        boxstyle="round,pad=0.01,rounding_size=0.02",
+        facecolor=facecolor,
+        edgecolor=edgecolor,
+        linewidth=linewidth,
+        transform=ax.figure.transFigure,
+        zorder=-1
+    )
+    ax.figure.patches.append(fancy_box)
+
+
 # ============================================================================
 # Figure 1: CAA Steering Effects (Exp4)
 # ============================================================================
 
 def create_figure1_caa_effects(results_dir: Path, output_dir: Path):
-    """Bar chart showing CAA steering effects are in wrong direction."""
+    """Bar chart showing CAA steering effects across alpha values."""
     
     data = load_json(results_dir / "exp4/exp4/alpha_sweep_results.json")
     
@@ -67,13 +105,16 @@ def create_figure1_caa_effects(results_dir: Path, output_dir: Path):
     baseline_effects = []
     baseline_stds = []
     attn_effects = []
+    attn_stds = []
     
     for alpha_str, result in data["per_alpha_results"].items():
         alpha = float(alpha_str)
         alphas.append(alpha)
+        n = result["results"]["baseline"]["n"]
         baseline_effects.append(result["results"]["baseline"]["mean_effect"])
-        baseline_stds.append(result["results"]["baseline"]["std_effect"] / np.sqrt(result["results"]["baseline"]["n"]))
+        baseline_stds.append(result["results"]["baseline"]["std_effect"] / np.sqrt(n))
         attn_effects.append(result["results"]["all_attn_ablated"]["mean_effect"])
+        attn_stds.append(result["results"]["all_attn_ablated"]["std_effect"] / np.sqrt(n))
     
     # Sort by alpha
     order = np.argsort(alphas)
@@ -81,51 +122,49 @@ def create_figure1_caa_effects(results_dir: Path, output_dir: Path):
     baseline_effects = np.array(baseline_effects)[order]
     baseline_stds = np.array(baseline_stds)[order]
     attn_effects = np.array(attn_effects)[order]
+    attn_stds = np.array(attn_stds)[order]
     
     fig, ax = plt.subplots(figsize=(10, 6))
     
     x = np.arange(len(alphas))
     width = 0.35
     
-    # Color bars based on direction
-    baseline_colors = [COLORS['negative'] if e < 0 else COLORS['positive'] for e in baseline_effects]
-    attn_colors = [COLORS['negative'] if e < 0 else COLORS['positive'] for e in attn_effects]
-    
+    # Bars with Okabe-Ito colors
     bars1 = ax.bar(x - width/2, baseline_effects, width, 
-                   color=baseline_colors, alpha=0.85,
+                   color=COLORS['negative'], alpha=0.85,
                    yerr=baseline_stds, capsize=4, 
-                   error_kw={'elinewidth': 1.5, 'capthick': 1.5},
-                   label='Baseline (Steering Active)', edgecolor='white', linewidth=1)
+                   error_kw={'elinewidth': 1.5, 'capthick': 1.5, 'color': COLORS['text']},
+                   label='Steering Active', edgecolor='white', linewidth=1.5)
     
     bars2 = ax.bar(x + width/2, attn_effects, width,
-                   color=[c if c == COLORS['positive'] else COLORS['secondary'] for c in attn_colors], 
-                   alpha=0.6,
-                   label='Attention Ablated', edgecolor='white', linewidth=1)
+                   color=COLORS['neutral'], alpha=0.85,
+                   yerr=attn_stds, capsize=4,
+                   error_kw={'elinewidth': 1.5, 'capthick': 1.5, 'color': COLORS['text']},
+                   label='Attention Ablated', edgecolor='white', linewidth=1.5)
     
     # Reference line at zero
-    ax.axhline(y=0, color=COLORS['primary'], linestyle='-', linewidth=1.5, alpha=0.5)
+    ax.axhline(y=0, color=COLORS['text'], linestyle='-', linewidth=1.5, alpha=0.4)
     
-    # Annotations
-    ax.annotate('More Sycophantic', xy=(0.02, 0.15), xycoords='axes fraction',
-                fontsize=10, color=COLORS['negative'], style='italic', alpha=0.8)
-    ax.annotate('Less Sycophantic', xy=(0.02, 0.85), xycoords='axes fraction',
-                fontsize=10, color=COLORS['positive'], style='italic', alpha=0.8)
-    
-    ax.set_xlabel('Steering Strength (α)', fontsize=12)
-    ax.set_ylabel('Effect on D_syc (Δ)', fontsize=12)
-    ax.set_title('CAA Steering Makes Model MORE Sycophantic', fontsize=14, pad=15)
+    ax.set_xlabel('Steering Strength (α)', fontsize=12, fontweight='medium')
+    ax.set_ylabel('Effect on D_syc (Δ)', fontsize=12, fontweight='medium')
+    ax.set_title('CAA Steering Effects by Alpha', fontsize=14, pad=15, fontweight='bold')
     ax.set_xticks(x)
-    ax.set_xticklabels([f'α = {a:.0f}' for a in alphas])
+    ax.set_xticklabels([f'{a:.0f}' for a in alphas])
     
-    ax.legend(loc='lower left', framealpha=0.9)
-    ax.set_ylim(-0.15, 0.15)
-    ax.grid(axis='y', alpha=0.3, color=COLORS['grid'])
+    ax.legend(loc='lower left', framealpha=0.95, edgecolor=COLORS['grid'])
+    ax.set_ylim(-0.15, 0.12)
+    ax.grid(axis='y', alpha=0.4, color=COLORS['grid'], linestyle='-', linewidth=0.8)
+    
+    # Style spines
+    for spine in ['bottom', 'left']:
+        ax.spines[spine].set_color(COLORS['text'])
+        ax.spines[spine].set_linewidth(1.2)
     
     plt.tight_layout()
     plt.savefig(output_dir / "fig1_caa_steering_effects.png")
     plt.savefig(output_dir / "fig1_caa_steering_effects.pdf")
     plt.close()
-    print(f"✓ Created Figure 1: CAA Steering Effects")
+    print(f"  Created Figure 1: CAA Steering Effects")
 
 
 # ============================================================================
@@ -151,42 +190,43 @@ def create_figure2_layer_alpha_heatmap(results_dir: Path, output_dir: Path):
     
     fig, ax = plt.subplots(figsize=(10, 6))
     
-    # Custom colormap: red (negative/wrong) -> white (zero) -> green (positive/correct)
-    cmap = LinearSegmentedColormap.from_list('diverging', 
+    # Custom diverging colormap using Okabe-Ito
+    cmap = LinearSegmentedColormap.from_list('okabe_diverging', 
         [COLORS['negative'], 'white', COLORS['positive']])
     
     # Symmetric color scale
     vmax = max(abs(effects.min()), abs(effects.max()))
-    vmax = max(vmax, 0.1)  # Ensure some range
+    vmax = max(vmax, 0.08)
     
     im = ax.imshow(effects, cmap=cmap, aspect='auto', vmin=-vmax, vmax=vmax)
     
-    # Add text annotations
+    # Add value annotations
     for i in range(len(layers)):
         for j in range(len(alphas)):
             val = effects[i, j]
-            color = 'white' if abs(val) > vmax * 0.6 else COLORS['text']
+            color = 'white' if abs(val) > vmax * 0.65 else COLORS['text']
             ax.text(j, i, f'{val:.3f}', ha='center', va='center', 
-                   fontsize=10, color=color, fontweight='medium')
+                   fontsize=11, color=color, fontweight='medium')
     
     ax.set_xticks(np.arange(len(alphas)))
     ax.set_yticks(np.arange(len(layers)))
-    ax.set_xticklabels([f'α = {a:.0f}' for a in alphas])
+    ax.set_xticklabels([f'{a:.0f}' for a in alphas])
     ax.set_yticklabels([f'Layer {l}' for l in layers])
     
-    ax.set_xlabel('Steering Strength (α)', fontsize=12)
-    ax.set_ylabel('Injection Layer', fontsize=12)
-    ax.set_title('Late-Layer CAA Injection: No Consistent Effect', fontsize=14, pad=15)
+    ax.set_xlabel('Steering Strength (α)', fontsize=12, fontweight='medium')
+    ax.set_ylabel('Injection Layer', fontsize=12, fontweight='medium')
+    ax.set_title('Late-Layer CAA Injection Effects', fontsize=14, pad=15, fontweight='bold')
     
     # Colorbar
     cbar = plt.colorbar(im, ax=ax, shrink=0.8, pad=0.02)
     cbar.set_label('Effect on D_syc', fontsize=11)
+    cbar.outline.set_linewidth(1.2)
     
     plt.tight_layout()
     plt.savefig(output_dir / "fig2_layer_alpha_heatmap.png")
     plt.savefig(output_dir / "fig2_layer_alpha_heatmap.pdf")
     plt.close()
-    print(f"✓ Created Figure 2: Layer-Alpha Heatmap")
+    print(f"  Created Figure 2: Layer-Alpha Heatmap")
 
 
 # ============================================================================
@@ -194,78 +234,72 @@ def create_figure2_layer_alpha_heatmap(results_dir: Path, output_dir: Path):
 # ============================================================================
 
 def create_figure3_head_effects(results_dir: Path, output_dir: Path):
-    """Scatter plot of head indirect effects showing weak mediation."""
+    """Scatter plot of head indirect effects."""
     
     data = load_json(results_dir / "exp5/head_effects.json")
     
     layers = [d["layer"] for d in data]
     heads = [d["head"] for d in data]
     effects = [d["effect"] for d in data]
-    stds = [d.get("std", 0) for d in data]
     
     # Sort by absolute effect for top-50 highlighting
     abs_effects = [abs(e) for e in effects]
-    top_50_indices = np.argsort(abs_effects)[-50:]
+    top_50_indices = set(np.argsort(abs_effects)[-50:])
     
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
     
-    # Left: Scatter plot of all heads
-    colors = []
+    # Left: Scatter plot
     for i, (l, e) in enumerate(zip(layers, effects)):
         if i in top_50_indices:
-            if e < 0:
-                colors.append(COLORS['negative'])
-            else:
-                colors.append(COLORS['positive'])
+            color = COLORS['positive'] if e > 0 else COLORS['negative']
+            alpha = 0.9
+            size = 60
+            zorder = 3
         else:
-            colors.append(COLORS['neutral'])
+            color = COLORS['neutral']
+            alpha = 0.25
+            size = 20
+            zorder = 1
+        ax1.scatter(l, e, c=color, alpha=alpha, s=size, edgecolors='white', linewidths=0.5, zorder=zorder)
     
-    alphas = [0.9 if i in top_50_indices else 0.3 for i in range(len(effects))]
-    sizes = [50 if i in top_50_indices else 15 for i in range(len(effects))]
+    ax1.axhline(y=0, color=COLORS['text'], linestyle='--', linewidth=1.2, alpha=0.5)
     
-    for i in range(len(effects)):
-        ax1.scatter(layers[i], effects[i], c=colors[i], alpha=alphas[i], s=sizes[i], edgecolors='white', linewidths=0.5)
+    ax1.set_xlabel('Layer', fontsize=12, fontweight='medium')
+    ax1.set_ylabel('Indirect Effect', fontsize=12, fontweight='medium')
+    ax1.set_title('Per-Head Indirect Effects', fontsize=14, pad=10, fontweight='bold')
+    ax1.grid(alpha=0.3, color=COLORS['grid'], linestyle='-', linewidth=0.8)
     
-    ax1.axhline(y=0, color=COLORS['primary'], linestyle='--', linewidth=1, alpha=0.5)
-    ax1.axhline(y=0.1, color=COLORS['grid'], linestyle=':', linewidth=1, alpha=0.5)
-    ax1.axhline(y=-0.1, color=COLORS['grid'], linestyle=':', linewidth=1, alpha=0.5)
-    
-    ax1.set_xlabel('Layer', fontsize=12)
-    ax1.set_ylabel('Indirect Effect', fontsize=12)
-    ax1.set_title('Per-Head Indirect Effects (1024 heads)', fontsize=14, pad=10)
-    ax1.grid(alpha=0.3, color=COLORS['grid'])
-    
-    # Add legend
+    # Legend
     legend_elements = [
-        mpatches.Patch(facecolor=COLORS['positive'], alpha=0.9, label='Top-50 (positive)'),
-        mpatches.Patch(facecolor=COLORS['negative'], alpha=0.9, label='Top-50 (negative)'),
-        mpatches.Patch(facecolor=COLORS['neutral'], alpha=0.3, label='Other heads'),
+        mpatches.Patch(facecolor=COLORS['positive'], alpha=0.9, label='Top-50 (positive)', edgecolor='white'),
+        mpatches.Patch(facecolor=COLORS['negative'], alpha=0.9, label='Top-50 (negative)', edgecolor='white'),
+        mpatches.Patch(facecolor=COLORS['neutral'], alpha=0.25, label='Other heads', edgecolor='white'),
     ]
-    ax1.legend(handles=legend_elements, loc='upper right', framealpha=0.9)
+    ax1.legend(handles=legend_elements, loc='upper right', framealpha=0.95, edgecolor=COLORS['grid'])
     
-    # Right: Histogram of effects
-    ax2.hist(effects, bins=50, color=COLORS['secondary'], alpha=0.7, edgecolor='white', linewidth=0.5)
-    ax2.axvline(x=0, color=COLORS['primary'], linestyle='--', linewidth=2)
-    ax2.axvline(x=np.mean(effects), color=COLORS['negative'], linestyle='-', linewidth=2, 
+    # Right: Histogram
+    ax2.hist(effects, bins=50, color=COLORS['primary'], alpha=0.8, edgecolor='white', linewidth=0.8)
+    ax2.axvline(x=0, color=COLORS['text'], linestyle='--', linewidth=1.5, alpha=0.7)
+    ax2.axvline(x=np.mean(effects), color=COLORS['secondary'], linestyle='-', linewidth=2.5, 
                 label=f'Mean: {np.mean(effects):.4f}')
     
-    ax2.set_xlabel('Indirect Effect', fontsize=12)
-    ax2.set_ylabel('Count', fontsize=12)
-    ax2.set_title('Distribution of Indirect Effects', fontsize=14, pad=10)
-    ax2.legend(loc='upper right', framealpha=0.9)
-    ax2.grid(axis='y', alpha=0.3, color=COLORS['grid'])
+    ax2.set_xlabel('Indirect Effect', fontsize=12, fontweight='medium')
+    ax2.set_ylabel('Count', fontsize=12, fontweight='medium')
+    ax2.set_title('Distribution of Indirect Effects', fontsize=14, pad=10, fontweight='bold')
+    ax2.legend(loc='upper right', framealpha=0.95, edgecolor=COLORS['grid'])
+    ax2.grid(axis='y', alpha=0.3, color=COLORS['grid'], linestyle='-', linewidth=0.8)
     
-    # Add text box with key stats
-    textstr = f'Max |effect|: {max(abs_effects):.3f}\nMean: {np.mean(effects):.4f}\nStd: {np.std(effects):.4f}'
-    props = dict(boxstyle='round,pad=0.5', facecolor='white', alpha=0.9, edgecolor=COLORS['grid'])
-    ax2.text(0.98, 0.75, textstr, transform=ax2.transAxes, fontsize=10,
-            verticalalignment='top', horizontalalignment='right', bbox=props)
+    # Style spines
+    for ax in [ax1, ax2]:
+        for spine in ['bottom', 'left']:
+            ax.spines[spine].set_color(COLORS['text'])
+            ax.spines[spine].set_linewidth(1.2)
     
     plt.tight_layout()
     plt.savefig(output_dir / "fig3_head_indirect_effects.png")
     plt.savefig(output_dir / "fig3_head_indirect_effects.pdf")
     plt.close()
-    print(f"✓ Created Figure 3: Head Indirect Effects")
+    print(f"  Created Figure 3: Head Indirect Effects")
 
 
 # ============================================================================
@@ -279,224 +313,289 @@ def create_figure4_method_comparison(results_dir: Path, output_dir: Path):
     methods = []
     effects = []
     stds = []
-    colors = []
     
     # CAA (exp4)
     caa_data = load_json(results_dir / "exp4/exp4/alpha_sweep_results.json")
     best_caa = caa_data["per_alpha_results"]["16.0"]["results"]["baseline"]
-    methods.append("CAA\n(residual, α=16)")
+    methods.append("CAA\n(α=16)")
     effects.append(best_caa["mean_effect"])
     stds.append(best_caa["std_effect"] / np.sqrt(best_caa["n"]))
-    colors.append(COLORS['negative'])
     
     # CAA late-layer (exp4b)
     late_data = load_json(results_dir / "exp4/exp4/layer_alpha_sweep_results.json")
     best_late = late_data["per_config_results"]["L29_a16.0"]["results"]["baseline"]
-    methods.append("CAA Late-Layer\n(L29, α=16)")
+    methods.append("CAA Late\n(L29, α=16)")
     effects.append(best_late["mean_effect"])
     stds.append(best_late["std_effect"] / np.sqrt(best_late["n"]))
-    colors.append(COLORS['negative'])
     
     # CCM mean-diff (exp5)
     ccm_mean = load_json(results_dir / "exp5/evaluation_results.json")
-    methods.append("CCM Mean-Diff\n(top-50, α=1)")
+    methods.append("CCM\nMean-Diff")
     effects.append(ccm_mean["1.0"]["mean_effect"])
     stds.append(ccm_mean["1.0"]["std_effect"] / np.sqrt(ccm_mean["1.0"]["n"]))
-    colors.append(COLORS['negative'])
     
     # CCM patching (exp5c)
     if (results_dir / "exp5/evaluation_results_patching.json").exists():
         ccm_patch = load_json(results_dir / "exp5/evaluation_results_patching.json")
-        methods.append("CCM Patching\n(top-50, α=1)")
+        methods.append("CCM\nPatching")
         effects.append(ccm_patch["1.0"]["mean_effect"])
         stds.append(ccm_patch["1.0"]["std_effect"] / np.sqrt(ccm_patch["1.0"]["n"]))
-        colors.append(COLORS['negative'])
     
     # Full patching (exp5d)
     if (results_dir / "exp5/evaluation_results_patching_all_replace.json").exists():
         full_patch = load_json(results_dir / "exp5/evaluation_results_patching_all_replace.json")
-        methods.append("Full Patching\n(all 1024 heads)")
+        methods.append("Full Patch\n(1024 heads)")
         effects.append(full_patch["1.0"]["mean_effect"])
         stds.append(full_patch["1.0"]["std_effect"] / np.sqrt(full_patch["1.0"]["n"]))
-        colors.append(COLORS['negative'])
     
-    fig, ax = plt.subplots(figsize=(12, 7))
+    fig, ax = plt.subplots(figsize=(11, 6))
     
     x = np.arange(len(methods))
     
-    # Determine colors based on effect direction
+    # Color by effect direction
     bar_colors = [COLORS['negative'] if e < 0 else COLORS['positive'] for e in effects]
     
     bars = ax.bar(x, effects, color=bar_colors, alpha=0.85, 
                   yerr=stds, capsize=5,
-                  error_kw={'elinewidth': 2, 'capthick': 2},
+                  error_kw={'elinewidth': 2, 'capthick': 2, 'color': COLORS['text']},
                   edgecolor='white', linewidth=2)
     
     # Reference line
-    ax.axhline(y=0, color=COLORS['primary'], linestyle='-', linewidth=2, alpha=0.5)
+    ax.axhline(y=0, color=COLORS['text'], linestyle='-', linewidth=1.5, alpha=0.4)
     
-    # Add value labels
-    for i, (bar, effect) in enumerate(zip(bars, effects)):
-        height = bar.get_height()
-        offset = 0.015 if height < 0 else -0.015
-        va = 'top' if height < 0 else 'bottom'
-        ax.text(bar.get_x() + bar.get_width()/2., height + offset,
-                f'{effect:.3f}', ha='center', va=va, fontsize=11, fontweight='bold',
-                color=COLORS['text'])
-    
-    ax.set_ylabel('Effect on D_syc (Δ)', fontsize=13)
-    ax.set_title('All Steering Methods Fail on Llama-3.1-8B-Instruct', fontsize=15, pad=15)
+    ax.set_ylabel('Effect on D_syc (Δ)', fontsize=13, fontweight='medium')
+    ax.set_title('Comparison of Steering Methods', fontsize=15, pad=15, fontweight='bold')
     ax.set_xticks(x)
     ax.set_xticklabels(methods, fontsize=10)
     
-    # Annotations
-    ax.annotate('WRONG DIRECTION\n(increases sycophancy)', 
-                xy=(0.98, 0.15), xycoords='axes fraction',
-                fontsize=11, color=COLORS['negative'], style='italic', 
-                ha='right', fontweight='bold')
+    ax.set_ylim(-0.16, 0.06)
+    ax.grid(axis='y', alpha=0.4, color=COLORS['grid'], linestyle='-', linewidth=0.8)
     
-    ax.set_ylim(-0.18, 0.08)
-    ax.grid(axis='y', alpha=0.3, color=COLORS['grid'])
+    # Style spines
+    for spine in ['bottom', 'left']:
+        ax.spines[spine].set_color(COLORS['text'])
+        ax.spines[spine].set_linewidth(1.2)
     
     plt.tight_layout()
     plt.savefig(output_dir / "fig4_method_comparison.png")
     plt.savefig(output_dir / "fig4_method_comparison.pdf")
     plt.close()
-    print(f"✓ Created Figure 4: Method Comparison")
+    print(f"  Created Figure 4: Method Comparison")
 
 
 # ============================================================================
-# Figure 5: Summary Infographic
+# Figure 5: Alpha Sweep Detail (All Conditions)
 # ============================================================================
 
-def create_figure5_summary(results_dir: Path, output_dir: Path):
-    """Clean summary showing progression of failed approaches."""
+def create_figure5_alpha_sweep_detail(results_dir: Path, output_dir: Path):
+    """Detailed alpha sweep showing all three conditions."""
     
-    fig, ax = plt.subplots(figsize=(14, 8))
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, 10)
-    ax.axis('off')
+    data = load_json(results_dir / "exp4/exp4/alpha_sweep_results.json")
     
-    # Title
-    ax.text(5, 9.5, 'Systematic Failure of Activation Steering on Llama-3.1-8B-Instruct',
-            ha='center', va='top', fontsize=16, fontweight='bold', color=COLORS['text'])
+    alphas = []
+    baseline = []
+    attn_ablated = []
+    mlp_ablated = []
     
-    # Subtitle
-    ax.text(5, 8.9, 'Each approach was tested, failed, and informed the next experiment',
-            ha='center', va='top', fontsize=12, style='italic', color=COLORS['neutral'])
+    for alpha_str in ["4.0", "8.0", "16.0", "24.0"]:
+        result = data["per_alpha_results"][alpha_str]
+        alphas.append(float(alpha_str))
+        baseline.append(result["results"]["baseline"]["mean_effect"])
+        attn_ablated.append(result["results"]["all_attn_ablated"]["mean_effect"])
+        mlp_ablated.append(result["results"]["mlp_ablated"]["mean_effect"])
     
-    # Define the flow
-    experiments = [
-        {
-            'name': 'CAA Vectors',
-            'desc': 'Mean activation difference\nin residual stream',
-            'result': 'Wrong direction\n(effect: -0.065)',
-            'hypothesis': '"Wrong layer?"',
-        },
-        {
-            'name': 'Late-Layer CAA',
-            'desc': 'Inject at layers 29-31\n(following literature)',
-            'result': 'No effect / noise\n(effect: ~0)',
-            'hypothesis': '"Wrong component?"',
-        },
-        {
-            'name': 'CCM Head Selection',
-            'desc': 'Causal mediation to find\nrelevant attention heads',
-            'result': 'Weak mediators\n(max |IE| = 0.10)',
-            'hypothesis': '"Wrong steering?"',
-        },
-        {
-            'name': 'CCM Patching',
-            'desc': 'Activation patching\non selected heads',
-            'result': 'Wrong direction\n(effect: -0.079)',
-            'hypothesis': '"Wrong heads?"',
-        },
-        {
-            'name': 'Full Model Patch',
-            'desc': 'Patch ALL 1024 heads\nwith neutral activations',
-            'result': 'Wrong direction\n(effect: -0.107)',
-            'hypothesis': None,
-        },
-    ]
+    fig, ax = plt.subplots(figsize=(10, 6))
     
-    # Draw boxes
-    box_width = 1.6
-    box_height = 1.8
-    y_pos = 6.5
-    start_x = 0.5
-    gap = 0.3
+    x = np.arange(len(alphas))
+    width = 0.25
     
-    for i, exp in enumerate(experiments):
-        x = start_x + i * (box_width + gap)
-        
-        # Main box
-        rect = mpatches.FancyBboxPatch((x, y_pos - box_height/2), box_width, box_height,
-                                        boxstyle="round,pad=0.05,rounding_size=0.15",
-                                        facecolor='white', edgecolor=COLORS['primary'],
-                                        linewidth=2)
-        ax.add_patch(rect)
-        
-        # Experiment name
-        ax.text(x + box_width/2, y_pos + 0.7, exp['name'],
-                ha='center', va='center', fontsize=10, fontweight='bold',
-                color=COLORS['primary'])
-        
-        # Description
-        ax.text(x + box_width/2, y_pos + 0.2, exp['desc'],
-                ha='center', va='center', fontsize=8, color=COLORS['text'])
-        
-        # Result (in red box)
-        result_rect = mpatches.FancyBboxPatch((x + 0.1, y_pos - 0.75), box_width - 0.2, 0.6,
-                                              boxstyle="round,pad=0.02,rounding_size=0.1",
-                                              facecolor=COLORS['negative'], alpha=0.15,
-                                              edgecolor=COLORS['negative'], linewidth=1)
-        ax.add_patch(result_rect)
-        ax.text(x + box_width/2, y_pos - 0.45, exp['result'],
-                ha='center', va='center', fontsize=8, color=COLORS['negative'],
-                fontweight='medium')
-        
-        # Arrow and hypothesis to next
-        if exp['hypothesis']:
-            arrow_x = x + box_width + gap/2
-            ax.annotate('', xy=(arrow_x + gap/2 - 0.05, y_pos),
-                       xytext=(arrow_x - gap/2 + 0.05, y_pos),
-                       arrowprops=dict(arrowstyle='->', color=COLORS['secondary'],
-                                      lw=2, mutation_scale=15))
-            ax.text(arrow_x, y_pos + 0.5, exp['hypothesis'],
-                   ha='center', va='bottom', fontsize=8, style='italic',
-                   color=COLORS['secondary'])
+    bars1 = ax.bar(x - width, baseline, width, label='Baseline', 
+                   color=COLORS['negative'], alpha=0.85, edgecolor='white', linewidth=1.5)
+    bars2 = ax.bar(x, attn_ablated, width, label='Attn Ablated', 
+                   color=COLORS['neutral'], alpha=0.85, edgecolor='white', linewidth=1.5)
+    bars3 = ax.bar(x + width, mlp_ablated, width, label='MLP Ablated', 
+                   color=COLORS['secondary'], alpha=0.85, edgecolor='white', linewidth=1.5)
     
-    # Final conclusion box
-    conclusion_rect = mpatches.FancyBboxPatch((1, 2.8), 8, 1.5,
-                                              boxstyle="round,pad=0.1,rounding_size=0.2",
-                                              facecolor=COLORS['negative'], alpha=0.1,
-                                              edgecolor=COLORS['negative'], linewidth=3)
-    ax.add_patch(conclusion_rect)
+    ax.axhline(y=0, color=COLORS['text'], linestyle='-', linewidth=1.5, alpha=0.4)
     
-    ax.text(5, 3.8, 'CONCLUSION', ha='center', va='center',
-            fontsize=14, fontweight='bold', color=COLORS['negative'])
-    ax.text(5, 3.2, 'Llama-3.1-8B-Instruct is resistant to activation-based steering.\n'
-                    'Even patching ALL attention heads with neutral activations increases sycophancy.',
-            ha='center', va='center', fontsize=11, color=COLORS['text'])
+    ax.set_xlabel('Steering Strength (α)', fontsize=12, fontweight='medium')
+    ax.set_ylabel('Effect on D_syc (Δ)', fontsize=12, fontweight='medium')
+    ax.set_title('Steering Effects by Condition', fontsize=14, pad=15, fontweight='bold')
+    ax.set_xticks(x)
+    ax.set_xticklabels([f'{a:.0f}' for a in alphas])
     
-    # Key insight box
-    insight_rect = mpatches.FancyBboxPatch((1, 0.8), 8, 1.3,
-                                           boxstyle="round,pad=0.1,rounding_size=0.2",
-                                           facecolor=COLORS['secondary'], alpha=0.1,
-                                           edgecolor=COLORS['secondary'], linewidth=2)
-    ax.add_patch(insight_rect)
+    ax.legend(loc='lower left', framealpha=0.95, edgecolor=COLORS['grid'])
+    ax.grid(axis='y', alpha=0.4, color=COLORS['grid'], linestyle='-', linewidth=0.8)
     
-    ax.text(5, 1.7, 'KEY INSIGHT', ha='center', va='center',
-            fontsize=12, fontweight='bold', color=COLORS['secondary'])
-    ax.text(5, 1.15, 'RL-optimized vectors (GRPO) work on this model. Mean-difference methods (CAA, CCM) do not.\n'
-                     'The difference is optimization: extracted vectors capture correlation, not causation.',
-            ha='center', va='center', fontsize=10, color=COLORS['text'])
+    for spine in ['bottom', 'left']:
+        ax.spines[spine].set_color(COLORS['text'])
+        ax.spines[spine].set_linewidth(1.2)
     
     plt.tight_layout()
-    plt.savefig(output_dir / "fig5_summary_infographic.png")
-    plt.savefig(output_dir / "fig5_summary_infographic.pdf")
+    plt.savefig(output_dir / "fig5_alpha_sweep_detail.png")
+    plt.savefig(output_dir / "fig5_alpha_sweep_detail.pdf")
     plt.close()
-    print(f"✓ Created Figure 5: Summary Infographic")
+    print(f"  Created Figure 5: Alpha Sweep Detail")
+
+
+# ============================================================================
+# Figure 6: CCM Steering Sweep
+# ============================================================================
+
+def create_figure6_ccm_alpha_sweep(results_dir: Path, output_dir: Path):
+    """CCM steering results across alpha values."""
+    
+    ccm_mean = load_json(results_dir / "exp5/evaluation_results.json")
+    
+    alphas = []
+    effects = []
+    stds = []
+    
+    for alpha_str in ["1.0", "2.0", "4.0", "8.0"]:
+        if alpha_str in ccm_mean:
+            alphas.append(float(alpha_str))
+            effects.append(ccm_mean[alpha_str]["mean_effect"])
+            stds.append(ccm_mean[alpha_str]["std_effect"] / np.sqrt(ccm_mean[alpha_str]["n"]))
+    
+    fig, ax = plt.subplots(figsize=(9, 6))
+    
+    x = np.arange(len(alphas))
+    
+    bar_colors = [COLORS['negative'] if e < 0 else COLORS['positive'] for e in effects]
+    
+    bars = ax.bar(x, effects, color=bar_colors, alpha=0.85,
+                  yerr=stds, capsize=5,
+                  error_kw={'elinewidth': 2, 'capthick': 2, 'color': COLORS['text']},
+                  edgecolor='white', linewidth=2)
+    
+    ax.axhline(y=0, color=COLORS['text'], linestyle='-', linewidth=1.5, alpha=0.4)
+    
+    ax.set_xlabel('Steering Strength (α)', fontsize=12, fontweight='medium')
+    ax.set_ylabel('Effect on D_syc (Δ)', fontsize=12, fontweight='medium')
+    ax.set_title('CCM Mean-Diff Steering Results', fontsize=14, pad=15, fontweight='bold')
+    ax.set_xticks(x)
+    ax.set_xticklabels([f'{a:.0f}' for a in alphas])
+    
+    ax.grid(axis='y', alpha=0.4, color=COLORS['grid'], linestyle='-', linewidth=0.8)
+    
+    for spine in ['bottom', 'left']:
+        ax.spines[spine].set_color(COLORS['text'])
+        ax.spines[spine].set_linewidth(1.2)
+    
+    plt.tight_layout()
+    plt.savefig(output_dir / "fig6_ccm_alpha_sweep.png")
+    plt.savefig(output_dir / "fig6_ccm_alpha_sweep.pdf")
+    plt.close()
+    print(f"  Created Figure 6: CCM Alpha Sweep")
+
+
+# ============================================================================
+# Figure 7: Head Layer Distribution
+# ============================================================================
+
+def create_figure7_head_layer_distribution(results_dir: Path, output_dir: Path):
+    """Distribution of top heads by layer."""
+    
+    data = load_json(results_dir / "exp5/head_effects.json")
+    
+    layers = [d["layer"] for d in data]
+    effects = [d["effect"] for d in data]
+    
+    # Get top 50 heads
+    abs_effects = [abs(e) for e in effects]
+    top_50_indices = np.argsort(abs_effects)[-50:]
+    
+    top_layers = [layers[i] for i in top_50_indices]
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    # Count heads per layer
+    layer_counts = {}
+    for l in top_layers:
+        layer_counts[l] = layer_counts.get(l, 0) + 1
+    
+    all_layers = list(range(32))
+    counts = [layer_counts.get(l, 0) for l in all_layers]
+    
+    bars = ax.bar(all_layers, counts, color=COLORS['primary'], alpha=0.85, 
+                  edgecolor='white', linewidth=1)
+    
+    # Highlight early layers
+    for i, count in enumerate(counts):
+        if count > 0 and i < 10:
+            bars[i].set_color(COLORS['secondary'])
+    
+    ax.set_xlabel('Layer', fontsize=12, fontweight='medium')
+    ax.set_ylabel('Number of Top-50 Heads', fontsize=12, fontweight='medium')
+    ax.set_title('Top Mediating Heads by Layer', fontsize=14, pad=15, fontweight='bold')
+    ax.set_xticks(range(0, 32, 4))
+    
+    ax.grid(axis='y', alpha=0.4, color=COLORS['grid'], linestyle='-', linewidth=0.8)
+    
+    for spine in ['bottom', 'left']:
+        ax.spines[spine].set_color(COLORS['text'])
+        ax.spines[spine].set_linewidth(1.2)
+    
+    plt.tight_layout()
+    plt.savefig(output_dir / "fig7_head_layer_distribution.png")
+    plt.savefig(output_dir / "fig7_head_layer_distribution.pdf")
+    plt.close()
+    print(f"  Created Figure 7: Head Layer Distribution")
+
+
+# ============================================================================
+# Figure 8: Effect Size Comparison (Violin/Box)
+# ============================================================================
+
+def create_figure8_effect_distributions(results_dir: Path, output_dir: Path):
+    """Box plots showing effect distributions for different methods."""
+    
+    # Load per-example effects
+    ccm_mean = load_json(results_dir / "exp5/evaluation_results.json")
+    
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    # Prepare data
+    data_to_plot = []
+    labels = []
+    
+    for alpha_str in ["1.0", "2.0", "4.0", "8.0"]:
+        if alpha_str in ccm_mean and "effects" in ccm_mean[alpha_str]:
+            data_to_plot.append(ccm_mean[alpha_str]["effects"])
+            labels.append(f'α={float(alpha_str):.0f}')
+    
+    if data_to_plot:
+        bp = ax.boxplot(data_to_plot, labels=labels, patch_artist=True,
+                        medianprops={'color': COLORS['text'], 'linewidth': 2},
+                        whiskerprops={'color': COLORS['text'], 'linewidth': 1.2},
+                        capprops={'color': COLORS['text'], 'linewidth': 1.2},
+                        flierprops={'markerfacecolor': COLORS['neutral'], 'markeredgecolor': 'white', 
+                                   'markersize': 5, 'alpha': 0.6})
+        
+        # Color boxes
+        colors_box = [COLORS['negative'], COLORS['negative'], COLORS['neutral'], COLORS['positive']]
+        for patch, color in zip(bp['boxes'], colors_box[:len(bp['boxes'])]):
+            patch.set_facecolor(color)
+            patch.set_alpha(0.7)
+            patch.set_edgecolor('white')
+            patch.set_linewidth(1.5)
+        
+        ax.axhline(y=0, color=COLORS['text'], linestyle='--', linewidth=1.5, alpha=0.5)
+        
+        ax.set_xlabel('Steering Strength (α)', fontsize=12, fontweight='medium')
+        ax.set_ylabel('Per-Example Effect', fontsize=12, fontweight='medium')
+        ax.set_title('Effect Distribution by Alpha', fontsize=14, pad=15, fontweight='bold')
+        ax.grid(axis='y', alpha=0.4, color=COLORS['grid'], linestyle='-', linewidth=0.8)
+        
+        for spine in ['bottom', 'left']:
+            ax.spines[spine].set_color(COLORS['text'])
+            ax.spines[spine].set_linewidth(1.2)
+    
+    plt.tight_layout()
+    plt.savefig(output_dir / "fig8_effect_distributions.png")
+    plt.savefig(output_dir / "fig8_effect_distributions.pdf")
+    plt.close()
+    print(f"  Created Figure 8: Effect Distributions")
 
 
 # ============================================================================
@@ -509,14 +608,17 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
     
     print("\n" + "="*60)
-    print("Creating MATS Application Figures")
+    print("Creating MATS Figures (Okabe-Ito Palette)")
     print("="*60 + "\n")
     
     create_figure1_caa_effects(results_dir, output_dir)
     create_figure2_layer_alpha_heatmap(results_dir, output_dir)
     create_figure3_head_effects(results_dir, output_dir)
     create_figure4_method_comparison(results_dir, output_dir)
-    create_figure5_summary(results_dir, output_dir)
+    create_figure5_alpha_sweep_detail(results_dir, output_dir)
+    create_figure6_ccm_alpha_sweep(results_dir, output_dir)
+    create_figure7_head_layer_distribution(results_dir, output_dir)
+    create_figure8_effect_distributions(results_dir, output_dir)
     
     print("\n" + "="*60)
     print(f"All figures saved to: {output_dir}")
@@ -524,10 +626,9 @@ def main():
     
     # List created files
     print("Created files:")
-    for f in sorted(output_dir.glob("*")):
-        print(f"  • {f.name}")
+    for f in sorted(output_dir.glob("*.png")):
+        print(f"  {f.name}")
 
 
 if __name__ == "__main__":
     main()
-
