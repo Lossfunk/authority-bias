@@ -44,6 +44,14 @@ class HeadCache:
         tensor = self._store.get((key.example_id, key.layer_idx, key.head_idx))
         return tensor
 
+    def get_example(self, example_id: str) -> Dict[Tuple[int, int], torch.Tensor]:
+        """Return {(layer_idx, head_idx): tensor} for a given example_id."""
+        out: Dict[Tuple[int, int], torch.Tensor] = {}
+        for (ex_id, layer, head), tensor in self._store.items():
+            if ex_id == example_id:
+                out[(layer, head)] = tensor
+        return out
+
     def clear_example(self, example_id: str) -> None:
         to_delete = [k for k in self._store if k[0] == example_id]
         for key in to_delete:
@@ -64,6 +72,11 @@ class HeadPatchRegistry:
         self.cache = HeadCache()
         self.mean_ablation: Dict[int, Dict[int, torch.Tensor]] = {}
         self.ablation_pos_idx: Optional[int] = None
+        # Multi-head value patching (e.g. patch selected heads to cached neutral values)
+        self.value_patch: Dict[int, Dict[int, torch.Tensor]] = {}
+        self.value_patch_pos_idx: Optional[int] = None
+        self.value_patch_alpha: float = 1.0
+        self.value_patch_mode: str = "replace"  # "replace" | "interp"
         # MLP ablation state
         self.mlp_ablation_layers: Set[int] = set()
         self.mlp_ablation_mode: str = "zero"  # "zero" | "mean"
@@ -131,6 +144,33 @@ class HeadPatchRegistry:
         self.mean_ablation = {}
         self.ablation_pos_idx = None
 
+    def set_value_patch(
+        self,
+        values: Dict[Tuple[int, int], torch.Tensor],
+        pos_idx: int,
+        *,
+        alpha: float = 1.0,
+        mode: str = "replace",
+    ):
+        """Patch selected head outputs at a given position.
+
+        mode:
+          - "replace": set head output to cached value
+          - "interp": set head output to orig + alpha * (cached - orig)
+        """
+        self.value_patch = {}
+        for (layer, head), tensor in values.items():
+            self.value_patch.setdefault(layer, {})[head] = tensor.detach().cpu()
+        self.value_patch_pos_idx = pos_idx
+        self.value_patch_alpha = float(alpha)
+        self.value_patch_mode = mode
+
+    def clear_value_patch(self):
+        self.value_patch = {}
+        self.value_patch_pos_idx = None
+        self.value_patch_alpha = 1.0
+        self.value_patch_mode = "replace"
+
     def set_mlp_ablation(self, layers: List[int], mode: str = "zero", mean_cache: Optional[Dict[int, torch.Tensor]] = None):
         """Set which MLP layers to ablate and how."""
         self.mlp_ablation_layers = set(layers)
@@ -191,6 +231,21 @@ class HeadPatchRegistry:
                             )
                         attn_output = attn_output.clone()
                         attn_output[:, self.target_head, pos, :] = cached_tensor
+
+        value_patch_layer = self.value_patch.get(layer_idx) if self.value_patch else None
+        if value_patch_layer and self.value_patch_pos_idx is not None:
+            pos = min(self.value_patch_pos_idx, attn_output.shape[2] - 1)
+            num_heads = attn_output.shape[1]
+            attn_output = attn_output.clone()
+            for head_idx, target in value_patch_layer.items():
+                if head_idx >= num_heads:
+                    continue
+                target_tensor = target.to(attn_output.device)
+                if self.value_patch_mode == "interp":
+                    orig = attn_output[:, head_idx, pos, :].clone()
+                    attn_output[:, head_idx, pos, :] = orig + self.value_patch_alpha * (target_tensor - orig)
+                else:
+                    attn_output[:, head_idx, pos, :] = target_tensor
 
         ablation_layer = self.mean_ablation.get(layer_idx) if self.mean_ablation else None
         ablation_pos = self.ablation_pos_idx if self.ablation_pos_idx is not None else self.pos_idx
@@ -301,6 +356,22 @@ def mean_ablation_mode(
         yield registry
     finally:
         registry.clear_mean_ablation()
+
+
+@contextmanager
+def head_value_patch_mode(
+    registry: HeadPatchRegistry,
+    head_values: Dict[Tuple[int, int], torch.Tensor],
+    pos_idx: int,
+    *,
+    alpha: float = 1.0,
+    mode: str = "replace",
+):
+    registry.set_value_patch(head_values, pos_idx, alpha=alpha, mode=mode)
+    try:
+        yield registry
+    finally:
+        registry.clear_value_patch()
 
 
 def ensure_head_patching(model, registry: Optional[HeadPatchRegistry] = None, force: bool = False) -> HeadPatchRegistry:

@@ -12,7 +12,7 @@ Algorithm:
    - Measure change in D_syc (indirect effect)
 3. Rank heads by average indirect effect
 4. Select top-K heads for steering
-5. Apply head-specific steering vectors to selected heads
+5. Steer by patching selected head outputs towards the neutral prompt activations
 """
 
 from __future__ import annotations
@@ -67,6 +67,40 @@ class HeadEffect:
     effect: float  # Average indirect effect on D_syc
     std: float     # Standard deviation
     n: int         # Number of examples
+
+
+def load_head_effects(path: Path) -> List[HeadEffect]:
+    with path.open("r") as f:
+        data = json.load(f)
+    effects = []
+    for item in data:
+        effects.append(
+            HeadEffect(
+                layer=int(item["layer"]),
+                head=int(item["head"]),
+                effect=float(item["effect"]),
+                std=float(item.get("std", 0.0)),
+                n=int(item.get("n", 0)),
+            )
+        )
+    return effects
+
+
+def load_selected_heads(path: Path) -> List[HeadEffect]:
+    with path.open("r") as f:
+        data = json.load(f)
+    effects = []
+    for item in data:
+        effects.append(
+            HeadEffect(
+                layer=int(item["layer"]),
+                head=int(item["head"]),
+                effect=float(item.get("effect", 0.0)),
+                std=float(item.get("std", 0.0)),
+                n=int(item.get("n", 0)),
+            )
+        )
+    return effects
 
 
 def compute_head_indirect_effect(
@@ -192,105 +226,43 @@ def select_top_heads(
     return sorted_effects[:top_k]
 
 
-def compute_head_steering_vectors(
+def evaluate_head_patching_sweep(
     model,
     tokenizer,
     registry: HeadPatchRegistry,
     examples: List[SycophancyExample],
-    selected_heads: List[HeadEffect],
+    head_tuples: List[Tuple[int, int]],
+    alpha_values: List[float],
     device: torch.device,
-) -> Dict[Tuple[int, int], torch.Tensor]:
-    """
-    Compute steering vectors for selected heads.
-    
-    For each head, the steering vector is:
-    mean(head_output on neutral) - mean(head_output on user_wrong)
-    
-    Adding this vector should DECREASE sycophancy.
-    """
-    print(f"Computing steering vectors for {len(selected_heads)} selected heads...")
-    
-    head_dim = model.config.hidden_size // model.config.num_attention_heads
-    
-    # Accumulate head outputs
-    head_outputs_neutral: Dict[Tuple[int, int], List[torch.Tensor]] = {
-        (h.layer, h.head): [] for h in selected_heads
-    }
-    head_outputs_user_wrong: Dict[Tuple[int, int], List[torch.Tensor]] = {
-        (h.layer, h.head): [] for h in selected_heads
-    }
-    
-    for ex in tqdm(examples, desc="Collecting head outputs"):
+    *,
+    patch_mode: str = "interp",
+) -> Dict[str, Dict]:
+    """Evaluate steering by patching selected heads to cached neutral values."""
+    effects_by_alpha: Dict[float, List[float]] = {float(a): [] for a in alpha_values}
+
+    for ex in tqdm(examples, desc="Evaluating (activation patching)"):
         user_wrong_prompt = ex.user_wrong_prompt
         neutral_prompt = make_neutral_prompt(ex)
-        example_id = f"steering_{id(ex)}"
+        wrong_answer = ex.wrong_answer
+        right_answer = ex.correct_answer
         
         inputs_uw = tokenize_prompt(tokenizer, user_wrong_prompt, device)
         inputs_n = tokenize_prompt(tokenizer, neutral_prompt, device)
         pos_idx_uw = inputs_uw["input_ids"].shape[1] - 1
         pos_idx_n = inputs_n["input_ids"].shape[1] - 1
-        
-        # Cache from user_wrong
-        with cache_mode(registry, example_id, pos_idx_uw):
-            with torch.no_grad():
-                _ = model(**inputs_uw)
-        
-        # Extract cached values
-        for (layer, head) in head_outputs_user_wrong.keys():
-            from src.hooks.head_patch_hooks import HeadKey
-            key = HeadKey(example_id, layer, head)
-            cached = registry.cache.get(key)
-            if cached is not None:
-                head_outputs_user_wrong[(layer, head)].append(cached)
-        
-        registry.cache.clear_example(example_id)
-        
-        # Cache from neutral
-        with cache_mode(registry, example_id, pos_idx_n):
+
+        # Cache neutral activations at neutral decision point
+        with cache_mode(registry, ex.uid, pos_idx_n):
             with torch.no_grad():
                 _ = model(**inputs_n)
-        
-        # Extract cached values
-        for (layer, head) in head_outputs_neutral.keys():
-            from src.hooks.head_patch_hooks import HeadKey
-            key = HeadKey(example_id, layer, head)
-            cached = registry.cache.get(key)
-            if cached is not None:
-                head_outputs_neutral[(layer, head)].append(cached)
-        
-        registry.cache.clear_example(example_id)
-    
-    # Compute mean difference vectors
-    steering_vectors = {}
-    for (layer, head) in head_outputs_neutral.keys():
-        if head_outputs_neutral[(layer, head)] and head_outputs_user_wrong[(layer, head)]:
-            neutral_mean = torch.stack(head_outputs_neutral[(layer, head)]).mean(dim=0)
-            user_wrong_mean = torch.stack(head_outputs_user_wrong[(layer, head)]).mean(dim=0)
-            # Vector to steer AWAY from sycophancy
-            steering_vectors[(layer, head)] = neutral_mean - user_wrong_mean
-    
-    return steering_vectors
 
-
-def evaluate_head_steering(
-    model,
-    tokenizer,
-    registry: HeadPatchRegistry,
-    examples: List[SycophancyExample],
-    steering_vectors: Dict[Tuple[int, int], torch.Tensor],
-    alpha: float,
-    device: torch.device,
-) -> Dict:
-    """Evaluate steering by applying vectors to selected heads."""
-    effects = []
-    
-    for ex in tqdm(examples, desc=f"Evaluating (alpha={alpha})"):
-        user_wrong_prompt = ex.user_wrong_prompt
-        wrong_answer = ex.wrong_answer
-        right_answer = ex.correct_answer
-        
-        inputs = tokenize_prompt(tokenizer, user_wrong_prompt, device)
-        pos_idx = inputs["input_ids"].shape[1] - 1
+        cached_all = registry.cache.get_example(ex.uid)
+        if len(head_tuples) == len(cached_all):
+            head_values = cached_all
+        else:
+            wanted = set(head_tuples)
+            head_values = {k: v for k, v in cached_all.items() if k in wanted}
+        registry.cache.clear_example(ex.uid)
         
         # Baseline D_syc
         base_metric = compute_D_syc(
@@ -302,35 +274,38 @@ def evaluate_head_steering(
             device=device,
         )
         base_d_syc = base_metric["D_syc"]
-        
-        # Steered D_syc using mean ablation with steering vectors
-        scaled_vectors = {k: v * alpha for k, v in steering_vectors.items()}
-        registry.set_mean_ablation(scaled_vectors, pos_idx)
-        
+
+        # Keep patch active and just sweep alpha (avoids rebuilding large dicts per alpha)
+        registry.set_value_patch(head_values, pos_idx_uw, alpha=float(alpha_values[0]), mode=patch_mode)
         try:
-            steered_metric = compute_D_syc(
-                model=model,
-                tokenizer=tokenizer,
-                prompt_text=user_wrong_prompt,
-                wrong_answer=wrong_answer,
-                right_answer=right_answer,
-                device=device,
-            )
-            steered_d_syc = steered_metric["D_syc"]
+            for alpha in alpha_values:
+                registry.value_patch_alpha = float(alpha)
+                steered_metric = compute_D_syc(
+                    model=model,
+                    tokenizer=tokenizer,
+                    prompt_text=user_wrong_prompt,
+                    wrong_answer=wrong_answer,
+                    right_answer=right_answer,
+                    device=device,
+                )
+                steered_d_syc = steered_metric["D_syc"]
+                effect = base_d_syc - steered_d_syc  # Positive = reduced sycophancy
+                effects_by_alpha[float(alpha)].append(float(effect))
         finally:
-            registry.clear_mean_ablation()
-        
-        effect = base_d_syc - steered_d_syc  # Positive = reduced sycophancy
-        effects.append(effect)
-    
-    effects_tensor = torch.tensor(effects)
-    return {
-        "alpha": alpha,
-        "n": len(effects),
-        "mean_effect": float(effects_tensor.mean()),
-        "std_effect": float(effects_tensor.std()),
-        "effects": [float(e) for e in effects],
-    }
+            registry.clear_value_patch()
+
+    results: Dict[str, Dict] = {}
+    for alpha in alpha_values:
+        vals = effects_by_alpha[float(alpha)]
+        effects_tensor = torch.tensor(vals)
+        results[str(alpha)] = {
+            "alpha": float(alpha),
+            "n": len(vals),
+            "mean_effect": float(effects_tensor.mean()),
+            "std_effect": float(effects_tensor.std()),
+            "effects": [float(e) for e in vals],
+        }
+    return results
 
 
 def main():
@@ -372,27 +347,34 @@ def main():
     
     output_dir = Path(ccm_cfg["output_dir"])
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    reuse_cached = bool(ccm_cfg.get("reuse_cached", True))
+    head_effects_path = output_dir / "head_effects.json"
+    selected_heads_path = output_dir / "selected_heads.json"
     
     # Step 1: Compute indirect effects for all heads
     print("\n" + "="*60)
     print("STEP 1: Computing indirect effects for all attention heads")
     print("="*60)
-    
-    all_effects = compute_all_head_effects(
-        model=model,
-        tokenizer=tokenizer,
-        registry=registry,
-        examples=mediation_examples,
-        device=device,
-    )
-    
-    # Save all effects
-    effects_data = [
-        {"layer": e.layer, "head": e.head, "effect": e.effect, "std": e.std, "n": e.n}
-        for e in all_effects
-    ]
-    with (output_dir / "head_effects.json").open("w") as f:
-        json.dump(effects_data, f, indent=2)
+
+    if reuse_cached and head_effects_path.exists():
+        print(f"Reusing cached head effects from {head_effects_path}")
+        all_effects = load_head_effects(head_effects_path)
+    else:
+        all_effects = compute_all_head_effects(
+            model=model,
+            tokenizer=tokenizer,
+            registry=registry,
+            examples=mediation_examples,
+            device=device,
+        )
+
+        effects_data = [
+            {"layer": e.layer, "head": e.head, "effect": e.effect, "std": e.std, "n": e.n}
+            for e in all_effects
+        ]
+        with head_effects_path.open("w") as f:
+            json.dump(effects_data, f, indent=2)
     
     # Step 2: Select top-K heads
     print("\n" + "="*60)
@@ -400,7 +382,12 @@ def main():
     print("="*60)
     
     top_k = ccm_cfg.get("top_k_heads", 50)
-    selected_heads = select_top_heads(all_effects, top_k)
+
+    if reuse_cached and selected_heads_path.exists():
+        print(f"Reusing cached selected heads from {selected_heads_path}")
+        selected_heads = load_selected_heads(selected_heads_path)
+    else:
+        selected_heads = select_top_heads(all_effects, top_k)
     
     print(f"\nTop {len(selected_heads)} heads by indirect effect:")
     print(f"{'Layer':<6} {'Head':<6} {'Effect':<12} {'Std':<12}")
@@ -413,73 +400,73 @@ def main():
         {"layer": h.layer, "head": h.head, "effect": h.effect, "std": h.std}
         for h in selected_heads
     ]
-    with (output_dir / "selected_heads.json").open("w") as f:
+    with selected_heads_path.open("w") as f:
         json.dump(selected_data, f, indent=2)
     
-    # Step 3: Compute steering vectors for selected heads
+    # Step 3: Evaluate steering via activation patching
     print("\n" + "="*60)
-    print("STEP 3: Computing steering vectors")
+    print("STEP 3: Evaluating steering effectiveness (activation patching)")
     print("="*60)
     
-    steering_vectors = compute_head_steering_vectors(
-        model=model,
-        tokenizer=tokenizer,
-        registry=registry,
-        examples=mediation_examples,
-        selected_heads=selected_heads,
-        device=device,
-    )
-    
-    # Save steering vectors
-    vectors_to_save = {f"L{k[0]}_H{k[1]}": v.tolist() for k, v in steering_vectors.items()}
-    with (output_dir / "steering_vectors.json").open("w") as f:
-        json.dump(vectors_to_save, f, indent=2)
-    
-    # Step 4: Evaluate steering
-    print("\n" + "="*60)
-    print("STEP 4: Evaluating steering effectiveness")
-    print("="*60)
-    
-    alpha_values = ccm_cfg.get("alpha_sweep", [1.0, 2.0, 4.0, 8.0])
-    all_results = {}
-    
-    for alpha in alpha_values:
-        print(f"\nAlpha = {alpha}")
-        result = evaluate_head_steering(
+    def _all_head_tuples() -> List[Tuple[int, int]]:
+        return [(l, h) for l in range(model.config.num_hidden_layers) for h in range(model.config.num_attention_heads)]
+
+    # Optional: run multiple evaluation variants without re-loading the model.
+    eval_variants = ccm_cfg.get("eval_variants")
+    if not eval_variants:
+        eval_variants = [
+            {
+                "name": "selected",
+                "head_set": "selected",
+                "patch_mode": ccm_cfg.get("patch_eval_mode", "interp"),
+                "alpha_sweep": ccm_cfg.get("alpha_sweep", [1.0, 2.0, 4.0, 8.0]),
+            }
+        ]
+
+    for variant in eval_variants:
+        variant_name = str(variant.get("name", "variant"))
+        head_set = str(variant.get("head_set", "selected"))
+        patch_eval_mode = str(variant.get("patch_mode", "interp"))
+        alpha_values = [float(a) for a in variant.get("alpha_sweep", [1.0, 2.0, 4.0, 8.0])]
+
+        if head_set == "all":
+            head_tuples = _all_head_tuples()
+        else:
+            head_tuples = [(h.layer, h.head) for h in selected_heads]
+
+        print("\n" + "-" * 60)
+        print(f"EVAL VARIANT: {variant_name}  (head_set={head_set}, patch_mode={patch_eval_mode})")
+        print("-" * 60)
+
+        all_results = evaluate_head_patching_sweep(
             model=model,
             tokenizer=tokenizer,
             registry=registry,
             examples=eval_examples,
-            steering_vectors=steering_vectors,
-            alpha=alpha,
+            head_tuples=head_tuples,
+            alpha_values=alpha_values,
             device=device,
+            patch_mode=patch_eval_mode,
         )
-        all_results[str(alpha)] = result
-        print(f"  Effect: {result['mean_effect']:+.4f} ± {result['std_effect']:.4f}")
+
+        for alpha in alpha_values:
+            result = all_results[str(alpha)]
+            print(f"\nAlpha = {alpha}")
+            print(f"  Effect: {result['mean_effect']:+.4f} ± {result['std_effect']:.4f}")
+
+        results_path = output_dir / f"evaluation_results_patching_{variant_name}.json"
+        with results_path.open("w") as f:
+            json.dump(all_results, f, indent=2)
+
+        best_alpha = None
+        best_effect = -float("inf")
+        for alpha_str, result in all_results.items():
+            effect = result["mean_effect"]
+            if effect > best_effect:
+                best_effect = effect
+                best_alpha = alpha_str
+        print(f"\nBest alpha for {variant_name}: {best_alpha} (effect: {best_effect:+.4f})")
     
-    # Save results
-    with (output_dir / "evaluation_results.json").open("w") as f:
-        json.dump(all_results, f, indent=2)
-    
-    # Summary
-    print("\n" + "="*60)
-    print("SUMMARY")
-    print("="*60)
-    print(f"\n{'Alpha':<8} {'Effect':<12} {'Std':<12}")
-    print("-" * 32)
-    
-    best_alpha = None
-    best_effect = -float("inf")
-    
-    for alpha_str, result in all_results.items():
-        effect = result["mean_effect"]
-        std = result["std_effect"]
-        print(f"{alpha_str:<8} {effect:+.4f}       {std:.4f}")
-        if effect > best_effect:
-            best_effect = effect
-            best_alpha = alpha_str
-    
-    print(f"\nBest alpha: {best_alpha} (effect: {best_effect:+.4f})")
     print(f"\nResults saved to {output_dir}")
 
 

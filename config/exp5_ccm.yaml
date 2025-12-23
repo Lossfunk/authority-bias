@@ -16,6 +16,18 @@ ccm:
   
   # Steering settings  
   alpha_sweep: [1.0, 2.0, 4.0, 8.0]
+
+  # Option C diagnostics: activation patching variants
+  # Run multiple evaluations back-to-back without recomputing head effects.
+  eval_variants:
+    - name: selected_replace
+      head_set: selected
+      patch_mode: replace
+      alpha_sweep: [1.0]
+    - name: all_replace
+      head_set: all
+      patch_mode: replace
+      alpha_sweep: [1.0]
   
   # Evaluation
   num_eval_examples: 200
