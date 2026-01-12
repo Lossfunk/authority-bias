@@ -1,12 +1,16 @@
 seed: 42
 
 model:
-  name: meta-llama/Llama-3.1-8B-Instruct
+  name: meta-llama/Llama-3.1-8B
   device: auto
   dtype: auto
 
 dataset:
+  # Raw dataset used to (re)create split files if missing.
+  # This path exists in the Modal image because the repo's external/ directory is included in the build context.
+  raw_path: external/sycophancy-eval/datasets/answer.jsonl
   split_a_path: data/split_A_user_wrong.jsonl  # For computing mediation effects
+  split_b_path: data/split_B_user_wrong.jsonl
   split_c_path: data/split_C_user_wrong.jsonl  # For evaluation
 
 ccm:
@@ -32,4 +36,4 @@ ccm:
   # Evaluation
   num_eval_examples: 200
   
-  output_dir: llama-results/exp5
+  output_dir: llama-results/exp5_llama31_base

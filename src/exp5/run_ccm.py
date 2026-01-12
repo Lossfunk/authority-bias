@@ -27,7 +27,12 @@ import torch
 import yaml
 from tqdm import tqdm
 
-from src.data.syc_dataset import load_user_wrong_split, make_neutral_prompt, SycophancyExample
+from src.data.syc_dataset import (
+    ensure_splits_exist,
+    load_user_wrong_split,
+    make_neutral_prompt,
+    SycophancyExample,
+)
 from src.hooks.head_patch_hooks import (
     HeadPatchRegistry,
     ensure_full_instrumentation,
@@ -331,9 +336,29 @@ def main():
     # Load data
     dataset_cfg = cfg["dataset"]
     ccm_cfg = cfg["ccm"]
+
+    raw_path = Path(dataset_cfg.get("raw_path", "external/sycophancy-eval/datasets/answer.jsonl"))
+    split_a_path = Path(dataset_cfg["split_a_path"])
+    split_b_path = Path(dataset_cfg.get("split_b_path", "data/split_B_user_wrong.jsonl"))
+    split_c_path = Path(dataset_cfg["split_c_path"])
+
+    if not raw_path.exists():
+        raise FileNotFoundError(
+            f"Missing raw dataset at {raw_path}. "
+            "Either set dataset.raw_path in config/exp5_ccm.yaml to a file that exists in the container, "
+            "or upload answer.jsonl to the Modal volume (e.g. /volume/data/answer.jsonl) and point raw_path to data/answer.jsonl."
+        )
+
+    ensure_splits_exist(
+        raw_path=raw_path,
+        split_a_path=split_a_path,
+        split_b_path=split_b_path,
+        split_c_path=split_c_path,
+        seed=seed,
+    )
     
-    split_a = load_user_wrong_split(Path(dataset_cfg["split_a_path"]))
-    split_c = load_user_wrong_split(Path(dataset_cfg["split_c_path"]))
+    split_a = load_user_wrong_split(split_a_path)
+    split_c = load_user_wrong_split(split_c_path)
     
     # Limit examples
     num_mediation = ccm_cfg.get("num_mediation_examples", 100)

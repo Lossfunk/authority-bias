@@ -67,6 +67,15 @@ plt.rcParams.update({
 })
 
 
+SAVE_PDF = False
+
+
+def save_figure(output_dir: Path, filename_stem: str):
+    plt.savefig(output_dir / f"{filename_stem}.png")
+    if SAVE_PDF:
+        plt.savefig(output_dir / f"{filename_stem}.pdf")
+
+
 def load_json(path: Path) -> Dict:
     with open(path, 'r') as f:
         return json.load(f)
@@ -161,8 +170,7 @@ def create_figure1_caa_effects(results_dir: Path, output_dir: Path):
         ax.spines[spine].set_linewidth(1.2)
     
     plt.tight_layout()
-    plt.savefig(output_dir / "fig1_caa_steering_effects.png")
-    plt.savefig(output_dir / "fig1_caa_steering_effects.pdf")
+    save_figure(output_dir, "fig1_caa_steering_effects")
     plt.close()
     print(f"  Created Figure 1: CAA Steering Effects")
 
@@ -223,8 +231,7 @@ def create_figure2_layer_alpha_heatmap(results_dir: Path, output_dir: Path):
     cbar.outline.set_linewidth(1.2)
     
     plt.tight_layout()
-    plt.savefig(output_dir / "fig2_layer_alpha_heatmap.png")
-    plt.savefig(output_dir / "fig2_layer_alpha_heatmap.pdf")
+    save_figure(output_dir, "fig2_layer_alpha_heatmap")
     plt.close()
     print(f"  Created Figure 2: Layer-Alpha Heatmap")
 
@@ -296,8 +303,7 @@ def create_figure3_head_effects(results_dir: Path, output_dir: Path):
             ax.spines[spine].set_linewidth(1.2)
     
     plt.tight_layout()
-    plt.savefig(output_dir / "fig3_head_indirect_effects.png")
-    plt.savefig(output_dir / "fig3_head_indirect_effects.pdf")
+    save_figure(output_dir, "fig3_head_indirect_effects")
     plt.close()
     print(f"  Created Figure 3: Head Indirect Effects")
 
@@ -313,40 +319,62 @@ def create_figure4_method_comparison(results_dir: Path, output_dir: Path):
     methods = []
     effects = []
     stds = []
+    hatches = []
+
+    def add_method(label: str, mean_effect: float, std_effect: float, n: int, hatch: str = ""):
+        methods.append(label)
+        effects.append(mean_effect)
+        stds.append(std_effect / np.sqrt(n))
+        hatches.append(hatch)
+
+    def add_eval_method(label: str, eval_path: Path, alpha_key: str = "1.0", hatch: str = ""):
+        if not eval_path.exists():
+            return
+        data = load_json(eval_path)
+        if alpha_key not in data:
+            return
+        rec = data[alpha_key]
+        add_method(label, rec["mean_effect"], rec["std_effect"], rec["n"], hatch=hatch)
     
     # CAA (exp4)
     caa_data = load_json(results_dir / "exp4/exp4/alpha_sweep_results.json")
     best_caa = caa_data["per_alpha_results"]["16.0"]["results"]["baseline"]
-    methods.append("CAA\n(α=16)")
-    effects.append(best_caa["mean_effect"])
-    stds.append(best_caa["std_effect"] / np.sqrt(best_caa["n"]))
+    add_method("CAA\n(α=16)", best_caa["mean_effect"], best_caa["std_effect"], best_caa["n"])
     
     # CAA late-layer (exp4b)
     late_data = load_json(results_dir / "exp4/exp4/layer_alpha_sweep_results.json")
     best_late = late_data["per_config_results"]["L29_a16.0"]["results"]["baseline"]
-    methods.append("CAA Late\n(L29, α=16)")
-    effects.append(best_late["mean_effect"])
-    stds.append(best_late["std_effect"] / np.sqrt(best_late["n"]))
+    add_method("CAA Late\n(L29, α=16)", best_late["mean_effect"], best_late["std_effect"], best_late["n"])
     
     # CCM mean-diff (exp5)
-    ccm_mean = load_json(results_dir / "exp5/evaluation_results.json")
-    methods.append("CCM\nMean-Diff")
-    effects.append(ccm_mean["1.0"]["mean_effect"])
-    stds.append(ccm_mean["1.0"]["std_effect"] / np.sqrt(ccm_mean["1.0"]["n"]))
+    add_eval_method("CCM\nMean-Diff", results_dir / "exp5/evaluation_results.json")
     
     # CCM patching (exp5c)
     if (results_dir / "exp5/evaluation_results_patching.json").exists():
-        ccm_patch = load_json(results_dir / "exp5/evaluation_results_patching.json")
-        methods.append("CCM\nPatching")
-        effects.append(ccm_patch["1.0"]["mean_effect"])
-        stds.append(ccm_patch["1.0"]["std_effect"] / np.sqrt(ccm_patch["1.0"]["n"]))
+        add_eval_method("CCM\nPatching", results_dir / "exp5/evaluation_results_patching.json")
     
-    # Full patching (exp5d)
-    if (results_dir / "exp5/evaluation_results_patching_all_replace.json").exists():
-        full_patch = load_json(results_dir / "exp5/evaluation_results_patching_all_replace.json")
-        methods.append("Full Patch\n(1024 heads)")
-        effects.append(full_patch["1.0"]["mean_effect"])
-        stds.append(full_patch["1.0"]["std_effect"] / np.sqrt(full_patch["1.0"]["n"]))
+    # Replace-mode patching (Instruct)
+    add_eval_method(
+        "Patch Top-50\n(Instruct)",
+        results_dir / "exp5/evaluation_results_patching_selected_replace.json",
+    )
+    add_eval_method(
+        "Patch All\n(1024, Instruct)",
+        results_dir / "exp5/evaluation_results_patching_all_replace.json",
+    )
+
+    # Replace-mode patching (Base)
+    base_dir = results_dir / "exp5_llama31_base"
+    add_eval_method(
+        "Patch Top-50\n(Base)",
+        base_dir / "evaluation_results_patching_selected_replace.json",
+        hatch="///",
+    )
+    add_eval_method(
+        "Patch All\n(1024, Base)",
+        base_dir / "evaluation_results_patching_all_replace.json",
+        hatch="///",
+    )
     
     fig, ax = plt.subplots(figsize=(11, 6))
     
@@ -355,10 +383,14 @@ def create_figure4_method_comparison(results_dir: Path, output_dir: Path):
     # Color by effect direction
     bar_colors = [COLORS['negative'] if e < 0 else COLORS['positive'] for e in effects]
     
-    bars = ax.bar(x, effects, color=bar_colors, alpha=0.85, 
+    bars = ax.bar(x, effects, color=bar_colors, alpha=0.85,
                   yerr=stds, capsize=5,
                   error_kw={'elinewidth': 2, 'capthick': 2, 'color': COLORS['text']},
                   edgecolor='white', linewidth=2)
+
+    for bar, hatch in zip(bars, hatches):
+        if hatch:
+            bar.set_hatch(hatch)
     
     # Reference line
     ax.axhline(y=0, color=COLORS['text'], linestyle='-', linewidth=1.5, alpha=0.4)
@@ -368,7 +400,7 @@ def create_figure4_method_comparison(results_dir: Path, output_dir: Path):
     ax.set_xticks(x)
     ax.set_xticklabels(methods, fontsize=10)
     
-    ax.set_ylim(-0.16, 0.06)
+    ax.set_ylim(-0.16, 0.08)
     ax.grid(axis='y', alpha=0.4, color=COLORS['grid'], linestyle='-', linewidth=0.8)
     
     # Style spines
@@ -377,8 +409,7 @@ def create_figure4_method_comparison(results_dir: Path, output_dir: Path):
         ax.spines[spine].set_linewidth(1.2)
     
     plt.tight_layout()
-    plt.savefig(output_dir / "fig4_method_comparison.png")
-    plt.savefig(output_dir / "fig4_method_comparison.pdf")
+    save_figure(output_dir, "fig4_method_comparison")
     plt.close()
     print(f"  Created Figure 4: Method Comparison")
 
@@ -432,10 +463,254 @@ def create_figure5_alpha_sweep_detail(results_dir: Path, output_dir: Path):
         ax.spines[spine].set_linewidth(1.2)
     
     plt.tight_layout()
-    plt.savefig(output_dir / "fig5_alpha_sweep_detail.png")
-    plt.savefig(output_dir / "fig5_alpha_sweep_detail.pdf")
+    save_figure(output_dir, "fig5_alpha_sweep_detail")
     plt.close()
     print(f"  Created Figure 5: Alpha Sweep Detail")
+
+
+# ============================================================================
+# Figure 5b: Summary Infographic (Systematic Failure + Base Contrast)
+# ============================================================================
+
+def create_figure5_summary_infographic(results_dir: Path, output_dir: Path):
+    """Narrative infographic summarizing failures + Base comparison."""
+
+    # Key numbers
+    caa_data = load_json(results_dir / "exp4/exp4/alpha_sweep_results.json")
+    caa_effect = caa_data["per_alpha_results"]["16.0"]["results"]["baseline"]["mean_effect"]
+
+    late_data = load_json(results_dir / "exp4/exp4/layer_alpha_sweep_results.json")
+    late_effect = late_data["per_config_results"]["L29_a16.0"]["results"]["baseline"]["mean_effect"]
+
+    head_effects = load_json(results_dir / "exp5/head_effects.json")
+    max_abs_ie = max(abs(d["effect"]) for d in head_effects)
+
+    ccm_patch = load_json(results_dir / "exp5/evaluation_results_patching.json")
+    ccm_patch_effect = ccm_patch["1.0"]["mean_effect"]
+
+    full_instruct = load_json(results_dir / "exp5/evaluation_results_patching_all_replace.json")
+    full_instruct_effect = full_instruct["1.0"]["mean_effect"]
+
+    full_base = load_json(results_dir / "exp5_llama31_base/evaluation_results_patching_all_replace.json")
+    full_base_effect = full_base["1.0"]["mean_effect"]
+
+    fig = plt.figure(figsize=(14, 4.6))
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.set_axis_off()
+
+    # Title
+    ax.text(
+        0.5,
+        0.93,
+        "Systematic Failure of Activation Steering on Llama-3.1-8B-Instruct",
+        ha="center",
+        va="center",
+        fontsize=15,
+        fontweight="bold",
+        color=COLORS["text"],
+    )
+    ax.text(
+        0.5,
+        0.885,
+        "All attention-based interventions fail; Base model flips sign under full patching",
+        ha="center",
+        va="center",
+        fontsize=10.5,
+        color="#6B7280",
+    )
+
+    def fmt_delta(x: float) -> str:
+        return f"{x:+.3f}"
+
+    def draw_method_box(
+        x: float,
+        y: float,
+        w: float,
+        h: float,
+        title: str,
+        subtitle: str,
+        result: str,
+        result_fill: str,
+    ):
+        outer = FancyBboxPatch(
+            (x, y),
+            w,
+            h,
+            boxstyle="round,pad=0.01,rounding_size=0.02",
+            facecolor="white",
+            edgecolor=COLORS["text"],
+            linewidth=1.4,
+        )
+        ax.add_patch(outer)
+
+        ax.text(
+            x + w / 2,
+            y + h * 0.78,
+            title,
+            ha="center",
+            va="center",
+            fontsize=9.5,
+            fontweight="bold",
+            color=COLORS["text"],
+        )
+        ax.text(
+            x + w / 2,
+            y + h * 0.60,
+            subtitle,
+            ha="center",
+            va="center",
+            fontsize=8.5,
+            color="#6B7280",
+            wrap=True,
+        )
+
+        inner = FancyBboxPatch(
+            (x + w * 0.08, y + h * 0.14),
+            w * 0.84,
+            h * 0.30,
+            boxstyle="round,pad=0.01,rounding_size=0.02",
+            facecolor=result_fill,
+            edgecolor="none",
+            alpha=0.25,
+        )
+        ax.add_patch(inner)
+        ax.text(
+            x + w / 2,
+            y + h * 0.29,
+            result,
+            ha="center",
+            va="center",
+            fontsize=9,
+            fontweight="bold",
+            color=result_fill,
+        )
+
+    # Layout
+    y_top = 0.58
+    box_h = 0.23
+    box_w = 0.14
+    gap = 0.02
+    x0 = 0.03
+    xs = [x0 + i * (box_w + gap) for i in range(6)]
+
+    draw_method_box(
+        xs[0],
+        y_top,
+        box_w,
+        box_h,
+        "CAA Vectors",
+        "Mean activation diff\nin residual stream",
+        f"Wrong dir\n(Δ={fmt_delta(caa_effect)})",
+        COLORS["negative"],
+    )
+    draw_method_box(
+        xs[1],
+        y_top,
+        box_w,
+        box_h,
+        "Late-Layer CAA",
+        "Inject at last layers\n(L29–31)",
+        f"No effect / wrong\n(Δ={fmt_delta(late_effect)})",
+        COLORS["negative"],
+    )
+    draw_method_box(
+        xs[2],
+        y_top,
+        box_w,
+        box_h,
+        "CCM Head Selection",
+        "Rank heads by\nindirect effect",
+        f"Weak mediators\n(max |IE|≈{max_abs_ie:.2f})",
+        COLORS["secondary"],
+    )
+    draw_method_box(
+        xs[3],
+        y_top,
+        box_w,
+        box_h,
+        "CCM Patching",
+        "Activation patching\non top-50 heads",
+        f"Wrong dir\n(Δ={fmt_delta(ccm_patch_effect)})",
+        COLORS["negative"],
+    )
+    draw_method_box(
+        xs[4],
+        y_top,
+        box_w,
+        box_h,
+        "Full Model Patch",
+        "Patch ALL 1024 heads\n(Instruct)",
+        f"Wrong dir\n(Δ={fmt_delta(full_instruct_effect)})",
+        COLORS["negative"],
+    )
+    draw_method_box(
+        xs[5],
+        y_top,
+        box_w,
+        box_h,
+        "Base Check",
+        "Patch ALL 1024 heads\n(Base)",
+        f"Correct dir\n(Δ={fmt_delta(full_base_effect)})",
+        COLORS["positive"],
+    )
+
+    # Arrows
+    y_mid = y_top + box_h * 0.52
+    for i in range(5):
+        ax.annotate(
+            "",
+            xy=(xs[i + 1] - gap * 0.2, y_mid),
+            xytext=(xs[i] + box_w + gap * 0.2, y_mid),
+            arrowprops=dict(arrowstyle="->", color=COLORS["neutral"], lw=2),
+        )
+
+    # Conclusion + Key Insight
+    concl = FancyBboxPatch(
+        (0.03, 0.27),
+        0.94,
+        0.16,
+        boxstyle="round,pad=0.01,rounding_size=0.02",
+        facecolor=COLORS["negative"],
+        edgecolor="none",
+        alpha=0.12,
+    )
+    ax.add_patch(concl)
+    ax.text(0.5, 0.38, "CONCLUSION", ha="center", va="center", fontsize=11, fontweight="bold", color=COLORS["negative"])
+    ax.text(
+        0.5,
+        0.315,
+        "Instruct is resistant/inverted: even patching ALL attention heads increases sycophancy (Δ = -0.107).\n"
+        "Base moves in the intended direction under the same patch (Δ = +0.035), but the effect is weak/noisy.",
+        ha="center",
+        va="center",
+        fontsize=9.5,
+        color=COLORS["text"],
+    )
+
+    insight = FancyBboxPatch(
+        (0.03, 0.08),
+        0.94,
+        0.14,
+        boxstyle="round,pad=0.01,rounding_size=0.02",
+        facecolor=COLORS["neutral"],
+        edgecolor="none",
+        alpha=0.16,
+    )
+    ax.add_patch(insight)
+    ax.text(0.5, 0.16, "KEY INSIGHT", ha="center", va="center", fontsize=11, fontweight="bold", color=COLORS["primary"])
+    ax.text(
+        0.5,
+        0.115,
+        "Mean-difference vectors (CAA/CCM) fail on Instruct; the Base-vs-Instruct sign flip suggests RLHF changes the relevant internal geometry.",
+        ha="center",
+        va="center",
+        fontsize=9.5,
+        color=COLORS["text"],
+    )
+
+    save_figure(output_dir, "fig5_summary_infographic")
+    plt.close()
+    print("  Created Figure 5b: Summary Infographic")
 
 
 # ============================================================================
@@ -483,8 +758,7 @@ def create_figure6_ccm_alpha_sweep(results_dir: Path, output_dir: Path):
         ax.spines[spine].set_linewidth(1.2)
     
     plt.tight_layout()
-    plt.savefig(output_dir / "fig6_ccm_alpha_sweep.png")
-    plt.savefig(output_dir / "fig6_ccm_alpha_sweep.pdf")
+    save_figure(output_dir, "fig6_ccm_alpha_sweep")
     plt.close()
     print(f"  Created Figure 6: CCM Alpha Sweep")
 
@@ -537,8 +811,7 @@ def create_figure7_head_layer_distribution(results_dir: Path, output_dir: Path):
         ax.spines[spine].set_linewidth(1.2)
     
     plt.tight_layout()
-    plt.savefig(output_dir / "fig7_head_layer_distribution.png")
-    plt.savefig(output_dir / "fig7_head_layer_distribution.pdf")
+    save_figure(output_dir, "fig7_head_layer_distribution")
     plt.close()
     print(f"  Created Figure 7: Head Layer Distribution")
 
@@ -565,7 +838,7 @@ def create_figure8_effect_distributions(results_dir: Path, output_dir: Path):
             labels.append(f'α={float(alpha_str):.0f}')
     
     if data_to_plot:
-        bp = ax.boxplot(data_to_plot, labels=labels, patch_artist=True,
+        bp = ax.boxplot(data_to_plot, tick_labels=labels, patch_artist=True,
                         medianprops={'color': COLORS['text'], 'linewidth': 2},
                         whiskerprops={'color': COLORS['text'], 'linewidth': 1.2},
                         capprops={'color': COLORS['text'], 'linewidth': 1.2},
@@ -592,10 +865,99 @@ def create_figure8_effect_distributions(results_dir: Path, output_dir: Path):
             ax.spines[spine].set_linewidth(1.2)
     
     plt.tight_layout()
-    plt.savefig(output_dir / "fig8_effect_distributions.png")
-    plt.savefig(output_dir / "fig8_effect_distributions.pdf")
+    save_figure(output_dir, "fig8_effect_distributions")
     plt.close()
     print(f"  Created Figure 8: Effect Distributions")
+
+
+# ============================================================================
+# Figure 9: Base vs Instruct (Patching Comparison)
+# ============================================================================
+
+def create_figure9_base_vs_instruct_patching(results_dir: Path, output_dir: Path):
+    """Grouped bars comparing Base vs Instruct for replace-mode patching."""
+
+    instruct_dir = results_dir / "exp5"
+    base_dir = results_dir / "exp5_llama31_base"
+
+    def load_point(eval_path: Path, alpha_key: str = "1.0"):
+        if not eval_path.exists():
+            return None
+        data = load_json(eval_path)
+        if alpha_key not in data:
+            return None
+        rec = data[alpha_key]
+        return rec["mean_effect"], rec["std_effect"] / np.sqrt(rec["n"])
+
+    instruct_selected = load_point(instruct_dir / "evaluation_results_patching_selected_replace.json")
+    instruct_all = load_point(instruct_dir / "evaluation_results_patching_all_replace.json")
+    base_selected = load_point(base_dir / "evaluation_results_patching_selected_replace.json")
+    base_all = load_point(base_dir / "evaluation_results_patching_all_replace.json")
+
+    if not all([instruct_selected, instruct_all, base_selected, base_all]):
+        print("  Skipping Figure 9: missing Base/Instruct patching files")
+        return
+
+    categories = ["Patch Top-50", "Patch All (1024)"]
+    x = np.arange(len(categories))
+    width = 0.35
+
+    instruct_means = [instruct_selected[0], instruct_all[0]]
+    instruct_ses = [instruct_selected[1], instruct_all[1]]
+    base_means = [base_selected[0], base_all[0]]
+    base_ses = [base_selected[1], base_all[1]]
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    instruct_colors = [COLORS['negative'] if m < 0 else COLORS['positive'] for m in instruct_means]
+    base_colors = [COLORS['negative'] if m < 0 else COLORS['positive'] for m in base_means]
+
+    bars_instruct = ax.bar(
+        x - width / 2,
+        instruct_means,
+        width,
+        yerr=instruct_ses,
+        capsize=5,
+        color=instruct_colors,
+        alpha=0.85,
+        edgecolor='white',
+        linewidth=2,
+        error_kw={'elinewidth': 2, 'capthick': 2, 'color': COLORS['text']},
+        label='Instruct',
+    )
+
+    bars_base = ax.bar(
+        x + width / 2,
+        base_means,
+        width,
+        yerr=base_ses,
+        capsize=5,
+        color=base_colors,
+        alpha=0.85,
+        edgecolor='white',
+        linewidth=2,
+        hatch='///',
+        error_kw={'elinewidth': 2, 'capthick': 2, 'color': COLORS['text']},
+        label='Base',
+    )
+
+    ax.axhline(y=0, color=COLORS['text'], linestyle='-', linewidth=1.5, alpha=0.4)
+    ax.set_xticks(x)
+    ax.set_xticklabels(categories)
+    ax.set_ylabel('Effect on D_syc (Δ)', fontsize=12, fontweight='medium')
+    ax.set_title('Replace-Mode Patching: Instruct vs Base', fontsize=14, pad=15, fontweight='bold')
+    ax.grid(axis='y', alpha=0.4, color=COLORS['grid'], linestyle='-', linewidth=0.8)
+    ax.set_ylim(-0.14, 0.08)
+    ax.legend(loc='lower left', framealpha=0.95, edgecolor=COLORS['grid'])
+
+    for spine in ['bottom', 'left']:
+        ax.spines[spine].set_color(COLORS['text'])
+        ax.spines[spine].set_linewidth(1.2)
+
+    plt.tight_layout()
+    save_figure(output_dir, "fig9_base_vs_instruct_patching")
+    plt.close()
+    print("  Created Figure 9: Base vs Instruct Patching")
 
 
 # ============================================================================
@@ -615,10 +977,12 @@ def main():
     create_figure2_layer_alpha_heatmap(results_dir, output_dir)
     create_figure3_head_effects(results_dir, output_dir)
     create_figure4_method_comparison(results_dir, output_dir)
+    create_figure5_summary_infographic(results_dir, output_dir)
     create_figure5_alpha_sweep_detail(results_dir, output_dir)
     create_figure6_ccm_alpha_sweep(results_dir, output_dir)
     create_figure7_head_layer_distribution(results_dir, output_dir)
     create_figure8_effect_distributions(results_dir, output_dir)
+    create_figure9_base_vs_instruct_patching(results_dir, output_dir)
     
     print("\n" + "="*60)
     print(f"All figures saved to: {output_dir}")
