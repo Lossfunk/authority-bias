@@ -3,7 +3,7 @@ Modal GPU runner for persona-vectors experiments.
 
 Usage (locally, with Modal CLI configured):
     modal run modal_app.py --exp exp2
-Available exp values: exp0, exp1, exp2, exp3, exp4, exp5, exp2_agg, validation
+Available exp values: exp0, exp1, exp2, exp3, exp4, exp5, exp2_agg, phase1, phase2, validation
 
 Notes:
 - Code is mounted read-only from the local repo snapshot.
@@ -100,7 +100,7 @@ def _run(cmd: list[str], cwd: Path, env: dict | None = None) -> None:
 def run_exp(exp: str = "exp2"):
     """
     Run one of the experiments on a GPU.
-    exp: exp0 | exp1 | exp2 | exp3 | exp4 | exp5 | exp2_agg | validation
+    exp: exp0 | exp1 | exp2 | exp3 | exp4 | exp5 | exp2_agg | phase1 | phase2 | validation
     """
     workdir = Path("/workspace")
     data_dir = Path("/volume/data")
@@ -140,6 +140,8 @@ def run_exp(exp: str = "exp2"):
         "exp3": ["python", "-m", "src.exp3.run_mediation_grid"],
         "exp4": ["python", "-m", "src.exp4.run_distributed_test"],
         "exp5": ["python", "-m", "src.exp5.run_ccm"],
+        "phase1": ["python", "-m", "src.exp6.run_phase1_sycophancy"],
+        "phase2": ["python", "-m", "src.exp6.run_phase2_sycophancy"],
         "validation": ["python", "-m", "src.exp3.run_validation", "--output-dir", "llama-results/validation"],
     }
     if exp not in cmd_map:
@@ -161,6 +163,8 @@ def main(exp: str = "exp2"):
     Local convenience wrapper. Examples:
         modal run modal_app.py --exp exp2
         modal run modal_app.py --exp exp3
+        modal run modal_app.py --exp phase1
+        modal run modal_app.py --exp phase2
         modal run modal_app.py --exp validation
     """
     run_exp.remote(exp=exp)

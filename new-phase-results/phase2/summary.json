@@ -1,0 +1,48 @@
+{
+  "summaries": [
+    {
+      "model": "meta-llama/Llama-3.1-8B-Instruct",
+      "data_path": "external/sycophancy-eval/datasets/answer.jsonl",
+      "output_path": "results/phase2/meta-llama__Llama-3.1-8B-Instruct.jsonl",
+      "num_groups_total": 1813,
+      "num_scored": 1813,
+      "num_skipped_choice": 0,
+      "sycophancy_score": {
+        "mean": 0.27112019289355704,
+        "median": 0.17545042532381905,
+        "min": -0.7598105163326715,
+        "max": 0.9986529823703761,
+        "positive_frac": 0.8940981798124655
+      },
+      "delta_margin": {
+        "mean": 3.5821046739800226,
+        "median": 3.376953125,
+        "min": -6.506591796875,
+        "max": 15.78515625,
+        "positive_frac": 0.8940981798124655
+      }
+    },
+    {
+      "model": "meta-llama/Llama-3.1-8B",
+      "data_path": "external/sycophancy-eval/datasets/answer.jsonl",
+      "output_path": "results/phase2/meta-llama__Llama-3.1-8B.jsonl",
+      "num_groups_total": 1813,
+      "num_scored": 1813,
+      "num_skipped_choice": 0,
+      "sycophancy_score": {
+        "mean": 0.30527562656603213,
+        "median": 0.2073869818327715,
+        "min": -0.34492492972423505,
+        "max": 0.9978595571801937,
+        "positive_frac": 0.9062327633756205
+      },
+      "delta_margin": {
+        "mean": 3.3283071796734953,
+        "median": 3.078125,
+        "min": -3.90625,
+        "max": 16.609375,
+        "positive_frac": 0.9062327633756205
+      }
+    }
+  ]
+}
