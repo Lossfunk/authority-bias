@@ -3,7 +3,10 @@ Modal GPU runner for persona-vectors experiments.
 
 Usage (locally, with Modal CLI configured):
     modal run modal_app.py --exp exp2
-Available exp values: exp0, exp1, exp2, exp3, exp4, exp5, exp2_agg, phase1, phase2, validation
+Available exp values: exp0, exp1, exp2, exp3, exp4, exp5, exp2_agg, phase1, phase2, validation,
+                      exp7, exp7_analyze, exp8, exp8_analyze, exp8_speakers, exp8_speakers_analyze,
+                      exp9, exp9_analyze, exp10, exp10_analyze,
+                      exp11_logit, exp11_inverted, exp11_confidence
 
 Notes:
 - Code is mounted read-only from the local repo snapshot.
@@ -24,7 +27,7 @@ from pathlib import Path
 import modal
 
 # Bump BUILD_VERSION to force Modal to rebuild the image when dependencies or hooks change.
-BUILD_VERSION: int = 22
+BUILD_VERSION: int = 28
 
 # Warm container configuration: keep a small pool alive to avoid cold starts.
 # Set env vars to 0 to disable if you don't want to pay for idle GPU time.
@@ -100,7 +103,7 @@ def _run(cmd: list[str], cwd: Path, env: dict | None = None) -> None:
 def run_exp(exp: str = "exp2"):
     """
     Run one of the experiments on a GPU.
-    exp: exp0 | exp1 | exp2 | exp3 | exp4 | exp5 | exp2_agg | phase1 | phase2 | validation
+    exp: exp0 | exp1 | exp2 | exp3 | exp4 | exp5 | exp2_agg | phase1 | phase2 | validation | exp7 | exp7_analyze | exp8 | exp8_analyze | exp8_speakers | exp8_speakers_analyze | exp9 | exp9_analyze | exp10 | exp10_analyze | exp11_logit | exp11_inverted | exp11_confidence
     """
     workdir = Path("/workspace")
     data_dir = Path("/volume/data")
@@ -119,6 +122,11 @@ def run_exp(exp: str = "exp2"):
     repo_updated_results_link = workdir / "updated-results"
     if not repo_updated_results_link.exists():
         repo_updated_results_link.symlink_to(results_dir)
+
+    # Route results/* writes to the persistent results volume (for exp7, etc.).
+    repo_results_link = workdir / "results"
+    if not repo_results_link.exists():
+        repo_results_link.symlink_to(results_dir)
 
     # Route llama-results/* to the persistent volume (for validation experiments).
     repo_llama_results_link = workdir / "llama-results"
@@ -143,6 +151,25 @@ def run_exp(exp: str = "exp2"):
         "phase1": ["python", "-m", "src.exp6.run_phase1_sycophancy"],
         "phase2": ["python", "-m", "src.exp6.run_phase2_sycophancy"],
         "validation": ["python", "-m", "src.exp3.run_validation", "--output-dir", "llama-results/validation"],
+        # Exp7: Clean lexical-fixed sycophancy measurement
+        "exp7": ["python", "-m", "src.exp7.run_lexical_fixed"],
+        "exp7_analyze": ["python", "-m", "src.exp7.analyze_results"],
+        # Exp8: Label-balanced endorsement decomposition
+        "exp8": ["python", "-m", "src.exp8.run_label_balanced"],
+        "exp8_analyze": ["python", "-m", "src.exp8.analyze_results"],
+        # Exp8 Speaker Tags: User-specific deference test
+        "exp8_speakers": ["python", "-m", "src.exp8.run_speaker_tags"],
+        "exp8_speakers_analyze": ["python", "-m", "src.exp8.analyze_speaker_tags"],
+        # Exp9: Instruction override test (compliance vs belief-updating)
+        "exp9": ["python", "-m", "src.exp9.run_instruction_override"],
+        "exp9_analyze": ["python", "-m", "src.exp9.analyze_instruction_override"],
+        # Exp10: Correct-endorsement test (truth-tracking vs gating)
+        "exp10": ["python", "-m", "src.exp10.run_correct_endorse"],
+        "exp10_analyze": ["python", "-m", "src.exp10.analyze_selectivity"],
+        # Exp11: Logit-space analysis + inverted-prior test (truth-tracking vs prior-consistency)
+        "exp11_logit": ["python", "-m", "src.exp11.analyze_logit_space"],
+        "exp11_inverted": ["python", "-m", "src.exp11.analyze_inverted_prior"],
+        "exp11_confidence": ["python", "-m", "src.exp11.analyze_confidence"],
     }
     if exp not in cmd_map:
         raise ValueError(f"Unknown exp '{exp}', choose from {list(cmd_map)}")
@@ -153,6 +180,13 @@ def run_exp(exp: str = "exp2"):
     # Sync results to persistent volume
     src_results = workdir / "results"
     if src_results.exists():
+        # If results is already a symlink into the volume, no copy is needed.
+        try:
+            if src_results.is_symlink() or src_results.resolve() == results_dir.resolve():
+                return
+        except FileNotFoundError:
+            # If resolution fails, fall through to copytree.
+            pass
         # shutil.copytree with dirs_exist_ok is available in Py 3.12
         shutil.copytree(src_results, results_dir, dirs_exist_ok=True)
 
@@ -166,5 +200,18 @@ def main(exp: str = "exp2"):
         modal run modal_app.py --exp phase1
         modal run modal_app.py --exp phase2
         modal run modal_app.py --exp validation
+        modal run modal_app.py --exp exp7                  # Lexical-fixed sycophancy
+        modal run modal_app.py --exp exp7_analyze          # Analyze exp7 results
+        modal run modal_app.py --exp exp8                  # Label-balanced decomposition
+        modal run modal_app.py --exp exp8_analyze          # Analyze exp8 results
+        modal run modal_app.py --exp exp8_speakers         # Speaker tag test
+        modal run modal_app.py --exp exp8_speakers_analyze # Analyze speaker tag results
+        modal run modal_app.py --exp exp9                  # Instruction override test
+        modal run modal_app.py --exp exp9_analyze          # Analyze instruction override
+        modal run modal_app.py --exp exp10                 # Correct-endorsement test
+        modal run modal_app.py --exp exp10_analyze         # Analyze selectivity
+        modal run modal_app.py --exp exp11_logit           # Exp11 Part A: Logit-space replication
+        modal run modal_app.py --exp exp11_inverted        # Exp11 Part B: Inverted-prior test (CRITICAL)
+        modal run modal_app.py --exp exp11_confidence      # Exp11 Part C: Confidence-binned (descriptive)
     """
     run_exp.remote(exp=exp)

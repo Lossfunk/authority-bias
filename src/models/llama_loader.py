@@ -23,6 +23,21 @@ def _resolve_dtype(dtype: Optional[Union[str, torch.dtype]]) -> Union[str, torch
     raise ValueError(f"Unsupported dtype value: {dtype}")
 
 
+def _from_pretrained_with_token(factory, model_name: str, token: Optional[str], **kwargs):
+    """
+    Call Transformers from_pretrained with the correct auth kwarg.
+
+    Newer versions use `token`, older versions use `use_auth_token`.
+    """
+    if token:
+        try:
+            return factory.from_pretrained(model_name, token=token, **kwargs)
+        except TypeError:
+            # Fall back for older Transformers
+            return factory.from_pretrained(model_name, use_auth_token=token, **kwargs)
+    return factory.from_pretrained(model_name, **kwargs)
+
+
 def load_model_and_tokenizer(
     model_name: str,
     device: Optional[str] = None,
@@ -35,7 +50,7 @@ def load_model_and_tokenizer(
     # Prefer explicit token, otherwise fall back to common env vars set via Modal secret.
     token = use_auth_token or os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACEHUB_API_TOKEN")
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=token)
+    tokenizer = _from_pretrained_with_token(AutoTokenizer, model_name, token)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"
@@ -47,15 +62,15 @@ def load_model_and_tokenizer(
         device_map = "auto"
         target_device = None
 
-    model = AutoModelForCausalLM.from_pretrained(
+    model = _from_pretrained_with_token(
+        AutoModelForCausalLM,
         model_name,
+        token,
         dtype=resolved_dtype,
         device_map=device_map,
         trust_remote_code=False,
-        use_auth_token=token,
         attn_implementation="eager",  # Required for consistent head tensor shapes
     )
     if target_device:
         model.to(torch.device(target_device))
     return model, tokenizer
-
