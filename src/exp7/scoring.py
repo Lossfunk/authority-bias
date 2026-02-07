@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Dict, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import torch
 from torch.nn import functional as F
@@ -116,17 +116,11 @@ def score_prompt_forced_choice(
     if token_id_a is None or token_id_b is None:
         token_id_a, token_id_b = get_ab_token_ids(tokenizer)
 
-    # Tokenize prompt
-    # Note: add_special_tokens=True adds BOS for Llama but NOT EOS.
-    # The last token position will predict the next token after "Answer:".
-    # If switching to a tokenizer that appends EOS, this needs adjustment.
-    inputs = tokenizer(prompt_text, return_tensors="pt", add_special_tokens=True)
-    input_ids = inputs.input_ids.to(device)
-    attention_mask = inputs.attention_mask.to(device) if hasattr(inputs, 'attention_mask') else torch.ones_like(input_ids)
+    model_inputs = _prepare_model_inputs(tokenizer, prompt_text, device)
 
-    # Get next-token logits
-    with torch.no_grad():
-        outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+    # Scoring does not need generation KV cache; disabling it saves memory and latency.
+    with torch.inference_mode():
+        outputs = model(**model_inputs, use_cache=False)
         logits = outputs.logits[0, -1, :]  # Last position logits
 
     # Compute log probabilities over full vocabulary
@@ -162,6 +156,149 @@ def score_prompt_forced_choice(
         token_id_a=token_id_a,
         token_id_b=token_id_b,
     )
+
+
+def _prepare_model_inputs(
+    tokenizer,
+    prompt_text: str,
+    device: torch.device,
+) -> Dict[str, torch.Tensor]:
+    """Tokenize prompt and strip terminal EOS if tokenizer adds it."""
+    tokenized = _tokenize_for_scoring(tokenizer, prompt_text)
+    model_inputs = {
+        key: value.to(device)
+        for key, value in tokenized.items()
+    }
+    return model_inputs
+
+
+def _tokenize_for_scoring(
+    tokenizer,
+    prompt_text: str,
+) -> Dict[str, torch.Tensor]:
+    """Tokenize a single prompt and strip terminal EOS if tokenizer adds it."""
+    inputs = tokenizer(prompt_text, return_tensors="pt", add_special_tokens=True)
+    if "input_ids" not in inputs:
+        raise ValueError("Tokenizer output is missing input_ids")
+
+    input_ids = inputs["input_ids"]
+    seq_len = input_ids.shape[1]
+    if seq_len == 0:
+        raise ValueError("Tokenizer produced empty input_ids")
+
+    # If EOS is auto-appended, score the token after the prompt cue, not after EOS.
+    strip_terminal_eos = (
+        tokenizer.eos_token_id is not None
+        and input_ids[0, -1].item() == tokenizer.eos_token_id
+        and seq_len > 1
+    )
+
+    model_inputs: Dict[str, torch.Tensor] = {}
+    for key, value in inputs.items():
+        if not torch.is_tensor(value):
+            continue
+        if strip_terminal_eos and value.ndim == 2 and value.shape[1] == seq_len:
+            value = value[:, :-1]
+        model_inputs[key] = value
+
+    if model_inputs["input_ids"].shape[1] == 0:
+        raise ValueError("All prompt tokens were stripped; cannot score next-token logits")
+
+    if "attention_mask" not in model_inputs:
+        model_inputs["attention_mask"] = torch.ones_like(model_inputs["input_ids"])
+
+    return model_inputs
+
+
+def score_prompts_forced_choice_batch(
+    model,
+    tokenizer,
+    prompt_texts: List[str],
+    device: torch.device,
+    token_id_a: Optional[int] = None,
+    token_id_b: Optional[int] = None,
+    batch_size: int = 32,
+    max_length: Optional[int] = None,
+) -> List[ForcedChoiceResult]:
+    """Score multiple prompts with forced-choice A/B in mini-batches.
+
+    Uses the same tokenization semantics as score_prompt_forced_choice, while
+    running a vectorized forward pass for significantly higher throughput.
+    """
+    if token_id_a is None or token_id_b is None:
+        token_id_a, token_id_b = get_ab_token_ids(tokenizer)
+
+    if batch_size <= 0:
+        raise ValueError("batch_size must be > 0")
+
+    if not prompt_texts:
+        return []
+
+    pad_token_id = tokenizer.pad_token_id
+    if pad_token_id is None:
+        pad_token_id = tokenizer.eos_token_id if tokenizer.eos_token_id is not None else 0
+
+    results: List[ForcedChoiceResult] = []
+    with torch.inference_mode():
+        for start in range(0, len(prompt_texts), batch_size):
+            batch_prompts = prompt_texts[start:start + batch_size]
+
+            tokenized = [_tokenize_for_scoring(tokenizer, p) for p in batch_prompts]
+            input_ids_list = [t["input_ids"].squeeze(0) for t in tokenized]
+            attn_list = [t["attention_mask"].squeeze(0) for t in tokenized]
+
+            if max_length is not None and max_length > 0:
+                input_ids_list = [ids[-max_length:] for ids in input_ids_list]
+                attn_list = [mask[-max_length:] for mask in attn_list]
+
+            max_len = max(x.shape[0] for x in input_ids_list)
+            bsz = len(input_ids_list)
+            input_ids = torch.full((bsz, max_len), pad_token_id, dtype=torch.long)
+            attention_mask = torch.zeros((bsz, max_len), dtype=torch.long)
+
+            for i, (ids, mask) in enumerate(zip(input_ids_list, attn_list)):
+                seq_len = ids.shape[0]
+                input_ids[i, :seq_len] = ids
+                attention_mask[i, :seq_len] = mask
+
+            input_ids = input_ids.to(device)
+            attention_mask = attention_mask.to(device)
+
+            outputs = model(input_ids=input_ids, attention_mask=attention_mask, use_cache=False)
+            all_logits = outputs.logits  # [B, T, V]
+            last_indices = attention_mask.sum(dim=1) - 1
+            batch_indices = torch.arange(bsz, device=device)
+            logits = all_logits[batch_indices, last_indices, :]  # [B, V]
+            log_probs = F.log_softmax(logits, dim=-1)
+
+            logp_a = log_probs[:, token_id_a]
+            logp_b = log_probs[:, token_id_b]
+            prob_a = torch.exp(logp_a)
+            prob_b = torch.exp(logp_b)
+            total = prob_a + prob_b
+
+            fc_a = prob_a / total
+            fc_b = prob_b / total
+            logit_a = logp_a - logp_b
+            logit_b = logp_b - logp_a
+
+            for i in range(bsz):
+                results.append(
+                    ForcedChoiceResult(
+                        prob_a=float(prob_a[i].item()),
+                        prob_b=float(prob_b[i].item()),
+                        logp_a=float(logp_a[i].item()),
+                        logp_b=float(logp_b[i].item()),
+                        fc_a=float(fc_a[i].item()),
+                        fc_b=float(fc_b[i].item()),
+                        logit_a=float(logit_a[i].item()),
+                        logit_b=float(logit_b[i].item()),
+                        token_id_a=token_id_a,
+                        token_id_b=token_id_b,
+                    )
+                )
+
+    return results
 
 
 def compute_endorsement_effect(
