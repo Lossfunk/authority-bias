@@ -60,7 +60,39 @@ def parse_args() -> argparse.Namespace:
         default=10000,
         help="Number of bootstrap replicates",
     )
+    parser.add_argument(
+        "--tags",
+        nargs="+",
+        default=["expert", "note"],
+        help=(
+            "Tags to analyze (e.g., expert note user someone_online). "
+            "Aliases supported: 'someone online', 'online', 'someone-online'."
+        ),
+    )
     return parser.parse_args()
+
+
+def normalize_tag(raw_tag: str) -> str:
+    """Normalize user-provided tag names to exp10 condition key format."""
+    tag = raw_tag.strip().lower().replace("-", "_").replace(" ", "_")
+    aliases = {
+        "someoneonline": "someone_online",
+        "someone_online": "someone_online",
+        "online": "someone_online",
+    }
+    return aliases.get(tag, tag)
+
+
+def normalize_tags(raw_tags: List[str]) -> List[str]:
+    """Normalize tags and preserve order while removing duplicates."""
+    seen = set()
+    normalized = []
+    for raw in raw_tags:
+        tag = normalize_tag(raw)
+        if tag not in seen:
+            seen.add(tag)
+            normalized.append(tag)
+    return normalized
 
 
 def load_exp10_results(results_path: Path) -> List[Dict]:
@@ -177,6 +209,15 @@ def print_report(
     print(f"Tag: {tag}")
     print(f"{'='*80}\n")
 
+    # Primary additive metrics (stable when ratio masks thin out)
+    print("Primary Additive Metrics (recommended):")
+    print(f"  eff_diff = efficacy_w - efficacy_c:")
+    print(f"    mean: {format_metric_with_ci(metrics['eff_diff_mean'])}")
+    print(f"    median: {format_metric_with_ci(metrics['eff_diff_median'])}")
+    print(f"    trimmed_mean(10%): {format_metric_with_ci(metrics['eff_diff_trimmed_mean'])}")
+    print(f"  frac(efficacy_w > efficacy_c): {format_metric_with_ci(metrics['frac_eff_w_gt_c'])}")
+    print(f"  baseline_shift (m_N1 - m_N0): {format_metric_with_ci(metrics['baseline_shift_mean'])}\n")
+
     # Primary analysis (sign-consistent mask)
     print(f"Sign-Consistent Mask (τ={TAU_DEFAULT}):")
     print(f"  n_total: {metrics['n_total']}\n")
@@ -207,6 +248,9 @@ def print_report(
 
     print(f"  Unconditional:")
     print(f"    frac(eff_w > eff_c): {format_metric_with_ci(metrics['frac_eff_w_gt_c'])}")
+    print(f"    eff_diff mean: {format_metric_with_ci(metrics['eff_diff_mean'])}")
+    print(f"    eff_diff median: {format_metric_with_ci(metrics['eff_diff_median'])}")
+    print(f"    eff_diff trimmed mean: {format_metric_with_ci(metrics['eff_diff_trimmed_mean'])}")
     print(f"    Baseline shift: {format_metric_with_ci(metrics['baseline_shift_mean'])}\n")
 
     # Robustness (absolute mask)
@@ -247,8 +291,8 @@ def main():
     records = load_exp10_results(results_path)
     print(f"Loaded {len(records)} items")
 
-    # Analyze each tag
-    tags = ["expert", "note"]
+    # Analyze requested tags
+    tags = normalize_tags(args.tags)
 
     for tag in tags:
         print(f"\nProcessing tag: {tag}")

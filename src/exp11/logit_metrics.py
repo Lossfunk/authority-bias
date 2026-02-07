@@ -21,6 +21,7 @@ import numpy as np
 TAU_DEFAULT = 1e-3
 TAU_VALUES = [1e-4, 1e-3, 1e-2]
 EPS = 1e-10  # Epsilon for numerical stability
+TRIM_FRACTION_DEFAULT = 0.1  # 10% symmetric trim for robust mean
 
 
 @dataclass
@@ -47,6 +48,21 @@ class ItemMetrics:
 
     # Item metadata
     question_id: str
+
+
+def trimmed_mean(arr: np.ndarray, trim_fraction: float = TRIM_FRACTION_DEFAULT) -> float:
+    """Compute symmetric trimmed mean for 1D arrays."""
+    if arr.size == 0:
+        return np.nan
+    if trim_fraction <= 0:
+        return float(np.mean(arr))
+
+    k = int(np.floor(trim_fraction * arr.size))
+    if 2 * k >= arr.size:
+        return float(np.mean(arr))
+
+    sorted_arr = np.sort(arr)
+    return float(np.mean(sorted_arr[k: arr.size - k]))
 
 
 def compute_margin_from_logits(l_c: float, l_w: float) -> float:
@@ -238,6 +254,9 @@ def bootstrap_all_metrics_coherent(
             "dr_mean": [], "dr_median": [], "frac_dr_pos": [],
             # Unconditional metrics (on full resample)
             "frac_eff_w_gt_c": [],
+            "eff_diff_mean": [],
+            "eff_diff_median": [],
+            "eff_diff_trimmed_mean": [],
             "baseline_shift_mean": [],
             # Diagnostics with bootstrap CIs (proportions)
             "pct_r_w_outside": [], "pct_r_c_outside": [],
@@ -250,6 +269,9 @@ def bootstrap_all_metrics_coherent(
         stats = {
             "norm_sel_mean": [], "norm_sel_median": [],
             "frac_eff_w_gt_c": [],
+            "eff_diff_mean": [],
+            "eff_diff_median": [],
+            "eff_diff_trimmed_mean": [],
             "baseline_shift_mean": [],
             # Diagnostics with bootstrap CIs
             "pct_mask_valid_abs": [],
@@ -276,6 +298,9 @@ def bootstrap_all_metrics_coherent(
         # Unconditional metrics on full resample (always computed)
         eff_diff_boot = efficacy_w[boot_idx] - efficacy_c[boot_idx]
         stats["frac_eff_w_gt_c"].append(np.mean(eff_diff_boot > 0))
+        stats["eff_diff_mean"].append(np.mean(eff_diff_boot))
+        stats["eff_diff_median"].append(np.median(eff_diff_boot))
+        stats["eff_diff_trimmed_mean"].append(trimmed_mean(eff_diff_boot))
         stats["baseline_shift_mean"].append(np.mean(delta_baseline[boot_idx]))
 
         # Get resampled arrays
@@ -419,6 +444,13 @@ def bootstrap_all_metrics_coherent(
     # Unconditional metrics point estimates
     results["frac_eff_w_gt_c"] = (float(np.mean(efficacy_w - efficacy_c > 0)),
                                   results["frac_eff_w_gt_c"][1])
+    eff_diff = efficacy_w - efficacy_c
+    results["eff_diff_mean"] = (float(np.mean(eff_diff)),
+                                results["eff_diff_mean"][1])
+    results["eff_diff_median"] = (float(np.median(eff_diff)),
+                                  results["eff_diff_median"][1])
+    results["eff_diff_trimmed_mean"] = (float(trimmed_mean(eff_diff)),
+                                        results["eff_diff_trimmed_mean"][1])
     results["baseline_shift_mean"] = (float(np.mean(delta_baseline)),
                                       results["baseline_shift_mean"][1])
     results["n_total"] = n_total

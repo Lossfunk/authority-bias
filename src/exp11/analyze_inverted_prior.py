@@ -29,7 +29,12 @@ from src.exp11.logit_metrics import (
     compute_slice_m_N0_stats,
     run_tau_sensitivity_with_ci,
 )
-from src.exp11.analyze_logit_space import extract_margins_per_tag, load_exp10_results, format_metric_with_ci
+from src.exp11.analyze_logit_space import (
+    extract_margins_per_tag,
+    format_metric_with_ci,
+    load_exp10_results,
+    normalize_tags,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -63,6 +68,15 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=10000,
         help="Number of bootstrap replicates",
+    )
+    parser.add_argument(
+        "--tags",
+        nargs="+",
+        default=["expert", "note"],
+        help=(
+            "Tags to analyze (e.g., expert note user someone_online). "
+            "Aliases supported: 'someone online', 'online', 'someone-online'."
+        ),
     )
     return parser.parse_args()
 
@@ -137,6 +151,14 @@ def print_slice_report(
     print(f"  mean: {m_N0_stats['mean']:.4f}, median: {m_N0_stats['median']:.4f}")
     print(f"  range: [{m_N0_stats['min']:.4f}, {m_N0_stats['max']:.4f}]\n")
 
+    print("Primary Additive Metrics (recommended):")
+    print(f"  eff_diff = efficacy_w - efficacy_c:")
+    print(f"    mean: {format_metric_with_ci(metrics['eff_diff_mean'])}")
+    print(f"    median: {format_metric_with_ci(metrics['eff_diff_median'])}")
+    print(f"    trimmed_mean(10%): {format_metric_with_ci(metrics['eff_diff_trimmed_mean'])}")
+    print(f"  frac(efficacy_w > efficacy_c): {format_metric_with_ci(metrics['frac_eff_w_gt_c'])}")
+    print(f"  baseline_shift (m_N1 - m_N0): {format_metric_with_ci(metrics['baseline_shift_mean'])}\n")
+
     # Endorsement susceptibility
     print(f"Endorsement Susceptibility (τ={tau}):")
     print(f"  p(effect_c_I0 > τ): {susceptibility['p_effect_c_works']:.4f} (WHY intersection shrinks)")
@@ -172,7 +194,11 @@ def print_slice_report(
         print(f"    frac(dr > 0): {format_metric_with_ci(metrics['frac_dr_pos'])}\n")
 
     print(f"  Unconditional:")
-    print(f"    frac(eff_w > eff_c): {format_metric_with_ci(metrics['frac_eff_w_gt_c'])}\n")
+    print(f"    frac(eff_w > eff_c): {format_metric_with_ci(metrics['frac_eff_w_gt_c'])}")
+    print(f"    eff_diff mean: {format_metric_with_ci(metrics['eff_diff_mean'])}")
+    print(f"    eff_diff median: {format_metric_with_ci(metrics['eff_diff_median'])}")
+    print(f"    eff_diff trimmed mean: {format_metric_with_ci(metrics['eff_diff_trimmed_mean'])}")
+    print(f"    baseline shift: {format_metric_with_ci(metrics['baseline_shift_mean'])}\n")
 
     # Robustness (absolute mask)
     print(f"Robustness (Absolute Mask):")
@@ -253,8 +279,8 @@ def main():
     records = load_exp10_results(results_path)
     print(f"Loaded {len(records)} items")
 
-    # Analyze each tag
-    tags = ["expert", "note"]
+    # Analyze requested tags
+    tags = normalize_tags(args.tags)
 
     for tag in tags:
         print(f"\n{'='*80}")
