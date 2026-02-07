@@ -19,7 +19,12 @@ from src.exp11.logit_metrics import (
     TAU_DEFAULT,
     bootstrap_all_metrics_coherent,
 )
-from src.exp11.analyze_logit_space import extract_margins_per_tag, load_exp10_results, format_metric_with_ci
+from src.exp11.analyze_logit_space import (
+    extract_margins_per_tag,
+    format_metric_with_ci,
+    load_exp10_results,
+    normalize_tags,
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -53,6 +58,15 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=10000,
         help="Number of bootstrap replicates",
+    )
+    parser.add_argument(
+        "--tags",
+        nargs="+",
+        default=["expert", "note"],
+        help=(
+            "Tags to analyze (e.g., expert note user someone_online). "
+            "Aliases supported: 'someone online', 'online', 'someone-online'."
+        ),
     )
     return parser.parse_args()
 
@@ -108,8 +122,8 @@ def main():
     records = load_exp10_results(results_path)
     print(f"Loaded {len(records)} items")
 
-    # Analyze each tag
-    tags = ["expert", "note"]
+    # Analyze requested tags
+    tags = normalize_tags(args.tags)
 
     for tag in tags:
         print(f"\n{'='*80}")
