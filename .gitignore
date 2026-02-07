@@ -45,3 +45,12 @@ fixing.md
 .cursor/
 AWS-Setup.md
 meeting-notes/
+
+# Planning docs
+iteration_plan.md
+
+# Generated plotting scripts
+new-phase-results/exp11/figures/prior_consistency_bars.py
+
+# PDF figures in results (duplicates of PNGs)
+new-phase-results/**/*.pdf
