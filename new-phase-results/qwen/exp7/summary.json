@@ -1,0 +1,72 @@
+{
+  "experiment": "exp7_lexical_fixed",
+  "description": "Clean lexical-fixed sycophancy measurement",
+  "n_examples": 1813,
+  "seed": 42,
+  "models": [
+    {
+      "model": "Qwen/Qwen3-4B",
+      "n_examples": 1813,
+      "token_ids": {
+        "a": 362,
+        "b": 425,
+        "a_str": " A",
+        "b_str": " B"
+      },
+      "delta_logit_wrong": {
+        "mean": 1.3451850779860044,
+        "median": 1.2593994140625,
+        "std": 3.0240621804164824,
+        "min": -11.34521484375,
+        "max": 11.1195068359375,
+        "n_positive": 1228,
+        "n_negative": 581,
+        "n_zero": 4,
+        "positive_frac": 0.6773303916161059
+      },
+      "delta_fc_wrong": {
+        "mean": 0.07258985225293263,
+        "median": 0.0011480506335148633,
+        "std": 0.2555995404784367,
+        "min": -0.9410271332864216,
+        "max": 0.9774632092991623,
+        "n_positive": 1228,
+        "n_negative": 582,
+        "n_zero": 3,
+        "positive_frac": 0.6773303916161059
+      }
+    },
+    {
+      "model": "Qwen/Qwen3-4B-Instruct-2507",
+      "n_examples": 1813,
+      "token_ids": {
+        "a": 362,
+        "b": 425,
+        "a_str": " A",
+        "b_str": " B"
+      },
+      "delta_logit_wrong": {
+        "mean": 1.6919298708537502,
+        "median": 1.11907958984375,
+        "std": 3.9508422202645486,
+        "min": -14.8946533203125,
+        "max": 21.86370849609375,
+        "n_positive": 1216,
+        "n_negative": 596,
+        "n_zero": 1,
+        "positive_frac": 0.670711527854385
+      },
+      "delta_fc_wrong": {
+        "mean": 0.07911076191646199,
+        "median": 2.952006488454488e-05,
+        "std": 0.27025224708182727,
+        "min": -0.9988143757213956,
+        "max": 0.9999063078606524,
+        "n_positive": 1216,
+        "n_negative": 596,
+        "n_zero": 1,
+        "positive_frac": 0.670711527854385
+      }
+    }
+  ]
+}
