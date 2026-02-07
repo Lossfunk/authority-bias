@@ -3,10 +3,16 @@ Modal GPU runner for persona-vectors experiments.
 
 Usage (locally, with Modal CLI configured):
     modal run modal_app.py --exp exp2
+    modal run modal_app.py --exp exp7 --models "Qwen/Qwen3-4B,Qwen/Qwen3-4B-Instruct-2507" --output-dir results/qwen/exp7
+    modal run modal_app.py --exp smoke_qwen --model "Qwen/Qwen3-4B"
+    modal run modal_app.py --exp exp11_logit --model "Qwen/Qwen3-4B-Instruct-2507" --results-dir results/qwen/exp10 --output-dir results/qwen/exp11/part_a
+    modal run modal_app.py --exp exp12 --models "meta-llama/Llama-3.1-8B-Instruct" --output-dir results/exp12
 Available exp values: exp0, exp1, exp2, exp3, exp4, exp5, exp2_agg, phase1, phase2, validation,
                       exp7, exp7_analyze, exp8, exp8_analyze, exp8_speakers, exp8_speakers_analyze,
                       exp9, exp9_analyze, exp10, exp10_analyze,
-                      exp11_logit, exp11_inverted, exp11_confidence
+                      exp11_logit, exp11_inverted, exp11_confidence,
+                      exp12, exp12_analyze,
+                      smoke_qwen
 
 Notes:
 - Code is mounted read-only from the local repo snapshot.
@@ -100,17 +106,37 @@ def _run(cmd: list[str], cwd: Path, env: dict | None = None) -> None:
     buffer_containers=WARM_BUFFER_CONTAINERS,
     scaledown_window=WARM_SCALEDOWN_WINDOW,
 )
-def run_exp(exp: str = "exp2"):
+def run_exp(
+    exp: str = "exp2",
+    models: str = "",
+    model: str = "",
+    output_dir: str = "",
+    results_dir: str = "",
+    extended_tags: bool = False,
+    turns: int = 3,
+    batch_size: int = 64,
+    probe_modes: str = "",
+    probe_styles: str = "",
+    no_correct_history: bool = False,
+    max_length: int = 0,
+):
     """
     Run one of the experiments on a GPU.
-    exp: exp0 | exp1 | exp2 | exp3 | exp4 | exp5 | exp2_agg | phase1 | phase2 | validation | exp7 | exp7_analyze | exp8 | exp8_analyze | exp8_speakers | exp8_speakers_analyze | exp9 | exp9_analyze | exp10 | exp10_analyze | exp11_logit | exp11_inverted | exp11_confidence
+
+    exp: experiment key (see cmd_map below)
+    models: comma-separated HF model ids for scripts that accept --models
+    model: single HF model id for scripts that accept --model (e.g. exp11_* and smoke_qwen)
+    output_dir: override output directory for results (e.g. "results/qwen/exp7")
+    results_dir: override input results directory for analysis scripts
+    extended_tags: when True and exp in {exp10, exp12}, include User/Someone online tags
+    turns/batch_size/probe_modes/probe_styles/no_correct_history/max_length: exp12 runtime knobs
     """
     workdir = Path("/workspace")
     data_dir = Path("/volume/data")
-    results_dir = Path("/volume/results")
+    results_volume_dir = Path("/volume/results")
     llama_results_dir = Path("/volume/llama-results")
     data_dir.mkdir(parents=True, exist_ok=True)
-    results_dir.mkdir(parents=True, exist_ok=True)
+    results_volume_dir.mkdir(parents=True, exist_ok=True)
     llama_results_dir.mkdir(parents=True, exist_ok=True)
 
     # Make volume data visible at the expected repo-relative path.
@@ -121,12 +147,12 @@ def run_exp(exp: str = "exp2"):
     # Route updated-results/* writes to the persistent results volume.
     repo_updated_results_link = workdir / "updated-results"
     if not repo_updated_results_link.exists():
-        repo_updated_results_link.symlink_to(results_dir)
+        repo_updated_results_link.symlink_to(results_volume_dir)
 
     # Route results/* writes to the persistent results volume (for exp7, etc.).
     repo_results_link = workdir / "results"
     if not repo_results_link.exists():
-        repo_results_link.symlink_to(results_dir)
+        repo_results_link.symlink_to(results_volume_dir)
 
     # Route llama-results/* to the persistent volume (for validation experiments).
     repo_llama_results_link = workdir / "llama-results"
@@ -135,7 +161,7 @@ def run_exp(exp: str = "exp2"):
 
     env = {
         "DATA_DIR": str(data_dir),
-        "RESULTS_DIR": str(results_dir),
+        "RESULTS_DIR": str(results_volume_dir),
         "LLAMA_RESULTS_DIR": str(llama_results_dir),
         "PYTHONPATH": str(workdir),
     }
@@ -170,37 +196,102 @@ def run_exp(exp: str = "exp2"):
         "exp11_logit": ["python", "-m", "src.exp11.analyze_logit_space"],
         "exp11_inverted": ["python", "-m", "src.exp11.analyze_inverted_prior"],
         "exp11_confidence": ["python", "-m", "src.exp11.analyze_confidence"],
+        # Exp12: Persistence/Washout (multi-turn carryover test)
+        "exp12": ["python", "-m", "src.exp12.run_persistence_washout"],
+        "exp12_analyze": ["python", "-m", "src.exp12.analyze_persistence"],
+        # Smoke test for Qwen model compatibility
+        "smoke_qwen": ["python", "-m", "src.smoke_test_qwen"],
     }
     if exp not in cmd_map:
         raise ValueError(f"Unknown exp '{exp}', choose from {list(cmd_map)}")
 
+    cmd = list(cmd_map[exp])
+
+    # Experiments that accept --models (run scripts only).
+    ACCEPTS_MULTI_MODELS = {"exp7", "exp8", "exp8_speakers", "exp9", "exp10", "exp12"}
+    # Experiments that accept a single --model argument.
+    ACCEPTS_SINGLE_MODEL = {"smoke_qwen", "exp11_logit", "exp11_inverted", "exp11_confidence"}
+    # Experiments that accept --output-dir (run + analyze scripts).
+    ACCEPTS_OUTPUT_DIR = ACCEPTS_MULTI_MODELS | {
+        "exp7_analyze", "exp8_analyze", "exp8_speakers_analyze",
+        "exp9_analyze", "exp10_analyze",
+        "exp11_logit", "exp11_inverted", "exp11_confidence",
+        "exp12", "exp12_analyze",
+    }
+    # Analysis scripts that accept --results-dir.
+    ACCEPTS_RESULTS_DIR = {
+        "exp7_analyze", "exp8_analyze", "exp8_speakers_analyze",
+        "exp9_analyze", "exp10_analyze",
+        "exp11_logit", "exp11_inverted", "exp11_confidence",
+        "exp12_analyze",
+    }
+
+    if model and exp in ACCEPTS_SINGLE_MODEL:
+        cmd.extend(["--model", model])
+    elif models:
+        model_list = [m.strip() for m in models.split(",") if m.strip()]
+        if exp in ACCEPTS_SINGLE_MODEL and model_list:
+            cmd.extend(["--model", model_list[0]])
+        elif exp in ACCEPTS_MULTI_MODELS:
+            cmd.extend(["--models"] + model_list)
+
+    if results_dir and exp in ACCEPTS_RESULTS_DIR:
+        cmd.extend(["--results-dir", results_dir])
+
+    if output_dir and exp in ACCEPTS_OUTPUT_DIR:
+        cmd.extend(["--output-dir", output_dir])
+
+    if extended_tags and exp in {"exp10", "exp12"}:
+        cmd.append("--extended-tags")
+
+    if exp == "exp12":
+        cmd.extend(["--turns", str(turns)])
+        cmd.extend(["--batch-size", str(batch_size)])
+        if probe_modes:
+            cmd.extend(["--probe-modes", probe_modes])
+        if probe_styles:
+            cmd.extend(["--probe-styles", probe_styles])
+        if no_correct_history:
+            cmd.append("--no-correct-history")
+        if max_length > 0:
+            cmd.extend(["--max-length", str(max_length)])
+
     merged_env = {**os.environ, **env}
-    _run(cmd_map[exp], cwd=workdir, env=merged_env)
+    _run(cmd, cwd=workdir, env=merged_env)
 
     # Sync results to persistent volume
     src_results = workdir / "results"
     if src_results.exists():
         # If results is already a symlink into the volume, no copy is needed.
         try:
-            if src_results.is_symlink() or src_results.resolve() == results_dir.resolve():
+            if src_results.is_symlink() or src_results.resolve() == results_volume_dir.resolve():
                 return
         except FileNotFoundError:
             # If resolution fails, fall through to copytree.
             pass
         # shutil.copytree with dirs_exist_ok is available in Py 3.12
-        shutil.copytree(src_results, results_dir, dirs_exist_ok=True)
+        shutil.copytree(src_results, results_volume_dir, dirs_exist_ok=True)
 
 
 @app.local_entrypoint()
-def main(exp: str = "exp2"):
+def main(
+    exp: str = "exp2",
+    models: str = "",
+    model: str = "",
+    output_dir: str = "",
+    results_dir: str = "",
+    extended_tags: bool = False,
+    turns: int = 3,
+    batch_size: int = 64,
+    probe_modes: str = "",
+    probe_styles: str = "",
+    no_correct_history: bool = False,
+    max_length: int = 0,
+):
     """
     Local convenience wrapper. Examples:
         modal run modal_app.py --exp exp2
-        modal run modal_app.py --exp exp3
-        modal run modal_app.py --exp phase1
-        modal run modal_app.py --exp phase2
-        modal run modal_app.py --exp validation
-        modal run modal_app.py --exp exp7                  # Lexical-fixed sycophancy
+        modal run modal_app.py --exp exp7                  # Lexical-fixed sycophancy (Llama defaults)
         modal run modal_app.py --exp exp7_analyze          # Analyze exp7 results
         modal run modal_app.py --exp exp8                  # Label-balanced decomposition
         modal run modal_app.py --exp exp8_analyze          # Analyze exp8 results
@@ -209,9 +300,28 @@ def main(exp: str = "exp2"):
         modal run modal_app.py --exp exp9                  # Instruction override test
         modal run modal_app.py --exp exp9_analyze          # Analyze instruction override
         modal run modal_app.py --exp exp10                 # Correct-endorsement test
+        modal run modal_app.py --exp exp10 --extended-tags # Correct-endorsement with Expert/Note/User/Someone online
         modal run modal_app.py --exp exp10_analyze         # Analyze selectivity
         modal run modal_app.py --exp exp11_logit           # Exp11 Part A: Logit-space replication
         modal run modal_app.py --exp exp11_inverted        # Exp11 Part B: Inverted-prior test (CRITICAL)
         modal run modal_app.py --exp exp11_confidence      # Exp11 Part C: Confidence-binned (descriptive)
+        modal run modal_app.py --exp exp12                 # Exp12: persistence/washout
+        modal run modal_app.py --exp exp12_analyze         # Analyze Exp12 outputs
+        modal run modal_app.py --exp smoke_qwen --model "Qwen/Qwen3-4B"
+        modal run modal_app.py --exp exp7 --models "Qwen/Qwen3-4B,Qwen/Qwen3-4B-Instruct-2507" --output-dir results/qwen/exp7
+        modal run modal_app.py --exp exp11_logit --model "Qwen/Qwen3-4B-Instruct-2507" --results-dir results/qwen/exp10 --output-dir results/qwen/exp11/part_a
     """
-    run_exp.remote(exp=exp)
+    run_exp.remote(
+        exp=exp,
+        models=models,
+        model=model,
+        output_dir=output_dir,
+        results_dir=results_dir,
+        extended_tags=extended_tags,
+        turns=turns,
+        batch_size=batch_size,
+        probe_modes=probe_modes,
+        probe_styles=probe_styles,
+        no_correct_history=no_correct_history,
+        max_length=max_length,
+    )
