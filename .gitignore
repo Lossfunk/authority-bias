@@ -54,3 +54,7 @@ new-phase-results/exp11/figures/prior_consistency_bars.py
 
 # PDF figures in results (duplicates of PNGs)
 new-phase-results/**/*.pdf
+
+# Credentials / secrets
+*.csv
+abhinav-*.csv
