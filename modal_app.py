@@ -117,8 +117,11 @@ def run_exp(
     batch_size: int = 64,
     probe_modes: str = "",
     probe_styles: str = "",
+    style_profile: str = "",
+    instruction_schedules: str = "",
     no_correct_history: bool = False,
     max_length: int = 0,
+    use_torch_compile: bool = False,
 ):
     """
     Run one of the experiments on a GPU.
@@ -129,15 +132,20 @@ def run_exp(
     output_dir: override output directory for results (e.g. "results/qwen/exp7")
     results_dir: override input results directory for analysis scripts
     extended_tags: when True and exp in {exp10, exp12}, include User/Someone online tags
-    turns/batch_size/probe_modes/probe_styles/no_correct_history/max_length: exp12 runtime knobs
+    turns/batch_size/probe_modes/probe_styles/style_profile/instruction_schedules/no_correct_history/max_length/use_torch_compile: exp12 runtime knobs
     """
     workdir = Path("/workspace")
     data_dir = Path("/volume/data")
     results_volume_dir = Path("/volume/results")
     llama_results_dir = Path("/volume/llama-results")
+    hf_home_dir = Path("/volume/hf-home")
+    hf_hub_cache_dir = hf_home_dir / "hub"
+    hf_transformers_cache_dir = hf_home_dir / "transformers"
     data_dir.mkdir(parents=True, exist_ok=True)
     results_volume_dir.mkdir(parents=True, exist_ok=True)
     llama_results_dir.mkdir(parents=True, exist_ok=True)
+    hf_hub_cache_dir.mkdir(parents=True, exist_ok=True)
+    hf_transformers_cache_dir.mkdir(parents=True, exist_ok=True)
 
     # Make volume data visible at the expected repo-relative path.
     repo_data_link = workdir / "data"
@@ -164,6 +172,17 @@ def run_exp(
         "RESULTS_DIR": str(results_volume_dir),
         "LLAMA_RESULTS_DIR": str(llama_results_dir),
         "PYTHONPATH": str(workdir),
+        # Persist HF caches across runs to avoid repeated large downloads.
+        "HF_HOME": str(hf_home_dir),
+        "HUGGINGFACE_HUB_CACHE": str(hf_hub_cache_dir),
+        "TRANSFORMERS_CACHE": str(hf_transformers_cache_dir),
+        # Xet download path has shown intermittent timeouts in this workload.
+        "HF_HUB_DISABLE_XET": os.environ.get("HF_HUB_DISABLE_XET", "1"),
+        "HF_HUB_DOWNLOAD_TIMEOUT": os.environ.get("HF_HUB_DOWNLOAD_TIMEOUT", "120"),
+        "HF_HUB_ETAG_TIMEOUT": os.environ.get("HF_HUB_ETAG_TIMEOUT", "120"),
+        # Retries are consumed by src/models/llama_loader.py.
+        "HF_DOWNLOAD_RETRIES": os.environ.get("HF_DOWNLOAD_RETRIES", "6"),
+        "HF_DOWNLOAD_RETRY_SLEEP": os.environ.get("HF_DOWNLOAD_RETRY_SLEEP", "2.0"),
     }
 
     cmd_map = {
@@ -251,13 +270,28 @@ def run_exp(
             cmd.extend(["--probe-modes", probe_modes])
         if probe_styles:
             cmd.extend(["--probe-styles", probe_styles])
+        if style_profile:
+            cmd.extend(["--style-profile", style_profile])
+        if instruction_schedules:
+            cmd.extend(["--instruction-schedules", instruction_schedules])
         if no_correct_history:
             cmd.append("--no-correct-history")
         if max_length > 0:
             cmd.extend(["--max-length", str(max_length)])
+        if use_torch_compile:
+            cmd.append("--use-torch-compile")
 
     merged_env = {**os.environ, **env}
-    _run(cmd, cwd=workdir, env=merged_env)
+    try:
+        _run(cmd, cwd=workdir, env=merged_env)
+    except subprocess.CalledProcessError:
+        should_retry_without_compile = exp == "exp12" and use_torch_compile and "--use-torch-compile" in cmd
+        if not should_retry_without_compile:
+            raise
+
+        retry_cmd = [arg for arg in cmd if arg != "--use-torch-compile"]
+        print("WARNING: Exp12 failed with torch.compile enabled; retrying once without --use-torch-compile.")
+        _run(retry_cmd, cwd=workdir, env=merged_env)
 
     # Sync results to persistent volume
     src_results = workdir / "results"
@@ -285,8 +319,11 @@ def main(
     batch_size: int = 64,
     probe_modes: str = "",
     probe_styles: str = "",
+    style_profile: str = "",
+    instruction_schedules: str = "",
     no_correct_history: bool = False,
     max_length: int = 0,
+    use_torch_compile: bool = False,
 ):
     """
     Local convenience wrapper. Examples:
@@ -306,6 +343,7 @@ def main(
         modal run modal_app.py --exp exp11_inverted        # Exp11 Part B: Inverted-prior test (CRITICAL)
         modal run modal_app.py --exp exp11_confidence      # Exp11 Part C: Confidence-binned (descriptive)
         modal run modal_app.py --exp exp12                 # Exp12: persistence/washout
+        modal run modal_app.py --exp exp12 --instruction-schedules "none,t0,t1,t2" --style-profile matched
         modal run modal_app.py --exp exp12_analyze         # Analyze Exp12 outputs
         modal run modal_app.py --exp smoke_qwen --model "Qwen/Qwen3-4B"
         modal run modal_app.py --exp exp7 --models "Qwen/Qwen3-4B,Qwen/Qwen3-4B-Instruct-2507" --output-dir results/qwen/exp7
@@ -322,6 +360,9 @@ def main(
         batch_size=batch_size,
         probe_modes=probe_modes,
         probe_styles=probe_styles,
+        style_profile=style_profile,
+        instruction_schedules=instruction_schedules,
         no_correct_history=no_correct_history,
         max_length=max_length,
+        use_torch_compile=use_torch_compile,
     )

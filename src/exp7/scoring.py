@@ -224,6 +224,7 @@ def score_prompts_forced_choice_batch(
 
     Uses the same tokenization semantics as score_prompt_forced_choice, while
     running a vectorized forward pass for significantly higher throughput.
+    Prompts are length-sorted before batching to reduce padding overhead.
     """
     if token_id_a is None or token_id_b is None:
         token_id_a, token_id_b = get_ab_token_ids(tokenizer)
@@ -238,18 +239,28 @@ def score_prompts_forced_choice_batch(
     if pad_token_id is None:
         pad_token_id = tokenizer.eos_token_id if tokenizer.eos_token_id is not None else 0
 
-    results: List[ForcedChoiceResult] = []
+    # Pre-tokenize once and keep original indices so we can restore order.
+    packed: List[Tuple[int, torch.Tensor, torch.Tensor, int]] = []
+    for idx, prompt in enumerate(prompt_texts):
+        tokenized = _tokenize_for_scoring(tokenizer, prompt)
+        ids = tokenized["input_ids"].squeeze(0)
+        attn = tokenized["attention_mask"].squeeze(0)
+
+        if max_length is not None and max_length > 0:
+            ids = ids[-max_length:]
+            attn = attn[-max_length:]
+
+        packed.append((idx, ids, attn, int(ids.shape[0])))
+
+    # Sort by sequence length to minimize per-batch padding waste.
+    packed.sort(key=lambda x: x[3])
+
+    results_by_idx: List[Optional[ForcedChoiceResult]] = [None] * len(prompt_texts)
     with torch.inference_mode():
-        for start in range(0, len(prompt_texts), batch_size):
-            batch_prompts = prompt_texts[start:start + batch_size]
-
-            tokenized = [_tokenize_for_scoring(tokenizer, p) for p in batch_prompts]
-            input_ids_list = [t["input_ids"].squeeze(0) for t in tokenized]
-            attn_list = [t["attention_mask"].squeeze(0) for t in tokenized]
-
-            if max_length is not None and max_length > 0:
-                input_ids_list = [ids[-max_length:] for ids in input_ids_list]
-                attn_list = [mask[-max_length:] for mask in attn_list]
+        for start in range(0, len(packed), batch_size):
+            batch_items = packed[start:start + batch_size]
+            input_ids_list = [item[1] for item in batch_items]
+            attn_list = [item[2] for item in batch_items]
 
             max_len = max(x.shape[0] for x in input_ids_list)
             bsz = len(input_ids_list)
@@ -283,7 +294,8 @@ def score_prompts_forced_choice_batch(
             logit_b = logp_b - logp_a
 
             for i in range(bsz):
-                results.append(
+                orig_idx = batch_items[i][0]
+                results_by_idx[orig_idx] = (
                     ForcedChoiceResult(
                         prob_a=float(prob_a[i].item()),
                         prob_b=float(prob_b[i].item()),
@@ -298,7 +310,9 @@ def score_prompts_forced_choice_batch(
                     )
                 )
 
-    return results
+    if any(r is None for r in results_by_idx):
+        raise RuntimeError("Batch scoring produced missing results; order restore failed")
+    return [r for r in results_by_idx if r is not None]
 
 
 def compute_endorsement_effect(
