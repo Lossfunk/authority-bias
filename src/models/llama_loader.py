@@ -5,6 +5,7 @@ Helpers for loading causal-LM models (Llama, Qwen, etc.) via HF Transformers.
 from __future__ import annotations
 
 import os
+import time
 from typing import Optional, Union
 
 import torch
@@ -29,13 +30,53 @@ def _from_pretrained_with_token(factory, model_name: str, token: Optional[str], 
 
     Newer versions use `token`, older versions use `use_auth_token`.
     """
-    if token:
+    max_retries = int(os.environ.get("HF_DOWNLOAD_RETRIES", "4"))
+    base_sleep_s = float(os.environ.get("HF_DOWNLOAD_RETRY_SLEEP", "2.0"))
+
+    def _is_transient_download_error(exc: Exception) -> bool:
+        msg = str(exc).lower()
+        transient_tokens = (
+            "readtimeout",
+            "connecttimeout",
+            "connectionerror",
+            "temporarily unavailable",
+            "timed out",
+            "503",
+            "504",
+            "connection reset",
+        )
+        return any(tok in msg for tok in transient_tokens)
+
+    def _invoke():
+        if token:
+            try:
+                return factory.from_pretrained(model_name, token=token, **kwargs)
+            except TypeError:
+                # Fall back for older Transformers that use use_auth_token.
+                return factory.from_pretrained(model_name, use_auth_token=token, **kwargs)
+        return factory.from_pretrained(model_name, **kwargs)
+
+    # Retry transient download failures.
+    last_exc: Optional[Exception] = None
+    for attempt in range(max_retries):
         try:
-            return factory.from_pretrained(model_name, token=token, **kwargs)
-        except TypeError:
-            # Fall back for older Transformers
-            return factory.from_pretrained(model_name, use_auth_token=token, **kwargs)
-    return factory.from_pretrained(model_name, **kwargs)
+            return _invoke()
+        except Exception as exc:
+            last_exc = exc
+            if attempt >= max_retries - 1 or not _is_transient_download_error(exc):
+                raise
+            sleep_s = base_sleep_s * (2 ** attempt)
+            print(
+                f"[load_model_and_tokenizer] transient download failure "
+                f"(attempt {attempt + 1}/{max_retries}): {exc}. "
+                f"Retrying in {sleep_s:.1f}s..."
+            )
+            time.sleep(sleep_s)
+
+    # Fallback: should be unreachable because loop either returns or raises.
+    if last_exc is not None:
+        raise last_exc
+    raise RuntimeError("Unexpected download retry state in _from_pretrained_with_token")
 
 
 def _parse_env_bool(value: Optional[str]) -> Optional[bool]:
