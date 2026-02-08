@@ -4,6 +4,8 @@ Design:
 - Initial turn per tag/instruction/history: neutral, wrong, correct.
 - Follow-up turns remove endorsement and re-ask with probe styles:
   same wording, paraphrase, and label-swap.
+- Fresh probes are scored independently per branch (no shared result copy).
+- Instruction timing can be scheduled at T0/T1/T2 for prevention-vs-cure tests.
 - Compare wrong-history vs neutral-history at each turn to estimate
   residual endorsement carryover after endorsement text is gone.
 """
@@ -13,6 +15,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import random
 from pathlib import Path
 from statistics import mean, median, stdev
@@ -33,13 +36,17 @@ from src.exp12.conditions import (
     EXTENDED_TAGS,
     HISTORY_CODE,
     BranchKey,
+    InstructionSchedule,
+    StyleProfile,
     format_fresh_probe_prompt,
     format_initial_prompt,
     format_probe_context_block,
     initial_context_from_prompt,
     normalize_tag,
+    parse_instruction_schedules,
     parse_probe_modes,
     parse_probe_styles,
+    parse_style_profile,
     probe_correct_label,
 )
 from src.models.llama_loader import load_model_and_tokenizer
@@ -62,9 +69,26 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--extended-tags", action="store_true")
     parser.add_argument("--probe-modes", type=str, default="context,fresh")
     parser.add_argument("--probe-styles", type=str, default="same,paraphrase,swap")
+    parser.add_argument(
+        "--style-profile",
+        type=str,
+        default="matched",
+        help="Probe wording profile: matched (default) or legacy.",
+    )
+    parser.add_argument(
+        "--instruction-schedules",
+        type=str,
+        default="none,t0",
+        help="Comma-separated instruction timing schedules: none,t0,t1,t2",
+    )
     parser.add_argument("--turns", type=int, default=3)
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--max-length", type=int, default=0, help="Optional max prompt length for scoring")
+    parser.add_argument(
+        "--use-torch-compile",
+        action="store_true",
+        help="Enable torch.compile for inference. Falls back to eager mode on failure.",
+    )
     parser.add_argument(
         "--no-correct-history",
         action="store_true",
@@ -89,6 +113,10 @@ def _resolve_data_path(path: Path) -> Path:
 
 def _model_tag(model_id: str) -> str:
     return model_id.replace("/", "__")
+
+
+def _is_qwen_model(model_id: str) -> bool:
+    return "qwen" in model_id.lower()
 
 
 def _order_seed(uid: str, seed: int) -> int:
@@ -193,6 +221,7 @@ def _compute_summary(
     tags: List[str],
     modes: List[str],
     styles: List[str],
+    instruction_schedules: List[InstructionSchedule],
     turns: int,
     include_correct_history: bool,
 ) -> Dict:
@@ -200,11 +229,12 @@ def _compute_summary(
     for tag in tags:
         tag_key = normalize_tag(tag)
         tag_out: Dict[str, Dict] = {}
-        for instruction in (0, 1):
-            i_key = f"instr_{instruction}"
-            n_code = f"N{instruction}_{tag_key}"
-            w_code = f"W{instruction}_{tag_key}"
-            c_code = f"C{instruction}_{tag_key}"
+        for instruction in instruction_schedules:
+            instr_key = instruction.key
+            i_key = f"instr_{instr_key}"
+            n_code = f"N{instr_key}_{tag_key}"
+            w_code = f"W{instr_key}_{tag_key}"
+            c_code = f"C{instr_key}_{tag_key}"
 
             m_n = _extract_margins(records, n_code, "margin_correct", "init_results")
             m_w = _extract_margins(records, w_code, "margin_correct", "init_results")
@@ -231,8 +261,8 @@ def _compute_summary(
                 for style in styles:
                     s_out: Dict[str, Dict] = {}
                     for turn in range(1, turns + 1):
-                        key_n = f"{mode_prefix}_HN{instruction}_{tag_key}_{style}_T{turn}"
-                        key_w = f"{mode_prefix}_HW{instruction}_{tag_key}_{style}_T{turn}"
+                        key_n = f"{mode_prefix}_HN{instr_key}_{tag_key}_{style}_T{turn}"
+                        key_w = f"{mode_prefix}_HW{instr_key}_{tag_key}_{style}_T{turn}"
                         m_hn = _extract_margins(records, key_n, "margin_correct", "probe_results")
                         m_hw = _extract_margins(records, key_w, "margin_correct", "probe_results")
                         residual_wrong = [w - n for w, n in zip(m_hw, m_hn)]
@@ -260,7 +290,7 @@ def _compute_summary(
                             }
 
                         if include_correct_history:
-                            key_c = f"{mode_prefix}_HC{instruction}_{tag_key}_{style}_T{turn}"
+                            key_c = f"{mode_prefix}_HC{instr_key}_{tag_key}_{style}_T{turn}"
                             m_hc = _extract_margins(records, key_c, "margin_correct", "probe_results")
                             residual_correct = [c - n for c, n in zip(m_hc, m_hn)]
                             ratio_correct = _safe_ratio(residual_correct, immediate_correct)
@@ -287,26 +317,119 @@ def run_for_model(
     tags: List[str],
     modes: List[str],
     styles: List[str],
+    style_profile: StyleProfile,
+    instruction_schedules: List[InstructionSchedule],
     turns: int,
     include_correct_history: bool,
     save_prompts: bool,
     batch_size: int,
     max_length: Optional[int],
+    use_torch_compile: bool,
 ) -> Dict:
     print(f"\n{'=' * 70}")
     print(f"Running Exp12 model: {model_id}")
     print(f"Tags: {tags}")
     print(f"Modes: {modes}")
+    print(f"Instruction schedules: {[s.name for s in instruction_schedules]}")
     print(f"Styles: {styles}, turns: {turns}")
+    print(f"Style profile: {style_profile}")
     print(f"{'=' * 70}")
 
     model, tokenizer = load_model_and_tokenizer(model_name=model_id, device="auto", dtype="auto")
     model.eval()
+    compile_requested = use_torch_compile
+    compile_disabled_reason: Optional[str] = None
+    if use_torch_compile and _is_qwen_model(model_id):
+        compile_disabled_reason = "disabled_for_qwen_stability"
+        print(
+            "WARNING: torch.compile is disabled for Qwen models in Exp12 due CUDA/Triton instability; using eager mode."
+        )
+        use_torch_compile = False
+
+    compile_enabled = False
+    compile_mode = os.environ.get("EXP12_TORCH_COMPILE_MODE", "reduce-overhead")
+    if use_torch_compile:
+        if hasattr(torch, "compile"):
+            try:
+                # Use a conservative default mode; max-autotune can be unstable on some kernels.
+                print(f"Attempting torch.compile (mode={compile_mode})...")
+                model = torch.compile(model, mode=compile_mode)
+                compile_enabled = True
+                print("torch.compile enabled.")
+            except Exception as exc:  # pragma: no cover - runtime dependent
+                print(f"WARNING: torch.compile failed, falling back to eager mode: {exc}")
+        else:
+            print("WARNING: torch.compile is unavailable in this PyTorch build; using eager mode.")
+
     device = next(model.parameters()).device
+    active_batch_size = batch_size
 
     token_id_a, token_id_b = get_ab_token_ids(tokenizer)
     print(f"Token A: {tokenizer.decode([token_id_a])!r} (id={token_id_a})")
     print(f"Token B: {tokenizer.decode([token_id_b])!r} (id={token_id_b})")
+
+    def _is_cuda_oom(exc: Exception) -> bool:
+        if isinstance(exc, torch.OutOfMemoryError):
+            return True
+        msg = str(exc).lower()
+        return "out of memory" in msg and "cuda" in msg
+
+    def _is_cuda_runtime_fault(exc: Exception) -> bool:
+        msg = str(exc).lower()
+        if "cuda error" in msg and "out of memory" not in msg:
+            return True
+        markers = (
+            "cudaerrorillegaladdress",
+            "illegal memory access",
+            "device-side assert",
+            "acceleratorerror",
+        )
+        return any(marker in msg for marker in markers)
+
+    def _reload_eager_model(reason: str) -> None:
+        nonlocal model, device, compile_enabled
+        print(reason)
+        del model
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        model, _ = load_model_and_tokenizer(model_name=model_id, device="auto", dtype="auto")
+        model.eval()
+        device = next(model.parameters()).device
+        compile_enabled = False
+
+    def _score_prompts_with_fallback(prompts: List[str]) -> List[ForcedChoiceResult]:
+        nonlocal model, device, compile_enabled, active_batch_size
+        while True:
+            try:
+                return _score_prompts(
+                    model, tokenizer, device, token_id_a, token_id_b,
+                    prompts, batch_size=active_batch_size, max_length=max_length,
+                )
+            except Exception as exc:
+                if _is_cuda_oom(exc):
+                    if compile_enabled:
+                        _reload_eager_model("WARNING: CUDA OOM with compiled model; reloading eager model and retrying.")
+                        continue
+
+                    if active_batch_size > 8:
+                        new_bs = max(8, active_batch_size // 2)
+                        if new_bs == active_batch_size:
+                            new_bs = active_batch_size - 1
+                        print(f"WARNING: CUDA OOM at batch_size={active_batch_size}; retrying with batch_size={new_bs}.")
+                        active_batch_size = new_bs
+                        if torch.cuda.is_available():
+                            torch.cuda.empty_cache()
+                        continue
+
+                    raise
+
+                if compile_enabled and _is_cuda_runtime_fault(exc):
+                    _reload_eager_model(
+                        "WARNING: CUDA runtime failure with compiled model; reloading eager model and retrying."
+                    )
+                    continue
+
+                raise
 
     records: List[Dict] = []
     for ex in examples:
@@ -331,24 +454,23 @@ def run_for_model(
     init_specs = []
     for tag in tags:
         tag_key = normalize_tag(tag)
-        for instruction in (0, 1):
+        for schedule in instruction_schedules:
             for history in init_histories:
-                code = f"{HISTORY_CODE[history]}{instruction}_{tag_key}"
-                init_specs.append((tag, tag_key, instruction, history, code))
+                code = f"{HISTORY_CODE[history]}{schedule.key}_{tag_key}"
+                init_specs.append((tag, tag_key, schedule, history, code))
 
-    init_prompt_cache: Dict[Tuple[str, int, str], List[str]] = {}
-    for tag, tag_key, instruction, history, code in tqdm(init_specs, desc=f"Exp12 init {model_id}"):
+    init_prompt_cache: Dict[Tuple[str, str, str], List[str]] = {}
+    for tag, tag_key, schedule, history, code in tqdm(init_specs, desc=f"Exp12 init {model_id}"):
         prompts = [
-            format_initial_prompt(ex, tag, history, bool(instruction))
+            format_initial_prompt(ex, tag, history, instruction=schedule.init_instruction)
             for ex in examples
         ]
-        init_prompt_cache[(tag_key, instruction, history)] = prompts
-        scored = _score_prompts(
-            model, tokenizer, device, token_id_a, token_id_b,
-            prompts, batch_size=batch_size, max_length=max_length,
-        )
+        init_prompt_cache[(tag_key, schedule.key, history)] = prompts
+        scored = _score_prompts_with_fallback(prompts)
         for i, result in enumerate(scored):
             entry = _result_to_entry(result, expected_correct_label=examples[i].correct_label)
+            entry["instruction"] = schedule.key
+            entry["instruction_schedule"] = schedule.name
             records[i]["init_results"][code] = entry
             if save_prompts:
                 records[i]["prompts"][code] = prompts[i]
@@ -359,13 +481,18 @@ def run_for_model(
         print("\nBuilding context-mode branch histories...")
         for tag in tags:
             tag_key = normalize_tag(tag)
-            for instruction in (0, 1):
+            for schedule in instruction_schedules:
                 for history in history_for_probes:
                     for style in styles:
-                        b = BranchKey(tag=tag_key, history=history, instruction=instruction, style=style)  # type: ignore[arg-type]
+                        b = BranchKey(
+                            tag=tag_key,
+                            history=history,  # type: ignore[arg-type]
+                            instruction_key=schedule.key,
+                            style=style,  # type: ignore[arg-type]
+                        )
                         branch_keys.append(b)
-                        init_code = f"{HISTORY_CODE[history]}{instruction}_{tag_key}"
-                        prompts = init_prompt_cache[(tag_key, instruction, history)]
+                        init_code = f"{HISTORY_CODE[history]}{schedule.key}_{tag_key}"
+                        prompts = init_prompt_cache[(tag_key, schedule.key, history)]
                         contexts = []
                         for i, prompt in enumerate(prompts):
                             pred = records[i]["init_results"][init_code]["pred_label"]
@@ -373,6 +500,7 @@ def run_for_model(
                         branch_contexts[b.key] = contexts
 
     print("\nScoring persistence/washout follow-up turns...")
+    schedule_by_key = {s.key: s for s in instruction_schedules}
     for turn in range(1, turns + 1):
         if "context" in modes:
             for b in tqdm(branch_keys, desc=f"Exp12 context probes {model_id} T{turn}"):
@@ -381,18 +509,22 @@ def run_for_model(
                 expected_labels: List[str] = []
                 contexts = branch_contexts[b.key]
                 style = b.style
+                schedule = schedule_by_key[b.instruction_key]
 
                 for i, ex in enumerate(examples):
-                    block = format_probe_context_block(ex, style, turn)
+                    block = format_probe_context_block(
+                        ex,
+                        style,
+                        turn,
+                        include_instruction=schedule.include_probe_instruction("context", turn),
+                        style_profile=style_profile,
+                    )
                     prompt = f"{contexts[i]}{block}\nAnswer:"
                     prompts.append(prompt)
                     context_blocks.append(block)
                     expected_labels.append(probe_correct_label(ex, style))
 
-                scored = _score_prompts(
-                    model, tokenizer, device, token_id_a, token_id_b,
-                    prompts, batch_size=batch_size, max_length=max_length,
-                )
+                scored = _score_prompts_with_fallback(prompts)
 
                 for i, result in enumerate(scored):
                     probe_code = f"CTX_{b.key}_T{turn}"
@@ -401,7 +533,8 @@ def run_for_model(
                     entry["turn"] = turn
                     entry["style"] = style
                     entry["history"] = b.history
-                    entry["instruction"] = b.instruction
+                    entry["instruction"] = b.instruction_key
+                    entry["instruction_schedule"] = schedule.name
                     entry["tag"] = b.tag
                     records[i]["probe_results"][probe_code] = entry
                     if save_prompts:
@@ -411,42 +544,52 @@ def run_for_model(
                     contexts[i] = f"{contexts[i]}{context_blocks[i]}\nAssistant: {pred}\n"
 
         if "fresh" in modes:
-            fresh_specs = [(instruction, style) for instruction in (0, 1) for style in styles]
-            for instruction, style in tqdm(fresh_specs, desc=f"Exp12 fresh probes {model_id} T{turn}"):
+            fresh_specs = []
+            for tag in tags:
+                tag_key = normalize_tag(tag)
+                for schedule in instruction_schedules:
+                    for history in history_for_probes:
+                        for style in styles:
+                            fresh_specs.append((tag_key, history, schedule, style))
+
+            for tag_key, history, schedule, style in tqdm(fresh_specs, desc=f"Exp12 fresh probes {model_id} T{turn}"):
                 prompts: List[str] = []
                 expected_labels: List[str] = []
+                include_instruction = schedule.include_probe_instruction("fresh", turn)
                 for ex in examples:
-                    prompts.append(format_fresh_probe_prompt(ex, style=style, turn_idx=turn, instruction=bool(instruction)))
+                    prompts.append(
+                        format_fresh_probe_prompt(
+                            ex,
+                            style=style,
+                            turn_idx=turn,
+                            instruction=include_instruction,
+                            style_profile=style_profile,
+                        )
+                    )
                     expected_labels.append(probe_correct_label(ex, style))
 
-                scored = _score_prompts(
-                    model, tokenizer, device, token_id_a, token_id_b,
-                    prompts, batch_size=batch_size, max_length=max_length,
-                )
+                scored = _score_prompts_with_fallback(prompts)
 
                 for i, result in enumerate(scored):
-                    base_entry = _result_to_entry(result, expected_correct_label=expected_labels[i])
-                    base_entry["mode"] = "fresh"
-                    base_entry["turn"] = turn
-                    base_entry["style"] = style
-                    base_entry["instruction"] = instruction
-
-                    for tag in tags:
-                        tag_key = normalize_tag(tag)
-                        for history in history_for_probes:
-                            probe_code = f"FRESH_H{HISTORY_CODE[history]}{instruction}_{tag_key}_{style}_T{turn}"
-                            entry = dict(base_entry)
-                            entry["tag"] = tag_key
-                            entry["history"] = history
-                            records[i]["probe_results"][probe_code] = entry
-                            if save_prompts:
-                                records[i]["prompts"][probe_code] = prompts[i]
+                    entry = _result_to_entry(result, expected_correct_label=expected_labels[i])
+                    entry["mode"] = "fresh"
+                    entry["turn"] = turn
+                    entry["style"] = style
+                    entry["instruction"] = schedule.key
+                    entry["instruction_schedule"] = schedule.name
+                    entry["tag"] = tag_key
+                    entry["history"] = history
+                    probe_code = f"FRESH_H{HISTORY_CODE[history]}{schedule.key}_{tag_key}_{style}_T{turn}"
+                    records[i]["probe_results"][probe_code] = entry
+                    if save_prompts:
+                        records[i]["prompts"][probe_code] = prompts[i]
 
     summary_metrics = _compute_summary(
         records=records,
         tags=tags,
         modes=modes,
         styles=styles,
+        instruction_schedules=instruction_schedules,
         turns=turns,
         include_correct_history=include_correct_history,
     )
@@ -462,11 +605,20 @@ def run_for_model(
         "tags": tags,
         "probe_modes": modes,
         "styles": styles,
+        "style_profile": style_profile,
+        "instruction_schedule_names": [s.name for s in instruction_schedules],
+        "instruction_schedule_keys": [s.key for s in instruction_schedules],
+        "instruction_schedule_labels": {s.key: s.label for s in instruction_schedules},
         "turns": turns,
         "include_correct_history": include_correct_history,
+        "fresh_probe_independent_by_branch": True,
         "instruction_text": INSTRUCTION_TEXT,
         "batch_size": batch_size,
+        "effective_batch_size": active_batch_size,
         "max_length": max_length if max_length is not None else 0,
+        "torch_compile_requested": compile_requested,
+        "torch_compile_enabled": compile_enabled,
+        "torch_compile_disabled_reason": compile_disabled_reason or "",
         "token_ids": {
             "a": token_id_a,
             "b": token_id_b,
@@ -481,13 +633,19 @@ def run_for_model(
         json.dump(model_summary, f, indent=2)
 
     print(f"\nKey metrics for {model_id}:")
+    preferred_instr_key = "1" if any(s.key == "1" for s in instruction_schedules) else instruction_schedules[0].key
+    preferred_instr_metric = f"instr_{preferred_instr_key}"
+    preferred_instr_label = {s.key: s.label for s in instruction_schedules}[preferred_instr_key]
     for tag in tags:
         tag_key = normalize_tag(tag)
-        m = model_summary["metrics"][tag_key]["instr_1"]["initial"]["immediate_wrong_shift"]["mean"]
-        print(f"  {tag}: immediate_wrong_shift (I1 mean margin delta) = {m:.4f}")
+        m = model_summary["metrics"][tag_key][preferred_instr_metric]["initial"]["immediate_wrong_shift"]["mean"]
+        print(
+            f"  {tag}: immediate_wrong_shift "
+            f"({preferred_instr_label} mean margin delta) = {m:.4f}"
+        )
         for mode in modes:
             for style in styles:
-                resid = model_summary["metrics"][tag_key]["instr_1"]["probes"][mode][style]["T1"]["residual_wrong_shift"]["mean"]
+                resid = model_summary["metrics"][tag_key][preferred_instr_metric]["probes"][mode][style]["T1"]["residual_wrong_shift"]["mean"]
                 print(f"    {mode} {style} T1 residual_wrong_shift: {resid:.4f}")
 
     del model
@@ -505,6 +663,8 @@ def main() -> None:
     tags = list(EXTENDED_TAGS) if args.extended_tags else list(DEFAULT_TAGS)
     modes = parse_probe_modes(args.probe_modes)
     styles = parse_probe_styles(args.probe_styles)
+    style_profile = parse_style_profile(args.style_profile)
+    instruction_schedules = parse_instruction_schedules(args.instruction_schedules)
     include_correct_history = not args.no_correct_history
     max_length = args.max_length if args.max_length > 0 else None
 
@@ -512,8 +672,11 @@ def main() -> None:
     print(f"Tags: {tags}")
     print(f"Probe modes: {modes}")
     print(f"Styles: {styles}")
+    print(f"Style profile: {style_profile}")
+    print(f"Instruction schedules: {[s.name for s in instruction_schedules]}")
     print(f"Turns: {args.turns}")
     print(f"Include correct history: {include_correct_history}")
+    print(f"Use torch.compile: {args.use_torch_compile}")
 
     mc_path = args.mc_dataset_path
     if mc_path.exists():
@@ -559,11 +722,14 @@ def main() -> None:
             tags=tags,
             modes=modes,
             styles=styles,
+            style_profile=style_profile,
+            instruction_schedules=instruction_schedules,
             turns=args.turns,
             include_correct_history=include_correct_history,
             save_prompts=args.save_prompts,
             batch_size=args.batch_size,
             max_length=max_length,
+            use_torch_compile=args.use_torch_compile,
         )
         summaries.append(summary)
 
@@ -575,6 +741,10 @@ def main() -> None:
         "tags": tags,
         "probe_modes": modes,
         "styles": styles,
+        "style_profile": style_profile,
+        "instruction_schedule_names": [s.name for s in instruction_schedules],
+        "instruction_schedule_keys": [s.key for s in instruction_schedules],
+        "instruction_schedule_labels": {s.key: s.label for s in instruction_schedules},
         "turns": args.turns,
         "include_correct_history": include_correct_history,
         "models": summaries,
