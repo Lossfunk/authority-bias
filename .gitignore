@@ -61,3 +61,4 @@ abhinav-*.csv
 
 # Large per-item result files (keep summaries, skip raw JSONL > 100MB)
 new-phase-results/**/*_results.jsonl
+experiments/ 
