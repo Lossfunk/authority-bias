@@ -1,9 +1,9 @@
 # Experimental Results Analysis: Endorsement Effects and Instruction Override
 
 **Project**: Persona Vectors / Authority Bias in LLMs
-**Models**: Llama-3.1-8B (Base), Llama-3.1-8B-Instruct
+**Models**: Llama-3.1-8B (Base), Llama-3.1-8B-Instruct, Qwen3-4B-Instruct-2507 (Exp12)
 **Dataset**: TriviaQA + TruthfulQA (n = 1,813 items)
-**Date Range**: January - February 2026
+**Date Range**: January - February 2025
 
 ---
 
@@ -11,7 +11,7 @@
 
 This document traces the experimental progression from initial sycophancy measurement through to the final mechanistic claim. Each experiment was designed to address a specific confound or question raised by the previous one.
 
-**Final Finding**: "Be correct" instructions do not induce truth-tracking in Instruct models. Instead, they induce **confidence-conditioned prior-consistency control** — the model trusts its own beliefs more strongly, which can entrench errors when the model is confidently wrong.
+**Final Finding**: "Be correct" instructions do not induce truth-tracking in Instruct models. Instead, they induce **confidence-conditioned prior-consistency control** — the model trusts its own beliefs more strongly, which can entrench errors when the model is confidently wrong. The severity is tag-dependent: Expert shows non-selective suppression (dr ≈ 0), while Note shows strong prior-consistency (dr = -0.67). Exp12 extends this by showing that endorsement pressure leaves **context-persistent state** and that early prevention (`t0`) outperforms delayed correction (`t1`/`t2`) (from exp12_p0).
 
 ---
 
@@ -30,7 +30,7 @@ Exp8 (Order Control)
     ▼
 Exp8_Speakers (Speaker Tags)
     │
-    ├── Finding: Expert > Note > User > Online hierarchy
+    ├── Finding: Authority-dependent hierarchy (Expert universally top; mid-tier ordering is model-specific)
     │   Question: Can instructions override this?
     ▼
 Exp9 (Instruction Override)
@@ -45,8 +45,14 @@ Exp10 (Correct-Endorsement)
     ▼
 Exp11 (Inverted-Prior Test)
     │
-    └── Finding: Selectivity flips negative when model's prior is wrong
-        Conclusion: Prior-consistency control, not truth-tracking
+    ├── Finding: Selectivity collapses (Expert, dr≈0) or inverts (Note, dr=-0.67) on wrong-prior items
+    │   Conclusion: Prior-consistency, not truth-tracking
+    ▼
+Exp12 (Temporal Dynamics)
+    │
+    └── Finding: Repeated pressure creates context-persistent bias;
+        prevention at t0 attenuates but does not eliminate (exp12_k);
+        t0 > delayed correction at t1/t2 (exp12_p0)
 ```
 
 ---
@@ -144,23 +150,28 @@ Identical endorsement content with different speaker tags:
 ### Key Results
 
 **Per-Tag Endorsement Effects (Instruct)**:
-| Tag | Effect | Positive % |
-|-----|--------|------------|
-| Expert | **2.46** | 96% |
-| Note | **1.72** | 94% |
-| User | **1.40** | 91% |
-| Online | **0.84** | 79% |
+
+| Tag | Llama Effect | Qwen Effect |
+|-----|-------------|-------------|
+| Expert | **2.46** (96% positive) | **9.87** (99% positive) |
+| Note | **1.72** (94% positive) | **4.82** (98% positive) |
+| User | **1.40** (91% positive) | **4.76** (97% positive) |
+| Online | **0.84** (79% positive) | **5.20** (97% positive) |
 
 **Decision Metric**:
-- `user_vs_expert` = **-1.06** → Expert > User
-- Hierarchy: **Expert > Note > User > Online**
+- `user_vs_expert` = **-1.06** (Llama) → Expert > User in both models
+- Llama hierarchy: **Expert > Note > User > Online**
+- Qwen hierarchy: **Expert > Online > Note > User**
+
+Note: Expert is universally the strongest source tag across both models. However, the ordering among mid-tier tags (Note, User, Online) is **model-specific** — Llama demotes Online to last while Qwen ranks it second.
 
 ### Interpretation
 
 - Effect is **NOT user-specific sycophancy**
 - It is **authority-weighted compliance** / credibility sensitivity
+- Expert consistently tops the hierarchy across models, but mid-tier ordering varies
 - "Note" (non-agentive) still produces strong effects → some format/channel component
-- Models defer more to **authority-coded sources**
+- Models defer more to **authority-coded sources**, though the specific ranking below Expert is model-dependent
 
 ### What This Led To
 
@@ -337,38 +348,186 @@ If instruction induces prior-consistency:
 
 **Part C**: Confidence-binned analysis (descriptive)
 
-### Key Results (High-Confidence-Wrong Slice, Instruct)
+### Key Results (High-Confidence-Wrong Slice = top 25% by |m_N0|, Instruct)
+
+All metrics below are **medians** with 95% bootstrap CIs (medians are more robust than means here due to heavy-tailed ratio distributions).
 
 **Expert Tag**:
-- n = 149 items (model confidently wrong)
-- `r_w = 0.59 [0.47, 0.71]` → **Still positive!**
-- Interpretation: **Truth-tracking** (instruction still works when model is wrong)
+- n = 114 items (model confidently wrong, mean m_N0 = -7.4)
+- `r_w = 0.72 [0.35, 0.89]` → Still positive (instruction does suppress wrong endorsements)
+- `r_c = 0.69 [0.63, 0.78]` → Also positive and similar magnitude
+- `dr = 0.00 [-0.27, 0.12]` → **Near zero** (non-selective: suppresses both about equally)
+- Interpretation: **Non-selective suppression**, not clearly truth-tracking
 
 **Note Tag**:
-- n = 111 items
-- `r_w = -0.06 [-0.57, 0.39]` → **Collapsed to zero**
-- `dr = -0.90 [-1.38, -0.45]` → **Negative!**
-- Interpretation: **Prior-consistency control**
+- n = 111 items (model confidently wrong, mean m_N0 = -7.5)
+- `r_w = 0.15 [-0.30, 0.50]` → **Collapsed** (instruction barely suppresses wrong endorsements)
+- `r_c = 0.91 [0.79, 0.98]` → **High** (instruction strongly suppresses correct endorsements)
+- `dr = -0.67 [-1.15, -0.33]` → **Strongly negative**
+- Interpretation: **Prior-consistency control** — instruction protects the wrong prior
 
-### Full Results Table (High-Confidence-Wrong Slice)
+### Full Results Table (High-Confidence-Wrong Slice, medians)
 
-| Tag | r_w | dr | frac(dr > 0) | frac(eff_w > eff_c) |
-|-----|-----|-----|--------------|---------------------|
-| Expert | +0.59 | +0.24 | 65% | 65% |
-| Note | -0.06 | **-0.90** | **15%** | **0.9%** |
+| Tag | r_w | r_c | dr | frac(dr > 0) | frac(eff_w > eff_c) |
+|-----|-----|-----|-----|--------------|---------------------|
+| Expert | +0.72 | +0.69 | **0.00** | 50% | 3.5% |
+| Note | +0.15 | +0.91 | **-0.67** | **15%** | **0.9%** |
 
 ### Interpretation
 
-The results reveal **tag-dependent behavior**:
+The results reveal **tag-dependent behavior**, but neither tag achieves genuine truth-tracking:
 
-**For "Expert" tag**: The instruction induces something closer to **truth-tracking**
-- Selectivity stays positive even when model's prior is wrong
-- The model can override its own beliefs when instructed
+**For "Expert" tag**: The instruction induces **non-selective suppression**
+- When the model is confidently wrong, r_w and r_c are both ~0.7 (dr ≈ 0)
+- The instruction suppresses both wrong and correct endorsements about equally
+- This is better than Note (no active inversion) but is **not truth-tracking** — the model does not preferentially suppress the wrong endorsement
+- 50% of items show dr > 0, which is exactly chance — no systematic selectivity
 
 **For "Note" tag**: The instruction induces **prior-consistency control**
-- When the model is confidently wrong, the instruction makes it **more stubborn**
-- It suppresses correct endorsements that conflict with its prior
+- When the model is confidently wrong, r_w collapses to 0.15 while r_c rises to 0.91
+- The instruction makes the model **more stubborn**: it lets wrong endorsements through (they agree with prior) while suppressing correct ones (they conflict with prior)
+- dr = -0.67 with only 15% of items showing positive selectivity
 - This **entrenches errors** rather than fixing them
+
+---
+
+## Exp12: Temporal Persistence, Instruction Timing, and Repeated Pressure
+
+**Date**: February 4-6, 2025  
+**Goal**: Characterize how endorsement-induced bias evolves over turns, whether it washes out, and whether prevention (`t0`) beats delayed correction (`t1`/`t2`).
+
+Exp12 was run in three stages:
+
+1. `exp12_instruct`: legacy 2-turn persistence run (4 tags, schedules `none`/`t0`)  
+2. `exp12_p0`: validity run with matched probe profile (2 tags, schedules `none`/`t0`/`t1`/`t2`, 3 turns)  
+3. `exp12_k`: repeated-pressure run with K-step badgering (`K=1,2,5,10,20`, schedules `none`/`t0`)
+
+### Part A: `exp12_instruct` (Legacy 2-Turn Run)
+
+### Design
+
+- Tags: Expert, Note, User, Someone online
+- Schedules: `none`, `t0`
+- Probes: context vs fresh, styles `{same, paraphrase, swap}`, turns `T1`, `T2`
+- Primary metrics reported below: initial wrong-answer shift, context residual wrong shift, fresh residual wrong shift
+
+### Full Results (All Conditions, `same` style)
+
+| Model | Tag | Schedule | Initial wrong shift | Context T1 residual | Context T2 residual | Fresh T1 residual | Fresh T2 residual |
+|---|---|---:|---:|---:|---:|---:|---:|
+| Llama-3.1-8B-Instruct | expert | none | -2.458 | -0.531 | 0.127 | 0.000 | 0.000 |
+| Llama-3.1-8B-Instruct | expert | t0 | -0.747 | 0.344 | 0.452 | 0.000 | 0.000 |
+| Llama-3.1-8B-Instruct | note | none | -1.721 | -0.026 | 0.340 | 0.000 | 0.000 |
+| Llama-3.1-8B-Instruct | note | t0 | -0.075 | 0.993 | 0.834 | 0.000 | 0.000 |
+| Llama-3.1-8B-Instruct | user | none | -1.412 | -0.203 | 0.229 | 0.000 | 0.000 |
+| Llama-3.1-8B-Instruct | user | t0 | -0.104 | 0.754 | 0.732 | 0.000 | 0.000 |
+| Llama-3.1-8B-Instruct | someone online | none | -0.846 | 0.170 | 0.322 | 0.000 | 0.000 |
+| Llama-3.1-8B-Instruct | someone online | t0 | 0.919 | 1.154 | 0.984 | 0.000 | 0.000 |
+| Qwen3-4B-Instruct-2507 | expert | none | -9.857 | 2.973 | 3.685 | 0.000 | 0.000 |
+| Qwen3-4B-Instruct-2507 | expert | t0 | -2.732 | 2.986 | 2.486 | 0.000 | 0.000 |
+| Qwen3-4B-Instruct-2507 | note | none | -4.804 | 1.231 | 2.291 | 0.000 | 0.000 |
+| Qwen3-4B-Instruct-2507 | note | t0 | -1.600 | 1.918 | 2.164 | 0.000 | 0.000 |
+| Qwen3-4B-Instruct-2507 | user | none | -4.749 | 2.031 | 2.578 | 0.000 | 0.000 |
+| Qwen3-4B-Instruct-2507 | user | t0 | 0.533 | 2.152 | 2.982 | 0.000 | 0.000 |
+| Qwen3-4B-Instruct-2507 | someone online | none | -5.188 | 0.903 | 1.403 | 0.000 | 0.000 |
+| Qwen3-4B-Instruct-2507 | someone online | t0 | 1.726 | 1.576 | 1.584 | 0.000 | 0.000 |
+
+### Interpretation
+
+- Fresh probes were exactly zero residual in all rows above.
+- Context probes showed large carryover and, in multiple conditions, apparent over-correction (positive residuals), motivating a stricter validity run with matched probe profiles.
+
+### Part B: `exp12_p0` (Matched Validity Run; Prevention vs Cure)
+
+### Design
+
+- Tags: Expert, Note
+- Schedules: `none`, `t0`, `t1`, `t2`
+- Turns: `T1`, `T2`, `T3`
+- Probe profile matched for imperativeness across styles
+- Primary metrics: context residual wrong shift, context washout score
+
+### Full Results (All Conditions, context + `same` style)
+
+| Model | Tag | Schedule | T1 residual | T2 residual | T3 residual | T1 washout | T2 washout | T3 washout |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Llama-3.1-8B-Instruct | expert | none | -0.874 | -0.594 | -0.659 | 0.544 | 0.587 | 0.594 |
+| Llama-3.1-8B-Instruct | expert | t0 | -0.474 | -0.044 | -0.306 | 0.392 | 0.398 | 0.427 |
+| Llama-3.1-8B-Instruct | expert | t1 | -0.855 | -0.305 | -0.415 | 0.555 | 0.653 | 0.619 |
+| Llama-3.1-8B-Instruct | expert | t2 | -0.874 | -0.461 | -0.610 | 0.544 | 0.625 | 0.588 |
+| Llama-3.1-8B-Instruct | note | none | -0.823 | -0.667 | -0.978 | 0.447 | 0.441 | 0.415 |
+| Llama-3.1-8B-Instruct | note | t0 | -0.250 | -0.156 | -0.457 | 0.292 | 0.242 | 0.255 |
+| Llama-3.1-8B-Instruct | note | t1 | -0.829 | -0.740 | -1.001 | 0.457 | 0.454 | 0.419 |
+| Llama-3.1-8B-Instruct | note | t2 | -0.823 | -0.622 | -0.926 | 0.447 | 0.474 | 0.410 |
+| Qwen3-4B-Instruct-2507 | expert | none | 0.032 | 0.324 | 0.590 | 0.739 | 0.709 | 0.691 |
+| Qwen3-4B-Instruct-2507 | expert | t0 | 0.906 | 1.427 | 2.065 | 0.477 | 0.424 | 0.388 |
+| Qwen3-4B-Instruct-2507 | expert | t1 | -0.544 | -0.476 | -0.210 | 0.759 | 0.779 | 0.778 |
+| Qwen3-4B-Instruct-2507 | expert | t2 | 0.032 | -0.013 | -0.303 | 0.739 | 0.760 | 0.768 |
+| Qwen3-4B-Instruct-2507 | note | none | -1.225 | -1.111 | -0.782 | 0.580 | 0.573 | 0.569 |
+| Qwen3-4B-Instruct-2507 | note | t0 | 0.085 | 0.462 | 1.082 | 0.451 | 0.448 | 0.447 |
+| Qwen3-4B-Instruct-2507 | note | t1 | -1.504 | -1.024 | -1.267 | 0.539 | 0.581 | 0.586 |
+| Qwen3-4B-Instruct-2507 | note | t2 | -1.225 | -1.028 | -1.158 | 0.580 | 0.615 | 0.621 |
+
+### Interpretation
+
+- **Llama**: `t0` improved recovery versus `none` at every turn for both tags.
+  - Expert improvements (`t0 - none`): `+0.400` (T1), `+0.550` (T2), `+0.353` (T3)
+  - Note improvements (`t0 - none`): `+0.573` (T1), `+0.511` (T2), `+0.521` (T3)
+- **Qwen**: `t0` gave even larger improvements:
+  - Expert: `+0.874`, `+1.103`, `+1.474`
+  - Note: `+1.310`, `+1.574`, `+1.864`
+- Delayed schedules (`t1`, `t2`) were generally weaker/less stable than `t0`, especially by T3.
+- Fresh probes remained fully washed out (`residual = 0` and washout near 1.0).
+
+### Part C: `exp12_k` (Repeated K-Step Pressure)
+
+### Design
+
+- Tags: Expert, Note
+- Schedules: `none`, `t0`
+- Repeated pressure lengths: `K = 1, 2, 5, 10, 20`
+- Primary metrics: pressure wrong shift (during pressure), context washout
+
+### Full Results: Pressure Wrong Shift Across K
+
+| Model | Tag | Schedule | K1 shift | K2 shift | K5 shift | K10 shift | K20 shift |
+|---|---|---:|---:|---:|---:|---:|---:|
+| Llama-3.1-8B-Instruct | expert | none | -1.387 | -0.802 | -1.011 | -1.116 | -1.162 |
+| Llama-3.1-8B-Instruct | expert | t0 | -0.480 | -0.211 | -0.491 | -0.664 | -0.915 |
+| Llama-3.1-8B-Instruct | note | none | -0.603 | -0.048 | -0.453 | -1.004 | -1.282 |
+| Llama-3.1-8B-Instruct | note | t0 | 0.227 | 0.339 | -0.016 | -0.471 | -0.782 |
+| Qwen3-4B-Instruct-2507 | expert | none | -3.784 | -3.623 | -7.788 | -7.878 | -7.924 |
+| Qwen3-4B-Instruct-2507 | expert | t0 | 1.728 | 0.394 | -2.077 | -2.017 | -2.317 |
+| Qwen3-4B-Instruct-2507 | note | none | -2.003 | -2.185 | -3.028 | -2.954 | -2.847 |
+| Qwen3-4B-Instruct-2507 | note | t0 | 1.031 | 0.551 | 0.664 | 0.477 | 0.243 |
+
+### Full Results: Context Washout Across K
+
+| Model | Tag | Schedule | K1 context washout | K2 context washout | K5 context washout | K10 context washout | K20 context washout | K20 fresh washout |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Llama-3.1-8B-Instruct | expert | none | 0.698 | 0.665 | 0.658 | 0.650 | 0.625 | 1.000 |
+| Llama-3.1-8B-Instruct | expert | t0 | 0.452 | 0.412 | 0.354 | 0.319 | 0.304 | 1.000 |
+| Llama-3.1-8B-Instruct | note | none | 0.548 | 0.508 | 0.497 | 0.502 | 0.486 | 1.000 |
+| Llama-3.1-8B-Instruct | note | t0 | 0.318 | 0.312 | 0.264 | 0.240 | 0.241 | 1.000 |
+| Qwen3-4B-Instruct-2507 | expert | none | 0.696 | 0.734 | 0.732 | 0.735 | 0.739 | 1.000 |
+| Qwen3-4B-Instruct-2507 | expert | t0 | 0.421 | 0.426 | 0.427 | 0.408 | 0.403 | 1.000 |
+| Qwen3-4B-Instruct-2507 | note | none | 0.523 | 0.559 | 0.539 | 0.559 | 0.570 | 1.000 |
+| Qwen3-4B-Instruct-2507 | note | t0 | 0.356 | 0.380 | 0.378 | 0.372 | 0.371 | 1.000 |
+
+### Interpretation
+
+- Repeated pressure increased wrong-answer shift magnitude, especially for Qwen under `none`.
+- `t0` consistently attenuated pressure effects relative to `none`, but did not eliminate context persistence.
+- Fresh probes were fully washed out (`washout = 1.0`) even at `K=20`, confirming the bias is context-dependent rather than persistent across fresh restarts.
+
+### What This Added to the Mechanism
+
+- Exp11 identified **what** the instruction is doing (prior-consistency control, tag-dependent).
+- Exp12 identified **when and how long** the induced state matters:
+  - Context state can persist across turns under repeated pressure (exp12_k).
+  - `t0` consistently attenuates pressure effects but does not eliminate them (exp12_k).
+  - Prevention (`t0`) is materially better than delayed correction (`t1`, `t2`) (exp12_p0).
+  - Fresh restarts reliably remove the carryover (exp12_k, exp12_p0).
 
 ---
 
@@ -378,24 +537,25 @@ The results reveal **tag-dependent behavior**:
 
 1. **Endorsement effects are real** and not just token priming (Exp7)
 2. **Endorsement >> Order effects** (Exp8)
-3. **Authority-weighted, not user-specific** (Exp8_Speakers)
+3. **Authority-weighted, not user-specific**: Expert is universally top; mid-tier ordering is model-specific (Exp8_Speakers)
 4. **Instructions can reduce endorsement effects** (Exp9)
-5. **Instruct shows selective suppression** of wrong > correct (Exp10)
-6. **But this selectivity is prior-dependent**, not truth-conditioned (Exp11)
+5. **Instruct shows apparent selective suppression** of wrong > correct on average (Exp10)
+6. **But this selectivity is prior-dependent**, not truth-conditioned — and collapses or inverts on confidently-wrong items (Exp11)
+7. **Temporal dynamics matter**: repeated pressure sustains context bias; early instruction (`t0`) attenuates but does not eliminate context persistence (Exp12)
 
 ### The Novel Finding
 
-> "Be correct" instructions do not make Instruct models truth-seekers. They make them **prior-consistent**. When the model is confidently wrong, the instruction can **entrench the error** by suppressing correct endorsements that conflict with its prior.
+> "Be correct" instructions do not make Instruct models truth-seekers. At best (Expert tag), they induce **non-selective suppression** that treats wrong and correct endorsements equally. At worst (Note tag), they induce **prior-consistency control** that actively entrenches errors — suppressing correct endorsements that conflict with the model's (wrong) prior while letting wrong endorsements through.
 
-This is a distinct failure mode from sycophancy or authority bias. It represents a fundamental limitation of instruction-based interventions: they may increase **self-trust** rather than **truthfulness**.
+This is a distinct failure mode from sycophancy or authority bias. It represents a fundamental limitation of instruction-based interventions: they increase **self-trust** rather than **truthfulness**. The degree of failure is tag-dependent (more severe for lower-authority sources), and the resulting bias can persist under multi-turn pressure in context.
 
-### Model × Tag Interaction
+### Model x Tag Interaction
 
 The effect is not uniform:
-- **Expert tag**: More robust to prior errors (closer to truth-tracking)
-- **Note tag**: Prior-consistency dominates (self-trust under instruction)
+- **Expert tag**: On confidently-wrong items, instruction suppresses both endorsement types roughly equally (dr ≈ 0). This avoids the worst failure mode (inversion) but is **not truth-tracking** — it is closer to non-selective gating.
+- **Note tag**: On confidently-wrong items, instruction shows **strong prior-consistency** (dr = -0.67). It lets wrong endorsements through while actively suppressing correct ones.
 
-This suggests the control policy is **tag-conditioned**, possibly reflecting different learned behaviors for different authority levels.
+This suggests the control policy is **tag-conditioned**: the model treats higher-authority sources differently, applying more cautious (but non-selective) suppression for Expert, while defaulting to prior-reinforcement for lower-authority tags like Note.
 
 ---
 
@@ -404,10 +564,11 @@ This suggests the control policy is **tag-conditioned**, possibly reflecting dif
 ### Failure Mode Characterized
 
 When a model is given accuracy instructions:
-1. It does suppress external endorsements
+1. It does suppress external endorsements on average
 2. But the suppression is **confidence-weighted** by its own prior
-3. High-confidence wrong priors become **entrenched**
-4. The instruction can **backfire** when model beliefs are incorrect
+3. For high-authority sources (Expert): suppression becomes **non-selective** (dr ≈ 0) on wrong-prior items — not harmful, but not helpful either
+4. For lower-authority sources (Note): suppression **inverts** (dr = -0.67) — the instruction actively protects the wrong prior
+5. High-confidence wrong priors can become **entrenched** through this mechanism
 
 ### What This Means for RLHF/Instruction-Tuning
 
@@ -424,10 +585,11 @@ The "be correct" behavior appears to be:
 |------------|----------|-------------|----------------|
 | Exp7 | Is endorsement effect real? | Yes, survives lexical control | Is it order or endorsement? |
 | Exp8 | Is it order/recency? | No, endorsement dominates | Is it user-specific? |
-| Exp8_Speakers | Is it user-specific? | No, Expert > Note > User > Online | Can instructions override? |
+| Exp8_Speakers | Is it user-specific? | No, authority-weighted (Expert universally top; mid-tier ordering model-specific) | Can instructions override? |
 | Exp9 | Do instructions work? | Yes, 40-60% reduction | What's the nature of override? |
-| Exp10 | Truth-tracking or gating? | Instruct shows selectivity | Is it actually truth-tracking? |
-| Exp11 | Truth or prior-consistency? | **Prior-consistency** (tag-dependent) | Final mechanism |
+| Exp10 | Truth-tracking or gating? | Instruct shows apparent selectivity on average | Is it actually truth-tracking? |
+| Exp11 | Truth or prior-consistency? | **Prior-consistency** for Note (dr = -0.67); non-selective for Expert (dr ≈ 0). Neither truth-tracks on confidently-wrong items. | Temporal stress-test under multi-turn pressure |
+| Exp12 | Does it persist over turns? | Context carryover persists; `t0` attenuates but does not eliminate; fresh restarts wash out | Final mechanism under temporal dynamics |
 
 ---
 
@@ -443,10 +605,14 @@ The "be correct" behavior appears to be:
 - `r_w = 1 - (effect_w_I1 / effect_w_I0)` (relative suppression of wrong)
 - `dr = r_w - r_c` (differential suppression)
 - `m_N0 < 0` = model's neutral prior is wrong
+- `pressure_wrong_shift` = shift under repeated pressure at a given `K`
+- `residual_wrong_shift` = remaining wrong-shift after endorsement removal (context probe)
+- `washout_score_wrong` = `1 - |residual_wrong_shift| / |initial_wrong_shift|` (clipped to `[0,1]`)
 
 ### Code Location
 - Exp7-10: `src/exp7/` through `src/exp10/`
 - Exp11: `src/exp11/` (logit_metrics.py, analyze_*.py)
+- Exp12: `src/exp12/` (run_persistence_washout.py, run_repeated_endorsement.py, plot_repeated_endorsement.py)
 
 ---
 
@@ -457,3 +623,4 @@ The "be correct" behavior appears to be:
 - **Jan 30**: Added matched-template controls, established authority hierarchy
 - **Feb 2**: Added correct-endorsement condition, found selectivity
 - **Feb 3**: Ran inverted-prior test, discovered prior-consistency mechanism
+- **Feb 4-6**: Ran Exp12 persistence/timing/repeated-pressure studies and validated prevention > cure dynamics

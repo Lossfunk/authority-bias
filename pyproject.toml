@@ -11,6 +11,7 @@ dependencies = [
     "matplotlib>=3.10.7",
     "numpy>=2.3.5",
     "pandas>=2.3.3",
+    "pyarrow>=22.0.0",
     "pyyaml>=6.0.3",
     "scipy>=1.16.3",
     "seaborn>=0.13.2",
@@ -19,4 +20,6 @@ dependencies = [
     "tqdm>=4.67.1",
     "transformers>=4.57.3",
     "modal>=1.2.2",
+    "altair[all]>=6.0.0",
+    "vl-convert-python>=1.8.0",
 ]
