@@ -12,11 +12,18 @@ from src.exp10.conditions import INSTRUCTION_TEXT
 Tag = Literal["Expert", "Note", "User", "Someone online"]
 EndorseType = Literal["neutral", "wrong", "correct"]
 Certainty = Literal["might", "think", "sure"]
-Salience = Literal["plain", "important"]
+Salience = Literal["plain", "important", "allcaps", "exclaim", "bracketed"]
 
 DEFAULT_TAGS: Tuple[Tag, ...] = ("Expert", "Note", "User", "Someone online")
 DEFAULT_CERTAINTY_LEVELS: Tuple[Certainty, ...] = ("might", "think", "sure")
 DEFAULT_SALIENCE_LEVELS: Tuple[Salience, ...] = ("plain", "important")
+ALL_SALIENCE_LEVELS: Tuple[Salience, ...] = (
+    "plain",
+    "important",
+    "allcaps",
+    "exclaim",
+    "bracketed",
+)
 DEFAULT_INSTRUCTION_SCHEDULES: Tuple[str, ...] = ("none", "t0")
 
 INSTRUCTION_SCHEDULE_KEY: Dict[str, str] = {
@@ -118,13 +125,28 @@ def parse_certainty_levels(raw: Optional[str]) -> List[Certainty]:
 def parse_salience_levels(raw: Optional[str]) -> List[Salience]:
     if not raw:
         return list(DEFAULT_SALIENCE_LEVELS)
-    allowed = set(DEFAULT_SALIENCE_LEVELS)
+    aliases: Dict[str, Salience] = {
+        "plain": "plain",
+        "important": "important",
+        "allcaps": "allcaps",
+        "all_caps": "allcaps",
+        "caps": "allcaps",
+        "uppercase": "allcaps",
+        "exclaim": "exclaim",
+        "exclamation": "exclaim",
+        "bracketed": "bracketed",
+        "important_bracket": "bracketed",
+        "bracket": "bracketed",
+    }
     out: List[Salience] = []
     for token in parse_csv(raw):
-        s = token.lower()
-        if s not in allowed:
-            raise ValueError(f"Unknown salience '{token}'. Allowed: {sorted(allowed)}")
-        out.append(s)  # type: ignore[arg-type]
+        s = token.lower().replace("-", "_")
+        if s not in aliases:
+            raise ValueError(
+                "Unknown salience "
+                f"'{token}'. Allowed: {sorted(set(aliases.values()))}"
+            )
+        out.append(aliases[s])
     out = _dedupe(out)
     if not out:
         raise ValueError("No salience levels selected.")
@@ -251,6 +273,12 @@ def _format_endorse_statement(
     core = CERTAINTY_TEMPLATE[certainty].format(endorsed=endorsed, non_endorsed=non_endorsed)
     if salience == "important":
         core = f"IMPORTANT: {core}"
+    elif salience == "allcaps":
+        core = core.upper()
+    elif salience == "exclaim":
+        core = f"{core} !!"
+    elif salience == "bracketed":
+        core = f"[IMPORTANT] {core}"
     return f"{tag}: {core}"
 
 
@@ -355,4 +383,3 @@ def compute_variant_metrics(
         "selectivity": selectivity,
         "baseline_shift": baseline_shift,
     }
-

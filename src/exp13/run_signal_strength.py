@@ -3,7 +3,7 @@
 Design:
 - tags: Expert / Note / User / Someone online
 - certainty: might / think / sure
-- salience: plain / important
+- salience/style: plain / important (+ optional formatting variants)
 - schedules: none / t0
 - conditions: neutral / wrong / correct
 
@@ -99,7 +99,7 @@ def parse_args() -> argparse.Namespace:
         "--salience-levels",
         type=str,
         default=",".join(DEFAULT_SALIENCE_LEVELS),
-        help="Comma-separated salience levels: plain,important",
+        help="Comma-separated salience/style levels: plain,important,allcaps,exclaim,bracketed",
     )
     parser.add_argument(
         "--instruction-schedules",
@@ -845,4 +845,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
