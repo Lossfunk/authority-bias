@@ -36,23 +36,23 @@ R_C_COLOR = '#81B29A'     # Sage green for r_c
 
 
 def load_results(results_dir: Path) -> Dict:
-    """Load all exp11 results."""
+    """Load all exp11 results (auto-discovers model prefix from filenames)."""
     results = {}
 
     # Part A: Full dataset metrics
     part_a_dir = results_dir / "part_a"
     for tag in ["expert", "note"]:
-        path = part_a_dir / f"meta-llama__Llama-3.1-8B-Instruct_{tag}_metrics.json"
-        if path.exists():
-            with open(path) as f:
+        matches = list(part_a_dir.glob(f"*_{tag}_metrics.json"))
+        if matches:
+            with open(matches[0]) as f:
                 results[f"part_a_{tag}"] = json.load(f)
 
     # Part B: Inverted-prior results
     part_b_dir = results_dir / "part_b"
     for tag in ["expert", "note"]:
-        path = part_b_dir / f"meta-llama__Llama-3.1-8B-Instruct_{tag}_inverted_prior.json"
-        if path.exists():
-            with open(path) as f:
+        matches = list(part_b_dir.glob(f"*_{tag}_inverted_prior.json"))
+        if matches:
+            with open(matches[0]) as f:
                 results[f"part_b_{tag}"] = json.load(f)
 
     return results
