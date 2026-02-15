@@ -63,5 +63,16 @@ abhinav-*.csv
 
 # Large per-item result files (keep summaries, skip raw JSONL > 100MB)
 new-phase-results/**/*_results.jsonl
-experiments/ 
-new-phase-results/exp13
+experiments/
+
+# Large experiment result directories (>50MB each)
+new-phase-results/llama/exp13/
+new-phase-results/qwen/exp13/
+new-phase-results/qwen/exp14e/
+new-phase-results/llama/exp14e/
+new-phase-results/exp14e/
+
+# Generated figure outputs and paper figure scripts
+new-phase-results/**/figures/
+new-phase-results/figures/
+src/paper_figures/
