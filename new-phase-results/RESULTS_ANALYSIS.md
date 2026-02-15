@@ -15,6 +15,79 @@ This document traces the experimental progression from initial sycophancy measur
 
 ---
 
+## Update (Feb 2026): Qwen Reasoning-Matched Reruns (Exp7-Exp11)
+
+This section summarizes the latest Qwen-only matched reruns now present under:
+
+- `new-phase-results/qwen/exp7`
+- `new-phase-results/qwen/exp8_speakers`
+- `new-phase-results/qwen/exp9`
+- `new-phase-results/qwen/exp10_extended`
+- `new-phase-results/qwen/exp11/part_a`
+- `new-phase-results/qwen/exp11/part_b`
+
+Models compared:
+- `Qwen/Qwen3-4B`
+- `Qwen/Qwen3-4B-Instruct-2507`
+- `Qwen/Qwen3-4B-Thinking-2507`
+
+### Claim Tiers
+
+#### Strongly Supported
+
+1. Endorsement shift exists across all Qwen variants (Exp7), and is largest for Thinking in forced-choice terms.
+   - FC wrong shift mean: Base `0.0726`, Instruct `0.0793`, Thinking `0.1738`
+   - Positive fraction: Base `0.6773`, Instruct `0.6674`, Thinking `0.8682`
+
+2. Source hierarchy remains authority-weighted in all variants (Exp8_speakers), with Expert strongest.
+   - Thinking means: Expert `4.303`, Note `2.708`, User `2.788`, Online `2.749`
+   - Instruct means: Expert `9.856`, Online `5.198`, Note `4.814`, User `4.745`
+
+3. Instruction reduces endorsement effects in both Instruct and Thinking (Exp9), but unevenly by tag.
+   - Thinking: Expert reduction `~70.9%` (`4.303 -> 1.254`), Note `~36.6%` (`2.708 -> 1.717`)
+   - Instruct: Expert reduction `~71.7%` (`9.856 -> 2.786`), Note `~66.4%` (`4.814 -> 1.617`)
+
+4. Inverted-prior stress test (Exp11, high-conf-wrong slice) shows strong non-Expert prior-consistency failure in Instruct.
+   - Instruct `dr_median`:
+     - Expert: `+0.314` `[+0.066, +0.723]`
+     - Note: `-0.895` `[-1.331, -0.581]`
+     - User: `-1.232` `[-1.702, -1.088]`
+     - Someone online: `-1.685` `[-2.097, -1.433]`
+
+#### Moderately Supported
+
+1. Aggregate selectivity (Exp10_extended) is positive for Thinking and Instruct across all four tags.
+   - Thinking selectivity: Expert `0.148`, Note `0.052`, User `0.095`, Online `0.090`
+   - Instruct selectivity: Expert `0.326`, Note `0.050`, User `0.062`, Online `0.060`
+
+2. Thinking appears less pathologically inverted than Instruct in the critical high-conf-wrong regime (Exp11 part_b), especially for Note.
+   - Thinking `dr_median`:
+     - Expert: `+0.074` `[-0.048, +0.274]`
+     - Note: `+0.165` `[+0.027, +0.299]`
+     - User: `+0.254` `[-0.123, +0.538]`
+     - Someone online: `-0.116` `[-0.224, +0.027]`
+
+#### Uncertain / Open
+
+1. Full truth-tracking in Thinking across all tags is not established.
+   - Only Note has clearly positive `dr` CI in high-conf-wrong slice; Expert/User/Online are mixed or include zero.
+
+2. Why Thinking has larger surface susceptibility (Exp7) but weaker inversion under stress (Exp11) remains mechanistically unresolved.
+   - Candidate explanations include calibration, instruction parsing differences, and confidence geometry.
+
+3. Cross-family generalization remains open.
+   - Current reasoning-model evidence is Qwen-specific; extension to other reasoning models is still needed.
+
+### Updated Mechanistic Read (Qwen Family)
+
+1. Surface behavior: Thinking is more endorsement-sensitive at baseline (Exp7).
+2. Mitigation behavior: Both variants respond to "be correct" instructions (Exp9/Exp10).
+3. Stress-test behavior: Instruct exhibits strong non-Expert prior-consistency inversion on high-confidence-wrong items, while Thinking shows weaker/mixed inversion and a positive Note result (Exp11).
+
+This strengthens the claim that aggregate selectivity alone is insufficient; inverted-prior slicing is necessary to diagnose mechanism.
+
+---
+
 ## Experimental Progression Overview
 
 ```

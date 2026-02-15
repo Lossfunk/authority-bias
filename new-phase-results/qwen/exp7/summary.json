@@ -5,6 +5,70 @@
   "seed": 42,
   "models": [
     {
+      "model": "Qwen/Qwen3-4B-Instruct-2507",
+      "n_examples": 1813,
+      "token_ids": {
+        "a": 362,
+        "b": 425,
+        "a_str": " A",
+        "b_str": " B"
+      },
+      "delta_logit_wrong": {
+        "mean": 1.7085568285488122,
+        "median": 1.1754150390625,
+        "std": 3.965320620928525,
+        "min": -14.6492919921875,
+        "max": 21.739227294921875,
+        "n_positive": 1210,
+        "n_negative": 602,
+        "n_zero": 1,
+        "positive_frac": 0.6674020959735245
+      },
+      "delta_fc_wrong": {
+        "mean": 0.07932949592465328,
+        "median": 3.00353850478547e-05,
+        "std": 0.2704928119859519,
+        "min": -0.9985540218503525,
+        "max": 0.9999273497757257,
+        "n_positive": 1210,
+        "n_negative": 602,
+        "n_zero": 1,
+        "positive_frac": 0.6674020959735245
+      }
+    },
+    {
+      "model": "Qwen/Qwen3-4B-Thinking-2507",
+      "n_examples": 1813,
+      "token_ids": {
+        "a": 362,
+        "b": 425,
+        "a_str": " A",
+        "b_str": " B"
+      },
+      "delta_logit_wrong": {
+        "mean": 1.7462714648154711,
+        "median": 1.7412109375,
+        "std": 1.6565867333434294,
+        "min": -4.148193359375,
+        "max": 8.2586669921875,
+        "n_positive": 1574,
+        "n_negative": 232,
+        "n_zero": 7,
+        "positive_frac": 0.8681742967457253
+      },
+      "delta_fc_wrong": {
+        "mean": 0.17380795510900698,
+        "median": 0.0903315364120485,
+        "std": 0.21981775172221793,
+        "min": -0.5302576947316453,
+        "max": 0.910085982257818,
+        "n_positive": 1574,
+        "n_negative": 233,
+        "n_zero": 6,
+        "positive_frac": 0.8681742967457253
+      }
+    },
+    {
       "model": "Qwen/Qwen3-4B",
       "n_examples": 1813,
       "token_ids": {
@@ -34,38 +98,6 @@
         "n_negative": 582,
         "n_zero": 3,
         "positive_frac": 0.6773303916161059
-      }
-    },
-    {
-      "model": "Qwen/Qwen3-4B-Instruct-2507",
-      "n_examples": 1813,
-      "token_ids": {
-        "a": 362,
-        "b": 425,
-        "a_str": " A",
-        "b_str": " B"
-      },
-      "delta_logit_wrong": {
-        "mean": 1.6919298708537502,
-        "median": 1.11907958984375,
-        "std": 3.9508422202645486,
-        "min": -14.8946533203125,
-        "max": 21.86370849609375,
-        "n_positive": 1216,
-        "n_negative": 596,
-        "n_zero": 1,
-        "positive_frac": 0.670711527854385
-      },
-      "delta_fc_wrong": {
-        "mean": 0.07911076191646199,
-        "median": 2.952006488454488e-05,
-        "std": 0.27025224708182727,
-        "min": -0.9988143757213956,
-        "max": 0.9999063078606524,
-        "n_positive": 1216,
-        "n_negative": 596,
-        "n_zero": 1,
-        "positive_frac": 0.670711527854385
       }
     }
   ]
