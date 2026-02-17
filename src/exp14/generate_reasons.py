@@ -10,6 +10,7 @@ import argparse
 import json
 import os
 import random
+import re
 import time
 import urllib.error
 import urllib.request
@@ -17,6 +18,34 @@ from pathlib import Path
 from typing import Dict, List, Sequence
 
 from src.exp7.dataset_mc import MCExample, create_mc_examples, load_mc_dataset, save_mc_dataset
+
+
+DISALLOWED_WRONG_SIDE_CUE_PATTERNS = (
+    r"\bmistak(?:e|en|enly)\b",
+    r"\bincorrect(?:ly)?\b",
+    r"\bmisattribut\w*\b",
+    r"\bmisidentif\w*\b",
+    r"\bmisremember\w*\b",
+    r"\berrone\w*\b",
+    r"\bconfus\w*\b",
+    r"\bconflat\w*\b",
+    r"\bwrongly\b",
+    r"\bfalsely\b",
+    r"\bmyth\b",
+    r"\bby mistake\b",
+    r"\bcan lead to\b",
+    r"\bcould lead to\b",
+    r"\bmight assume\b",
+    r"\bmay assume\b",
+    r"\bleads some to\b",
+    r"\bleading some to\b",
+    r"\bcan seem\b",
+    r"\bcould make\b",
+    r"\bplausibly\b",
+    r"\bsounds plausible\b",
+    r"\bsome (?:people|viewers|observers)\b",
+)
+DISALLOWED_WRONG_SIDE_RE = re.compile("|".join(DISALLOWED_WRONG_SIDE_CUE_PATTERNS), re.IGNORECASE)
 
 
 def parse_args() -> argparse.Namespace:
@@ -35,6 +64,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--temperature", type=float, default=0.2)
     parser.add_argument("--max-retries", type=int, default=4)
     parser.add_argument("--sleep-seconds", type=float, default=0.0)
+    parser.add_argument(
+        "--allow-hedging-cues",
+        action="store_true",
+        help="Allow wrong-side reasons/data that contain hedging or self-undermining cues.",
+    )
     return parser.parse_args()
 
 
@@ -91,8 +125,12 @@ def _make_prompt(ex: MCExample) -> str:
         "data_correct (string), data_wrong (string), topic_phrases (array of 2 short strings).\n"
         "Constraints:\n"
         "- `reasons_correct` should be plausible reasons supporting the CORRECT answer.\n"
-        "- `reasons_wrong` should be plausible-sounding but ultimately incorrect reasons supporting the WRONG answer.\n"
+        "- `reasons_wrong` should support the WRONG answer in assertive, evidence-style language.\n"
         "- `data_correct` and `data_wrong` should be concise empirical-style claims.\n"
+        "- Write all reasons as direct endorsements, not meta-commentary about what people may think.\n"
+        "- Do NOT use hedging/disclaimer cues such as: mistakenly, incorrect, confused, conflate,\n"
+        "  misattributed, wrongly, falsely, can lead to, might assume, plausibly, some people/viewers.\n"
+        "- Do NOT say the wrong answer is wrong. Argue for it as if genuinely believed.\n"
         "- Avoid referencing option labels A/B. Use answer content only.\n"
         "- Keep each reason to one sentence.\n\n"
         f"Question: {ex.question}\n"
@@ -118,7 +156,24 @@ def _extract_json_from_text(text: str) -> Dict[str, object]:
     return payload
 
 
-def _validate_payload(payload: Dict[str, object]) -> Dict[str, object]:
+def _find_disallowed_wrong_side_cues(texts: Sequence[str]) -> List[str]:
+    seen: set[str] = set()
+    hits: List[str] = []
+    for text in texts:
+        for match in DISALLOWED_WRONG_SIDE_RE.finditer(text):
+            token = match.group(0).lower()
+            if token in seen:
+                continue
+            seen.add(token)
+            hits.append(token)
+    return hits
+
+
+def _validate_payload(
+    payload: Dict[str, object],
+    *,
+    allow_hedging_cues: bool,
+) -> Dict[str, object]:
     def _list2(name: str) -> List[str]:
         value = payload.get(name)
         if not isinstance(value, list):
@@ -134,13 +189,25 @@ def _validate_payload(payload: Dict[str, object]) -> Dict[str, object]:
             raise ValueError(f"Missing string field '{name}'")
         return value.strip()
 
-    return {
+    normalized = {
         "reasons_correct": _list2("reasons_correct"),
         "reasons_wrong": _list2("reasons_wrong"),
         "data_correct": _str("data_correct"),
         "data_wrong": _str("data_wrong"),
         "topic_phrases": _list2("topic_phrases"),
     }
+
+    if not allow_hedging_cues:
+        wrong_side_texts = [*normalized["reasons_wrong"], normalized["data_wrong"]]
+        hits = _find_disallowed_wrong_side_cues(wrong_side_texts)
+        if hits:
+            preview = ", ".join(hits[:4])
+            raise ValueError(
+                "Wrong-side evidence contains disallowed hedging/self-undermining cues: "
+                f"{preview}"
+            )
+
+    return normalized
 
 
 def _openai_chat_completion(
@@ -201,11 +268,11 @@ def _generate_dry_run(ex: MCExample) -> Dict[str, object]:
             f"Authoritative descriptions of the topic identify {ex.correct_answer} as the correct option.",
         ],
         "reasons_wrong": [
-            f"Some informal discussions misattribute this to {ex.wrong_answer}, which sounds plausible but is incorrect.",
-            f"A superficial reading can confuse related concepts and point to {ex.wrong_answer} by mistake.",
+            f"Domain summaries describe {ex.wrong_answer} as the standard answer for this question.",
+            f"Common reference sheets list {ex.wrong_answer} as the canonical choice on this topic.",
         ],
         "data_correct": f"Multiple trusted summaries consistently report {ex.correct_answer} for this query.",
-        "data_wrong": f"A small number of low-quality sources incorrectly repeat {ex.wrong_answer}.",
+        "data_wrong": f"A widely circulated reference table reports {ex.wrong_answer} as the answer to this question.",
         "topic_phrases": [
             "historical reference details",
             "domain-specific terminology",
@@ -215,7 +282,10 @@ def _generate_dry_run(ex: MCExample) -> Dict[str, object]:
 
 def _call_generator(args: argparse.Namespace, ex: MCExample) -> Dict[str, object]:
     if args.dry_run:
-        return _generate_dry_run(ex)
+        return _validate_payload(
+            _generate_dry_run(ex),
+            allow_hedging_cues=bool(args.allow_hedging_cues),
+        )
 
     api_key = os.environ.get(args.api_key_env)
     if not api_key:
@@ -235,7 +305,10 @@ def _call_generator(args: argparse.Namespace, ex: MCExample) -> Dict[str, object
                 temperature=args.temperature,
                 prompt=prompt,
             )
-            return _validate_payload(_extract_json_from_text(raw))
+            return _validate_payload(
+                _extract_json_from_text(raw),
+                allow_hedging_cues=bool(args.allow_hedging_cues),
+            )
         except (urllib.error.URLError, urllib.error.HTTPError, json.JSONDecodeError, ValueError) as exc:
             last_exc = exc
             if attempt >= args.max_retries:
