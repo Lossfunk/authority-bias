@@ -65,6 +65,16 @@ abhinav-*.csv
 new-phase-results/**/*_results.jsonl
 experiments/
 
+# Exp14 generated run artifacts (keep curated reports/tables only)
+new-phase-results/exp14/*_checkpoint.json
+new-phase-results/exp14/*_run_manifest.json
+new-phase-results/exp14/*_summary.json
+new-phase-results/exp14/item_table.jsonl
+new-phase-results/exp14/summary.json
+new-phase-results/exp14/analysis/
+new-phase-results/exp14/robustness/*_analysis/
+new-phase-results/exp14/robustness/subsets/*.txt
+
 # Large experiment result directories (>50MB each)
 new-phase-results/llama/exp13/
 new-phase-results/qwen/exp13/
