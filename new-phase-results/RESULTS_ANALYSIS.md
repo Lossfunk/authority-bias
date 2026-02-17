@@ -88,6 +88,59 @@ This strengthens the claim that aggregate selectivity alone is insufficient; inv
 
 ---
 
+## Update (Feb 17, 2026): Exp14 Evidence-Quality Robustness to Hedging
+
+This section restores the Exp14A rerun and robustness check outputs using the currently available local artifacts:
+
+- Raw Exp14A results: `new-phase-results/exp14/*_results.jsonl` (3 models, 1,813 items each)
+- Reasons dataset: `data/exp14_reasons.jsonl` (1,813 items)
+
+Recomputed analysis outputs:
+
+- Baseline analysis: `new-phase-results/exp14/analysis`
+- Robustness analysis root: `new-phase-results/exp14/robustness`
+- Subset summary: `new-phase-results/exp14/robustness/subset_summary.json`
+- Full vs clean vs hedged comparison: `new-phase-results/exp14/robustness/comparison_prior_wrong_tau.csv`
+- Robustness report: `new-phase-results/exp14/robustness/robustness_report.md`
+
+### Subset Definitions Used for Robustness
+
+Wrong-reason rows were split into:
+
+- `clean`: no matched strong/mild/meta hedging cues
+- `hedged`: complement of clean
+
+Resulting counts:
+
+- Clean: `807 / 1813` (`44.5%`)
+- Hedged: `1006 / 1813` (`55.5%`)
+
+### Prior-Wrong Slice Trend Summary (Kendall tau Means)
+
+| Subset | Mean tau_wrong | Mean tau_correct | Mean (correct - wrong) |
+|---|---:|---:|---:|
+| full | `0.437` | `0.663` | `0.226` |
+| clean | `0.445` | `0.647` | `0.203` |
+| hedged | `0.412` | `0.672` | `0.259` |
+
+Gap-sign check across 12 model×tag×instruction prior-wrong cells:
+
+- Full: `12/12` with `correct > wrong`
+- Clean: `12/12` with `correct > wrong`
+- Hedged: `11/12` with `correct > wrong`
+
+### Interpretation
+
+1. The Exp14 evidence-quality asymmetry does **not** collapse on the clean subset.
+2. Hedged items likely amplify asymmetry magnitude, but are not required for the main direction.
+3. The core claim remains supported under this robustness check: stronger evidence tends to increase correct-direction shifts more reliably than wrong-direction shifts in prior-wrong contexts.
+
+### Caveat
+
+The clean/hedged split is heuristic (regex-based) and should be treated as a robustness stress test, not a perfect semantic classifier.
+
+---
+
 ## Experimental Progression Overview
 
 ```
