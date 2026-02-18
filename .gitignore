@@ -76,6 +76,14 @@ new-phase-results/exp14/analysis/
 new-phase-results/exp14/robustness/*_analysis/
 new-phase-results/exp14/robustness/subsets/*.txt
 
+# Exp14 assertive v2 intermediate artifacts (keep analysis outputs)
+new-phase-results/exp14_assertive_v2/*_checkpoint.json
+new-phase-results/exp14_assertive_v2/*_run_manifest.json
+new-phase-results/exp14_assertive_v2/item_table.jsonl
+
+# Exp14D smoke test (not needed in repo)
+new-phase-results/exp14d_assertive_v2_i0_smoke/
+
 # Large experiment result directories (>50MB each)
 new-phase-results/llama/exp13/
 new-phase-results/qwen/exp13/
