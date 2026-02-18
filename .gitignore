@@ -33,6 +33,10 @@ htmlcov/
 # Project data & results (generated / large)
 results/
 updated-results/
+test-results/
+rlhf-results/
+llama-results/
+assets/
 data/
 .env
 
