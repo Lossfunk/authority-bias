@@ -1,0 +1,1768 @@
+{
+  "models": [
+    {
+      "experiment": "exp14_social_epistemic",
+      "model": "Qwen/Qwen3-4B-Instruct-2507",
+      "source": "new-phase-results/exp14_assertive_v2/Qwen__Qwen3-4B-Instruct-2507_results.jsonl",
+      "design": {
+        "high_tag": "expert",
+        "low_tag": "note",
+        "low_evidence": "bare",
+        "high_evidence": "reason2",
+        "instruction_key": "I1",
+        "tau_evidence_levels": [
+          "bare",
+          "reason1",
+          "reason2",
+          "reason_data"
+        ],
+        "magnitude_low_evidence": "bare",
+        "magnitude_high_evidence": "reason_data",
+        "prior_code": "N0_expert_bare"
+      },
+      "slice_counts": {
+        "all": 1813,
+        "prior_correct": 1357,
+        "prior_wrong": 450
+      },
+      "slices": {
+        "all": {
+          "wrong": {
+            "n_items": 1813,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 2.71784292264203,
+                "ci95_low": 2.5518379089389134,
+                "ci95_high": 2.8866056346525095
+              },
+              "high_tag_high_evidence": {
+                "mean": 11.438476023855488,
+                "ci95_low": 11.186761949289851,
+                "ci95_high": 11.677300820032404
+              },
+              "low_tag_low_evidence": {
+                "mean": 1.6235036455460563,
+                "ci95_low": 1.4608449070084115,
+                "ci95_high": 1.7872402656163817
+              },
+              "low_tag_high_evidence": {
+                "mean": 6.841658982004964,
+                "ci95_low": 6.609699721843974,
+                "ci95_high": 7.073253068119139
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": 2.8455781594732485,
+                "ci95_low": 2.6492689516685055,
+                "ci95_high": 3.031574789174538
+              },
+              "evidence_main": {
+                "mean": 6.969394218836183,
+                "ci95_low": 6.765574959924848,
+                "ci95_high": 7.174586859659405
+              },
+              "interaction": {
+                "mean": 3.5024777647545506,
+                "ci95_low": 3.2270361301192776,
+                "ci95_high": 3.7729659167298677
+              }
+            }
+          },
+          "correct": {
+            "n_items": 1813,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 0.8622470525372311,
+                "ci95_low": 0.7159453857556537,
+                "ci95_high": 1.011721389358108
+              },
+              "high_tag_high_evidence": {
+                "mean": 4.722033576944291,
+                "ci95_low": 4.500474518882721,
+                "ci95_high": 4.94783090548297
+              },
+              "low_tag_low_evidence": {
+                "mean": 2.866043419056812,
+                "ci95_low": 2.72007495777027,
+                "ci95_high": 3.0140869005963875
+              },
+              "low_tag_high_evidence": {
+                "mean": 4.844121664713183,
+                "ci95_low": 4.589786896071773,
+                "ci95_high": 5.092646505920781
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": -1.0629422271442361,
+                "ci95_low": -1.1795831376258272,
+                "ci95_high": -0.9519815654302262
+              },
+              "evidence_main": {
+                "mean": 2.9189323850317153,
+                "ci95_low": 2.7285364301442705,
+                "ci95_high": 3.1117119226808123
+              },
+              "interaction": {
+                "mean": 1.8817082787506894,
+                "ci95_low": 1.6929881412024268,
+                "ci95_high": 2.0686474690171677
+              }
+            }
+          }
+        },
+        "prior_correct": {
+          "wrong": {
+            "n_items": 1357,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 3.0342552505526896,
+                "ci95_low": 2.849553890129882,
+                "ci95_high": 3.2178246044813927
+              },
+              "high_tag_high_evidence": {
+                "mean": 13.281382415254237,
+                "ci95_low": 13.045125427470984,
+                "ci95_high": 13.520591615523674
+              },
+              "low_tag_low_evidence": {
+                "mean": 0.8729158990420044,
+                "ci95_low": 0.7079852875138173,
+                "ci95_high": 1.044005762942152
+              },
+              "low_tag_high_evidence": {
+                "mean": 7.237427747328666,
+                "ci95_low": 6.979271291509304,
+                "ci95_high": 7.502960668351603
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": 4.102647009718128,
+                "ci95_low": 3.9001226820134027,
+                "ci95_high": 4.294570722699429
+              },
+              "evidence_main": {
+                "mean": 8.305819506494105,
+                "ci95_low": 8.097171441052183,
+                "ci95_high": 8.498689718675157
+              },
+              "interaction": {
+                "mean": 3.8826153164148858,
+                "ci95_low": 3.5378244893376936,
+                "ci95_high": 4.234707585379053
+              }
+            }
+          },
+          "correct": {
+            "n_items": 1357,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": -0.014603099668386146,
+                "ci95_low": -0.13352509556927045,
+                "ci95_high": 0.10092186924281515
+              },
+              "high_tag_high_evidence": {
+                "mean": 2.849861251842299,
+                "ci95_low": 2.6696561089489683,
+                "ci95_high": 3.030654994933677
+              },
+              "low_tag_low_evidence": {
+                "mean": 2.5604936210390568,
+                "ci95_low": 2.446783100934967,
+                "ci95_high": 2.6744371632046793
+              },
+              "low_tag_high_evidence": {
+                "mean": 2.796112172991894,
+                "ci95_low": 2.6088083490696388,
+                "ci95_high": 2.9808301572862934
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": -1.2606738209285189,
+                "ci95_low": -1.3625464712774042,
+                "ci95_high": -1.1600487885443533
+              },
+              "evidence_main": {
+                "mean": 1.5500414517317613,
+                "ci95_low": 1.386856112835068,
+                "ci95_high": 1.7055724512942152
+              },
+              "interaction": {
+                "mean": 2.628845799557848,
+                "ci95_low": 2.454094545930822,
+                "ci95_high": 2.7995305375483603
+              }
+            }
+          }
+        },
+        "prior_wrong": {
+          "wrong": {
+            "n_items": 450,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 1.7702170138888889,
+                "ci95_low": 1.4568151041666666,
+                "ci95_high": 2.0695078125000004
+              },
+              "high_tag_high_evidence": {
+                "mean": 5.943324652777778,
+                "ci95_low": 5.565561957465278,
+                "ci95_high": 6.335857096354167
+              },
+              "low_tag_low_evidence": {
+                "mean": 3.8581119791666665,
+                "ci95_low": 3.522989583333333,
+                "ci95_high": 4.193148546006944
+              },
+              "low_tag_high_evidence": {
+                "mean": 5.64609375,
+                "ci95_low": 5.20877907986111,
+                "ci95_high": 6.1227133246527785
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": -0.89533203125,
+                "ci95_low": -1.1187133246527778,
+                "ci95_high": -0.6731091037326389
+              },
+              "evidence_main": {
+                "mean": 2.980544704861111,
+                "ci95_low": 2.639646755642361,
+                "ci95_high": 3.3313060980902782
+              },
+              "interaction": {
+                "mean": 2.3851258680555554,
+                "ci95_low": 1.9774256727430557,
+                "ci95_high": 2.7880241970486113
+              }
+            }
+          },
+          "correct": {
+            "n_items": 450,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 3.474869791666667,
+                "ci95_low": 3.1118823784722225,
+                "ci95_high": 3.855146484375
+              },
+              "high_tag_high_evidence": {
+                "mean": 10.31842013888889,
+                "ci95_low": 9.909997829861112,
+                "ci95_high": 10.760784071180556
+              },
+              "low_tag_low_evidence": {
+                "mean": 3.754826388888889,
+                "ci95_low": 3.287679253472222,
+                "ci95_high": 4.229138454861111
+              },
+              "low_tag_high_evidence": {
+                "mean": 10.94458767361111,
+                "ci95_low": 10.38025607638889,
+                "ci95_high": 11.487023871527779
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": -0.4530620659722222,
+                "ci95_low": -0.8016095920138889,
+                "ci95_high": -0.12179616970486101
+              },
+              "evidence_main": {
+                "mean": 7.016655815972222,
+                "ci95_low": 6.62983984375,
+                "ci95_high": 7.393870768229166
+              },
+              "interaction": {
+                "mean": -0.3462109375,
+                "ci95_low": -0.8137099609375,
+                "ci95_high": 0.11018326822916669
+              }
+            }
+          }
+        }
+      },
+      "paired_diagnostics": {
+        "all": {
+          "expert": {
+            "n_items": 1813,
+            "tau_wrong": {
+              "mean": 0.7271362766526179,
+              "ci95_low": 0.7106001072753092,
+              "ci95_high": 0.7424505568995481,
+              "positive_frac": 0.9222283507997794
+            },
+            "tau_correct": {
+              "mean": 0.26511200192693823,
+              "ci95_low": 0.24145103085365216,
+              "ci95_high": 0.28869489226977474,
+              "positive_frac": 0.6012134583563155
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -0.4620242747256798,
+              "ci95_low": -0.49433957796199174,
+              "ci95_high": -0.43056957404585317,
+              "positive_frac": 0.1765030336458908
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 11.031784335355765,
+              "ci95_low": 10.727701813939259,
+              "ci95_high": 11.323849428390444,
+              "positive_frac": 0.9509100937672367
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 2.2174701806398236,
+              "ci95_low": 1.997972972972973,
+              "ci95_high": 2.4358552220508134,
+              "positive_frac": 0.604522890237176
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -8.814314154715941,
+              "ci95_low": -9.286808488175675,
+              "ci95_high": -8.333786584735245,
+              "positive_frac": 0.20573634859349146
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          },
+          "note": {
+            "n_items": 1813,
+            "tau_wrong": {
+              "mean": 0.642014083058016,
+              "ci95_low": 0.6205606492544548,
+              "ci95_high": 0.6625707724905516,
+              "positive_frac": 0.8654164368450082
+            },
+            "tau_correct": {
+              "mean": -0.07926850798051845,
+              "ci95_low": -0.10605377136089986,
+              "ci95_high": -0.05156061316902357,
+              "positive_frac": 0.380584666298952
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -0.7212825910385345,
+              "ci95_low": -0.7661021274720905,
+              "ci95_high": -0.6785253471710587,
+              "positive_frac": 0.18587975730832873
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 6.8046260945256485,
+              "ci95_low": 6.562262457770271,
+              "ci95_high": 7.050410070066878,
+              "positive_frac": 0.8957528957528957
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 0.8459002688913403,
+              "ci95_low": 0.6050748931329288,
+              "ci95_high": 1.0838435733246001,
+              "positive_frac": 0.44070601213458355
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -5.958725825634308,
+              "ci95_low": -6.390210162929192,
+              "ci95_high": -5.5354519658370105,
+              "positive_frac": 0.21787093215664644
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          }
+        },
+        "prior_correct": {
+          "expert": {
+            "n_items": 1357,
+            "tau_wrong": {
+              "mean": 0.8141649028956389,
+              "ci95_low": 0.8001612377499284,
+              "ci95_high": 0.8275366396422675,
+              "positive_frac": 0.974207811348563
+            },
+            "tau_correct": {
+              "mean": 0.15162310793828795,
+              "ci95_low": 0.12478075576286607,
+              "ci95_high": 0.1774102590442945,
+              "positive_frac": 0.5121591746499632
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -0.662541794957351,
+              "ci95_low": -0.6940602303506014,
+              "ci95_high": -0.6295711600414037,
+              "positive_frac": 0.08253500368459837
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 12.956796644712602,
+              "ci95_low": 12.665707183815401,
+              "ci95_high": 13.250734832696205,
+              "positive_frac": 0.9874723655121592
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 0.882747731669123,
+              "ci95_low": 0.6967476942474208,
+              "ci95_high": 1.0732620497881358,
+              "positive_frac": 0.5158437730287398
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -12.074048913043478,
+              "ci95_low": -12.487880190102247,
+              "ci95_high": -11.654897709216101,
+              "positive_frac": 0.08695652173913043
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          },
+          "note": {
+            "n_items": 1357,
+            "tau_wrong": {
+              "mean": 0.7951846194257831,
+              "ci95_low": 0.7793558965979748,
+              "ci95_high": 0.8105156489177054,
+              "positive_frac": 0.9638909358879882
+            },
+            "tau_correct": {
+              "mean": -0.27196368277573846,
+              "ci95_low": -0.30001770521673293,
+              "ci95_high": -0.24325694231172293,
+              "positive_frac": 0.2313927781871776
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -1.0671483022015216,
+              "ci95_low": -1.1031434817282024,
+              "ci95_high": -1.03025204787045,
+              "positive_frac": 0.05305821665438467
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 8.197835586311717,
+              "ci95_low": 7.9582425617170225,
+              "ci95_high": 8.454748526160648,
+              "positive_frac": 0.9749447310243183
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": -0.9424857221812822,
+              "ci95_low": -1.1176575741525425,
+              "ci95_high": -0.7644459285187913,
+              "positive_frac": 0.2984524686809138
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -9.140321308492998,
+              "ci95_low": -9.490856654730102,
+              "ci95_high": -8.794014254789978,
+              "positive_frac": 0.0655858511422255
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          }
+        },
+        "prior_wrong": {
+          "expert": {
+            "n_items": 450,
+            "tau_wrong": {
+              "mean": 0.46476214001884697,
+              "ci95_low": 0.42364281074788723,
+              "ci95_high": 0.5039685230761668,
+              "positive_frac": 0.7644444444444445
+            },
+            "tau_correct": {
+              "mean": 0.6049529674547014,
+              "ci95_low": 0.5703713783417983,
+              "ci95_high": 0.6385536940324207,
+              "positive_frac": 0.8666666666666667
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": 0.14019082743585434,
+              "ci95_low": 0.0818186395423798,
+              "ci95_high": 0.19933971964069386,
+              "positive_frac": 0.46
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 5.280533854166666,
+              "ci95_low": 4.795772243923611,
+              "ci95_high": 5.787756727430556,
+              "positive_frac": 0.84
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 6.233650173611111,
+              "ci95_low": 5.742195529513889,
+              "ci95_high": 6.712071397569445,
+              "positive_frac": 0.8688888888888889
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": 0.9531163194444444,
+              "ci95_low": 0.11232204861111111,
+              "ci95_high": 1.8147944878472222,
+              "positive_frac": 0.5666666666666667
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          },
+          "note": {
+            "n_items": 450,
+            "tau_wrong": {
+              "mean": 0.18053186079273037,
+              "ci95_low": 0.12893294747153444,
+              "ci95_high": 0.2319108134410671,
+              "positive_frac": 0.5666666666666667
+            },
+            "tau_correct": {
+              "mean": 0.49712457984370506,
+              "ci95_low": 0.4576580780131505,
+              "ci95_high": 0.5345001722127756,
+              "positive_frac": 0.8266666666666667
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": 0.31659271905097464,
+              "ci95_low": 0.24183765527749265,
+              "ci95_high": 0.3927690124859804,
+              "positive_frac": 0.5844444444444444
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 2.6431336805555556,
+              "ci95_low": 2.170091037326389,
+              "ci95_high": 3.1138161892361116,
+              "positive_frac": 0.6555555555555556
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 6.207387152777778,
+              "ci95_low": 5.641325737847222,
+              "ci95_high": 6.774541232638889,
+              "positive_frac": 0.8666666666666667
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": 3.564253472222222,
+              "ci95_low": 2.6537233072916666,
+              "ci95_high": 4.4732109375,
+              "positive_frac": 0.6733333333333333
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          }
+        }
+      }
+    },
+    {
+      "experiment": "exp14_social_epistemic",
+      "model": "Qwen/Qwen3-4B-Thinking-2507",
+      "source": "new-phase-results/exp14_assertive_v2/Qwen__Qwen3-4B-Thinking-2507_results.jsonl",
+      "design": {
+        "high_tag": "expert",
+        "low_tag": "note",
+        "low_evidence": "bare",
+        "high_evidence": "reason2",
+        "instruction_key": "I1",
+        "tau_evidence_levels": [
+          "bare",
+          "reason1",
+          "reason2",
+          "reason_data"
+        ],
+        "magnitude_low_evidence": "bare",
+        "magnitude_high_evidence": "reason_data",
+        "prior_code": "N0_expert_bare"
+      },
+      "slice_counts": {
+        "all": 1813,
+        "prior_correct": 1344,
+        "prior_wrong": 441
+      },
+      "slices": {
+        "all": {
+          "wrong": {
+            "n_items": 1813,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 1.2724377757859902,
+                "ci95_low": 1.2353729466871208,
+                "ci95_high": 1.3098870893374241
+              },
+              "high_tag_high_evidence": {
+                "mean": 2.6922594629067844,
+                "ci95_low": 2.6325730725144787,
+                "ci95_high": 2.750310313103282
+              },
+              "low_tag_low_evidence": {
+                "mean": 1.7206718836183121,
+                "ci95_low": 1.6853800567946773,
+                "ci95_high": 1.7548223765857693
+              },
+              "low_tag_high_evidence": {
+                "mean": 2.9979380688086046,
+                "ci95_low": 2.9484658327013236,
+                "ci95_high": 3.04849836682984
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": -0.37695635686707113,
+                "ci95_low": -0.4092024182984004,
+                "ci95_high": -0.34386023359935186
+              },
+              "evidence_main": {
+                "mean": 1.3485439361555434,
+                "ci95_low": 1.309758999672504,
+                "ci95_high": 1.3872457059259515
+              },
+              "interaction": {
+                "mean": 0.14255550193050193,
+                "ci95_low": 0.10192366114520132,
+                "ci95_high": 0.18132325565361282
+              }
+            }
+          },
+          "correct": {
+            "n_items": 1813,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 0.5176546125206839,
+                "ci95_low": 0.47958499594939324,
+                "ci95_high": 0.5540489907956426
+              },
+              "high_tag_high_evidence": {
+                "mean": 2.1501374620794262,
+                "ci95_low": 2.0963487443119138,
+                "ci95_high": 2.206592308587286
+              },
+              "low_tag_low_evidence": {
+                "mean": 1.298404750413679,
+                "ci95_low": 1.258533206356867,
+                "ci95_high": 1.3396112710286816
+              },
+              "low_tag_high_evidence": {
+                "mean": 2.8240571566464423,
+                "ci95_low": 2.756572863520408,
+                "ci95_high": 2.8924312905060674
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": -0.7273349162300056,
+                "ci95_low": -0.7569636770459872,
+                "ci95_high": -0.6984795681363761
+              },
+              "evidence_main": {
+                "mean": 1.579067627895753,
+                "ci95_low": 1.5433706057380723,
+                "ci95_high": 1.615944766314465
+              },
+              "interaction": {
+                "mean": 0.10683044332597905,
+                "ci95_low": 0.06944797555846663,
+                "ci95_high": 0.14457751956356868
+              }
+            }
+          }
+        },
+        "prior_correct": {
+          "wrong": {
+            "n_items": 1344,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 1.4685320172991072,
+                "ci95_low": 1.4308790661039805,
+                "ci95_high": 1.507096426827567
+              },
+              "high_tag_high_evidence": {
+                "mean": 2.9293038504464284,
+                "ci95_low": 2.861116245814732,
+                "ci95_high": 2.996106828962054
+              },
+              "low_tag_low_evidence": {
+                "mean": 1.8405267624627977,
+                "ci95_low": 1.8024436587379093,
+                "ci95_high": 1.8762460617792038
+              },
+              "low_tag_high_evidence": {
+                "mean": 3.1558750697544644,
+                "ci95_low": 3.0982607886904763,
+                "ci95_high": 3.2171465192522324
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": -0.2992829822358631,
+                "ci95_low": -0.33665211995442706,
+                "ci95_high": -0.259319087437221
+              },
+              "evidence_main": {
+                "mean": 1.388060070219494,
+                "ci95_low": 1.3402163187662761,
+                "ci95_high": 1.4348424275716147
+              },
+              "interaction": {
+                "mean": 0.14542352585565477,
+                "ci95_low": 0.09804338727678572,
+                "ci95_high": 0.19379301525297618
+              }
+            }
+          },
+          "correct": {
+            "n_items": 1344,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 0.29757835751488093,
+                "ci95_low": 0.2577059064592634,
+                "ci95_high": 0.33620801653180804
+              },
+              "high_tag_high_evidence": {
+                "mean": 1.918916248139881,
+                "ci95_low": 1.8624040876116073,
+                "ci95_high": 1.977978006998698
+              },
+              "low_tag_low_evidence": {
+                "mean": 1.0622791108630953,
+                "ci95_low": 1.0170567103794643,
+                "ci95_high": 1.1036910284133183
+              },
+              "low_tag_high_evidence": {
+                "mean": 2.465939476376488,
+                "ci95_low": 2.399551246279762,
+                "ci95_high": 2.533621724446615
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": -0.6558619907924107,
+                "ci95_low": -0.6861533392043341,
+                "ci95_high": -0.6256473359607515
+              },
+              "evidence_main": {
+                "mean": 1.5124991280691964,
+                "ci95_low": 1.4708269755045573,
+                "ci95_high": 1.5534461248488654
+              },
+              "interaction": {
+                "mean": 0.21767752511160715,
+                "ci95_low": 0.17525758289155507,
+                "ci95_high": 0.26051722935267857
+              }
+            }
+          }
+        },
+        "prior_wrong": {
+          "wrong": {
+            "n_items": 441,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 0.6922300170068028,
+                "ci95_low": 0.619746270904195,
+                "ci95_high": 0.7653293739370749
+              },
+              "high_tag_high_evidence": {
+                "mean": 2.002878755668934,
+                "ci95_low": 1.9164082429846938,
+                "ci95_high": 2.09126386231576
+              },
+              "low_tag_low_evidence": {
+                "mean": 1.361438846371882,
+                "ci95_low": 1.2849883964002269,
+                "ci95_high": 1.4423476031037417
+              },
+              "low_tag_high_evidence": {
+                "mean": 2.5149606717687076,
+                "ci95_low": 2.418418721655329,
+                "ci95_high": 2.609153557256236
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": -0.5906453727324263,
+                "ci95_low": -0.6409307017077664,
+                "ci95_high": -0.5406977439413265
+              },
+              "evidence_main": {
+                "mean": 1.2320852820294785,
+                "ci95_low": 1.164633379393424,
+                "ci95_high": 1.3013398393211453
+              },
+              "interaction": {
+                "mean": 0.15712691326530612,
+                "ci95_low": 0.08999300240929704,
+                "ci95_high": 0.22713293650793653
+              }
+            }
+          },
+          "correct": {
+            "n_items": 441,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 1.1651431405895691,
+                "ci95_low": 1.1024553571428573,
+                "ci95_high": 1.2264923026502268
+              },
+              "high_tag_high_evidence": {
+                "mean": 2.839578018707483,
+                "ci95_low": 2.7252624096513602,
+                "ci95_high": 2.95216194550737
+              },
+              "low_tag_low_evidence": {
+                "mean": 1.98781179138322,
+                "ci95_low": 1.9148546006944445,
+                "ci95_high": 2.0661075237386624
+              },
+              "low_tag_high_evidence": {
+                "mean": 3.8795085742630384,
+                "ci95_low": 3.7465804811507937,
+                "ci95_high": 4.012829506802721
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": -0.9312996031746031,
+                "ci95_low": -0.9999208342191043,
+                "ci95_high": -0.8627786856930272
+              },
+              "evidence_main": {
+                "mean": 1.7830658304988662,
+                "ci95_low": 1.7010276050524378,
+                "ci95_high": 1.8665341331845238
+              },
+              "interaction": {
+                "mean": -0.21726190476190477,
+                "ci95_low": -0.2934118569302721,
+                "ci95_high": -0.13877307433390024
+              }
+            }
+          }
+        }
+      },
+      "paired_diagnostics": {
+        "all": {
+          "expert": {
+            "n_items": 1813,
+            "tau_wrong": {
+              "mean": 0.6241664636639976,
+              "ci95_low": 0.6070740594433197,
+              "ci95_high": 0.6404965859332886,
+              "positive_frac": 0.888030888030888
+            },
+            "tau_correct": {
+              "mean": 0.5478973602544893,
+              "ci95_low": 0.5320876107388942,
+              "ci95_high": 0.5640286812426153,
+              "positive_frac": 0.873138444567016
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -0.07626910340950832,
+              "ci95_low": -0.10053971366474589,
+              "ci95_high": -0.05292927705545141,
+              "positive_frac": 0.28957528957528955
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 2.0172861796745725,
+              "ci95_low": 1.9545622112865417,
+              "ci95_high": 2.0785823630550193,
+              "positive_frac": 0.9464975179260894
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 1.4784606832597904,
+              "ci95_low": 1.432737466819498,
+              "ci95_high": 1.5219861762272477,
+              "positive_frac": 0.9470490899062327
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -0.5388254964147822,
+              "ci95_low": -0.615979104902096,
+              "ci95_high": -0.46003435474696636,
+              "positive_frac": 0.38885824600110314
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          },
+          "note": {
+            "n_items": 1813,
+            "tau_wrong": {
+              "mean": 0.6754434838976303,
+              "ci95_low": 0.660676793032809,
+              "ci95_high": 0.6908362544591106,
+              "positive_frac": 0.9260893546607832
+            },
+            "tau_correct": {
+              "mean": 0.5453306325871351,
+              "ci95_low": 0.5283245598712115,
+              "ci95_high": 0.5630587214518252,
+              "positive_frac": 0.8483177054605626
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -0.13011285131049516,
+              "ci95_low": -0.1547802249490771,
+              "ci95_high": -0.10522806897969202,
+              "positive_frac": 0.3028130170987314
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 1.8059522373138444,
+              "ci95_low": 1.7574762780956976,
+              "ci95_high": 1.8542056824841424,
+              "positive_frac": 0.9779371207942636
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 1.4548895994208495,
+              "ci95_low": 1.4084034468939604,
+              "ci95_high": 1.5005548038472145,
+              "positive_frac": 0.9349145063430778
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -0.351062637892995,
+              "ci95_low": -0.4262494398097077,
+              "ci95_high": -0.2795845111693326,
+              "positive_frac": 0.4125758411472697
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          }
+        },
+        "prior_correct": {
+          "expert": {
+            "n_items": 1344,
+            "tau_wrong": {
+              "mean": 0.6521044093453731,
+              "ci95_low": 0.6319987385895461,
+              "ci95_high": 0.67177559183565,
+              "positive_frac": 0.8921130952380952
+            },
+            "tau_correct": {
+              "mean": 0.5329338316545525,
+              "ci95_low": 0.5134240188624724,
+              "ci95_high": 0.5515333536257923,
+              "positive_frac": 0.8645833333333334
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -0.11917057769082044,
+              "ci95_low": -0.144817260775717,
+              "ci95_high": -0.0909480693047343,
+              "positive_frac": 0.2611607142857143
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 2.1254156203497026,
+              "ci95_low": 2.0533155895414805,
+              "ci95_high": 2.2002874465215774,
+              "positive_frac": 0.9434523809523809
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 1.422331310453869,
+              "ci95_low": 1.3734327770414805,
+              "ci95_high": 1.4731680733816963,
+              "positive_frac": 0.9479166666666666
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -0.7030843098958334,
+              "ci95_low": -0.7906127203078497,
+              "ci95_high": -0.6158811296735491,
+              "positive_frac": 0.35119047619047616
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          },
+          "note": {
+            "n_items": 1344,
+            "tau_wrong": {
+              "mean": 0.724375180625553,
+              "ci95_low": 0.7078132180951565,
+              "ci95_high": 0.7401774731532248,
+              "positive_frac": 0.9486607142857143
+            },
+            "tau_correct": {
+              "mean": 0.4898220840054884,
+              "ci95_low": 0.4696446027985499,
+              "ci95_high": 0.5096220384204793,
+              "positive_frac": 0.8117559523809523
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -0.23455309662006446,
+              "ci95_low": -0.2632717910597458,
+              "ci95_high": -0.20613011517994143,
+              "positive_frac": 0.2261904761904762
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 1.9349539620535714,
+              "ci95_low": 1.8797674996512277,
+              "ci95_high": 1.9898982456752232,
+              "positive_frac": 0.984375
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 1.2695835658482142,
+              "ci95_low": 1.2213635399228049,
+              "ci95_high": 1.3205190022786457,
+              "positive_frac": 0.9181547619047619
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -0.6653703962053571,
+              "ci95_low": -0.7467343284970238,
+              "ci95_high": -0.5813039870489212,
+              "positive_frac": 0.3273809523809524
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          }
+        },
+        "prior_wrong": {
+          "expert": {
+            "n_items": 441,
+            "tau_wrong": {
+              "mean": 0.5383216818295198,
+              "ci95_low": 0.5050194769366243,
+              "ci95_high": 0.5709494715504403,
+              "positive_frac": 0.8775510204081632
+            },
+            "tau_correct": {
+              "mean": 0.5946158810548045,
+              "ci95_low": 0.5640393183485094,
+              "ci95_high": 0.6223831799831874,
+              "positive_frac": 0.9002267573696145
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": 0.056294199225284704,
+              "ci95_low": 0.011114225354095215,
+              "ci95_high": 0.10152478052304288,
+              "positive_frac": 0.38095238095238093
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 1.710609764739229,
+              "ci95_low": 1.5987944657029478,
+              "ci95_high": 1.8154068788973923,
+              "positive_frac": 0.9569160997732427
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 1.6608382936507937,
+              "ci95_low": 1.558508494543651,
+              "ci95_high": 1.760734658446712,
+              "positive_frac": 0.9455782312925171
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -0.049771471088435375,
+              "ci95_low": -0.2058456455498866,
+              "ci95_high": 0.10329285359977329,
+              "positive_frac": 0.5034013605442177
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          },
+          "note": {
+            "n_items": 441,
+            "tau_wrong": {
+              "mean": 0.5336405777565145,
+              "ci95_low": 0.49950630902309295,
+              "ci95_high": 0.5665721718186117,
+              "positive_frac": 0.8616780045351474
+            },
+            "tau_correct": {
+              "mean": 0.7085198252192899,
+              "ci95_low": 0.6825465520789967,
+              "ci95_high": 0.7346892206178846,
+              "positive_frac": 0.9523809523809523
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": 0.17487924746277544,
+              "ci95_low": 0.1317025288830616,
+              "ci95_high": 0.21747317163639415,
+              "positive_frac": 0.5215419501133787
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 1.4236819727891157,
+              "ci95_low": 1.3428808372307257,
+              "ci95_high": 1.5098535377692743,
+              "positive_frac": 0.9591836734693877
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 2.0120287698412698,
+              "ci95_low": 1.9091367276077098,
+              "ci95_high": 2.1131966588718822,
+              "positive_frac": 0.9841269841269841
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": 0.5883467970521542,
+              "ci95_low": 0.440307672548186,
+              "ci95_high": 0.7297021152210884,
+              "positive_frac": 0.6643990929705216
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          }
+        }
+      }
+    },
+    {
+      "experiment": "exp14_social_epistemic",
+      "model": "meta-llama/Llama-3.1-8B-Instruct",
+      "source": "new-phase-results/exp14_assertive_v2/meta-llama__Llama-3.1-8B-Instruct_results.jsonl",
+      "design": {
+        "high_tag": "expert",
+        "low_tag": "note",
+        "low_evidence": "bare",
+        "high_evidence": "reason2",
+        "instruction_key": "I1",
+        "tau_evidence_levels": [
+          "bare",
+          "reason1",
+          "reason2",
+          "reason_data"
+        ],
+        "magnitude_low_evidence": "bare",
+        "magnitude_high_evidence": "reason_data",
+        "prior_code": "N0_expert_bare"
+      },
+      "slice_counts": {
+        "all": 1813,
+        "prior_correct": 1328,
+        "prior_wrong": 451
+      },
+      "slices": {
+        "all": {
+          "wrong": {
+            "n_items": 1813,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 0.7479337596525096,
+                "ci95_low": 0.7066644869518753,
+                "ci95_high": 0.7925717689947601
+              },
+              "high_tag_high_evidence": {
+                "mean": 3.59441361003861,
+                "ci95_low": 3.5252849968112248,
+                "ci95_high": 3.659358948393547
+              },
+              "low_tag_low_evidence": {
+                "mean": 0.07158154646993933,
+                "ci95_low": 0.03004559087148373,
+                "ci95_high": 0.11269369656646443
+              },
+              "low_tag_high_evidence": {
+                "mean": 2.5383277888858244,
+                "ci95_low": 2.46461708838941,
+                "ci95_high": 2.6090662489658025
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": 0.8662190171676779,
+                "ci95_low": 0.8362828788610038,
+                "ci95_high": 0.8959108532559983
+              },
+              "evidence_main": {
+                "mean": 2.656613046400993,
+                "ci95_low": 2.598572726704702,
+                "ci95_high": 2.7115810993949947
+              },
+              "interaction": {
+                "mean": 0.3797336079702151,
+                "ci95_low": 0.33872164575289576,
+                "ci95_high": 0.42086509540471595
+              }
+            }
+          },
+          "correct": {
+            "n_items": 1813,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 0.4630425227523442,
+                "ci95_low": 0.4176949569946222,
+                "ci95_high": 0.5104596145890788
+              },
+              "high_tag_high_evidence": {
+                "mean": 2.8985538472145613,
+                "ci95_low": 2.8261293759480144,
+                "ci95_high": 2.966833071911197
+              },
+              "low_tag_low_evidence": {
+                "mean": 0.2258945808052951,
+                "ci95_low": 0.18957701323772752,
+                "ci95_high": 0.2608773334080254
+              },
+              "low_tag_high_evidence": {
+                "mean": 2.2269223145339216,
+                "ci95_low": 2.1545563939258137,
+                "ci95_high": 2.3014390965423335
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": 0.45438973731384447,
+                "ci95_low": 0.42489789993277716,
+                "ci95_high": 0.48347317442602045
+              },
+              "evidence_main": {
+                "mean": 2.218269529095422,
+                "ci95_low": 2.168586521390651,
+                "ci95_high": 2.268091991864313
+              },
+              "interaction": {
+                "mean": 0.4344835907335907,
+                "ci95_low": 0.3958645567602041,
+                "ci95_high": 0.47254852109762824
+              }
+            }
+          }
+        },
+        "prior_correct": {
+          "wrong": {
+            "n_items": 1328,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 0.7506441782756024,
+                "ci95_low": 0.6959760918674699,
+                "ci95_high": 0.8065458366669804
+              },
+              "high_tag_high_evidence": {
+                "mean": 3.7844150037650603,
+                "ci95_low": 3.7063508183123117,
+                "ci95_high": 3.864413930134601
+              },
+              "low_tag_low_evidence": {
+                "mean": -0.03937429405120482,
+                "ci95_low": -0.08676132753670933,
+                "ci95_high": 0.0087592067488705
+              },
+              "low_tag_high_evidence": {
+                "mean": 2.6974450536521086,
+                "ci95_low": 2.607972882741905,
+                "ci95_high": 2.785227580242846
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": 0.9384942112198795,
+                "ci95_low": 0.9035577613187123,
+                "ci95_high": 0.9732469305934677
+              },
+              "evidence_main": {
+                "mean": 2.8852950865963853,
+                "ci95_low": 2.81858833037227,
+                "ci95_high": 2.951410353327372
+              },
+              "interaction": {
+                "mean": 0.29695147778614456,
+                "ci95_low": 0.2462545739599021,
+                "ci95_high": 0.3502131082925452
+              }
+            }
+          },
+          "correct": {
+            "n_items": 1328,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 0.21809111445783133,
+                "ci95_low": 0.17039919933640812,
+                "ci95_high": 0.26399742034544427
+              },
+              "high_tag_high_evidence": {
+                "mean": 2.404749858810241,
+                "ci95_low": 2.3372484322053837,
+                "ci95_high": 2.4713678934487953
+              },
+              "low_tag_low_evidence": {
+                "mean": 0.1756488846009036,
+                "ci95_low": 0.13822661250470633,
+                "ci95_high": 0.21397528590926204
+              },
+              "low_tag_high_evidence": {
+                "mean": 1.7446141989834338,
+                "ci95_low": 1.6719020613704818,
+                "ci95_high": 1.815046563205949
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": 0.35128894484186746,
+                "ci95_low": 0.32097829795745486,
+                "ci95_high": 0.3813119543604104
+              },
+              "evidence_main": {
+                "mean": 1.8778120293674698,
+                "ci95_low": 1.8320913659520897,
+                "ci95_high": 1.9233377479645144
+              },
+              "interaction": {
+                "mean": 0.6176934299698795,
+                "ci95_low": 0.580303513860128,
+                "ci95_high": 0.656031155873494
+              }
+            }
+          }
+        },
+        "prior_wrong": {
+          "wrong": {
+            "n_items": 451,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 0.7027179185144125,
+                "ci95_low": 0.6309310473253881,
+                "ci95_high": 0.7765055518985587
+              },
+              "high_tag_high_evidence": {
+                "mean": 3.000874792128603,
+                "ci95_low": 2.8864093247644123,
+                "ci95_high": 3.1130315877910197
+              },
+              "low_tag_low_evidence": {
+                "mean": 0.3675599362527716,
+                "ci95_low": 0.2969083460365854,
+                "ci95_high": 0.434088527231153
+              },
+              "low_tag_high_evidence": {
+                "mean": 2.0519678492239466,
+                "ci95_low": 1.9333889100609756,
+                "ci95_high": 2.1676441674750553
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": 0.6420324625831486,
+                "ci95_low": 0.5822443181818182,
+                "ci95_high": 0.6989385566796009
+              },
+              "evidence_main": {
+                "mean": 1.9912823932926829,
+                "ci95_low": 1.8959211734340355,
+                "ci95_high": 2.0879895804462305
+              },
+              "interaction": {
+                "mean": 0.6137489606430155,
+                "ci95_low": 0.5445853831762749,
+                "ci95_high": 0.6817300530072063
+              }
+            }
+          },
+          "correct": {
+            "n_items": 451,
+            "cells": {
+              "high_tag_low_evidence": {
+                "mean": 1.1397675304878048,
+                "ci95_low": 1.047903746881929,
+                "ci95_high": 1.2350603260116408
+              },
+              "high_tag_high_evidence": {
+                "mean": 4.293800235587583,
+                "ci95_low": 4.1611460209950115,
+                "ci95_high": 4.422596920038803
+              },
+              "low_tag_low_evidence": {
+                "mean": 0.3483231707317073,
+                "ci95_low": 0.2537124532289357,
+                "ci95_high": 0.4333923745842573
+              },
+              "low_tag_high_evidence": {
+                "mean": 3.5955255681818183,
+                "ci95_low": 3.4600663889273835,
+                "ci95_high": 3.7327464575249447
+              }
+            },
+            "effects": {
+              "authority_main": {
+                "mean": 0.7448595135809313,
+                "ci95_low": 0.6758857270302107,
+                "ci95_high": 0.812781167717572
+              },
+              "evidence_main": {
+                "mean": 3.2006175512749446,
+                "ci95_low": 3.0953104429393012,
+                "ci95_high": 3.306106438816519
+              },
+              "interaction": {
+                "mean": -0.0931696923503326,
+                "ci95_low": -0.1831262558896896,
+                "ci95_high": -0.0026315219650776
+              }
+            }
+          }
+        }
+      },
+      "paired_diagnostics": {
+        "all": {
+          "expert": {
+            "n_items": 1813,
+            "tau_wrong": {
+              "mean": 0.8586005433748506,
+              "ci95_low": 0.8491355056958398,
+              "ci95_high": 0.8681005571437019,
+              "positive_frac": 0.9884169884169884
+            },
+            "tau_correct": {
+              "mean": 0.7018081580900835,
+              "ci95_low": 0.6915948602056633,
+              "ci95_high": 0.7118810663021254,
+              "positive_frac": 0.9862107004964148
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -0.1567923852847672,
+              "ci95_low": -0.171531262443424,
+              "ci95_high": -0.14182296739519298,
+              "positive_frac": 0.1654715940430226
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 3.3120604660783233,
+              "ci95_low": 3.2529433690706013,
+              "ci95_high": 3.371769210217871,
+              "positive_frac": 0.9955874241588527
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 2.126312138030888,
+              "ci95_low": 2.074020528819636,
+              "ci95_high": 2.1792222188706565,
+              "positive_frac": 0.9911748483177054
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -1.1857483280474352,
+              "ci95_low": -1.279802554467733,
+              "ci95_high": -1.0874285218732762,
+              "positive_frac": 0.26806398234969664
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          },
+          "note": {
+            "n_items": 1813,
+            "tau_wrong": {
+              "mean": 0.8316073010720544,
+              "ci95_low": 0.8182691553741888,
+              "ci95_high": 0.8447295431283439,
+              "positive_frac": 0.9691119691119691
+            },
+            "tau_correct": {
+              "mean": 0.6148936011047025,
+              "ci95_low": 0.5991680755117426,
+              "ci95_high": 0.6307662367455406,
+              "positive_frac": 0.9018201875344732
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -0.21671369996735204,
+              "ci95_low": -0.23837196135014221,
+              "ci95_high": -0.193361097107781,
+              "positive_frac": 0.19305019305019305
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 3.096542333149476,
+              "ci95_low": 3.024677082615141,
+              "ci95_high": 3.169186194325703,
+              "positive_frac": 0.9751792608935466
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 1.785235969387755,
+              "ci95_low": 1.7121959351730556,
+              "ci95_high": 1.857327719939327,
+              "positive_frac": 0.9012686155543298
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -1.3113063637617208,
+              "ci95_low": -1.4450784050951462,
+              "ci95_high": -1.1818876473731383,
+              "positive_frac": 0.2995035852178709
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          }
+        },
+        "prior_correct": {
+          "expert": {
+            "n_items": 1328,
+            "tau_wrong": {
+              "mean": 0.8784323611132095,
+              "ci95_low": 0.8674820653176529,
+              "ci95_high": 0.8886648795320126,
+              "positive_frac": 0.9909638554216867
+            },
+            "tau_correct": {
+              "mean": 0.6756927547500166,
+              "ci95_low": 0.6642548680417821,
+              "ci95_high": 0.6874799623137064,
+              "positive_frac": 0.9841867469879518
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -0.20273960636319308,
+              "ci95_low": -0.2188232930602187,
+              "ci95_high": -0.18619591555022771,
+              "positive_frac": 0.11671686746987951
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 3.5949854103915664,
+              "ci95_low": 3.5292926098926958,
+              "ci95_high": 3.6608788915427333,
+              "positive_frac": 0.9954819277108434
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 1.8020931381777108,
+              "ci95_low": 1.754938111822289,
+              "ci95_high": 1.8478493564100151,
+              "positive_frac": 0.990210843373494
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -1.7928922722138554,
+              "ci95_low": -1.87998877835561,
+              "ci95_high": -1.6976472785673946,
+              "positive_frac": 0.1378012048192771
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          },
+          "note": {
+            "n_items": 1328,
+            "tau_wrong": {
+              "mean": 0.8766146619186496,
+              "ci95_low": 0.8635004017554805,
+              "ci95_high": 0.8898275076732998,
+              "positive_frac": 0.9826807228915663
+            },
+            "tau_correct": {
+              "mean": 0.5398592007177287,
+              "ci95_low": 0.520510122146626,
+              "ci95_high": 0.5593093021673282,
+              "positive_frac": 0.8704819277108434
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -0.336755461200921,
+              "ci95_low": -0.36040082343989316,
+              "ci95_high": -0.31319109985763005,
+              "positive_frac": 0.11069277108433735
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 3.49792039250753,
+              "ci95_low": 3.4176212172910394,
+              "ci95_high": 3.577766657450113,
+              "positive_frac": 0.9864457831325302
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 1.2010630412274097,
+              "ci95_low": 1.1398811799934112,
+              "ci95_high": 1.264280094008848,
+              "positive_frac": 0.8697289156626506
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": -2.2968573512801207,
+              "ci95_low": -2.412527355515813,
+              "ci95_high": -2.183468002870858,
+              "positive_frac": 0.14834337349397592
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          }
+        },
+        "prior_wrong": {
+          "expert": {
+            "n_items": 451,
+            "tau_wrong": {
+              "mean": 0.7988001501594484,
+              "ci95_low": 0.7753969714613332,
+              "ci95_high": 0.8206993631390502,
+              "positive_frac": 0.9800443458980045
+            },
+            "tau_correct": {
+              "mean": 0.7781174105453486,
+              "ci95_low": 0.758493428722268,
+              "ci95_high": 0.7971227973585658,
+              "positive_frac": 0.9933481152993349
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": -0.02068273961409984,
+              "ci95_low": -0.05093305776003642,
+              "ci95_high": 0.0125101287111434,
+              "positive_frac": 0.31263858093126384
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 2.4886796701773837,
+              "ci95_low": 2.391393041504989,
+              "ci95_high": 2.5876420454545452,
+              "positive_frac": 0.9955654101995566
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 3.063201565964523,
+              "ci95_low": 2.9535470222422395,
+              "ci95_high": 3.1825502788941242,
+              "positive_frac": 0.9933481152993349
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": 0.5745218957871396,
+              "ci95_low": 0.4051502303907982,
+              "ci95_high": 0.7437547637195122,
+              "positive_frac": 0.647450110864745
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          },
+          "note": {
+            "n_items": 451,
+            "tau_wrong": {
+              "mean": 0.6975054296355513,
+              "ci95_low": 0.6626404906407042,
+              "ci95_high": 0.7298186121790932,
+              "positive_frac": 0.926829268292683
+            },
+            "tau_correct": {
+              "mean": 0.8212343053761963,
+              "ci95_low": 0.8000639399121393,
+              "ci95_high": 0.8420389110129974,
+              "positive_frac": 0.9866962305986696
+            },
+            "tau_gap_correct_minus_wrong": {
+              "mean": 0.12372887574064513,
+              "ci95_low": 0.08138757599088463,
+              "ci95_high": 0.16847824407875378,
+              "positive_frac": 0.43015521064301554
+            },
+            "magnitude_wrong_ehigh_minus_elow": {
+              "mean": 1.9377251940133038,
+              "ci95_low": 1.805780990160754,
+              "ci95_high": 2.0640791730182926,
+              "positive_frac": 0.9401330376940134
+            },
+            "magnitude_correct_ehigh_minus_elow": {
+              "mean": 3.4447148697339247,
+              "ci95_low": 3.295959499722838,
+              "ci95_high": 3.5906107088414636,
+              "positive_frac": 0.9866962305986696
+            },
+            "magnitude_gap_correct_minus_wrong": {
+              "mean": 1.506989675720621,
+              "ci95_low": 1.270303838691796,
+              "ci95_high": 1.7389652768154102,
+              "positive_frac": 0.7339246119733924
+            },
+            "tau_evidence_levels": [
+              "bare",
+              "reason1",
+              "reason2",
+              "reason_data"
+            ],
+            "magnitude_contrast_levels": {
+              "low": "bare",
+              "high": "reason_data"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

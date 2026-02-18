@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 from pathlib import Path
 from typing import Any, Dict, List, Sequence, Tuple
 
 import numpy as np
+from scipy import stats
 
 
 def parse_args() -> argparse.Namespace:
@@ -29,6 +31,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--low-evidence", type=str, default="bare")
     parser.add_argument("--high-evidence", type=str, default="reason2")
     parser.add_argument("--instruction-key", type=str, default="I0")
+    parser.add_argument(
+        "--tau-evidence-levels",
+        type=str,
+        default="bare,reason1,reason2,reason_data",
+        help="Comma-separated evidence levels used for trend taus.",
+    )
+    parser.add_argument(
+        "--magnitude-low-evidence",
+        type=str,
+        default="bare",
+        help="Lower evidence level for magnitude contrast (E_high - E_low).",
+    )
+    parser.add_argument(
+        "--magnitude-high-evidence",
+        type=str,
+        default="reason_data",
+        help="Higher evidence level for magnitude contrast (E_high - E_low).",
+    )
     parser.add_argument("--n-boot", type=int, default=3000)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--prior-tag", type=str, default="expert")
@@ -39,6 +59,10 @@ def parse_args() -> argparse.Namespace:
 
 def _normalize_tag(tag: str) -> str:
     return tag.lower().replace(" ", "_").replace("-", "_")
+
+
+def _parse_csv(raw: str) -> List[str]:
+    return [token.strip() for token in raw.split(",") if token.strip()]
 
 
 def _load_jsonl(path: Path) -> List[Dict[str, Any]]:
@@ -79,6 +103,28 @@ def _summ_mean(values: Sequence[float], *, n_boot: int, seed: int) -> Dict[str, 
         return {"mean": 0.0, "ci95_low": 0.0, "ci95_high": 0.0}
     lo, hi = _bootstrap_mean_ci(values, n_boot=n_boot, seed=seed)
     return {"mean": float(np.mean(arr)), "ci95_low": lo, "ci95_high": hi}
+
+
+def _summ_mean_with_positive(values: Sequence[float], *, n_boot: int, seed: int) -> Dict[str, float]:
+    arr = np.array(values, dtype=float)
+    if arr.size == 0:
+        return {
+            "mean": 0.0,
+            "ci95_low": 0.0,
+            "ci95_high": 0.0,
+            "positive_frac": 0.0,
+        }
+    out = _summ_mean(values, n_boot=n_boot, seed=seed)
+    out["positive_frac"] = float(np.mean(arr > 0.0))
+    return out
+
+
+def _kendall_tau(series: Sequence[float]) -> float:
+    x = np.arange(len(series), dtype=float)
+    tau, _ = stats.kendalltau(x, np.array(series, dtype=float))
+    if not np.isfinite(tau):
+        return 0.0
+    return float(tau)
 
 
 def _slice_records(
@@ -219,6 +265,128 @@ def _decompose(
     }
 
 
+def _paired_tag_diagnostics(
+    rows: Sequence[Dict[str, Any]],
+    *,
+    tag: str,
+    instruction_key: str,
+    tau_evidence_levels: Sequence[str],
+    magnitude_low_evidence: str,
+    magnitude_high_evidence: str,
+    n_boot: int,
+    seed: int,
+) -> Dict[str, Any]:
+    tau_wrong: List[float] = []
+    tau_correct: List[float] = []
+    tau_gap: List[float] = []
+    mag_wrong: List[float] = []
+    mag_correct: List[float] = []
+    mag_gap: List[float] = []
+
+    for row in rows:
+        wrong_series: List[float] = []
+        correct_series: List[float] = []
+        ok = True
+        for level in tau_evidence_levels:
+            w = _extract_shift(
+                row,
+                tag=tag,
+                evidence=level,
+                instruction_key=instruction_key,
+                direction="wrong",
+            )
+            c = _extract_shift(
+                row,
+                tag=tag,
+                evidence=level,
+                instruction_key=instruction_key,
+                direction="correct",
+            )
+            if w is None or c is None:
+                ok = False
+                break
+            wrong_series.append(float(w))
+            correct_series.append(float(c))
+
+        if not ok:
+            continue
+
+        w_low = _extract_shift(
+            row,
+            tag=tag,
+            evidence=magnitude_low_evidence,
+            instruction_key=instruction_key,
+            direction="wrong",
+        )
+        w_high = _extract_shift(
+            row,
+            tag=tag,
+            evidence=magnitude_high_evidence,
+            instruction_key=instruction_key,
+            direction="wrong",
+        )
+        c_low = _extract_shift(
+            row,
+            tag=tag,
+            evidence=magnitude_low_evidence,
+            instruction_key=instruction_key,
+            direction="correct",
+        )
+        c_high = _extract_shift(
+            row,
+            tag=tag,
+            evidence=magnitude_high_evidence,
+            instruction_key=instruction_key,
+            direction="correct",
+        )
+        if any(v is None for v in (w_low, w_high, c_low, c_high)):
+            continue
+
+        tw = _kendall_tau(wrong_series)
+        tc = _kendall_tau(correct_series)
+        dg_w = float(w_high) - float(w_low)
+        dg_c = float(c_high) - float(c_low)
+
+        tau_wrong.append(tw)
+        tau_correct.append(tc)
+        tau_gap.append(tc - tw)
+        mag_wrong.append(dg_w)
+        mag_correct.append(dg_c)
+        mag_gap.append(dg_c - dg_w)
+
+    n_items = len(tau_gap)
+    if n_items == 0:
+        return {
+            "n_items": 0,
+            "tau_wrong": _summ_mean_with_positive([], n_boot=n_boot, seed=seed),
+            "tau_correct": _summ_mean_with_positive([], n_boot=n_boot, seed=seed + 1),
+            "tau_gap_correct_minus_wrong": _summ_mean_with_positive([], n_boot=n_boot, seed=seed + 2),
+            "magnitude_wrong_ehigh_minus_elow": _summ_mean_with_positive([], n_boot=n_boot, seed=seed + 3),
+            "magnitude_correct_ehigh_minus_elow": _summ_mean_with_positive([], n_boot=n_boot, seed=seed + 4),
+            "magnitude_gap_correct_minus_wrong": _summ_mean_with_positive([], n_boot=n_boot, seed=seed + 5),
+            "tau_evidence_levels": list(tau_evidence_levels),
+            "magnitude_contrast_levels": {
+                "low": magnitude_low_evidence,
+                "high": magnitude_high_evidence,
+            },
+        }
+
+    return {
+        "n_items": n_items,
+        "tau_wrong": _summ_mean_with_positive(tau_wrong, n_boot=n_boot, seed=seed),
+        "tau_correct": _summ_mean_with_positive(tau_correct, n_boot=n_boot, seed=seed + 1),
+        "tau_gap_correct_minus_wrong": _summ_mean_with_positive(tau_gap, n_boot=n_boot, seed=seed + 2),
+        "magnitude_wrong_ehigh_minus_elow": _summ_mean_with_positive(mag_wrong, n_boot=n_boot, seed=seed + 3),
+        "magnitude_correct_ehigh_minus_elow": _summ_mean_with_positive(mag_correct, n_boot=n_boot, seed=seed + 4),
+        "magnitude_gap_correct_minus_wrong": _summ_mean_with_positive(mag_gap, n_boot=n_boot, seed=seed + 5),
+        "tau_evidence_levels": list(tau_evidence_levels),
+        "magnitude_contrast_levels": {
+            "low": magnitude_low_evidence,
+            "high": magnitude_high_evidence,
+        },
+    }
+
+
 def _analyze_file(path: Path, args: argparse.Namespace) -> Dict[str, Any]:
     rows = _load_jsonl(path)
     if not rows:
@@ -228,11 +396,13 @@ def _analyze_file(path: Path, args: argparse.Namespace) -> Dict[str, Any]:
     high_tag = _normalize_tag(args.high_tag)
     low_tag = _normalize_tag(args.low_tag)
     prior_tag = _normalize_tag(args.prior_tag)
+    tau_evidence_levels = _parse_csv(args.tau_evidence_levels)
     prior_code = f"N{args.prior_instruction_key}_{prior_tag}_{args.prior_evidence_level}"
 
     slices = _slice_records(rows, prior_code=prior_code)
 
     out_slices: Dict[str, Any] = {}
+    out_paired: Dict[str, Any] = {}
     for slice_name, slice_rows in slices.items():
         out_slices[slice_name] = {
             "wrong": _decompose(
@@ -258,6 +428,28 @@ def _analyze_file(path: Path, args: argparse.Namespace) -> Dict[str, Any]:
                 seed=args.seed + int(abs(hash((slice_name, "correct"))) % 100000),
             ),
         }
+        out_paired[slice_name] = {
+            high_tag: _paired_tag_diagnostics(
+                slice_rows,
+                tag=high_tag,
+                instruction_key=args.instruction_key,
+                tau_evidence_levels=tau_evidence_levels,
+                magnitude_low_evidence=args.magnitude_low_evidence,
+                magnitude_high_evidence=args.magnitude_high_evidence,
+                n_boot=args.n_boot,
+                seed=args.seed + int(abs(hash((slice_name, high_tag, "paired"))) % 100000),
+            ),
+            low_tag: _paired_tag_diagnostics(
+                slice_rows,
+                tag=low_tag,
+                instruction_key=args.instruction_key,
+                tau_evidence_levels=tau_evidence_levels,
+                magnitude_low_evidence=args.magnitude_low_evidence,
+                magnitude_high_evidence=args.magnitude_high_evidence,
+                n_boot=args.n_boot,
+                seed=args.seed + int(abs(hash((slice_name, low_tag, "paired"))) % 100000),
+            ),
+        }
 
     return {
         "experiment": "exp14_social_epistemic",
@@ -269,11 +461,118 @@ def _analyze_file(path: Path, args: argparse.Namespace) -> Dict[str, Any]:
             "low_evidence": args.low_evidence,
             "high_evidence": args.high_evidence,
             "instruction_key": args.instruction_key,
+            "tau_evidence_levels": tau_evidence_levels,
+            "magnitude_low_evidence": args.magnitude_low_evidence,
+            "magnitude_high_evidence": args.magnitude_high_evidence,
             "prior_code": prior_code,
         },
         "slice_counts": {name: len(rows_) for name, rows_ in slices.items()},
         "slices": out_slices,
+        "paired_diagnostics": out_paired,
     }
+
+
+def _write_paired_table(analyses: Sequence[Dict[str, Any]], output_csv: Path) -> None:
+    rows: List[Dict[str, Any]] = []
+    for analysis in analyses:
+        model = analysis["model"]
+        paired = analysis.get("paired_diagnostics", {})
+        for slice_name, slice_payload in paired.items():
+            for tag, payload in slice_payload.items():
+                tau_gap = payload.get("tau_gap_correct_minus_wrong", {})
+                mag_gap = payload.get("magnitude_gap_correct_minus_wrong", {})
+                rows.append(
+                    {
+                        "model": model,
+                        "slice": slice_name,
+                        "tag": tag,
+                        "n_items": payload.get("n_items", 0),
+                        "tau_gap_mean": tau_gap.get("mean", 0.0),
+                        "tau_gap_ci95_low": tau_gap.get("ci95_low", 0.0),
+                        "tau_gap_ci95_high": tau_gap.get("ci95_high", 0.0),
+                        "tau_gap_positive_frac": tau_gap.get("positive_frac", 0.0),
+                        "magnitude_gap_mean": mag_gap.get("mean", 0.0),
+                        "magnitude_gap_ci95_low": mag_gap.get("ci95_low", 0.0),
+                        "magnitude_gap_ci95_high": mag_gap.get("ci95_high", 0.0),
+                        "magnitude_gap_positive_frac": mag_gap.get("positive_frac", 0.0),
+                    }
+                )
+
+    output_csv.parent.mkdir(parents=True, exist_ok=True)
+    with output_csv.open("w", newline="") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "model",
+                "slice",
+                "tag",
+                "n_items",
+                "tau_gap_mean",
+                "tau_gap_ci95_low",
+                "tau_gap_ci95_high",
+                "tau_gap_positive_frac",
+                "magnitude_gap_mean",
+                "magnitude_gap_ci95_low",
+                "magnitude_gap_ci95_high",
+                "magnitude_gap_positive_frac",
+            ],
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _write_report(analyses: Sequence[Dict[str, Any]], path: Path) -> None:
+    lines: List[str] = []
+    lines.append("# Exp14D Social vs Epistemic Analysis")
+    lines.append("")
+    lines.append(
+        "Includes 2x2 factorial decomposition and paired contrasts per tag:"
+        " tau(correct)-tau(wrong) and (E_high-E_low)_correct-(E_high-E_low)_wrong."
+    )
+    lines.append("")
+
+    for analysis in analyses:
+        lines.append(f"## {analysis['model']}")
+        lines.append(f"- source: `{analysis['source']}`")
+        design = analysis["design"]
+        lines.append(
+            "- design: "
+            f"high_tag={design['high_tag']}, low_tag={design['low_tag']}, "
+            f"factorial_evidence=({design['low_evidence']}->{design['high_evidence']}), "
+            f"instruction={design['instruction_key']}"
+        )
+        lines.append(
+            "- paired diagnostics: "
+            f"tau_levels={','.join(design['tau_evidence_levels'])}, "
+            f"magnitude_levels={design['magnitude_low_evidence']}->{design['magnitude_high_evidence']}"
+        )
+        sc = analysis["slice_counts"]
+        lines.append(
+            f"- slice counts: all={sc.get('all', 0)}, prior_correct={sc.get('prior_correct', 0)}, "
+            f"prior_wrong={sc.get('prior_wrong', 0)}"
+        )
+        lines.append("")
+
+        for slice_name in ["all", "prior_wrong"]:
+            if slice_name not in analysis["paired_diagnostics"]:
+                continue
+            lines.append(f"### Slice: {slice_name}")
+            for tag, payload in analysis["paired_diagnostics"][slice_name].items():
+                tau_gap = payload["tau_gap_correct_minus_wrong"]
+                mag_gap = payload["magnitude_gap_correct_minus_wrong"]
+                lines.append(
+                    f"- {tag}: n={payload['n_items']}; "
+                    f"tau gap mean={tau_gap['mean']:.3f} "
+                    f"[{tau_gap['ci95_low']:.3f}, {tau_gap['ci95_high']:.3f}], "
+                    f"pos_frac={tau_gap['positive_frac']:.3f}; "
+                    f"magnitude gap mean={mag_gap['mean']:.3f} "
+                    f"[{mag_gap['ci95_low']:.3f}, {mag_gap['ci95_high']:.3f}], "
+                    f"pos_frac={mag_gap['positive_frac']:.3f}"
+                )
+            lines.append("")
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join(lines) + "\n")
 
 
 def main() -> None:
@@ -300,6 +599,8 @@ def main() -> None:
         raise RuntimeError("No analyses generated.")
 
     (args.output_dir / "summary.json").write_text(json.dumps({"models": analyses}, indent=2))
+    _write_paired_table(analyses, args.output_dir / "paired_contrast_table.csv")
+    _write_report(analyses, args.output_dir / "report.md")
     print(f"Wrote Exp14D analysis outputs to {args.output_dir}")
 
 

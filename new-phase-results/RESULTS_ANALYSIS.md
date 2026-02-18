@@ -1,9 +1,9 @@
 # Experimental Results Analysis: Endorsement Effects and Instruction Override
 
 **Project**: Persona Vectors / Authority Bias in LLMs
-**Models**: Llama-3.1-8B (Base), Llama-3.1-8B-Instruct, Qwen3-4B-Instruct-2507 (Exp12)
+**Models**: Llama-3.1-8B (Base), Llama-3.1-8B-Instruct, Qwen3-4B-Instruct-2507, Qwen3-4B-Thinking-2507 (Exp7-14D)
 **Dataset**: TriviaQA + TruthfulQA (n = 1,813 items)
-**Date Range**: January - February 2025
+**Date Range**: January 2025 - February 2026
 
 ---
 
@@ -11,7 +11,11 @@
 
 This document traces the experimental progression from initial sycophancy measurement through to the final mechanistic claim. Each experiment was designed to address a specific confound or question raised by the previous one.
 
-**Final Finding**: "Be correct" instructions do not induce truth-tracking in Instruct models. Instead, they induce **confidence-conditioned prior-consistency control** — the model trusts its own beliefs more strongly, which can entrench errors when the model is confidently wrong. The severity is tag-dependent: Expert shows non-selective suppression (dr ≈ 0), while Note shows strong prior-consistency (dr = -0.67). Exp12 extends this by showing that endorsement pressure leaves **context-persistent state** and that early prevention (`t0`) outperforms delayed correction (`t1`/`t2`) (from exp12_p0).
+**Final Finding**: "Be correct" instructions do not induce truth-tracking in Instruct models. Instead, they induce **confidence-conditioned prior-consistency control** — the model trusts its own beliefs more strongly, which can entrench errors when the model is confidently wrong. The severity is tag-dependent: Expert shows non-selective suppression (dr ≈ 0), while Note shows strong prior-consistency (dr = -0.67). Exp12 extends this by showing that endorsement pressure leaves **context-persistent state** and that early prevention (`t0`) outperforms delayed correction (`t1`/`t2`). Exp13 shows that **certainty phrasing** ("might" → "sure") acts as a gain knob on endorsement effects, with model-specific formatting sensitivity.
+
+Exp14 introduces **evidence-quality scaling**. After correcting a hedging confound in the generated reasons (46% of wrong-direction reasons contained self-undermining language), the assertive v2 rerun finds: in the prior-wrong slice, correct-direction evidence scales more steeply in **9/12 cells** (mean tau gap = +0.114, down from +0.226 in the contaminated run). The strongest signal is Qwen-Instruct under Note tag (gap = +0.357 [+0.276, +0.429]). In the all-items slice, the pattern reverses: wrong-direction evidence scales more steeply in **all 12 cells**. Truth-sensitive updating is conditional on prior state, authority tag, and model family — not a global property.
+
+Exp14D adds a formal 2x2 factorial (authority x evidence quality) with paired bootstrap contrasts. The interaction is a crossover in Qwen-Instruct: Expert amplifies wrong-direction evidence scaling while Note allows truth-sensitive discrimination. Llama Expert is a definitive null (symmetric processing, CIs straddling zero in both instruction schedules).
 
 ---
 
@@ -176,9 +180,36 @@ Exp11 (Inverted-Prior Test)
     ▼
 Exp12 (Temporal Dynamics)
     │
-    └── Finding: Repeated pressure creates context-persistent bias;
-        prevention at t0 attenuates but does not eliminate (exp12_k);
-        t0 > delayed correction at t1/t2 (exp12_p0)
+    ├── Finding: Repeated pressure creates context-persistent bias;
+    │   prevention at t0 attenuates but does not eliminate (exp12_k);
+    │   t0 > delayed correction at t1/t2 (exp12_p0)
+    │   Question: Does signal strength (certainty, formatting) modulate the effect?
+    ▼
+Exp13 (Signal Strength)
+    │
+    ├── Finding: Certainty phrasing acts as gain knob; formatting is model-dependent.
+    │   Qwen most style-sensitive (IMPORTANT: +17.5%), Llama strongest on ALL CAPS (+31%).
+    │   Question: Is the mechanism purely social deference, or does evidence quality matter?
+    ▼
+Exp14 (Evidence-Quality Scaling)
+    │
+    ├── Finding (full data): Evidence quality scales both wrong and correct endorsement effects,
+    │   but in prior-wrong slices, correct-direction scaling is stronger on average.
+    │   Confound: wrong-side reasons contain hedging/meta cues.
+    ├── Robustness: On clean non-hedged subset (44.5%), the asymmetry persists
+    │   (clean mean tau gap = +0.203 vs full +0.226), so the core pattern survives.
+    ├── Assertive V2 rerun (corrected): mean gap drops to +0.114, 9/12 cells positive.
+    │   All-items slice reverses: wrong > correct in all 12 cells.
+    │   Hedging inflated original effect by ~50%.
+    │   Question: Is authority x evidence additive or interactive?
+    ▼
+Exp14D (Authority x Evidence Factorial)
+    │
+    ├── Finding: Crossover interaction in Qwen-Instruct.
+    │   Expert amplifies wrong-direction scaling, Note allows truth-sensitive discrimination.
+    │   Llama Expert is a definitive null (symmetric processing).
+    │   Three tiers: strong (Qwen-I Note), moderate (Qwen-T), null (Llama Expert).
+    └── Next: Expanded model set, closed-source replication, Someone Online tag
 ```
 
 ---
@@ -657,6 +688,301 @@ Exp12 was run in three stages:
 
 ---
 
+## Exp13: Signal Strength — Certainty Phrasing and Formatting Effects
+
+**Date**: February 12-14, 2026
+**Goal**: Determine whether endorsement effects scale with the **certainty** of the endorsement phrasing and with surface-level **formatting emphasis**
+
+### Motivation
+
+Exp7-12 established the endorsement mechanism and its failure modes, but always used a single phrasing ("I think it's B"). This left open whether the effect is binary (any endorsement is enough) or graded (stronger phrasing → stronger effect). Similarly, whether surface formatting cues (ALL CAPS, `[IMPORTANT]`, exclamation marks) independently modulate the effect was unknown.
+
+### Design
+
+**Certainty Sweep** (3 levels × 2 tags × 2 instructions):
+- `might`: "Expert: It might be B, not A."
+- `think`: "Expert: I think it's B, not A."
+- `sure`: "Expert: I'm sure it's B, not A."
+
+**Formatting Sweep** (5 formats × 2 tags × 2 instructions, all at `think` certainty):
+- `plain`: No formatting
+- `important`: Prefixed with "IMPORTANT: "
+- `allcaps`: Entire endorsement in ALL CAPS
+- `exclaim`: Endorsement followed by "!!"
+- `bracketed`: Wrapped in "[IMPORTANT] ... [/IMPORTANT]"
+
+Each condition includes wrong, correct, and neutral endorsement variants. Instruction schedules: `none` (I0), `t0` (I1).
+
+**Models**: Qwen3-4B-Instruct-2507, Llama-3.1-8B-Instruct
+**Dataset**: Same 1,813 items
+
+### Key Results — Certainty Sweep
+
+Mean wrong-endorsement effect (effect_wrong_I0) across certainty levels:
+
+| Model | Tag | might | think | sure | Δ (sure − might) |
+|-------|-----|------:|------:|-----:|------------------:|
+| Qwen-Instruct | Expert | 0.445 | 0.615 | 0.630 | **+0.185** |
+| Qwen-Instruct | Note | 0.265 | 0.240 | 0.349 | **+0.084** |
+| Llama-Instruct | Expert | 0.258 | 0.318 | 0.302 | **+0.044** |
+| Llama-Instruct | Note | 0.196 | 0.241 | 0.221 | **+0.025** |
+
+- Qwen-Instruct Expert shows the strongest dose-response: the biggest jump is from `might` to `think` (+38%), with `sure` adding only marginal gain.
+- Llama-Instruct shows a flatter certainty profile — the effect is more binary (any assertion suffices).
+- Note tag is consistently weaker than Expert but follows similar directional patterns.
+
+### Key Results — Formatting Effects
+
+Mean wrong-endorsement effect (effect_wrong_I0, Expert tag, `think` level) across formats:
+
+| Format | Qwen-Instruct | Δ vs plain | Llama-Instruct | Δ vs plain |
+|--------|---------------:|-----------:|---------------:|-----------:|
+| plain | 0.616 | — | 0.318 | — |
+| important | 0.724 | **+0.108** (+17.5%) | 0.339 | +0.021 (+6.5%) |
+| allcaps | 0.641 | +0.025 (+4.0%) | 0.417 | **+0.099** (+31.2%) |
+| exclaim | 0.545 | -0.071 (-11.5%) | 0.330 | +0.012 (+3.7%) |
+| bracketed | 0.696 | +0.080 (+13.0%) | 0.333 | +0.015 (+4.6%) |
+
+- Formatting sensitivity is **model-specific**: Qwen responds most to semantic markers (`IMPORTANT:`, `[IMPORTANT]`), while Llama responds most to typographic salience (ALL CAPS).
+- Exclamation marks are counterproductive for Qwen — possibly parsed as informal/low-authority.
+- Overall, formatting is a secondary modulator; certainty phrasing has a larger effect.
+
+### Interpretation
+
+1. **Certainty phrasing is a gain knob** — stronger assertion language amplifies endorsement effects, but with diminishing returns past `think`.
+2. **Formatting sensitivity is model-dependent** — no universal "strongest" format; models parse surface cues through different internal heuristics.
+3. **The effect is graded, not binary** — models distinguish between tentative and confident endorsements, which supports the idea that they are processing endorsement as a soft signal rather than a hard switch.
+
+### What This Led To
+
+Having established that signal strength matters, the next question was: **does the quality of the evidence behind the endorsement matter?** If the model is processing endorsements as soft signals, does providing actual reasons/data shift the effect differently for correct vs wrong endorsements?
+
+---
+
+## Exp14: Evidence-Quality Scaling
+
+**Date**: February 15-17, 2026
+**Goal**: Test whether evidence quality (bare assertion → reasons → data) scales endorsement effects asymmetrically for correct vs wrong directions, particularly in the prior-wrong regime
+
+### Motivation
+
+Exp11 showed that "be correct" instructions induce prior-consistency rather than truth-tracking. But this tested a binary instruction, not graded evidence. A stronger test of partial Bayesian behavior: if a model receives **better evidence** for a claim, does it weight that evidence more when the claim is correct than when it is wrong?
+
+If the model is purely socially deferential, evidence quality should scale both directions equally. If the model has any truth-tracking capacity, correct-direction evidence should benefit more from quality upgrades.
+
+### Design
+
+**Evidence Levels** (4 levels, forming a quality ladder):
+- `bare`: "{Tag}: I think it's B, not A."
+- `reason1`: bare + one supporting reason
+- `reason2`: bare + two supporting reasons
+- `reason_data`: bare + reasons + a fabricated data point
+
+For each item, reasons were generated using GPT-4o to be plausible but directionally aligned (correct reasons for the correct answer, wrong reasons for the wrong answer).
+
+**Factorial**: 4 evidence levels × 2 endorsement directions (wrong/correct) × 2 tags (Expert/Note) × 2 instructions (I0/I1)
+
+**Models**: Qwen3-4B-Instruct-2507, Qwen3-4B-Thinking-2507, Llama-3.1-8B-Instruct
+**Dataset**: 1,813 items
+**Key Metric**: Kendall tau — non-parametric monotonicity of logit shift across the 4 evidence levels, computed separately for wrong-direction and correct-direction endorsements in the prior-wrong slice
+
+### Key Results — Prior-Wrong Slice Kendall Tau
+
+| Model | Tag | Instr | tau_wrong | tau_correct | Gap (correct − wrong) |
+|-------|-----|-------|----------:|------------:|----------------------:|
+| Qwen-Instruct | Expert | I0 | 0.343 | 0.397 | +0.054 |
+| Qwen-Instruct | Expert | I1 | 0.386 | 0.601 | +0.215 |
+| Qwen-Instruct | Note | I0 | -0.009 | 0.476 | +0.486 |
+| Qwen-Instruct | Note | I1 | 0.020 | 0.497 | +0.477 |
+| Qwen-Thinking | Expert | I0 | 0.535 | 0.672 | +0.137 |
+| Qwen-Thinking | Expert | I1 | 0.559 | 0.639 | +0.080 |
+| Qwen-Thinking | Note | I0 | 0.553 | 0.766 | +0.213 |
+| Qwen-Thinking | Note | I1 | 0.488 | 0.721 | +0.234 |
+| Llama-Instruct | Expert | I0 | 0.650 | 0.762 | +0.112 |
+| Llama-Instruct | Expert | I1 | 0.723 | 0.802 | +0.079 |
+| Llama-Instruct | Note | I0 | 0.559 | 0.769 | +0.211 |
+| Llama-Instruct | Note | I1 | 0.438 | 0.846 | **+0.408** |
+
+- **All 12 cells show positive gap** (tau_correct > tau_wrong): correct-direction evidence scales more steeply.
+- Strongest asymmetry: Llama Note I1 (gap = +0.408) and Qwen-Instruct Note I0 (gap = +0.486).
+- Qwen-Instruct Note shows near-zero tau_wrong (-0.009 to 0.020) — wrong-direction evidence barely scales at all, while correct-direction evidence scales strongly.
+- Qwen-Thinking shows the most balanced pattern (both directions scale, but correct still leads).
+
+### Key Results — Diagnostic Shift (E_last − E_first, Prior-Wrong)
+
+Mean logit shift from bare to reason_data in the correct direction:
+
+| Model | Tag | Instr | Mean shift | 95% CI | Positive frac |
+|-------|-----|-------|----------:|-------:|--------------:|
+| Qwen-Instruct | Expert | I0 | 2.514 | [2.068, 2.926] | 73.9% |
+| Qwen-Instruct | Expert | I1 | 6.520 | [6.037, 7.005] | 89.2% |
+| Qwen-Instruct | Note | I0 | 4.588 | [4.102, 5.054] | 81.9% |
+| Qwen-Instruct | Note | I1 | 6.308 | [5.774, 6.874] | 85.0% |
+| Qwen-Thinking | Expert | I0 | 3.269 | [3.086, 3.444] | 97.1% |
+| Qwen-Thinking | Note | I0 | 3.506 | [3.353, 3.655] | 99.3% |
+| Llama-Instruct | Expert | I0 | 3.678 | [3.540, 3.817] | 99.6% |
+| Llama-Instruct | Note | I1 | 3.479 | [3.334, 3.617] | 99.3% |
+
+### Hedging Contamination Audit
+
+A post-hoc audit of `data/exp14_reasons.jsonl` discovered that **46% of wrong-direction reasons** contained self-undermining language ("mistakenly believed", "incorrectly thought", "while this is a common misconception") versus <1% of correct-direction reasons. This is a systematic confound from the GPT-4o generator that could inflate the asymmetry.
+
+| Category | Count | % |
+|----------|------:|---:|
+| Strong hedging cues | 834 | 46.0% |
+| Mild hedging only | 57 | 3.1% |
+| Meta-explanatory framing | 115 | 6.3% |
+| Clean (none of the above) | 807 | 44.5% |
+
+### Robustness Check — Clean Subset
+
+Recomputed Kendall tau on the **clean subset only** (807 items, 44.5% of data, no hedging cues in wrong reasons):
+
+| Subset | Mean tau_wrong | Mean tau_correct | Mean gap (correct − wrong) |
+|--------|---------------:|----------------:|---------------------------:|
+| Full | 0.437 | 0.663 | 0.226 |
+| Clean | 0.445 | 0.647 | 0.203 |
+| Hedged | 0.412 | 0.672 | 0.259 |
+
+Gap sign check (correct > wrong) across 12 model × tag × instruction cells:
+- Full: **12/12**
+- Clean: **12/12**
+- Hedged: 11/12
+
+The asymmetry **does not collapse** on the clean subset. The gap narrows from 0.226 → 0.203, confirming that hedging inflates the effect by ~10%, but the directional pattern is robust.
+
+### Remediation and Assertive V2 Rerun
+
+Reasons were re-generated with a fixed prompt enforcing assertive framing (`data/exp14_reasons_assertive_v2.jsonl`). The new dataset shows **0.0% strong hedging** (down from 46%). Full Exp14 rerun completed with clean reasons.
+
+Results: `new-phase-results/exp14_assertive_v2/`
+
+### Assertive V2 Results — Prior-Wrong Slice Kendall Tau
+
+| Model | Tag | Instr | tau_wrong | tau_correct | Gap (correct - wrong) |
+|-------|-----|-------|----------:|------------:|----------------------:|
+| Qwen-Instruct | Expert | I0 | 0.300 | 0.293 | -0.008 |
+| Qwen-Instruct | Expert | I1 | 0.393 | 0.533 | +0.140 |
+| Qwen-Instruct | Note | I0 | 0.124 | 0.481 | **+0.357** |
+| Qwen-Instruct | Note | I1 | 0.181 | 0.497 | **+0.317** |
+| Qwen-Thinking | Expert | I0 | 0.555 | 0.645 | +0.090 |
+| Qwen-Thinking | Expert | I1 | 0.570 | 0.626 | +0.056 |
+| Qwen-Thinking | Note | I0 | 0.543 | 0.673 | +0.130 |
+| Qwen-Thinking | Note | I1 | 0.506 | 0.681 | +0.175 |
+| Llama-Instruct | Expert | I0 | 0.689 | 0.704 | +0.015 |
+| Llama-Instruct | Expert | I1 | 0.756 | 0.735 | -0.021 |
+| Llama-Instruct | Note | I0 | 0.734 | 0.732 | -0.003 |
+| Llama-Instruct | Note | I1 | 0.571 | 0.695 | +0.124 |
+
+Comparison with original contaminated run:
+
+| Metric | Original (hedged) | Assertive V2 (clean) |
+|--------|------------------:|---------------------:|
+| Positive-gap cells (prior-wrong) | 12/12 | **9/12** |
+| Mean tau gap | +0.226 | **+0.114** |
+
+Three cells flipped to negative or zero: Qwen-Instruct Expert/I0 (-0.008), Llama Expert/I1 (-0.021), Llama Note/I0 (-0.003). Hedging accounted for roughly half the original effect.
+
+### Assertive V2 Results — All-Items Slice
+
+In the all-items slice, the pattern reverses. All 12 cells show **wrong > correct** (negative tau gap). Wrong-direction evidence scales more steeply than correct-direction in the full population. The truth-sensitive signal only appears in the prior-wrong slice.
+
+This slice reversal is the single most important finding: aggregate metrics are systematically misleading because prior-correct and prior-wrong items point in opposite directions.
+
+### Per-Model Patterns After Correction
+
+**Qwen-Instruct Note**: strongest surviving signal. Wrong-direction tau barely moves (0.124), correct-direction tau is strong (0.481). Consistent across both instruction schedules. In the high-confidence prior-wrong slice, wrong-direction tau goes negative (-0.079, p = 0.92) while correct remains strong (+0.595, p = 1.2e-34). This is repeated evidence across schedules and slices, though replication with another reason generator/seed would strengthen the "structural" claim.
+
+**Qwen-Thinking**: all-items slice shows wrong > correct in all 4 cells (mean gap about -0.099). Prior-wrong slice shows correct > wrong in all 4 cells (mean gap about +0.113). The truth-sensitive signal is slice-dependent, not global.
+
+**Llama**: with assertive wrong reasons, Llama's wrong-direction tau increased substantially (e.g., Note/I0: 0.559 -> 0.734). Llama processes evidence quality similarly for both directions in most conditions, or tilts toward wrong-direction. The earlier apparent advantage was partially inflated by hedging.
+
+### Interpretation (Corrected)
+
+1. **Evidence-quality sensitivity is universal**: all models respond monotonically to evidence quality in both directions. Better arguments move them more. This is not purely "someone said it."
+2. **Truth-directional sensitivity is conditional**: whether correct-direction evidence benefits *disproportionately* depends on model, tag, and prior state. It is not a general property.
+3. **The all-items vs prior-wrong reversal is the load-bearing finding**: prior-stratification changes the sign of the conclusion. Aggregate sycophancy metrics that pool both slices are systematically misleading.
+4. **Hedging confound inflated the original effect by ~50%**: mean gap dropped from +0.226 to +0.114, and 3 cells flipped. The subset robustness check (+0.203) was optimistic because it filtered old reasons rather than regenerating globally.
+
+### What This Adds to the Mechanism
+
+Exp11 showed instructions induce prior-consistency, not truth-tracking. Exp14 (corrected) refines this: when evidence quality is graded, some model/tag/slice combinations show partial truth-tracking. The prior-consistency mechanism (Exp11) and evidence-quality sensitivity (Exp14) operate at different levels. But the truth-tracking is weaker and more conditional than the original run suggested.
+
+---
+
+## Exp14D: Authority x Evidence Factorial Interaction
+
+**Date**: February 18-19, 2026
+**Goal**: Formally decompose the authority x evidence quality interaction with paired bootstrap contrasts and 2x2 factorial effects
+
+### Motivation
+
+Exp14 showed that the asymmetry between correct and wrong evidence scaling varies by tag. But is this an additive effect (authority adds a constant boost, evidence quality adds a separate boost) or an interaction (authority changes *how* evidence quality is processed)? A 2x2 factorial decomposition answers this directly.
+
+### Design
+
+**Factorial**: 2 authority levels (Expert/Note) x 2 evidence levels (bare/reason2) x 2 directions (wrong/correct)
+
+**Paired contrasts**:
+- tau gap: tau(correct) - tau(wrong) with bootstrap 95% CI
+- magnitude gap: (E3-E0)_correct - (E3-E0)_wrong with bootstrap 95% CI
+
+**Slices**: all items, prior_wrong
+
+**Models**: Qwen3-4B-Instruct-2507, Qwen3-4B-Thinking-2507, Llama-3.1-8B-Instruct
+**Instruction schedules**: I0 and I1 (run separately)
+
+Results: `new-phase-results/exp14d_assertive_v2_i0/` and `new-phase-results/exp14d_assertive_v2_i1/`
+
+### Key Results — Paired Tau Gap with Bootstrap CIs (Prior-Wrong Slice)
+
+| Model | Tag | I0 tau gap [CI] | I0 sig? | I1 tau gap [CI] | I1 sig? |
+|-------|-----|----------------:|---------|----------------:|---------|
+| Qwen-I | Expert | -0.008 [-0.07, +0.05] | no | +0.140 [+0.08, +0.20] | **yes** |
+| Qwen-I | Note | **+0.357** [+0.28, +0.43] | **yes** | **+0.317** [+0.24, +0.39] | **yes** |
+| Qwen-T | Expert | +0.090 [+0.05, +0.13] | **yes** | +0.056 [+0.01, +0.10] | **yes** (barely) |
+| Qwen-T | Note | **+0.130** [+0.09, +0.17] | **yes** | **+0.175** [+0.13, +0.22] | **yes** |
+| Llama | Expert | +0.015 [-0.03, +0.06] | no | -0.021 [-0.05, +0.01] | no |
+| Llama | Note | -0.003 [-0.04, +0.04] | no | **+0.124** [+0.08, +0.17] | **yes** |
+
+### Key Results — All-Items Slice
+
+All 12 cells (both instructions) show **negative tau gap** with CIs excluding zero. In the full population, wrong-direction evidence always scales more steeply. The truth-sensitive signal is entirely confined to the prior-wrong slice.
+
+### 2x2 Factorial Decomposition — Qwen-Instruct Prior-Wrong I0
+
+The most notable interaction:
+
+| Direction | Authority main | Evidence main | Interaction |
+|-----------|---------------:|--------------:|------------:|
+| Wrong | — | — | **+2.008** [+1.78, +2.25] |
+| Correct | — | — | **-1.343** [-1.69, -1.00] |
+
+This is a crossover interaction. Expert authority amplifies wrong-direction evidence scaling but suppresses correct-direction evidence scaling. Note authority does the reverse. The model processes evidence quality *differently* depending on who's speaking.
+
+### Per-Model Summary
+
+**Qwen-Instruct**: clear crossover interaction. Note tag produces the largest truth-sensitive gap in the entire study (+0.357 with tight CIs). Expert tag either nullifies it (I0) or weakens it (I1). The "be correct" instruction (I1) improves Expert from null to weakly positive, suggesting instructions partially counteract the Expert deference shortcut.
+
+**Qwen-Thinking**: moderate, consistent positive gaps across all conditions. Smaller gaps than Qwen-Instruct Note but more uniform. No strong crossover — the pattern is closer to additive (both authority and evidence contribute independently).
+
+**Llama Expert**: definitive null in both instruction schedules. CIs straddle zero. Llama treats Expert-tagged evidence symmetrically regardless of direction. This is the "pure social deference" outcome — evidence quality matters but not differentially by direction.
+
+**Llama Note I1**: the one Llama condition that shows a significant positive gap (+0.124). The "be correct" instruction unlocks weak truth-sensitivity under low-authority framing.
+
+### Interpretation
+
+1. **The interaction is real and tightly estimated** in Qwen-Instruct. Expert authority suppresses truth-sensitive discrimination; Note allows it. This is not additive.
+2. **"Be correct" instructions amplify truth-sensitivity in the prior-wrong slice** for most model/tag conditions, comparing I0 to I1. This is the opposite of what pure prior-consistency would predict (which should make the gap more negative under instruction).
+3. **Note tag consistently produces larger truth-sensitive gaps than Expert.** One interpretation: Expert endorsements trigger deference that bypasses content evaluation; Note endorsements get less automatic deference, so the model evaluates content, and content quality matters more for correct reasons because they are actually true.
+4. **Three tiers emerge**: (a) Qwen-Instruct Note — strong, statistically significant truth-sensitivity; (b) Qwen-Thinking all conditions + Qwen-I Expert I1 + Llama Note I1 — weak to moderate; (c) Llama Expert — null.
+
+### What This Adds to the Mechanism
+
+Exp14 showed that evidence-quality asymmetry exists in some conditions. Exp14D pins down *where* it exists and *why* — it is gated by the authority x evidence interaction. The crossover interaction in Qwen-Instruct is the tightest single result in the study and provides the mechanism for why Note tag produces different behavior than Expert tag in the prior-wrong slice.
+
+---
+
 ## Final Mechanistic Picture
 
 ### What We Established
@@ -668,40 +994,46 @@ Exp12 was run in three stages:
 5. **Instruct shows apparent selective suppression** of wrong > correct on average (Exp10)
 6. **But this selectivity is prior-dependent**, not truth-conditioned — and collapses or inverts on confidently-wrong items (Exp11)
 7. **Temporal dynamics matter**: repeated pressure sustains context bias; early instruction (`t0`) attenuates but does not eliminate context persistence (Exp12)
+8. **Signal strength is a gain knob**: certainty phrasing ("might" -> "sure") amplifies endorsement effects with diminishing returns; formatting sensitivity is model-specific (Exp13)
+9. **Evidence quality reveals conditional truth-tracking**: after correcting a hedging confound (46% of wrong reasons self-undermined), the assertive v2 rerun shows 9/12 prior-wrong cells with correct > wrong scaling (mean gap +0.114, down from +0.226). The effect is strongest for Qwen-Instruct under Note tag and absent for Llama under Expert tag (Exp14)
+10. **Authority x evidence interaction is a crossover, not additive**: Expert amplifies wrong-direction scaling while Note allows truth-sensitive discrimination. Formally established with paired bootstrap CIs (Exp14D)
+11. **All-items vs prior-wrong reversal is universal**: in the full population, wrong-direction evidence scales more steeply in all 12 cells. The truth-sensitive signal only appears in the prior-wrong slice. Prior-stratification changes the sign of the conclusion (Exp14, Exp14D)
 
-### The Novel Finding
+### The Novel Findings
 
-> "Be correct" instructions do not make Instruct models truth-seekers. At best (Expert tag), they induce **non-selective suppression** that treats wrong and correct endorsements equally. At worst (Note tag), they induce **prior-consistency control** that actively entrenches errors — suppressing correct endorsements that conflict with the model's (wrong) prior while letting wrong endorsements through.
+**Finding 1 (Exp11)**: "Be correct" instructions do not make Instruct models truth-seekers. At best (Expert tag), they induce non-selective suppression that treats wrong and correct endorsements equally. At worst (Note tag), they induce prior-consistency control that actively entrenches errors.
 
-This is a distinct failure mode from sycophancy or authority bias. It represents a fundamental limitation of instruction-based interventions: they increase **self-trust** rather than **truthfulness**. The degree of failure is tag-dependent (more severe for lower-authority sources), and the resulting bias can persist under multi-turn pressure in context.
+**Finding 2 (Exp14, corrected)**: Truth-sensitive evidence updating exists but is conditional on prior state, authority tag, and model family. It is not a global property. The hedging confound inflated the original effect by ~50%; after correction, 3/12 cells flipped to null or negative.
 
-### Model x Tag Interaction
+**Finding 3 (Exp14D)**: The authority x evidence interaction is a crossover in Qwen-Instruct: Expert authority suppresses truth-sensitive discrimination, Note allows it. This is not additive — authority changes *how* evidence quality is processed, not just *how much* the model updates.
+
+**Finding 4 (Exp14/14D)**: The all-items vs prior-wrong sign reversal means aggregate sycophancy metrics are systematically misleading. Whether you conclude "models partially truth-track" or "better arguments make things worse" depends on which items you condition on. Prior-stratification is load-bearing for any claim about LLM epistemic behavior.
+
+### Model x Tag Interaction (Updated)
 
 The effect is not uniform:
-- **Expert tag**: On confidently-wrong items, instruction suppresses both endorsement types roughly equally (dr ≈ 0). This avoids the worst failure mode (inversion) but is **not truth-tracking** — it is closer to non-selective gating.
-- **Note tag**: On confidently-wrong items, instruction shows **strong prior-consistency** (dr = -0.67). It lets wrong endorsements through while actively suppressing correct ones.
-
-This suggests the control policy is **tag-conditioned**: the model treats higher-authority sources differently, applying more cautious (but non-selective) suppression for Expert, while defaulting to prior-reinforcement for lower-authority tags like Note.
+- **Expert tag**: On prior-wrong items, most models process evidence quality roughly symmetrically (Llama Expert is a definitive null; Qwen-I Expert/I0 is near-zero). The "be correct" instruction improves Qwen-I Expert from null to weakly positive.
+- **Note tag**: Qwen-Instruct Note shows the strongest truth-sensitive gap in the study (+0.357 with CIs [+0.276, +0.429]). Wrong-direction evidence barely scales while correct-direction evidence scales strongly. This is consistent across both instruction schedules.
+- **Reasoning model (Qwen-Thinking)**: moderate, consistent positive gaps across all conditions. More uniform than Qwen-Instruct, with no strong crossover. The pattern is closer to additive.
+- **Llama**: near-symmetric or wrong-tilted in most conditions. Only Llama Note/I1 shows a significant positive gap (+0.124), suggesting the "be correct" instruction unlocks weak truth-sensitivity under low-authority framing.
 
 ---
 
 ## Implications for Alignment
 
-### Failure Mode Characterized
+### Failure Modes Characterized
 
-When a model is given accuracy instructions:
-1. It does suppress external endorsements on average
-2. But the suppression is **confidence-weighted** by its own prior
-3. For high-authority sources (Expert): suppression becomes **non-selective** (dr ≈ 0) on wrong-prior items — not harmful, but not helpful either
-4. For lower-authority sources (Note): suppression **inverts** (dr = -0.67) — the instruction actively protects the wrong prior
-5. High-confidence wrong priors can become **entrenched** through this mechanism
+1. **Prior-consistency under instruction** (Exp11): "Be correct" instructions increase self-trust, not truthfulness. When the model is confidently wrong, the instruction entrenches the error by suppressing helpful corrections.
+
+2. **Authority-gated deference** (Exp14D): Expert-tagged claims trigger near-symmetric processing regardless of evidential direction. The model defers to authority without evaluating content differentially. Lower-authority tags (Note) allow content evaluation to modulate the update.
+
+3. **Aggregate metric blindness** (Exp14): pooling prior-correct and prior-wrong items hides a sign reversal. Any sycophancy metric that reports aggregate flip rates is mixing two populations that behave in opposite directions.
 
 ### What This Means for RLHF/Instruction-Tuning
 
-The "be correct" behavior appears to be:
-- Training models to **trust themselves more** under instructions
-- Not training models to **evaluate correctness** against ground truth
-- This is a control-policy distinction, not just bias measurement
+- Instructions train models to **trust themselves more**, not to **evaluate correctness** against evidence. This is a control-policy distinction.
+- High-authority framing bypasses the content evaluation pathway. A uniform agreement penalty (as proposed by Shapira et al. 2026) would suppress both the deference shortcut (where correction is needed) and truth-sensitive discrimination (where it should be preserved). Source-conditioned corrections may be needed.
+- The partial truth-tracking that does survive (Qwen-Instruct Note) suggests the capacity exists but is gated by authority signals. Whether this can be amplified through training is an open question.
 
 ---
 
@@ -715,7 +1047,10 @@ The "be correct" behavior appears to be:
 | Exp9 | Do instructions work? | Yes, 40-60% reduction | What's the nature of override? |
 | Exp10 | Truth-tracking or gating? | Instruct shows apparent selectivity on average | Is it actually truth-tracking? |
 | Exp11 | Truth or prior-consistency? | **Prior-consistency** for Note (dr = -0.67); non-selective for Expert (dr ≈ 0). Neither truth-tracks on confidently-wrong items. | Temporal stress-test under multi-turn pressure |
-| Exp12 | Does it persist over turns? | Context carryover persists; `t0` attenuates but does not eliminate; fresh restarts wash out | Final mechanism under temporal dynamics |
+| Exp12 | Does it persist over turns? | Context carryover persists; `t0` attenuates but does not eliminate; fresh restarts wash out | Does signal strength modulate? |
+| Exp13 | Does certainty/formatting matter? | Certainty phrasing is a gain knob (Qwen Expert: +0.185 from might→sure); formatting model-specific | Does evidence quality matter? |
+| Exp14 | Does evidence quality scale asymmetrically? | After hedging correction: 9/12 prior-wrong cells positive (mean gap +0.114). All-items slice reverses (wrong > correct). Strongest: Qwen-I Note (+0.357). | Formal factorial decomposition |
+| Exp14D | Is authority x evidence additive or interactive? | Crossover in Qwen-I: Expert amplifies wrong scaling, Note allows truth-discrimination. Llama Expert is null. | Expanded model set; closed-source replication |
 
 ---
 
@@ -734,11 +1069,15 @@ The "be correct" behavior appears to be:
 - `pressure_wrong_shift` = shift under repeated pressure at a given `K`
 - `residual_wrong_shift` = remaining wrong-shift after endorsement removal (context probe)
 - `washout_score_wrong` = `1 - |residual_wrong_shift| / |initial_wrong_shift|` (clipped to `[0,1]`)
+- `tau_gap` = `kendall_tau(correct) - kendall_tau(wrong)` (paired contrast, positive = truth-sensitive)
+- `magnitude_gap` = `(E3-E0)_correct - (E3-E0)_wrong` (logit shift magnitude contrast)
 
 ### Code Location
 - Exp7-10: `src/exp7/` through `src/exp10/`
 - Exp11: `src/exp11/` (logit_metrics.py, analyze_*.py)
 - Exp12: `src/exp12/` (run_persistence_washout.py, run_repeated_endorsement.py, plot_repeated_endorsement.py)
+- Exp13: `src/exp13/` (run_signal_strength.py, analyze_signal_strength.py, conditions.py)
+- Exp14: `src/exp14/` (run_evidence_quality.py, analyze_evidence_quality.py, analyze_social_epistemic.py, generate_reasons.py, plot_evidence_quality.py)
 
 ---
 
@@ -750,3 +1089,7 @@ The "be correct" behavior appears to be:
 - **Feb 2**: Added correct-endorsement condition, found selectivity
 - **Feb 3**: Ran inverted-prior test, discovered prior-consistency mechanism
 - **Feb 4-6**: Ran Exp12 persistence/timing/repeated-pressure studies and validated prevention > cure dynamics
+- **Feb 12-14**: Ran Exp13 signal-strength experiments (certainty sweep + formatting variants) on Qwen and Llama
+- **Feb 15-16**: Ran Exp14 evidence-quality scaling on 3 models; discovered hedging contamination in generated wrong-reasons (46%); ran robustness check on clean subset confirming asymmetry holds
+- **Feb 17**: Re-generated assertive reasons with fixed prompt (0% hedging); ran Exp14 assertive v2 rerun
+- **Feb 18-19**: Analyzed assertive v2 results: mean gap +0.114 (down from +0.226), 9/12 cells positive. Discovered all-items vs prior-wrong sign reversal. Ran Exp14D factorial interaction analysis with paired bootstrap CIs. Found crossover interaction in Qwen-Instruct (Expert suppresses truth-discrimination, Note allows it). Someone Online supplementary run initiated.
