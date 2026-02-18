@@ -61,7 +61,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--api-base", type=str, default="https://api.openai.com/v1")
     parser.add_argument("--api-key-env", type=str, default="OPENAI_API_KEY")
     parser.add_argument("--model", type=str, default="gpt-4o-mini")
-    parser.add_argument("--temperature", type=float, default=0.2)
+    parser.add_argument(
+        "--temperature",
+        type=float,
+        default=0.2,
+        help="Sampling temperature. For GPT-5-family models this is auto-omitted from API calls.",
+    )
     parser.add_argument("--max-retries", type=int, default=4)
     parser.add_argument("--sleep-seconds", type=float, default=0.0)
     parser.add_argument(
@@ -215,13 +220,12 @@ def _openai_chat_completion(
     api_base: str,
     api_key: str,
     model: str,
-    temperature: float,
+    temperature: float | None,
     prompt: str,
 ) -> str:
     url = f"{api_base.rstrip('/')}/chat/completions"
     body = {
         "model": model,
-        "temperature": temperature,
         "messages": [
             {
                 "role": "system",
@@ -233,6 +237,8 @@ def _openai_chat_completion(
             },
         ],
     }
+    if temperature is not None:
+        body["temperature"] = temperature
 
     req = urllib.request.Request(
         url,
@@ -244,8 +250,18 @@ def _openai_chat_completion(
         },
     )
 
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        payload = json.loads(resp.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        detail = ""
+        try:
+            detail = exc.read().decode("utf-8", errors="replace").strip()
+        except Exception:
+            detail = ""
+        if detail:
+            raise ValueError(f"HTTP {exc.code} from API: {detail}") from exc
+        raise ValueError(f"HTTP {exc.code} from API: {exc.reason}") from exc
 
     choices = payload.get("choices", [])
     if not isinstance(choices, list) or not choices:
@@ -295,6 +311,12 @@ def _call_generator(args: argparse.Namespace, ex: MCExample) -> Dict[str, object
         )
 
     prompt = _make_prompt(ex)
+    request_temperature: float | None = args.temperature
+    # GPT-5-family chat requests reject temperature/top_p/logprobs in many configurations.
+    # Auto-omit temperature to avoid immediate HTTP 400 failures.
+    if args.model.startswith("gpt-5"):
+        request_temperature = None
+
     last_exc: Exception | None = None
     for attempt in range(1, args.max_retries + 1):
         try:
@@ -302,7 +324,7 @@ def _call_generator(args: argparse.Namespace, ex: MCExample) -> Dict[str, object
                 api_base=args.api_base,
                 api_key=api_key,
                 model=args.model,
-                temperature=args.temperature,
+                temperature=request_temperature,
                 prompt=prompt,
             )
             return _validate_payload(

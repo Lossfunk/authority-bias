@@ -34,6 +34,7 @@ htmlcov/
 results/
 updated-results/
 data/
+.env
 
 #documents
 plan.md
