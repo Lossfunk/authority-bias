@@ -20,7 +20,7 @@ import numpy as np
 from src.paper_figures.theme import (
     PAL, FIGSIZE_2x1, apply_theme, save_fig,
     label_panel, add_zero_line, add_y_grid,
-    draw_bar, draw_error_bar, ci95,
+    draw_bar, draw_error_bar, ci95, model_result_path,
 )
 
 
@@ -96,12 +96,24 @@ def main():
     apply_theme()
 
     b = Path("new-phase-results")
-    li = load_json(b / "llama/exp7/meta-llama__Llama-3.1-8B-Instruct_summary.json")
-    lb = load_json(b / "llama/exp7/meta-llama__Llama-3.1-8B_summary.json")
-    qi = load_json(b / "qwen/exp7/Qwen__Qwen3-4B-Instruct-2507_summary.json")
-    qb = load_json(b / "qwen/exp7/Qwen__Qwen3-4B_summary.json")
-    le = load_json(b / "llama/exp8/meta-llama__Llama-3.1-8B-Instruct_summary.json")
-    qe = load_json(b / "qwen/exp8/Qwen__Qwen3-4B-Instruct-2507_summary.json")
+    li = load_json(model_result_path(
+        b, "llama", "exp7/meta-llama__Llama-3.1-8B-Instruct_summary.json"
+    ))
+    lb = load_json(model_result_path(
+        b, "llama", "exp7/meta-llama__Llama-3.1-8B_summary.json"
+    ))
+    qi = load_json(model_result_path(
+        b, "qwen", "exp7/Qwen__Qwen3-4B-Instruct-2507_summary.json"
+    ))
+    qb = load_json(model_result_path(
+        b, "qwen", "exp7/Qwen__Qwen3-4B_summary.json"
+    ))
+    le = load_json(model_result_path(
+        b, "llama", "exp8/meta-llama__Llama-3.1-8B-Instruct_summary.json"
+    ))
+    qe = load_json(model_result_path(
+        b, "qwen", "exp8/Qwen__Qwen3-4B-Instruct-2507_summary.json"
+    ))
 
     fig, (a1, a2) = plt.subplots(1, 2, figsize=FIGSIZE_2x1)
     plot_effect(a1, li, qi, lb, qb)

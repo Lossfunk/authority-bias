@@ -33,7 +33,7 @@ import numpy as np
 
 from src.paper_figures.theme import (
     PAL, CMAP_DIVERGING, apply_theme, save_fig,
-    label_panel, add_zero_line, add_y_grid, add_region_shading,
+    label_panel, add_zero_line, add_y_grid, add_region_shading, model_result_path,
 )
 
 
@@ -333,23 +333,23 @@ def main() -> None:
 
     # ── Load data ─────────────────────────────────────────────────────
     # Panel A: item-level data (same items that exp11 reanalyzes)
-    items = load_items(
-        base / "llama/exp10_extended/meta-llama__Llama-3.1-8B-Instruct_results.jsonl"
-    )
+    items = load_items(model_result_path(
+        base, "llama", "exp10_extended/meta-llama__Llama-3.1-8B-Instruct_results.jsonl"
+    ))
 
     # Panels B/C: Part A (overall) + Part B (inverted-prior slices)
-    expert_overall = load_json(
-        base / "llama/exp11_extended/part_a/meta-llama__Llama-3.1-8B-Instruct_expert_metrics.json"
-    )
-    note_overall = load_json(
-        base / "llama/exp11_extended/part_a/meta-llama__Llama-3.1-8B-Instruct_note_metrics.json"
-    )
-    expert_inv = load_json(
-        base / "llama/exp11_extended/part_b/meta-llama__Llama-3.1-8B-Instruct_expert_inverted_prior.json"
-    )
-    note_inv = load_json(
-        base / "llama/exp11_extended/part_b/meta-llama__Llama-3.1-8B-Instruct_note_inverted_prior.json"
-    )
+    expert_overall = load_json(model_result_path(
+        base, "llama", "exp11_extended/part_a/meta-llama__Llama-3.1-8B-Instruct_expert_metrics.json"
+    ))
+    note_overall = load_json(model_result_path(
+        base, "llama", "exp11_extended/part_a/meta-llama__Llama-3.1-8B-Instruct_note_metrics.json"
+    ))
+    expert_inv = load_json(model_result_path(
+        base, "llama", "exp11_extended/part_b/meta-llama__Llama-3.1-8B-Instruct_expert_inverted_prior.json"
+    ))
+    note_inv = load_json(model_result_path(
+        base, "llama", "exp11_extended/part_b/meta-llama__Llama-3.1-8B-Instruct_note_inverted_prior.json"
+    ))
 
     # ── Create figure ─────────────────────────────────────────────────
     fig = plt.figure(figsize=(7.5, 6.0), constrained_layout=False)

@@ -23,6 +23,7 @@ import numpy as np
 from src.paper_figures.theme import (
     PAL, FIGSIZE_2x1, apply_theme, save_fig,
     label_panel, add_y_grid, plot_with_band, annotate_endpoint, ci95,
+    model_result_path,
 )
 
 
@@ -141,8 +142,12 @@ def main():
     apply_theme()
 
     b = Path("new-phase-results")
-    llama = load_json(b / "llama/exp12_k/meta-llama__Llama-3.1-8B-Instruct_summary.json")
-    qwen = load_json(b / "qwen/exp12_k/Qwen__Qwen3-4B-Instruct-2507_summary.json")
+    llama = load_json(model_result_path(
+        b, "llama", "exp12_k/meta-llama__Llama-3.1-8B-Instruct_summary.json"
+    ))
+    qwen = load_json(model_result_path(
+        b, "qwen", "exp12_k/Qwen__Qwen3-4B-Instruct-2507_summary.json"
+    ))
 
     fig, (a1, a2) = plt.subplots(1, 2, figsize=(FIGSIZE_2x1[0], FIGSIZE_2x1[1] + 0.4),
                                     constrained_layout=False)
