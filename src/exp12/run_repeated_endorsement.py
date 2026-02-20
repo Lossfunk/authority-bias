@@ -15,9 +15,10 @@ import hashlib
 import json
 import os
 import random
+from datetime import UTC, datetime
 from pathlib import Path
 from statistics import mean, median, stdev
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
 
 import torch
 from tqdm import tqdm
@@ -55,6 +56,8 @@ DEFAULT_MODELS: Tuple[str, ...] = (
     "meta-llama/Llama-3.1-8B-Instruct",
     "Qwen/Qwen3-4B-Instruct-2507",
 )
+EXP12K_CODE_VERSION = "2026-02-20-v2"
+RESUME_CHOICES = ("auto", "never", "require")
 
 
 def parse_args() -> argparse.Namespace:
@@ -92,6 +95,30 @@ def parse_args() -> argparse.Namespace:
         "--use-torch-compile",
         action="store_true",
         help="Enable torch.compile for inference. Falls back to eager mode on failure.",
+    )
+    parser.add_argument(
+        "--tf32",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable TF32 where supported.",
+    )
+    parser.add_argument(
+        "--resume",
+        type=str,
+        choices=RESUME_CHOICES,
+        default="auto",
+        help="Resume behavior: auto|never|require",
+    )
+    parser.add_argument(
+        "--checkpoint-every",
+        type=int,
+        default=10,
+        help="Write checkpoint after this many completed stage scores (0 disables periodic checkpoints).",
+    )
+    parser.add_argument(
+        "--allow-config-mismatch",
+        action="store_true",
+        help="Allow resuming from checkpoint artifacts with a changed run config fingerprint.",
     )
     parser.add_argument(
         "--include-correct-history",
@@ -148,6 +175,130 @@ def _is_qwen_model(model_id: str) -> bool:
 def _order_seed(uid: str, seed: int) -> int:
     digest = hashlib.md5(f"{seed}:{uid}".encode("utf-8")).hexdigest()
     return int(digest[:8], 16)
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(UTC).isoformat()
+
+
+def _stable_json(data: Dict[str, Any]) -> str:
+    return json.dumps(data, sort_keys=True, separators=(",", ":"))
+
+
+def _fingerprint(config: Dict[str, Any]) -> str:
+    return hashlib.sha256(_stable_json(config).encode("utf-8")).hexdigest()
+
+
+def _dataset_id(examples: Sequence[MCExample]) -> str:
+    joined = "\n".join(ex.uid for ex in examples)
+    return hashlib.sha256(joined.encode("utf-8")).hexdigest()
+
+
+def _atomic_write_json(path: Path, payload: Dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_suffix(path.suffix + ".tmp")
+    with tmp_path.open("w") as f:
+        json.dump(payload, f, indent=2)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp_path, path)
+
+
+def _atomic_write_records(path: Path, records: Sequence[Dict[str, Any]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_suffix(path.suffix + ".tmp")
+    with tmp_path.open("w") as f:
+        for rec in records:
+            f.write(json.dumps(rec) + "\n")
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp_path, path)
+
+
+def _load_json(path: Path) -> Dict[str, Any]:
+    with path.open("r") as f:
+        return json.load(f)
+
+
+def _load_checkpoint_records(path: Path) -> List[Dict[str, Any]]:
+    rows: List[Dict[str, Any]] = []
+    with path.open("rb") as f:
+        for idx, raw in enumerate(f):
+            text = raw.decode("utf-8", errors="strict").strip()
+            if not text:
+                continue
+            payload = json.loads(text)
+            if not isinstance(payload, dict):
+                raise ValueError(f"Invalid checkpoint record type at {path}:{idx + 1}")
+            rows.append(payload)
+    return rows
+
+
+def _init_records(
+    *,
+    model_id: str,
+    examples: Sequence[MCExample],
+    seed: int,
+    save_prompts: bool,
+) -> List[Dict[str, Any]]:
+    records: List[Dict[str, Any]] = []
+    for ex in examples:
+        rec = {
+            "model": model_id,
+            "uid": ex.uid,
+            "correct_label": ex.correct_label,
+            "wrong_label": ex.wrong_label,
+            "order_seed": _order_seed(ex.uid, seed),
+            "metadata": ex.metadata,
+            "init_results": {},
+            "pressure_results": {},
+            "probe_results": {},
+        }
+        if save_prompts:
+            rec["prompts"] = {}
+        records.append(rec)
+    return records
+
+
+def _is_stage_complete(records: Sequence[Dict[str, Any]], section: str, code: str) -> bool:
+    if not records:
+        return False
+    for rec in records:
+        payload = rec.get(section, {})
+        if not isinstance(payload, dict) or code not in payload:
+            return False
+    return True
+
+
+def _write_checkpoint(
+    *,
+    path: Path,
+    model_id: str,
+    fingerprint: str,
+    started_at: str,
+    total_examples: int,
+    completed_stages: int,
+    total_stages: int,
+    resume_mode: str,
+    effective_batch_size: int,
+    completed: bool,
+) -> None:
+    payload = {
+        "experiment": "exp12_repeated_endorsement",
+        "code_version": EXP12K_CODE_VERSION,
+        "model": model_id,
+        "fingerprint": fingerprint,
+        "started_at": started_at,
+        "updated_at": _utc_now_iso(),
+        "total_examples": total_examples,
+        "completed_stages": completed_stages,
+        "total_stages": total_stages,
+        "remaining_stages": max(total_stages - completed_stages, 0),
+        "resume_mode": resume_mode,
+        "effective_batch_size": effective_batch_size,
+        "completed": completed,
+    }
+    _atomic_write_json(path, payload)
 
 
 def _pred_label(result: ForcedChoiceResult) -> str:
@@ -233,6 +384,31 @@ def _score_prompts(
         batch_size=batch_size,
         max_length=max_length,
     )
+
+
+def _configure_torch_runtime(*, tf32: bool) -> str:
+    """Configure TF32 using the newest available PyTorch API."""
+    if not torch.cuda.is_available():
+        return "no_cuda"
+
+    has_new_fp32_api = (
+        hasattr(torch.backends, "fp32_precision")
+        and hasattr(torch.backends, "cuda")
+        and hasattr(torch.backends.cuda, "matmul")
+        and hasattr(torch.backends.cuda.matmul, "fp32_precision")
+    )
+    if has_new_fp32_api:
+        precision_value = "tf32" if tf32 else "ieee"
+        torch.backends.fp32_precision = precision_value
+        torch.backends.cuda.matmul.fp32_precision = precision_value
+        if hasattr(torch.backends, "cudnn") and hasattr(torch.backends.cudnn, "fp32_precision"):
+            torch.backends.cudnn.fp32_precision = precision_value
+        return "fp32_precision"
+
+    # Fallback for older PyTorch versions.
+    torch.backends.cuda.matmul.allow_tf32 = tf32
+    torch.backends.cudnn.allow_tf32 = tf32
+    return "allow_tf32"
 
 
 def _extract_margins(records: List[Dict], key: str, field: str, section: str) -> List[float]:
@@ -405,7 +581,121 @@ def run_for_model(
     batch_size: int,
     max_length: Optional[int],
     use_torch_compile: bool,
+    tf32: bool,
+    resume_mode: str,
+    checkpoint_every: int,
+    allow_config_mismatch: bool,
 ) -> Dict:
+    model_tag = _model_tag(model_id)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    out_path = output_dir / f"{model_tag}_results.jsonl"
+    summary_path = output_dir / f"{model_tag}_summary.json"
+    checkpoint_path = output_dir / f"{model_tag}_checkpoint.json"
+    checkpoint_records_path = output_dir / f"{model_tag}_checkpoint_records.jsonl"
+    manifest_path = output_dir / f"{model_tag}_run_manifest.json"
+
+    run_config = {
+        "experiment": "exp12_repeated_endorsement",
+        "code_version": EXP12K_CODE_VERSION,
+        "model": model_id,
+        "seed": seed,
+        "dataset_id": _dataset_id(examples),
+        "n_examples": len(examples),
+        "tags": list(tags),
+        "probe_modes": list(modes),
+        "styles": list(styles),
+        "style_profile": style_profile,
+        "instruction_schedule_names": [s.name for s in instruction_schedules],
+        "instruction_schedule_keys": [s.key for s in instruction_schedules],
+        "k_values": list(k_values),
+        "include_correct_history": include_correct_history,
+        "save_prompts": save_prompts,
+        "max_length": max_length if max_length is not None else 0,
+    }
+    fingerprint = _fingerprint(run_config)
+
+    if resume_mode != "never" and out_path.exists() and summary_path.exists():
+        print(f"Detected completed Exp12-K artifacts for {model_id}; loading summary from disk.")
+        return _load_json(summary_path)
+
+    has_existing = (
+        out_path.exists()
+        or summary_path.exists()
+        or checkpoint_path.exists()
+        or checkpoint_records_path.exists()
+        or manifest_path.exists()
+    )
+    if resume_mode == "never" and has_existing:
+        raise RuntimeError(
+            f"Existing run artifacts found for {model_id} in {output_dir}. "
+            "Use --resume auto/require or move to a new output directory."
+        )
+    if resume_mode == "require" and not has_existing:
+        raise RuntimeError(
+            f"Resume required but no existing artifacts found for model {model_id} in {output_dir}."
+        )
+
+    if manifest_path.exists():
+        manifest = _load_json(manifest_path)
+        existing_fingerprint = manifest.get("fingerprint")
+        if existing_fingerprint != fingerprint and not allow_config_mismatch:
+            raise RuntimeError(
+                "Run config fingerprint mismatch.\n"
+                f"  Existing: {existing_fingerprint}\n"
+                f"  Current : {fingerprint}\n"
+                "Use --allow-config-mismatch only if this run config change is intentional."
+            )
+    else:
+        if resume_mode == "require":
+            raise RuntimeError(f"Missing manifest for resume-required run: {manifest_path}")
+        _atomic_write_json(
+            manifest_path,
+            {
+                "experiment": "exp12_repeated_endorsement",
+                "code_version": EXP12K_CODE_VERSION,
+                "created_at": _utc_now_iso(),
+                "fingerprint": fingerprint,
+                "config": run_config,
+            },
+        )
+
+    records = _init_records(model_id=model_id, examples=examples, seed=seed, save_prompts=save_prompts)
+    started_at = _utc_now_iso()
+    if checkpoint_path.exists() or checkpoint_records_path.exists():
+        if not checkpoint_path.exists() or not checkpoint_records_path.exists():
+            if resume_mode == "require":
+                raise RuntimeError(
+                    f"Incomplete checkpoint artifacts for {model_id}. "
+                    f"Expected both {checkpoint_path.name} and {checkpoint_records_path.name}."
+                )
+        elif resume_mode != "never":
+            ckpt = _load_json(checkpoint_path)
+            existing_fingerprint = ckpt.get("fingerprint")
+            if existing_fingerprint != fingerprint and not allow_config_mismatch:
+                raise RuntimeError(
+                    "Checkpoint fingerprint mismatch.\n"
+                    f"  Existing: {existing_fingerprint}\n"
+                    f"  Current : {fingerprint}\n"
+                    "Use --allow-config-mismatch only if this run config change is intentional."
+                )
+            raw_records = _load_checkpoint_records(checkpoint_records_path)
+            by_uid: Dict[str, Dict[str, Any]] = {}
+            for rec in raw_records:
+                uid = str(rec.get("uid", ""))
+                if uid:
+                    by_uid[uid] = rec
+            missing = [ex.uid for ex in examples if ex.uid not in by_uid]
+            if missing:
+                raise RuntimeError(
+                    f"Checkpoint records are missing {len(missing)} example(s); first missing uid={missing[0]}"
+                )
+            records = [by_uid[ex.uid] for ex in examples]
+            started_at = str(ckpt.get("started_at", started_at))
+            print(
+                f"Resuming {model_id} from checkpoint: "
+                f"{ckpt.get('completed_stages', 0)}/{ckpt.get('total_stages', 'unknown')} stages complete."
+            )
+
     print(f"\n{'=' * 70}")
     print(f"Running Exp12-K model: {model_id}")
     print(f"Tags: {tags}")
@@ -414,8 +704,11 @@ def run_for_model(
     print(f"Styles: {styles}")
     print(f"K values: {k_values}")
     print(f"Style profile: {style_profile}")
+    print(f"TF32 enabled: {tf32}")
+    print(f"Resume mode: {resume_mode}; checkpoint_every={checkpoint_every}")
     print(f"{'=' * 70}")
 
+    tf32_control_api = _configure_torch_runtime(tf32=tf32)
     model, tokenizer = load_model_and_tokenizer(model_name=model_id, device="auto", dtype="auto")
     model.eval()
     compile_requested = use_torch_compile
@@ -511,27 +804,9 @@ def run_for_model(
 
                 raise
 
-    records: List[Dict] = []
-    for ex in examples:
-        rec = {
-            "model": model_id,
-            "uid": ex.uid,
-            "correct_label": ex.correct_label,
-            "wrong_label": ex.wrong_label,
-            "order_seed": _order_seed(ex.uid, seed),
-            "metadata": ex.metadata,
-            "init_results": {},
-            "pressure_results": {},
-            "probe_results": {},
-        }
-        if save_prompts:
-            rec["prompts"] = {}
-        records.append(rec)
-
     init_histories: List[HistoryType] = ["neutral", "wrong"] + (["correct"] if include_correct_history else [])
     history_for_branches = init_histories
 
-    print("\nScoring initial turn conditions...")
     init_specs = []
     for tag in tags:
         tag_key = normalize_tag(tag)
@@ -540,10 +815,59 @@ def run_for_model(
                 code = f"{HISTORY_CODE[history]}{schedule.key}_{tag_key}"
                 init_specs.append((tag, tag_key, schedule, history, code))
 
+    branch_specs: List[Tuple[str, str, InstructionSchedule, HistoryType]] = []
+    for tag in tags:
+        tag_key = normalize_tag(tag)
+        for schedule in instruction_schedules:
+            for history in history_for_branches:
+                branch_specs.append((tag, tag_key, schedule, history))
+
+    fresh_specs: List[Tuple[str, str, InstructionSchedule, HistoryType, str]] = []
+    if "fresh" in modes:
+        for tag in tags:
+            tag_key = normalize_tag(tag)
+            for schedule in instruction_schedules:
+                for history in history_for_branches:
+                    for style in styles:
+                        fresh_specs.append((tag, tag_key, schedule, history, style))
+
+    max_k = max(k_values)
+    selected_k = set(k_values)
+    total_stages = (
+        len(init_specs)
+        + len(branch_specs) * max_k
+        + (len(branch_specs) * len(styles) * len(selected_k) if "context" in modes else 0)
+        + (len(fresh_specs) * len(selected_k) if "fresh" in modes else 0)
+    )
+    completed_stage_ids: Set[str] = set()
+    new_stages_completed = 0
+    checkpoint_enabled = checkpoint_every > 0
+
+    def _checkpoint(completed: bool = False) -> None:
+        _atomic_write_records(checkpoint_records_path, records)
+        _write_checkpoint(
+            path=checkpoint_path,
+            model_id=model_id,
+            fingerprint=fingerprint,
+            started_at=started_at,
+            total_examples=len(examples),
+            completed_stages=len(completed_stage_ids),
+            total_stages=total_stages,
+            resume_mode=resume_mode,
+            effective_batch_size=active_batch_size,
+            completed=completed,
+        )
+
+    print("\nScoring initial turn conditions...")
+
     init_prompt_cache: Dict[Tuple[str, str, HistoryType], List[str]] = {}
     for tag, tag_key, schedule, history, code in tqdm(init_specs, desc=f"Exp12-K init {model_id}"):
+        stage_id = f"init::{code}"
         prompts = [format_initial_prompt(ex, tag, history, instruction=schedule.init_instruction) for ex in examples]
         init_prompt_cache[(tag_key, schedule.key, history)] = prompts
+        if _is_stage_complete(records, "init_results", code):
+            completed_stage_ids.add(stage_id)
+            continue
         scored = _score_prompts_with_fallback(prompts)
         for i, result in enumerate(scored):
             entry = _result_to_entry(result, expected_correct_label=examples[i].correct_label)
@@ -552,31 +876,34 @@ def run_for_model(
             records[i]["init_results"][code] = entry
             if save_prompts:
                 records[i]["prompts"][code] = prompts[i]
+        completed_stage_ids.add(stage_id)
+        new_stages_completed += 1
+        if checkpoint_enabled and new_stages_completed % checkpoint_every == 0:
+            _checkpoint(completed=False)
 
-    branch_specs: List[Tuple[str, str, InstructionSchedule, HistoryType]] = []
     branch_contexts: Dict[Tuple[str, str, HistoryType], List[str]] = {}
     print("\nBuilding repeated-pressure branch histories...")
-    for tag in tags:
-        tag_key = normalize_tag(tag)
-        for schedule in instruction_schedules:
-            for history in history_for_branches:
-                branch_specs.append((tag, tag_key, schedule, history))
-                init_code = f"{HISTORY_CODE[history]}{schedule.key}_{tag_key}"
-                prompts = init_prompt_cache[(tag_key, schedule.key, history)]
-                contexts = []
-                for i, prompt in enumerate(prompts):
-                    pred = records[i]["init_results"][init_code]["pred_label"]
-                    contexts.append(initial_context_from_prompt(prompt, str(pred)))
-                branch_contexts[(tag_key, schedule.key, history)] = contexts
+    for _tag, tag_key, schedule, history in branch_specs:
+        init_code = f"{HISTORY_CODE[history]}{schedule.key}_{tag_key}"
+        prompts = init_prompt_cache[(tag_key, schedule.key, history)]
+        contexts = []
+        for i, prompt in enumerate(prompts):
+            pred = records[i]["init_results"][init_code]["pred_label"]
+            contexts.append(initial_context_from_prompt(prompt, str(pred)))
+        branch_contexts[(tag_key, schedule.key, history)] = contexts
 
-    max_k = max(k_values)
-    selected_k = set(k_values)
+    expected_labels_by_style: Dict[str, List[str]] = {
+        style: [probe_correct_label(ex, style=style) for ex in examples]
+        for style in styles
+    }
     print("\nRunning repeated pressure turns...")
     for k in range(1, max_k + 1):
         for tag, tag_key, schedule, history in tqdm(branch_specs, desc=f"Exp12-K pressure {model_id} K{k}"):
             contexts = branch_contexts[(tag_key, schedule.key, history)]
             prompts: List[str] = []
             blocks: List[str] = []
+            pressure_code = f"PRESS_H{HISTORY_CODE[history]}{schedule.key}_{tag_key}_K{k}"
+            stage_id = f"pressure::{pressure_code}"
             for i, ex in enumerate(examples):
                 block = _format_pressure_block(
                     ex,
@@ -588,10 +915,16 @@ def run_for_model(
                 prompts.append(f"{contexts[i]}{block}\nAnswer:")
                 blocks.append(block)
 
+            if _is_stage_complete(records, "pressure_results", pressure_code):
+                completed_stage_ids.add(stage_id)
+                for i in range(len(examples)):
+                    pred = str(records[i]["pressure_results"][pressure_code]["pred_label"])
+                    contexts[i] = f"{contexts[i]}{blocks[i]}\nAssistant: {pred}\n"
+                continue
+
             scored = _score_prompts_with_fallback(prompts)
 
             for i, result in enumerate(scored):
-                pressure_code = f"PRESS_H{HISTORY_CODE[history]}{schedule.key}_{tag_key}_K{k}"
                 entry = _result_to_entry(result, expected_correct_label=examples[i].correct_label)
                 entry["mode"] = "pressure"
                 entry["k"] = k
@@ -605,31 +938,44 @@ def run_for_model(
 
                 pred = str(entry["pred_label"])
                 contexts[i] = f"{contexts[i]}{blocks[i]}\nAssistant: {pred}\n"
+            completed_stage_ids.add(stage_id)
+            new_stages_completed += 1
+            if checkpoint_enabled and new_stages_completed % checkpoint_every == 0:
+                _checkpoint(completed=False)
 
         if k not in selected_k:
             continue
 
         if "context" in modes:
+            context_block_cache: Dict[Tuple[str, int], List[str]] = {}
             for tag, tag_key, schedule, history in tqdm(branch_specs, desc=f"Exp12-K context probes {model_id} K{k}"):
                 contexts = branch_contexts[(tag_key, schedule.key, history)]
                 for style in styles:
-                    prompts: List[str] = []
-                    expected_labels: List[str] = []
-                    for i, ex in enumerate(examples):
-                        block = format_probe_context_block(
-                            ex,
-                            style=style,  # type: ignore[arg-type]
-                            turn_idx=k,
-                            include_instruction=False,
-                            style_profile=style_profile,
-                        )
-                        prompts.append(f"{contexts[i]}{block}\nAnswer:")
-                        expected_labels.append(probe_correct_label(ex, style=style))  # type: ignore[arg-type]
+                    block_cache_key = (style, k)
+                    context_blocks = context_block_cache.get(block_cache_key)
+                    if context_blocks is None:
+                        context_blocks = [
+                            format_probe_context_block(
+                                ex,
+                                style=style,  # type: ignore[arg-type]
+                                turn_idx=k,
+                                include_instruction=False,
+                                style_profile=style_profile,
+                            )
+                            for ex in examples
+                        ]
+                        context_block_cache[block_cache_key] = context_blocks
+                    prompts = [f"{ctx}{block}\nAnswer:" for ctx, block in zip(contexts, context_blocks)]
+                    expected_labels = expected_labels_by_style[style]
+                    probe_code = f"CTX_H{HISTORY_CODE[history]}{schedule.key}_{tag_key}_{style}_K{k}"
+                    stage_id = f"probe::{probe_code}"
+                    if _is_stage_complete(records, "probe_results", probe_code):
+                        completed_stage_ids.add(stage_id)
+                        continue
 
                     scored = _score_prompts_with_fallback(prompts)
 
                     for i, result in enumerate(scored):
-                        probe_code = f"CTX_H{HISTORY_CODE[history]}{schedule.key}_{tag_key}_{style}_K{k}"
                         entry = _result_to_entry(result, expected_correct_label=expected_labels[i])
                         entry["mode"] = "context"
                         entry["k"] = k
@@ -641,25 +987,22 @@ def run_for_model(
                         records[i]["probe_results"][probe_code] = entry
                         if save_prompts:
                             records[i]["prompts"][probe_code] = prompts[i]
+                    completed_stage_ids.add(stage_id)
+                    new_stages_completed += 1
+                    if checkpoint_enabled and new_stages_completed % checkpoint_every == 0:
+                        _checkpoint(completed=False)
 
         if "fresh" in modes:
-            fresh_specs: List[Tuple[str, str, InstructionSchedule, HistoryType, str]] = []
-            for tag in tags:
-                tag_key = normalize_tag(tag)
-                for schedule in instruction_schedules:
-                    for history in history_for_branches:
-                        for style in styles:
-                            fresh_specs.append((tag, tag_key, schedule, history, style))
-
+            fresh_cache: Dict[Tuple[str, bool, int], Tuple[List[str], List[ForcedChoiceResult]]] = {}
             for _tag, tag_key, schedule, history, style in tqdm(
                 fresh_specs,
                 desc=f"Exp12-K fresh probes {model_id} K{k}",
             ):
-                prompts: List[str] = []
-                expected_labels: List[str] = []
                 include_instruction = schedule.include_probe_instruction("fresh", k)
-                for ex in examples:
-                    prompts.append(
+                fresh_cache_key = (style, include_instruction, k)
+                cached = fresh_cache.get(fresh_cache_key)
+                if cached is None:
+                    prompts = [
                         format_fresh_probe_prompt(
                             ex,
                             style=style,  # type: ignore[arg-type]
@@ -667,13 +1010,20 @@ def run_for_model(
                             instruction=include_instruction,
                             style_profile=style_profile,
                         )
-                    )
-                    expected_labels.append(probe_correct_label(ex, style=style))  # type: ignore[arg-type]
-
-                scored = _score_prompts_with_fallback(prompts)
+                        for ex in examples
+                    ]
+                    scored = _score_prompts_with_fallback(prompts)
+                    fresh_cache[fresh_cache_key] = (prompts, scored)
+                else:
+                    prompts, scored = cached
+                expected_labels = expected_labels_by_style[style]
+                probe_code = f"FRESH_H{HISTORY_CODE[history]}{schedule.key}_{tag_key}_{style}_K{k}"
+                stage_id = f"probe::{probe_code}"
+                if _is_stage_complete(records, "probe_results", probe_code):
+                    completed_stage_ids.add(stage_id)
+                    continue
 
                 for i, result in enumerate(scored):
-                    probe_code = f"FRESH_H{HISTORY_CODE[history]}{schedule.key}_{tag_key}_{style}_K{k}"
                     entry = _result_to_entry(result, expected_correct_label=expected_labels[i])
                     entry["mode"] = "fresh"
                     entry["k"] = k
@@ -685,6 +1035,10 @@ def run_for_model(
                     records[i]["probe_results"][probe_code] = entry
                     if save_prompts:
                         records[i]["prompts"][probe_code] = prompts[i]
+                completed_stage_ids.add(stage_id)
+                new_stages_completed += 1
+                if checkpoint_enabled and new_stages_completed % checkpoint_every == 0:
+                    _checkpoint(completed=False)
 
     summary_metrics = _compute_summary(
         records=records,
@@ -696,12 +1050,13 @@ def run_for_model(
         include_correct_history=include_correct_history,
     )
 
-    out_path = output_dir / f"{_model_tag(model_id)}_results.jsonl"
     with out_path.open("w") as f:
         for rec in records:
             f.write(json.dumps(rec) + "\n")
 
     model_summary = {
+        "experiment": "exp12_repeated_endorsement",
+        "code_version": EXP12K_CODE_VERSION,
         "model": model_id,
         "n_examples": len(examples),
         "tags": tags,
@@ -722,6 +1077,14 @@ def run_for_model(
         "torch_compile_requested": compile_requested,
         "torch_compile_enabled": compile_enabled,
         "torch_compile_disabled_reason": compile_disabled_reason or "",
+        "tf32_enabled": tf32,
+        "tf32_control_api": tf32_control_api,
+        "resume_mode": resume_mode,
+        "checkpoint_every": checkpoint_every,
+        "checkpoint_enabled": checkpoint_enabled,
+        "completed_stages": len(completed_stage_ids),
+        "total_stages": total_stages,
+        "run_fingerprint": fingerprint,
         "token_ids": {
             "a": token_id_a,
             "b": token_id_b,
@@ -731,9 +1094,9 @@ def run_for_model(
         "metrics": summary_metrics,
     }
 
-    summary_path = output_dir / f"{_model_tag(model_id)}_summary.json"
     with summary_path.open("w") as f:
         json.dump(model_summary, f, indent=2)
+    _checkpoint(completed=True)
 
     k0 = k_values[0]
     print(f"\nKey Exp12-K metrics for {model_id} at K={k0}:")
@@ -762,6 +1125,8 @@ def main() -> None:
     args = parse_args()
     if args.batch_size <= 0:
         raise ValueError("--batch-size must be > 0")
+    if args.checkpoint_every < 0:
+        raise ValueError("--checkpoint-every must be >= 0")
 
     tags = list(EXTENDED_TAGS) if args.extended_tags else list(DEFAULT_TAGS)
     modes = parse_probe_modes(args.probe_modes)
@@ -781,6 +1146,9 @@ def main() -> None:
     print(f"K values: {k_values}")
     print(f"Include correct history: {include_correct_history}")
     print(f"Use torch.compile: {args.use_torch_compile}")
+    print(f"TF32: {args.tf32}")
+    print(f"Resume mode: {args.resume}")
+    print(f"Checkpoint every: {args.checkpoint_every}")
 
     mc_path = args.mc_dataset_path
     if mc_path.exists():
@@ -834,6 +1202,10 @@ def main() -> None:
             batch_size=args.batch_size,
             max_length=max_length,
             use_torch_compile=args.use_torch_compile,
+            tf32=args.tf32,
+            resume_mode=args.resume,
+            checkpoint_every=args.checkpoint_every,
+            allow_config_mismatch=args.allow_config_mismatch,
         )
         summaries.append(summary)
 
@@ -852,6 +1224,8 @@ def main() -> None:
         "k_values": k_values,
         "max_k": max(k_values),
         "include_correct_history": include_correct_history,
+        "resume_mode": args.resume,
+        "checkpoint_every": args.checkpoint_every,
         "models": summaries,
     }
     with (args.output_dir / "summary.json").open("w") as f:
