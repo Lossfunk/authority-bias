@@ -26,7 +26,7 @@ import numpy as np
 from src.paper_figures.theme import (
     PAL, apply_theme, save_fig,
     label_panel, add_zero_line, add_y_grid, add_region_shading,
-    draw_bar, draw_error_bar,
+    draw_bar, draw_error_bar, model_result_path,
 )
 
 
@@ -265,12 +265,16 @@ def main() -> None:
     base = Path("new-phase-results")
 
     # Exp10 data
-    llama_inst_10 = load_json(base / "llama/exp10/meta-llama__Llama-3.1-8B-Instruct_summary.json")
-    llama_base_10 = load_json(base / "llama/exp10/meta-llama__Llama-3.1-8B_summary.json")
+    llama_inst_10 = load_json(model_result_path(
+        base, "llama", "exp10/meta-llama__Llama-3.1-8B-Instruct_summary.json"
+    ))
+    llama_base_10 = load_json(model_result_path(
+        base, "llama", "exp10/meta-llama__Llama-3.1-8B_summary.json"
+    ))
 
     # Exp11 data (Llama Instruct)
     exp11_results = load_exp11_results(
-        base / "llama/exp11_extended",
+        model_result_path(base, "llama", "exp11_extended"),
         "meta-llama__Llama-3.1-8B-Instruct",
     )
 

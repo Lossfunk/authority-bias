@@ -20,7 +20,7 @@ import numpy as np
 
 from src.paper_figures.theme import (
     PAL, FIGSIZE_2x1, CMAP_SEQUENTIAL, apply_theme, save_fig,
-    label_panel, add_y_grid, ci95,
+    label_panel, add_y_grid, ci95, model_result_path,
 )
 
 
@@ -116,10 +116,18 @@ def main():
     apply_theme()
 
     b = Path("new-phase-results")
-    li = load_json(b / "llama/exp8_speakers/meta-llama__Llama-3.1-8B-Instruct_summary.json")
-    lb = load_json(b / "llama/exp8_speakers/meta-llama__Llama-3.1-8B_summary.json")
-    qi = load_json(b / "qwen/exp8_speakers/Qwen__Qwen3-4B-Instruct-2507_summary.json")
-    qb = load_json(b / "qwen/exp8_speakers/Qwen__Qwen3-4B_summary.json")
+    li = load_json(model_result_path(
+        b, "llama", "exp8_speakers/meta-llama__Llama-3.1-8B-Instruct_summary.json"
+    ))
+    lb = load_json(model_result_path(
+        b, "llama", "exp8_speakers/meta-llama__Llama-3.1-8B_summary.json"
+    ))
+    qi = load_json(model_result_path(
+        b, "qwen", "exp8_speakers/Qwen__Qwen3-4B-Instruct-2507_summary.json"
+    ))
+    qb = load_json(model_result_path(
+        b, "qwen", "exp8_speakers/Qwen__Qwen3-4B_summary.json"
+    ))
 
     fig, (a1, a2) = plt.subplots(1, 2, figsize=FIGSIZE_2x1, sharey=True)
     plot_panel(a1, li, lb, "Llama-3.1-8B")

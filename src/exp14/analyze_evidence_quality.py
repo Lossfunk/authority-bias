@@ -34,13 +34,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--results-dir",
         type=Path,
-        default=Path("new-phase-results/exp14"),
+        default=Path("new-phase-results/llama-3.1-8b-results/exp14"),
         help="Directory containing Exp14 *_results.jsonl files",
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("new-phase-results/exp14/analysis"),
+        default=Path("new-phase-results/llama-3.1-8b-results/exp14/analysis"),
         help="Directory to write analysis artifacts",
     )
     parser.add_argument("--n-boot", type=int, default=3000, help="Bootstrap replicates")

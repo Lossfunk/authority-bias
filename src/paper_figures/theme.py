@@ -157,6 +157,32 @@ def make_sequential_cmap(
 CMAP_DIVERGING = make_diverging_cmap()
 CMAP_SEQUENTIAL = make_sequential_cmap()
 
+# Canonical per-model result directories.
+MODEL_RESULT_DIRS = {
+    "llama": ("llama-3.1-8b-results",),
+    "qwen": ("qwen3-4b-results",),
+    "qwen_thinking": ("qwen3-4b-thinking-results",),
+}
+
+
+def model_result_roots(root: Path, model: str) -> List[Path]:
+    """Candidate roots for a model's results directory.
+
+    Ordered by preferred canonical names.
+    """
+    names = MODEL_RESULT_DIRS.get(model, (model,))
+    return [root / name for name in names]
+
+
+def model_result_path(root: Path, model: str, relative: Union[str, Path]) -> Path:
+    """Resolve a model-specific file path across canonical + legacy layouts."""
+    rel = Path(relative)
+    candidates = [base / rel for base in model_result_roots(root, model)]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return candidates[0]
+
 
 # ═══════════════════════════════════════════════════════════════════════
 # 3. FIGURE SIZING

@@ -26,13 +26,30 @@ plt.rcParams.update(
 )
 
 
+# Model dirs under results-root that contain exp14/analysis
+_EXP14_MODEL_DIRS = (
+    "llama-3.1-8b-results",
+    "qwen3-4b-results",
+    "qwen3-4b-thinking-results",
+)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Plot Exp14 evidence-quality figures")
     parser.add_argument(
         "--analysis-dir",
         type=Path,
-        default=Path("new-phase-results/exp14/analysis"),
-        help="Directory containing *_analysis.json files",
+        default=None,
+        help="Directory containing *_analysis.json files (if not using --results-root)",
+    )
+    parser.add_argument(
+        "--results-root",
+        type=Path,
+        default=Path("new-phase-results"),
+        help=(
+            "Root of results tree; discovers *_analysis.json under "
+            "{root}/{model_dir}/exp14/analysis for all models",
+        ),
     )
     parser.add_argument(
         "--output-dir",
@@ -64,6 +81,30 @@ def _load_analysis_files(analysis_dir: Path) -> List[Dict[str, Any]]:
         analyses.append(payload)
     if not analyses:
         raise FileNotFoundError(f"No analysis files found in {analysis_dir}")
+    return analyses
+
+
+def _discover_analyses_from_root(results_root: Path) -> List[Dict[str, Any]]:
+    """Discover all *_analysis.json under {root}/{model_dir}/exp14/analysis."""
+    analyses: List[Dict[str, Any]] = []
+    seen_models: set[str] = set()
+    for model_dir in _EXP14_MODEL_DIRS:
+        analysis_dir = results_root / model_dir / "exp14" / "analysis"
+        if not analysis_dir.is_dir():
+            continue
+        for path in sorted(analysis_dir.glob("*_analysis.json")):
+            if path.name == "combined_analysis.json":
+                continue
+            payload = json.loads(path.read_text())
+            model_id = payload.get("model", "")
+            if model_id not in seen_models:
+                seen_models.add(model_id)
+                analyses.append(payload)
+    if not analyses:
+        raise FileNotFoundError(
+            f"No *_analysis.json found under {results_root}/{{model_dir}}/exp14/analysis "
+            f"for model dirs: {list(_EXP14_MODEL_DIRS)}"
+        )
     return analyses
 
 
@@ -263,7 +304,10 @@ def main() -> None:
     formats = [token.lower() for token in _parse_csv(args.formats)]
     slices = _parse_csv(args.slices)
 
-    analyses = _load_analysis_files(args.analysis_dir)
+    if args.analysis_dir is not None:
+        analyses = _load_analysis_files(args.analysis_dir)
+    else:
+        analyses = _discover_analyses_from_root(args.results_root)
     for analysis in analyses:
         _plot_monotonicity(
             analysis,

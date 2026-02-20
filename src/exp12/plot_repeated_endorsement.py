@@ -529,14 +529,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--llama-summary", type=Path,
         default=Path(
-            "new-phase-results/llama/exp12_k/"
+            "new-phase-results/llama-3.1-8b-results/exp12_k/"
             "meta-llama__Llama-3.1-8B-Instruct_summary.json"
         ),
     )
     parser.add_argument(
         "--qwen-summary", type=Path,
         default=Path(
-            "new-phase-results/qwen/exp12_k/"
+            "new-phase-results/qwen3-4b-results/exp12_k/"
             "Qwen__Qwen3-4B-Instruct-2507_summary.json"
         ),
     )

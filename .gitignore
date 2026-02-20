@@ -35,67 +35,48 @@ results/
 updated-results/
 test-results/
 rlhf-results/
-llama-results/
 assets/
 data/
 .env
 
-#documents
+# Documents / planning
 plan.md
 edits.md
-# Do Persona Vectors and Attention Circuits Align.pdf
 current-stage.md
 fixing.md
+iteration_plan.md
+meeting-notes/
+AWS-Setup.md
 
 .cursor/
-AWS-Setup.md
-meeting-notes/
-
-# Planning docs
-iteration_plan.md
-
-# Generated plotting scripts
-new-phase-results/exp11/figures/prior_consistency_bars.py
-
-# PDF figures in results (duplicates of PNGs)
-new-phase-results/**/*.pdf
-new-phase-results/figures/
-new-phase-results/**/figures/
 
 # Credentials / secrets
 *.csv
 abhinav-*.csv
 
-# Large per-item result files (keep summaries, skip raw JSONL > 100MB)
-new-phase-results/**/*_results.jsonl
-experiments/
-
-# Exp14 generated run artifacts (keep curated reports/tables only)
-new-phase-results/exp14/*_checkpoint.json
-new-phase-results/exp14/*_run_manifest.json
-new-phase-results/exp14/*_summary.json
-new-phase-results/exp14/item_table.jsonl
-new-phase-results/exp14/summary.json
-new-phase-results/exp14/analysis/
-new-phase-results/exp14/robustness/*_analysis/
-new-phase-results/exp14/robustness/subsets/*.txt
-
-# Exp14 assertive v2 intermediate artifacts (keep analysis outputs)
-new-phase-results/exp14_assertive_v2/*_checkpoint.json
-new-phase-results/exp14_assertive_v2/*_run_manifest.json
-new-phase-results/exp14_assertive_v2/item_table.jsonl
-
-# Exp14D smoke test (not needed in repo)
-new-phase-results/exp14d_assertive_v2_i0_smoke/
-
-# Large experiment result directories (>50MB each)
-new-phase-results/llama/exp13/
-new-phase-results/qwen/exp13/
-new-phase-results/qwen/exp14e/
-new-phase-results/llama/exp14e/
-new-phase-results/exp14e/
-
-# Generated figure outputs and paper figure scripts
+# Generated figure outputs
 new-phase-results/**/figures/
 new-phase-results/figures/
-src/paper_figures/
+
+# PDF figures (duplicates of PNGs)
+new-phase-results/**/*.pdf
+
+# Large per-item raw result files (keep summaries, skip raw JSONL)
+new-phase-results/**/*_results.jsonl
+
+# Large experiment result subdirs (raw inference output, >50MB)
+new-phase-results/llama-3.1-8b-results/exp12_instruct/
+new-phase-results/llama-3.1-8b-results/exp12_k/
+new-phase-results/llama-3.1-8b-results/exp12_p0/
+new-phase-results/llama-3.1-8b-results/exp13/
+new-phase-results/qwen3-4b-results/exp12_instruct/
+new-phase-results/qwen3-4b-results/exp12_k/
+new-phase-results/qwen3-4b-results/exp12_p0/
+new-phase-results/qwen3-4b-results/exp13/
+
+# Checkpoint / manifest files (run artifacts, not results)
+new-phase-results/**/*_checkpoint.json
+new-phase-results/**/*_run_manifest.json
+
+# Smoke test directories
+new-phase-results/qwen3-4b-results/smoke_qwen/

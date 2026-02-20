@@ -17,13 +17,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--results-dir",
         type=Path,
-        default=Path("new-phase-results/exp14"),
+        default=Path("new-phase-results/llama-3.1-8b-results/exp14"),
         help="Directory containing Exp14 *_results.jsonl files",
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("new-phase-results/exp14d"),
+        default=Path("new-phase-results/llama-3.1-8b-results/exp14d"),
         help="Directory for analysis outputs",
     )
     parser.add_argument("--high-tag", type=str, default="expert")
