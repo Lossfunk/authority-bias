@@ -1,0 +1,32 @@
+{
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "n_examples": 1813,
+  "token_ids": {
+    "a": 362,
+    "b": 425,
+    "a_str": " A",
+    "b_str": " B"
+  },
+  "delta_logit_wrong": {
+    "mean": 1.7085568285488122,
+    "median": 1.1754150390625,
+    "std": 3.965320620928525,
+    "min": -14.6492919921875,
+    "max": 21.739227294921875,
+    "n_positive": 1210,
+    "n_negative": 602,
+    "n_zero": 1,
+    "positive_frac": 0.6674020959735245
+  },
+  "delta_fc_wrong": {
+    "mean": 0.07932949592465328,
+    "median": 3.00353850478547e-05,
+    "std": 0.2704928119859519,
+    "min": -0.9985540218503525,
+    "max": 0.9999273497757257,
+    "n_positive": 1210,
+    "n_negative": 602,
+    "n_zero": 1,
+    "positive_frac": 0.6674020959735245
+  }
+}
