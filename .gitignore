@@ -49,6 +49,7 @@ meeting-notes/
 AWS-Setup.md
 
 .cursor/
+experiments/
 
 # Credentials / secrets
 *.csv
