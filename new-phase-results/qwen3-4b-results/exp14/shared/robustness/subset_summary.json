@@ -1,0 +1,17 @@
+{
+  "total_items": 1813,
+  "strong": 834,
+  "mild_only": 57,
+  "meta_only": 115,
+  "clean": 807,
+  "clean_pct": 44.51,
+  "heuristic": {
+    "strong_regex": "mistaken|incorrect|misattribut|errone|misremember",
+    "mild_regex": "confusion|conflate|confuse",
+    "meta_regex": "could\\s+make|leads\\s+some\\s+to|can\\s+seem|plausibly",
+    "text_fields": [
+      "reasons_wrong[0]",
+      "reasons_wrong[1]"
+    ]
+  }
+}
