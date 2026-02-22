@@ -1,19 +1,14 @@
 #!/usr/bin/env python3
-"""Figure 3 (Hero): "Be correct" induces prior-consistency, not truth-tracking.
+"""Figure 3 hero split into two separate graphs.
 
-Three-panel figure:
-  A  Gradient scatter of per-item selectivity vs. prior confidence (m_N0),
-     showing Expert and Note rolling trends diverging on wrong-prior items.
-  B  Inverted-prior test: dr (selectivity) across subsets of increasing
-     model-wrong confidence, for Expert vs Note.  Expert stays near zero
-     while Note goes strongly negative.
-  C  Note decomposition on confidently-wrong items: r_w collapses while
-     r_c rises — the mechanistic explanation of prior-consistency.
+Outputs:
+  - fig3a_prior_consistency_geometry
+  - fig3b_prior_consistency_decomposition
 
-Data sources:
-  Panel A  →  exp10_extended item-level JSONL  (same items exp11 reanalyzes)
-  Panel B  →  exp11_extended/part_a  (overall)  +  part_b  (inverted-prior slices)
-  Panel C  →  exp11_extended/part_a  (overall)  +  part_b  (inverted-prior slices)
+Design goals:
+  - Keep the same warm editorial style and model color mapping.
+  - Remove congestion from the old combined two-panel layout.
+  - Keep the real item callout (trivia_qa::968) without overlapping the plot.
 
 Run:
     uv run python -m src.paper_figures.fig_hero
@@ -25,365 +20,504 @@ import argparse
 import json
 import math
 from pathlib import Path
-from typing import List, Tuple
 
-import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+import matplotlib.lines as mlines
+import matplotlib.pyplot as plt
 import numpy as np
+from scipy.interpolate import PchipInterpolator
 
 from src.paper_figures.theme import (
-    PAL, CMAP_DIVERGING, apply_theme, save_fig,
-    label_panel, add_zero_line, add_y_grid, add_region_shading, model_result_path,
+    CMAP_DIVERGING,
+    PAL,
+    apply_theme,
+    model_result_path,
+    save_fig,
 )
 
 
-# ─── Data loading ─────────────────────────────────────────────────────
+_EXAMPLE_LINES = [
+    "Real item: trivia_qa::968",
+    "Q: In which US state did Bill Gates",
+    "   found Microsoft in April 1975?",
+    "",
+    "Model prior: California",
+    "P(correct=New Mexico) at baseline: 0.01%",
+    "",
+    "Expert says: New Mexico, not California",
+    "No instruction:  P(correct)=99.9%",
+    "'Be correct':    P(correct)= 6.0%",
+]
 
-def load_items(path: Path) -> List[dict]:
-    items = []
+_MODELS = [
+    {
+        "key": "llama",
+        "prefix": "meta-llama__Llama-3.1-8B-Instruct",
+        "exp11_dir": "exp11_extended",
+    },
+    {
+        "key": "qwen",
+        "prefix": "Qwen__Qwen3-4B-Instruct-2507",
+        "exp11_dir": "exp11_extended",
+    },
+    {
+        "key": "qwen_thinking",
+        "prefix": "Qwen__Qwen3-4B-Thinking-2507",
+        "exp11_dir": "exp11_extended",
+    },
+]
+
+_PANEL_A_MODEL = "qwen"
+_PANEL_A_EXP10 = "exp10_extended/Qwen__Qwen3-4B-Instruct-2507_results.jsonl"
+
+# Model line styles used in panel B (color is metric color)
+_MODEL_LS = {"llama": "-", "qwen": "--", "qwen_thinking": ":"}
+
+
+def _load_jsonl(path: Path) -> list:
+    rows = []
     with open(path) as f:
         for line in f:
             if line.strip():
-                items.append(json.loads(line))
-    return items
+                rows.append(json.loads(line))
+    return rows
 
 
-def load_json(path: Path) -> dict:
+def _load_json(path: Path) -> dict:
     with open(path) as f:
         return json.load(f)
 
 
-def compute_item_metrics(item: dict, tag: str) -> dict | None:
-    """Compute per-item m_N0 and selectivity in probability space.
-
-    m_N0 = logit(correct) - logit(wrong) in neutral-no-instruction.
-    selectivity = efficacy_wrong - efficacy_correct (from exp10 framework).
-    """
+def _item_metrics(item: dict, tag: str) -> dict | None:
     sm = item.get("selectivity_metrics", {})
     cr = item.get("condition_results", {})
 
-    tag_key = tag.lower().replace(" ", "_")
-    n0_key = f"N0_{tag_key}"
+    n0_key = f"N0_{tag}"
     if n0_key not in cr:
         return None
 
     n0 = cr[n0_key]
-    correct_label = item.get("correct_label", "a").lower()
+    correct = item.get("correct_label", "a").lower()
+    m_n0 = (
+        (n0["logit_a"] - n0["logit_b"])
+        if correct == "a"
+        else (n0["logit_b"] - n0["logit_a"])
+    )
 
-    # m_N0 = logit(correct) - logit(wrong)
-    if correct_label == "a":
-        m_N0 = n0["logit_a"] - n0["logit_b"]
-    else:
-        m_N0 = n0["logit_b"] - n0["logit_a"]
-
-    eff_w = sm.get(f"efficacy_wrong_{tag_key}", None)
-    eff_c = sm.get(f"efficacy_correct_{tag_key}", None)
-    sel = sm.get(f"selectivity_{tag_key}", None)
-
-    if eff_w is None or eff_c is None or sel is None:
+    sel = sm.get(f"selectivity_{tag}")
+    if sel is None:
         return None
 
-    return {"m_N0": m_N0, "selectivity": sel}
+    return {"m_n0": float(m_n0), "sel": float(sel)}
 
 
-def _extract(data, key):
-    """Extract [point, [lo, hi]] → (point, lo, hi)."""
-    val = data[key]
-    return val[0], val[1][0], val[1][1]
-
-
-# ─── Rolling statistics ───────────────────────────────────────────────
-
-def rolling_stats(
-    x: np.ndarray, y: np.ndarray,
-    n_bins: int = 30, min_count: int = 15,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """Rolling mean + 95% CI for y as a function of x."""
+def _rolling(x: np.ndarray, y: np.ndarray, n_bins: int = 30, min_count: int = 18):
     edges = np.linspace(x.min(), x.max(), n_bins + 1)
-    centers, means, ci_lo, ci_hi = [], [], [], []
-
+    centers, means, lo, hi = [], [], [], []
     for i in range(n_bins):
         mask = (x >= edges[i]) & (x < edges[i + 1])
         if mask.sum() < min_count:
             continue
-        yb = y[mask]
-        m = np.mean(yb)
-        se = np.std(yb, ddof=1) / math.sqrt(len(yb))
+        y_bin = y[mask]
+        m = float(np.mean(y_bin))
+        se = float(np.std(y_bin, ddof=1) / math.sqrt(len(y_bin)))
         centers.append((edges[i] + edges[i + 1]) / 2)
         means.append(m)
-        ci_lo.append(m - 1.96 * se)
-        ci_hi.append(m + 1.96 * se)
+        lo.append(m - 1.96 * se)
+        hi.append(m + 1.96 * se)
+    return np.array(centers), np.array(means), np.array(lo), np.array(hi)
 
-    return np.array(centers), np.array(means), np.array(ci_lo), np.array(ci_hi)
 
-
-# ─── Panel A: Gradient scatter + trend ────────────────────────────────
-
-def plot_gradient_scatter(
-    ax: plt.Axes,
-    items: List[dict],
-    title: str,
-) -> None:
-    """Selectivity vs. prior confidence for Expert and Note tags."""
-    tag_data = {}
-    for tag in ["expert", "note"]:
-        metrics = []
-        for item in items:
-            m = compute_item_metrics(item, tag)
-            if m is not None:
-                metrics.append(m)
-        tag_data[tag] = metrics
-
-    # Color norm centered at zero
-    all_m = np.concatenate([
-        np.array([m["m_N0"] for m in tag_data["expert"]]),
-        np.array([m["m_N0"] for m in tag_data["note"]]),
-    ])
-    norm = mcolors.TwoSlopeNorm(vmin=all_m.min(), vcenter=0, vmax=all_m.max())
-
-    # Faint scatter (Expert only, to show distribution)
-    m_N0_e = np.array([m["m_N0"] for m in tag_data["expert"]])
-    sel_e = np.clip(np.array([m["selectivity"] for m in tag_data["expert"]]), -0.5, 0.5)
-    ax.scatter(m_N0_e, sel_e, c=m_N0_e, cmap=CMAP_DIVERGING, norm=norm,
-               s=3, alpha=0.15, linewidths=0, zorder=1, rasterized=True)
-
-    # Rolling trends for both tags
-    for tag, color, lbl in [
-        ("expert", PAL.blue, "Expert"),
-        ("note", PAL.red, "Note"),
-    ]:
-        m_N0 = np.array([m["m_N0"] for m in tag_data[tag]])
-        sel = np.clip(np.array([m["selectivity"] for m in tag_data[tag]]), -0.5, 0.5)
-        centers, means, lo, hi = rolling_stats(m_N0, sel, n_bins=25, min_count=20)
-
-        ax.fill_between(centers, lo, hi, color=color, alpha=0.10, linewidth=0, zorder=2)
-        ax.plot(centers, means, color=color, linewidth=2.2, zorder=3,
-                solid_capstyle="round", label=lbl)
-
-    add_zero_line(ax)
-    add_region_shading(ax, y_top=0.5, y_bot=-0.5)
-
-    ax.set_xlabel("Prior confidence  (m_N0)")
-    ax.set_ylabel("Instruction selectivity")
-    ax.set_title(title, loc="left")
-    ax.legend(loc="upper left", fontsize=8)
-
-    # Semantic x-axis annotations
-    ylim = ax.get_ylim()
-    ax.annotate("Confidently wrong", xy=(ax.get_xlim()[0] + 0.5, ylim[0] + 0.02),
-                fontsize=7, color=PAL.red, fontstyle="italic", ha="left", va="bottom")
-    ax.annotate("Confidently correct", xy=(ax.get_xlim()[1] - 0.5, ylim[0] + 0.02),
-                fontsize=7, color=PAL.blue, fontstyle="italic", ha="right", va="bottom")
-
-    # Key finding callout — note the overall prior-dependence
-    ax.annotate(
-        "Selectivity tracks prior confidence;\nsee B, C for tag-specific divergence",
-        xy=(-8, -0.30),
-        xytext=(-3, 0.38),
-        fontsize=7, color=PAL.medium_gray,
-        arrowprops=dict(arrowstyle="->", color=PAL.medium_gray, lw=0.8,
-                        connectionstyle="arc3,rad=-0.2"),
-        bbox=dict(boxstyle="round,pad=0.4", facecolor=PAL.bg_warm,
-                  alpha=0.9, edgecolor=PAL.faint_gray, linewidth=0.5),
+def _smooth(
+    c: np.ndarray, m: np.ndarray, lo: np.ndarray, hi: np.ndarray, n_pts: int = 320
+):
+    x = np.linspace(c[0], c[-1], n_pts)
+    return (
+        x,
+        PchipInterpolator(c, m)(x),
+        PchipInterpolator(c, lo)(x),
+        PchipInterpolator(c, hi)(x),
     )
 
 
-# ─── Panel B: Inverted-prior selectivity comparison ───────────────────
+def _unpack(metrics: dict, key: str):
+    val = metrics[key]  # [median, [lo, hi]]
+    return float(val[0]), float(val[1][0]), float(val[1][1])
 
-def plot_inverted_prior_selectivity(
-    ax: plt.Axes,
-    expert_overall: dict,
-    note_overall: dict,
-    expert_inv: dict,
-    note_inv: dict,
-) -> None:
-    """dr (selectivity) across subsets: overall → model wrong → confidently wrong.
 
-    Shows Expert staying near zero while Note inverts dramatically.
-    """
-    # Define the three comparison points
-    slice_labels = ["All items", "Model\nwrong", "Confidently\nwrong"]
+def _plot_panel_a(ax: plt.Axes, items: list) -> None:
+    sel_clip = 0.52
+    expert = [m for it in items for m in [_item_metrics(it, "expert")] if m is not None]
+    note = [m for it in items for m in [_item_metrics(it, "note")] if m is not None]
 
-    for tag_overall, tag_inv, tag_name, color, marker, offset in [
-        (expert_overall, expert_inv, "Expert", PAL.blue, "o", -0.12),
-        (note_overall, note_inv, "Note", PAL.red, "s", 0.12),
+    x_exp = np.array([p["m_n0"] for p in expert])
+    y_exp = np.clip(np.array([p["sel"] for p in expert]), -sel_clip, sel_clip)
+
+    norm = mcolors.TwoSlopeNorm(vmin=x_exp.min(), vcenter=0.0, vmax=x_exp.max())
+    ax.scatter(
+        x_exp,
+        y_exp,
+        c=x_exp,
+        cmap=CMAP_DIVERGING,
+        norm=norm,
+        s=2.5,
+        alpha=0.07,
+        linewidths=0,
+        rasterized=True,
+        zorder=1,
+    )
+
+    ax.set_xlim(-27, 27)
+    ax.set_ylim(-sel_clip, sel_clip)
+    ax.axhspan(
+        0.0, sel_clip, color=PAL.positive_region, alpha=0.45, linewidth=0, zorder=0
+    )
+    ax.axhspan(
+        -sel_clip, 0.0, color=PAL.negative_region, alpha=0.45, linewidth=0, zorder=0
+    )
+    ax.axhline(0.0, color=PAL.faint_gray, lw=0.7, alpha=0.8, zorder=0)
+    ax.axvline(0.0, color=PAL.faint_gray, lw=0.8, ls="--", alpha=0.55, zorder=1)
+
+    endpoints = []
+    note_curve_x = None
+    note_curve_y = None
+    for tag_name, points, color in [
+        ("Expert", expert, PAL.blue),
+        ("Note", note, PAL.red),
     ]:
-        # Extract dr_median [point, [lo, hi]] for each slice
-        ov_metrics = tag_overall["metrics_sign_consistent"]
-        dr_overall = _extract(ov_metrics, "dr_median")
+        xx = np.array([p["m_n0"] for p in points])
+        yy = np.clip(np.array([p["sel"] for p in points]), -sel_clip, sel_clip)
+        c, m, lo, hi = _rolling(xx, yy, n_bins=28, min_count=18)
+        if len(c) < 4:
+            continue
+        sx, sy, slo, shi = _smooth(c, m, lo, hi)
+        ax.fill_between(sx, slo, shi, color=color, alpha=0.13, linewidth=0, zorder=2)
+        ax.plot(sx, sy, color=color, lw=2.2, zorder=3, solid_capstyle="round")
+        endpoints.append((tag_name, color, float(sx[-1]), float(sy[-1])))
+        if tag_name == "Note":
+            note_curve_x = sx
+            note_curve_y = sy
 
-        inv_full = tag_inv["slices"]["full"]["metrics"]
-        dr_wrong = _extract(inv_full, "dr_median")
-
-        inv_hc = tag_inv["slices"]["high_conf_top25"]["metrics"]
-        dr_conf_wrong = _extract(inv_hc, "dr_median")
-
-        points = [dr_overall, dr_wrong, dr_conf_wrong]
-        x_vals = np.arange(3) + offset
-        y_vals = [p[0] for p in points]
-        ci_lo = [p[0] - p[1] for p in points]
-        ci_hi = [p[2] - p[0] for p in points]
-
-        # Error bars
-        ax.errorbar(
-            x_vals, y_vals,
-            yerr=[ci_lo, ci_hi],
-            fmt="none", ecolor=PAL.medium_gray, elinewidth=0.8,
-            capsize=3, capthick=0.6, alpha=0.5, zorder=2,
-        )
-        # Dots
-        ax.scatter(
-            x_vals, y_vals, s=55, c=color, marker=marker,
-            edgecolors=PAL.bg_warm, linewidths=0.8, zorder=3,
-            label=tag_name,
-        )
-        # Value labels on the final (most extreme) point
-        val = y_vals[-1]
-        va = "bottom" if val >= 0 else "top"
-        y_off = 0.06 if val >= 0 else -0.06
+    for tag_name, color, x_end, y_end in endpoints:
         ax.text(
-            x_vals[-1], val + y_off,
-            f"{val:.2f}",
-            ha="center", va=va, fontsize=7.5, fontweight="bold", color=color,
+            x_end - 1.0,
+            y_end + (0.02 if tag_name == "Expert" else -0.02),
+            tag_name,
+            color=color,
+            fontsize=7.2,
+            fontweight="bold",
+            ha="right",
+            va="center",
         )
 
-    add_zero_line(ax)
-    add_region_shading(ax)
-    add_y_grid(ax)
-
-    ax.set_xticks(range(3))
-    ax.set_xticklabels(slice_labels, fontsize=7.5)
-    ax.set_ylabel("Selectivity (dr)")
-    ax.set_title("Inverted-prior test", loc="left")
-    ax.legend(loc="upper left", fontsize=7, markerscale=0.8)
-
-
-# ─── Panel C: r_w vs r_c decomposition (Note, inverted-prior) ────────
-
-def plot_note_decomposition(
-    ax: plt.Axes,
-    note_overall: dict,
-    note_inv: dict,
-) -> None:
-    """Show r_w collapsing while r_c rises as model becomes more confidently wrong.
-
-    Three slices: overall, model-wrong (full), confidently-wrong (top25).
-    """
-    slice_labels = ["All\nitems", "Model\nwrong", "Confidently\nwrong"]
-
-    # Collect r_w and r_c medians across slices
-    ov = note_overall["metrics_sign_consistent"]
-    full = note_inv["slices"]["full"]["metrics"]
-    hc = note_inv["slices"]["high_conf_top25"]["metrics"]
-
-    for metric, color, label in [
-        ("r_w_median", PAL.r_w, "r_w (wrong endorsement)"),
-        ("r_c_median", PAL.r_c, "r_c (correct endorsement)"),
-    ]:
-        points = [_extract(ov, metric), _extract(full, metric), _extract(hc, metric)]
-        x_arr = np.arange(3)
-        y_arr = np.array([p[0] for p in points])
-        lo_arr = np.array([p[1] for p in points])
-        hi_arr = np.array([p[2] for p in points])
-
-        ax.fill_between(x_arr, lo_arr, hi_arr, color=color, alpha=0.15, linewidth=0)
-        ax.plot(x_arr, y_arr, color=color, marker="o", markersize=5,
-                markeredgecolor=PAL.bg_warm, markeredgewidth=0.8,
-                linewidth=1.8, zorder=3, label=label)
-
-        # Endpoint label
-        ax.annotate(
-            f"{y_arr[-1]:.2f}",
-            xy=(x_arr[-1], y_arr[-1]),
-            xytext=(8, 0), textcoords="offset points",
-            fontsize=7, fontweight="bold", color=color, va="center",
-        )
-
-    add_zero_line(ax)
-    add_y_grid(ax)
-
-    ax.set_xticks(range(3))
-    ax.set_xticklabels(slice_labels, fontsize=7.5)
-    ax.set_ylabel("Suppression ratio")
-    ax.set_title("Note: r_w / r_c decomposition", loc="left")
-    ax.legend(loc="upper right", fontsize=7)
-    ax.set_ylim(-0.5, 1.2)
-
-    # Key finding callout
     ax.text(
-        0.5, 0.03,
-        "r_w collapses; instruction protects wrong prior",
-        transform=ax.transAxes, ha="center", va="bottom",
-        fontsize=6.5, color=PAL.medium_gray, fontstyle="italic",
+        -26.5,
+        -sel_clip + 0.01,
+        "<- model wrong",
+        fontsize=6.2,
+        color=PAL.medium_gray,
+        fontstyle="italic",
+        va="bottom",
+        ha="left",
+    )
+    ax.text(
+        26.5,
+        -sel_clip + 0.01,
+        "model correct ->",
+        fontsize=6.2,
+        color=PAL.medium_gray,
+        fontstyle="italic",
+        va="bottom",
+        ha="right",
+    )
+
+    ax.set_xlabel("Prior confidence ($m_{N_0}$)", fontsize=8, labelpad=3)
+    ax.set_ylabel("Instruction selectivity", fontsize=8, labelpad=3)
+    ax.set_title(
+        "Qwen3-4B-Instruct", loc="right", fontsize=7, color=PAL.medium_gray, pad=4
+    )
+
+    # Bottom-right embedded example with a small arrow to the Note curve
+    box_x, box_y = 0.57, 0.08
+    ax.text(
+        box_x,
+        box_y,
+        "\n".join(_EXAMPLE_LINES),
+        transform=ax.transAxes,
+        fontsize=5.9,
+        color=PAL.dark_text,
+        va="bottom",
+        ha="left",
+        fontfamily="monospace",
+        linespacing=1.32,
+        zorder=10,
+        bbox=dict(
+            boxstyle="round,pad=0.34",
+            facecolor=PAL.bg_card,
+            edgecolor=PAL.faint_gray,
+            linewidth=0.7,
+            alpha=0.96,
+        ),
+    )
+
+    if note_curve_x is not None and note_curve_y is not None:
+        idx = int(np.argmin(np.abs(note_curve_x - (-7.5))))
+        ax.annotate(
+            "",
+            xy=(float(note_curve_x[idx]), float(note_curve_y[idx])),
+            xycoords="data",
+            xytext=(box_x - 0.006, box_y + 0.30),
+            textcoords="axes fraction",
+            arrowprops=dict(
+                arrowstyle="-|>",
+                color=PAL.red,
+                lw=0.8,
+                connectionstyle="arc3,rad=0.16",
+            ),
+            zorder=11,
+        )
+
+
+def _plot_panel_b(ax: plt.Axes, base: Path) -> None:
+    x = np.arange(3)
+    labels = ["All\nitems", "Model\nwrong", "Confidently\nwrong"]
+
+    for model in _MODELS:
+        key = model["key"]
+        style = PAL.MODEL_STYLES[key]
+
+        pa_path = model_result_path(
+            base,
+            key,
+            f"{model['exp11_dir']}/part_a/{model['prefix']}_note_metrics.json",
+        )
+        pb_path = model_result_path(
+            base,
+            key,
+            f"{model['exp11_dir']}/part_b/{model['prefix']}_note_inverted_prior.json",
+        )
+
+        part_a = _load_json(pa_path)["metrics_sign_consistent"]
+        slices = _load_json(pb_path)["slices"]
+        seq = [part_a, slices["full"]["metrics"], slices["high_conf_top25"]["metrics"]]
+
+        for metric, metric_color in [("r_w_median", PAL.r_w), ("r_c_median", PAL.r_c)]:
+            vals, lo, hi = [], [], []
+            for block in seq:
+                try:
+                    m, l, h = _unpack(block, metric)
+                except (KeyError, TypeError, IndexError):
+                    m, l, h = np.nan, np.nan, np.nan
+                vals.append(m)
+                lo.append(l)
+                hi.append(h)
+
+            y = np.array(vals, dtype=float)
+
+            if key == "qwen":
+                ax.fill_between(
+                    x,
+                    np.array(lo),
+                    np.array(hi),
+                    color=metric_color,
+                    alpha=0.10,
+                    linewidth=0,
+                    zorder=1,
+                )
+
+            ax.plot(
+                x,
+                y,
+                color=metric_color,
+                linestyle=_MODEL_LS[key],
+                linewidth=2.0 if key == "qwen" else 1.7,
+                marker=style["marker"],
+                markersize=5.3,
+                markerfacecolor=style["color"],
+                markeredgecolor=PAL.bg_warm,
+                markeredgewidth=0.7,
+                alpha=0.95 if key == "qwen" else 0.88,
+                zorder=3,
+                solid_capstyle="round",
+            )
+
+    qwen_metrics = _load_json(
+        model_result_path(
+            base,
+            "qwen",
+            "exp11_extended/part_b/Qwen__Qwen3-4B-Instruct-2507_note_inverted_prior.json",
+        )
+    )["slices"]["high_conf_top25"]["metrics"]
+    rw_q = _unpack(qwen_metrics, "r_w_median")[0]
+    rc_q = _unpack(qwen_metrics, "r_c_median")[0]
+
+    ax.annotate(
+        rf"$r_w \sim {rw_q:.2f}$",
+        xy=(2, rw_q),
+        xytext=(8, -2),
+        textcoords="offset points",
+        fontsize=7.0,
+        color=PAL.r_w,
+        va="center",
+        ha="left",
+        fontweight="bold",
+    )
+    ax.annotate(
+        rf"$r_c \sim {rc_q:.2f}$",
+        xy=(2, rc_q),
+        xytext=(8, 2),
+        textcoords="offset points",
+        fontsize=7.0,
+        color=PAL.r_c,
+        va="center",
+        ha="left",
+        fontweight="bold",
+    )
+
+    qt_metrics = _load_json(
+        model_result_path(
+            base,
+            "qwen_thinking",
+            "exp11_extended/part_b/Qwen__Qwen3-4B-Thinking-2507_note_inverted_prior.json",
+        )
+    )["slices"]["high_conf_top25"]["metrics"]
+    qt_dr = _unpack(qt_metrics, "dr_median")[0]
+    qt_rc = _unpack(qt_metrics, "r_c_median")[0]
+    qt_rw = _unpack(qt_metrics, "r_w_median")[0]
+    qt_mid = 0.5 * (qt_rc + qt_rw)
+
+    ax.annotate(
+        f"Reasoning model\n$\\Delta r \\sim {qt_dr:.2f}$",
+        xy=(2, qt_mid),
+        xytext=(2.74, 0.10),
+        textcoords="data",
+        fontsize=6.5,
+        color=PAL.MODEL_STYLES["qwen_thinking"]["color"],
+        ha="center",
+        va="center",
+        fontstyle="italic",
+        bbox=dict(
+            boxstyle="round,pad=0.22",
+            facecolor=PAL.bg_warm,
+            edgecolor="none",
+            alpha=0.92,
+        ),
+        arrowprops=dict(
+            arrowstyle="-|>",
+            color=PAL.MODEL_STYLES["qwen_thinking"]["color"],
+            lw=0.8,
+            connectionstyle="arc3,rad=0.15",
+        ),
+    )
+
+    ax.axhline(0.0, color=PAL.faint_gray, lw=0.7, alpha=0.8, zorder=0)
+    ax.yaxis.grid(True, alpha=0.18, linewidth=0.5, color=PAL.faint_gray)
+    ax.set_axisbelow(True)
+    ax.set_xlim(-0.45, 3.05)
+    ax.set_ylim(-0.62, 1.08)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, fontsize=9)
+    ax.set_ylabel("Suppression ratio", fontsize=9)
+    ax.set_title(r"Note tag: $r_w$ vs $r_c$ across slices", loc="left", fontsize=10)
+
+
+def _legend_panel_b(fig: plt.Figure) -> None:
+    metric_handles = [
+        mlines.Line2D(
+            [], [], color=PAL.r_w, lw=2.0, label=r"$r_w$ (wrong-endorse suppression)"
+        ),
+        mlines.Line2D(
+            [], [], color=PAL.r_c, lw=2.0, label=r"$r_c$ (correct-endorse suppression)"
+        ),
+    ]
+
+    model_handles = []
+    for model in _MODELS:
+        key = model["key"]
+        style = PAL.MODEL_STYLES[key]
+        ms = 5.0 if key != "qwen_thinking" else 4.6
+        model_handles.append(
+            mlines.Line2D(
+                [],
+                [],
+                color=PAL.medium_gray,
+                linestyle=_MODEL_LS[key],
+                lw=1.7,
+                marker=style["marker"],
+                markersize=ms,
+                markerfacecolor=style["color"],
+                markeredgecolor=PAL.bg_warm,
+                markeredgewidth=0.6,
+                markevery=[1],
+                label=style["label"],
+            )
+        )
+
+    handles = metric_handles + model_handles
+    fig.legend(
+        handles=handles,
+        loc="lower center",
+        ncol=3,
+        fontsize=7,
+        handlelength=1.8,
+        handletextpad=0.45,
+        columnspacing=1.1,
+        frameon=False,
+        bbox_to_anchor=(0.50, -0.01),
     )
 
 
-# ─── Main ─────────────────────────────────────────────────────────────
+def _make_fig3a(items: list, output_dir: Path, formats: list[str]) -> list[Path]:
+    fig, ax = plt.subplots(figsize=(7.0, 4.35), constrained_layout=False)
+
+    _plot_panel_a(ax, items)
+
+    fig.subplots_adjust(left=0.10, right=0.98, top=0.86, bottom=0.16)
+    fig.suptitle(
+        "Figure 3A: Prior-confidence geometry of instruction selectivity",
+        fontsize=10,
+        fontweight="bold",
+        y=0.96,
+        color=PAL.dark_text,
+    )
+
+    return save_fig(fig, "fig3a_prior_consistency_geometry", output_dir, formats)
+
+
+def _make_fig3b(base: Path, output_dir: Path, formats: list[str]) -> list[Path]:
+    fig, ax = plt.subplots(figsize=(6.2, 4.35), constrained_layout=False)
+    fig.subplots_adjust(left=0.12, right=0.95, top=0.86, bottom=0.24)
+
+    _plot_panel_b(ax, base)
+    _legend_panel_b(fig)
+
+    fig.suptitle(
+        "Figure 3B: Mechanism in the Note tag (all three models)",
+        fontsize=10,
+        fontweight="bold",
+        y=0.96,
+        color=PAL.dark_text,
+    )
+
+    return save_fig(fig, "fig3b_prior_consistency_decomposition", output_dir, formats)
+
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output-dir", type=Path,
-                        default=Path("new-phase-results/figures/paper"))
+    parser.add_argument(
+        "--output-dir", type=Path, default=Path("new-phase-results/figures/paper")
+    )
     parser.add_argument("--formats", nargs="+", default=["png", "pdf"])
     args = parser.parse_args()
 
     apply_theme()
-
     base = Path("new-phase-results")
+    items = _load_jsonl(model_result_path(base, _PANEL_A_MODEL, _PANEL_A_EXP10))
 
-    # ── Load data ─────────────────────────────────────────────────────
-    # Panel A: item-level data (same items that exp11 reanalyzes)
-    items = load_items(model_result_path(
-        base, "llama", "exp10_extended/meta-llama__Llama-3.1-8B-Instruct_results.jsonl"
-    ))
+    out_a = _make_fig3a(items, args.output_dir, args.formats)
+    out_b = _make_fig3b(base, args.output_dir, args.formats)
 
-    # Panels B/C: Part A (overall) + Part B (inverted-prior slices)
-    expert_overall = load_json(model_result_path(
-        base, "llama", "exp11_extended/part_a/meta-llama__Llama-3.1-8B-Instruct_expert_metrics.json"
-    ))
-    note_overall = load_json(model_result_path(
-        base, "llama", "exp11_extended/part_a/meta-llama__Llama-3.1-8B-Instruct_note_metrics.json"
-    ))
-    expert_inv = load_json(model_result_path(
-        base, "llama", "exp11_extended/part_b/meta-llama__Llama-3.1-8B-Instruct_expert_inverted_prior.json"
-    ))
-    note_inv = load_json(model_result_path(
-        base, "llama", "exp11_extended/part_b/meta-llama__Llama-3.1-8B-Instruct_note_inverted_prior.json"
-    ))
-
-    # ── Create figure ─────────────────────────────────────────────────
-    fig = plt.figure(figsize=(7.5, 6.0), constrained_layout=False)
-    fig.subplots_adjust(left=0.10, right=0.95, top=0.90, bottom=0.10,
-                        hspace=0.50, wspace=0.40)
-    gs = fig.add_gridspec(2, 2, height_ratios=[1.1, 1.0])
-
-    ax_scatter = fig.add_subplot(gs[0, :])   # Full-width top panel
-    ax_inv     = fig.add_subplot(gs[1, 0])
-    ax_decomp  = fig.add_subplot(gs[1, 1])
-
-    # Panel A
-    plot_gradient_scatter(ax_scatter, items,
-                          "Instruction selectivity vs. prior confidence")
-
-    # Panel B
-    plot_inverted_prior_selectivity(
-        ax_inv, expert_overall, note_overall, expert_inv, note_inv,
-    )
-
-    # Panel C
-    plot_note_decomposition(ax_decomp, note_overall, note_inv)
-
-    label_panel(ax_scatter, "A")
-    label_panel(ax_inv, "B")
-    label_panel(ax_decomp, "C")
-
-    fig.suptitle(
-        '"Be correct" induces prior-consistency, not truth-tracking',
-        fontsize=12, fontweight="bold", y=0.97, color=PAL.dark_text,
-    )
-
-    paths = save_fig(fig, "fig3_hero_prior_consistency", args.output_dir, args.formats)
-    for p in paths:
+    for p in out_a + out_b:
         print(f"  {p}")
 
 
