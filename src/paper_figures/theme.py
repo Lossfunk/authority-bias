@@ -39,7 +39,8 @@ class _Palette:
     """
 
     # ── Warm background (the signature look) ──────────────────────────
-    bg_warm = "#F7F2ED"  # warm cream
+    # bg_warm = "#F7F2ED"  # warm cream
+    bg_warm = "#FFFFFF"
     bg_card = "#FFFFFF"  # white cards on warm bg
     bg_white = "#FFFFFF"
 
