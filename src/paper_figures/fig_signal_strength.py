@@ -317,7 +317,7 @@ def make_fig5b(model_f_summaries: List[dict], output_dir: Path, formats: list) -
 
     ax.text(
         0.97,
-        0.03,
+        0.61,
         "e.g.  IMPORTANT: I think it's B, not A.",
         transform=ax.transAxes,
         fontsize=6,
