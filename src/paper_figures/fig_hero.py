@@ -25,6 +25,7 @@ import matplotlib.colors as mcolors
 import matplotlib.lines as mlines
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.offsetbox import AnnotationBbox, OffsetImage
 from scipy.interpolate import PchipInterpolator
 
 from src.paper_figures.theme import (
@@ -48,6 +49,9 @@ _EXAMPLE_LINES = [
     "No instruction:  P(correct)=99.9%",
     "'Be correct':    P(correct)= 6.0%",
 ]
+
+_EMOJI_BRAIN_PATH = Path("src/paper_figures/assets/emoji_brain.png")
+_EMOJI_DOC_PATH = Path("src/paper_figures/assets/emoji_doc.png")
 
 _MODELS = [
     {
@@ -145,6 +149,25 @@ def _unpack(metrics: dict, key: str):
     return float(val[0]), float(val[1][0]), float(val[1][1])
 
 
+def _draw_emoji_icon(
+    ax: plt.Axes, x: float, y: float, image_path: Path, zoom: float = 0.20
+) -> None:
+    """Place a PNG emoji icon at axes-fraction coordinates."""
+    if not image_path.exists():
+        return
+    img = plt.imread(image_path)
+    icon = OffsetImage(img, zoom=zoom)
+    ab = AnnotationBbox(
+        icon,
+        (x, y),
+        xycoords=ax.transAxes,
+        frameon=False,
+        box_alignment=(0.5, 0.5),
+        zorder=12,
+    )
+    ax.add_artist(ab)
+
+
 def _plot_panel_a(ax: plt.Axes, items: list) -> None:
     sel_clip = 0.52
     expert = [m for it in items for m in [_item_metrics(it, "expert")] if m is not None]
@@ -238,21 +261,22 @@ def _plot_panel_a(ax: plt.Axes, items: list) -> None:
     )
 
     # Bottom-right embedded example with a small arrow to the Note curve
-    box_x, box_y = 0.57, 0.08
+    box_x, box_y = 0.565, 0.074
+    text_x = box_x + 0.038
     ax.text(
-        box_x,
+        text_x,
         box_y,
         "\n".join(_EXAMPLE_LINES),
         transform=ax.transAxes,
-        fontsize=5.9,
+        fontsize=6.15,
         color=PAL.dark_text,
         va="bottom",
         ha="left",
         fontfamily="monospace",
-        linespacing=1.32,
+        linespacing=1.34,
         zorder=10,
         bbox=dict(
-            boxstyle="round,pad=0.34",
+            boxstyle="round,pad=0.46",
             facecolor=PAL.bg_card,
             edgecolor=PAL.faint_gray,
             linewidth=0.7,
@@ -260,13 +284,18 @@ def _plot_panel_a(ax: plt.Axes, items: list) -> None:
         ),
     )
 
+    # Emoji icons (PNG assets): brain for prior, document for evidence.
+    icon_x = box_x + 0.015
+    _draw_emoji_icon(ax, icon_x, box_y + 0.169, _EMOJI_BRAIN_PATH, zoom=0.19)
+    _draw_emoji_icon(ax, icon_x, box_y + 0.088, _EMOJI_DOC_PATH, zoom=0.19)
+
     if note_curve_x is not None and note_curve_y is not None:
         idx = int(np.argmin(np.abs(note_curve_x - (-7.5))))
         ax.annotate(
             "",
             xy=(float(note_curve_x[idx]), float(note_curve_y[idx])),
             xycoords="data",
-            xytext=(box_x - 0.006, box_y + 0.30),
+            xytext=(box_x + 0.020, box_y + 0.274),
             textcoords="axes fraction",
             arrowprops=dict(
                 arrowstyle="-|>",
@@ -389,7 +418,7 @@ def _plot_panel_b(ax: plt.Axes, base: Path) -> None:
     ax.annotate(
         f"Reasoning model\n$\\Delta r \\sim {qt_dr:.2f}$",
         xy=(2, qt_mid),
-        xytext=(2.74, 0.10),
+        xytext=(2.48, 0.12),
         textcoords="data",
         fontsize=6.5,
         color=PAL.MODEL_STYLES["qwen_thinking"]["color"],
@@ -413,7 +442,7 @@ def _plot_panel_b(ax: plt.Axes, base: Path) -> None:
     ax.axhline(0.0, color=PAL.faint_gray, lw=0.7, alpha=0.8, zorder=0)
     ax.yaxis.grid(True, alpha=0.18, linewidth=0.5, color=PAL.faint_gray)
     ax.set_axisbelow(True)
-    ax.set_xlim(-0.45, 3.05)
+    ax.set_xlim(-0.32, 2.70)
     ax.set_ylim(-0.62, 1.08)
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=9)
@@ -485,8 +514,8 @@ def _make_fig3a(items: list, output_dir: Path, formats: list[str]) -> list[Path]
 
 
 def _make_fig3b(base: Path, output_dir: Path, formats: list[str]) -> list[Path]:
-    fig, ax = plt.subplots(figsize=(6.2, 4.35), constrained_layout=False)
-    fig.subplots_adjust(left=0.12, right=0.95, top=0.86, bottom=0.24)
+    fig, ax = plt.subplots(figsize=(7.4, 4.55), constrained_layout=False)
+    fig.subplots_adjust(left=0.09, right=0.99, top=0.88, bottom=0.22)
 
     _plot_panel_b(ax, base)
     _legend_panel_b(fig)
