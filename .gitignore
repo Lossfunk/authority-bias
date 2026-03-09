@@ -82,3 +82,4 @@ new-phase-results/**/*_run_manifest.json
 
 # Smoke test directories
 new-phase-results/qwen3-4b-results/smoke_qwen/
+paper/

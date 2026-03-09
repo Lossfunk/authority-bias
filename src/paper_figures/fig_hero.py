@@ -32,6 +32,7 @@ from src.paper_figures.theme import (
     CMAP_DIVERGING,
     PAL,
     apply_theme,
+    label_panel,
     model_result_path,
     save_fig,
 )
@@ -48,6 +49,14 @@ _EXAMPLE_LINES = [
     "Expert says: New Mexico, not California",
     "No instruction:  P(correct)=99.9%",
     "'Be correct':    P(correct)= 6.0%",
+]
+
+_EXAMPLE_LINES_COMPACT = [
+    "trivia_qa::968",
+    "Prior: California  [wrong]",
+    "Expert: New Mexico, not CA",
+    "No instr:  P(correct) = 99.9%",
+    "Be correct: P(correct) =  6.0%",
 ]
 
 _EMOJI_BRAIN_PATH = Path("src/paper_figures/assets/emoji_brain.png")
@@ -168,7 +177,13 @@ def _draw_emoji_icon(
     ax.add_artist(ab)
 
 
-def _plot_panel_a(ax: plt.Axes, items: list) -> None:
+def _plot_panel_a(
+    ax: plt.Axes,
+    items: list,
+    *,
+    compact_callout: bool = False,
+    show_callout: bool = True,
+) -> None:
     sel_clip = 0.52
     expert = [m for it in items for m in [_item_metrics(it, "expert")] if m is not None]
     note = [m for it in items for m in [_item_metrics(it, "note")] if m is not None]
@@ -223,11 +238,11 @@ def _plot_panel_a(ax: plt.Axes, items: list) -> None:
 
     for tag_name, color, x_end, y_end in endpoints:
         ax.text(
-            x_end - 1.0,
-            y_end + (0.02 if tag_name == "Expert" else -0.02),
+            x_end - 2.5,
+            y_end + (0.05 if tag_name == "Expert" else -0.05),
             tag_name,
             color=color,
-            fontsize=7.2,
+            fontsize=7.5,
             fontweight="bold",
             ha="right",
             va="center",
@@ -257,57 +272,94 @@ def _plot_panel_a(ax: plt.Axes, items: list) -> None:
     ax.set_xlabel("Prior confidence ($m_{N_0}$)", fontsize=8, labelpad=3)
     ax.set_ylabel("Instruction selectivity", fontsize=8, labelpad=3)
     ax.set_title(
-        "Qwen3-4B-Instruct", loc="right", fontsize=7, color=PAL.medium_gray, pad=4
+        "Qwen3-4B-Instruct", loc="center", fontsize=9, color=PAL.medium_gray, pad=4
     )
 
-    # Bottom-right embedded example with a small arrow to the Note curve
-    box_x, box_y = 0.565, 0.074
-    text_x = box_x + 0.038
-    ax.text(
-        text_x,
-        box_y,
-        "\n".join(_EXAMPLE_LINES),
-        transform=ax.transAxes,
-        fontsize=6.15,
-        color=PAL.dark_text,
-        va="bottom",
-        ha="left",
-        fontfamily="monospace",
-        linespacing=1.34,
-        zorder=10,
-        bbox=dict(
-            boxstyle="round,pad=0.46",
-            facecolor=PAL.bg_card,
-            edgecolor=PAL.faint_gray,
-            linewidth=0.7,
-            alpha=0.96,
-        ),
-    )
-
-    # Emoji icons (PNG assets): brain for prior, document for evidence.
-    icon_x = box_x + 0.015
-    _draw_emoji_icon(ax, icon_x, box_y + 0.169, _EMOJI_BRAIN_PATH, zoom=0.19)
-    _draw_emoji_icon(ax, icon_x, box_y + 0.088, _EMOJI_DOC_PATH, zoom=0.19)
-
-    if note_curve_x is not None and note_curve_y is not None:
-        idx = int(np.argmin(np.abs(note_curve_x - (-7.5))))
-        ax.annotate(
-            "",
-            xy=(float(note_curve_x[idx]), float(note_curve_y[idx])),
-            xycoords="data",
-            xytext=(box_x + 0.020, box_y + 0.274),
-            textcoords="axes fraction",
-            arrowprops=dict(
-                arrowstyle="-|>",
-                color=PAL.red,
-                lw=0.8,
-                connectionstyle="arc3,rad=0.16",
+    # Embedded example callout — full or compact depending on context.
+    if show_callout and compact_callout:
+        box_x, box_y = 0.56, 0.16
+        ax.text(
+            box_x,
+            box_y,
+            "\n".join(_EXAMPLE_LINES_COMPACT),
+            transform=ax.transAxes,
+            fontsize=5.6,
+            color=PAL.dark_text,
+            va="bottom",
+            ha="left",
+            fontfamily="monospace",
+            linespacing=1.28,
+            zorder=10,
+            bbox=dict(
+                boxstyle="round,pad=0.30",
+                facecolor=PAL.bg_card,
+                edgecolor=PAL.faint_gray,
+                linewidth=0.6,
+                alpha=0.96,
             ),
-            zorder=11,
         )
+        if note_curve_x is not None and note_curve_y is not None:
+            idx = int(np.argmin(np.abs(note_curve_x - (-7.5))))
+            ax.annotate(
+                "",
+                xy=(float(note_curve_x[idx]), float(note_curve_y[idx])),
+                xycoords="data",
+                xytext=(box_x + 0.010, box_y + 0.10),
+                textcoords="axes fraction",
+                arrowprops=dict(
+                    arrowstyle="-|>,head_width=0.15,head_length=0.2",
+                    color=PAL.red,
+                    lw=0.7,
+                    mutation_scale=6,
+                    connectionstyle="arc3,rad=0.16",
+                ),
+                zorder=11,
+            )
+    elif show_callout:
+        box_x, box_y = 0.565, 0.074
+        text_x = box_x + 0.038
+        ax.text(
+            text_x,
+            box_y,
+            "\n".join(_EXAMPLE_LINES),
+            transform=ax.transAxes,
+            fontsize=6.15,
+            color=PAL.dark_text,
+            va="bottom",
+            ha="left",
+            fontfamily="monospace",
+            linespacing=1.34,
+            zorder=10,
+            bbox=dict(
+                boxstyle="round,pad=0.46",
+                facecolor=PAL.bg_card,
+                edgecolor=PAL.faint_gray,
+                linewidth=0.7,
+                alpha=0.96,
+            ),
+        )
+        icon_x = box_x + 0.015
+        _draw_emoji_icon(ax, icon_x, box_y + 0.169, _EMOJI_BRAIN_PATH, zoom=0.19)
+        _draw_emoji_icon(ax, icon_x, box_y + 0.088, _EMOJI_DOC_PATH, zoom=0.19)
+        if note_curve_x is not None and note_curve_y is not None:
+            idx = int(np.argmin(np.abs(note_curve_x - (-7.5))))
+            ax.annotate(
+                "",
+                xy=(float(note_curve_x[idx]), float(note_curve_y[idx])),
+                xycoords="data",
+                xytext=(box_x + 0.020, box_y + 0.274),
+                textcoords="axes fraction",
+                arrowprops=dict(
+                    arrowstyle="-|>",
+                    color=PAL.red,
+                    lw=0.8,
+                    connectionstyle="arc3,rad=0.16",
+                ),
+                zorder=11,
+            )
 
 
-def _plot_panel_b(ax: plt.Axes, base: Path) -> None:
+def _plot_panel_b(ax: plt.Axes, base: Path, *, show_title: bool = True) -> None:
     x = np.arange(3)
     labels = ["All\nitems", "Model\nwrong", "Confidently\nwrong"]
 
@@ -416,27 +468,15 @@ def _plot_panel_b(ax: plt.Axes, base: Path) -> None:
     qt_mid = 0.5 * (qt_rc + qt_rw)
 
     ax.annotate(
-        f"Reasoning model\n$\\Delta r \\sim {qt_dr:.2f}$",
+        rf"Qwen-T $\Delta r \sim {qt_dr:.2f}$",
         xy=(2, qt_mid),
-        xytext=(2.48, 0.12),
-        textcoords="data",
+        xytext=(8, 10),
+        textcoords="offset points",
         fontsize=6.5,
         color=PAL.MODEL_STYLES["qwen_thinking"]["color"],
-        ha="center",
+        ha="left",
         va="center",
         fontstyle="italic",
-        bbox=dict(
-            boxstyle="round,pad=0.22",
-            facecolor=PAL.bg_warm,
-            edgecolor="none",
-            alpha=0.92,
-        ),
-        arrowprops=dict(
-            arrowstyle="-|>",
-            color=PAL.MODEL_STYLES["qwen_thinking"]["color"],
-            lw=0.8,
-            connectionstyle="arc3,rad=0.15",
-        ),
     )
 
     ax.axhline(0.0, color=PAL.faint_gray, lw=0.7, alpha=0.8, zorder=0)
@@ -445,9 +485,10 @@ def _plot_panel_b(ax: plt.Axes, base: Path) -> None:
     ax.set_xlim(-0.32, 2.70)
     ax.set_ylim(-0.62, 1.08)
     ax.set_xticks(x)
-    ax.set_xticklabels(labels, fontsize=9)
-    ax.set_ylabel("Suppression ratio", fontsize=9)
-    ax.set_title(r"Note tag: $r_w$ vs $r_c$ across slices", loc="left", fontsize=10)
+    ax.set_xticklabels(labels, fontsize=7.5)
+    ax.set_ylabel("Suppression ratio", fontsize=8)
+    if show_title:
+        ax.set_title(r"Note tag: $r_w$ vs $r_c$ across slices", loc="center", fontsize=8.5)
 
 
 def _legend_panel_b(fig: plt.Figure) -> None:
@@ -492,7 +533,7 @@ def _legend_panel_b(fig: plt.Figure) -> None:
         handletextpad=0.45,
         columnspacing=1.1,
         frameon=False,
-        bbox_to_anchor=(0.50, -0.01),
+        bbox_to_anchor=(0.50, 0.01),
     )
 
 
@@ -501,34 +542,57 @@ def _make_fig3a(items: list, output_dir: Path, formats: list[str]) -> list[Path]
 
     _plot_panel_a(ax, items)
 
-    fig.subplots_adjust(left=0.10, right=0.98, top=0.86, bottom=0.16)
-    fig.suptitle(
-        "Figure 3A: Prior-confidence geometry of instruction selectivity",
-        fontsize=10,
-        fontweight="bold",
-        y=0.96,
-        color=PAL.dark_text,
-    )
+    fig.subplots_adjust(left=0.10, right=0.98, top=0.96, bottom=0.16)
 
     return save_fig(fig, "fig3a_prior_consistency_geometry", output_dir, formats)
 
 
 def _make_fig3b(base: Path, output_dir: Path, formats: list[str]) -> list[Path]:
-    fig, ax = plt.subplots(figsize=(7.4, 4.55), constrained_layout=False)
-    fig.subplots_adjust(left=0.09, right=0.99, top=0.88, bottom=0.22)
+    fig, ax = plt.subplots(figsize=(3.5, 3.2), constrained_layout=False)
+    fig.subplots_adjust(left=0.16, right=0.82, top=0.96, bottom=0.30)
 
     _plot_panel_b(ax, base)
     _legend_panel_b(fig)
 
-    fig.suptitle(
-        "Figure 3B: Mechanism in the Note tag (all three models)",
-        fontsize=10,
-        fontweight="bold",
-        y=0.96,
-        color=PAL.dark_text,
-    )
-
     return save_fig(fig, "fig3b_prior_consistency_decomposition", output_dir, formats)
+
+
+def _make_fig3_combined(
+    items: list, base: Path, output_dir: Path, formats: list[str]
+) -> list[Path]:
+    """Two-panel double-column Figure 3 for ACL \\begin{figure*} environment.
+
+    Panel A (left, ~55% inner width): prior-confidence geometry scatter.
+    Panel B (right, ~45% inner width): r_w vs r_c decomposition.
+
+    Target: 7.0-inch text width, so both panels get ~3 inches each after
+    accounting for a modest wspace.  The compact callout in panel A keeps
+    the right half of the scatter unobscured.
+    """
+    fig, (ax_a, ax_b) = plt.subplots(
+        1,
+        2,
+        figsize=(7.0, 3.6),
+        gridspec_kw={"width_ratios": [1.1, 0.9]},
+        constrained_layout=False,
+    )
+    # wspace=0.25  → gap is 25% of mean axes width ≈ 0.7 in, leaving each
+    # panel ~3.0 in of drawable area.
+    # right=0.90   → 10% right margin for panel-B annotation labels.
+    fig.subplots_adjust(left=0.07, right=0.90, top=0.94, bottom=0.26, wspace=0.25)
+
+    _plot_panel_a(ax_a, items, compact_callout=True, show_callout=False)
+    _plot_panel_b(ax_b, base, show_title=False)
+
+    # Give panel-B a little extra x-room so the right-side labels sit inside.
+    ax_b.set_xlim(-0.32, 2.95)
+
+    label_panel(ax_a, "A")
+    label_panel(ax_b, "B")
+
+    _legend_panel_b(fig)
+
+    return save_fig(fig, "fig3_combined", output_dir, formats)
 
 
 def main() -> None:
@@ -545,8 +609,9 @@ def main() -> None:
 
     out_a = _make_fig3a(items, args.output_dir, args.formats)
     out_b = _make_fig3b(base, args.output_dir, args.formats)
+    out_c = _make_fig3_combined(items, base, args.output_dir, args.formats)
 
-    for p in out_a + out_b:
+    for p in out_a + out_b + out_c:
         print(f"  {p}")
 
 

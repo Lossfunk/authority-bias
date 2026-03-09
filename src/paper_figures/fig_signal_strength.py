@@ -129,10 +129,13 @@ def extract_avg_salience(
 # ─── Figure 5a: Certainty dose-response ──────────────────────────────
 
 
-def make_fig5a(model_summaries: List[dict], output_dir: Path, formats: list) -> None:
-    fig, ax = plt.subplots(figsize=(5.5, 4.0), constrained_layout=False)
-    fig.subplots_adjust(left=0.12, right=0.82, top=0.86, bottom=0.22)
-
+def _plot_fig5a_panel(
+    ax: plt.Axes,
+    model_summaries: List[dict],
+    *,
+    right_pad: float,
+    show_endpoint_labels: bool = True,
+) -> None:
     x = np.arange(len(CERTAINTY_ORDER))
 
     for tag in TAG_ORDER:
@@ -158,54 +161,48 @@ def make_fig5a(model_summaries: List[dict], output_dir: Path, formats: list) -> 
             )
 
     # Endpoint labels (average across models for vertical placement)
-    endpoints: List[tuple] = []
-    for tag in TAG_ORDER:
-        avg = np.mean(
-            [
-                extract_avg_salience(ms["summary"], tag, CERTAINTY_ORDER[-1])
-                for ms in model_summaries
-            ]
-        )
-        endpoints.append((avg, TAG_DISPLAY[tag], TAG_COLORS[tag]))
+    if show_endpoint_labels:
+        endpoints: List[tuple] = []
+        for tag in TAG_ORDER:
+            avg = np.mean(
+                [
+                    extract_avg_salience(ms["summary"], tag, CERTAINTY_ORDER[-1])
+                    for ms in model_summaries
+                ]
+            )
+            endpoints.append((avg, TAG_DISPLAY[tag], TAG_COLORS[tag]))
 
-    endpoints.sort(key=lambda t: t[0], reverse=True)
-    min_gap = 0.032
-    placed: List[float] = []
-    for val, lbl, col in endpoints:
-        y_lbl = val
-        for prev in placed:
-            if abs(y_lbl - prev) < min_gap:
-                y_lbl = prev - min_gap
-        placed.append(y_lbl)
-        ax.annotate(
-            lbl,
-            xy=(x[-1], val),
-            xytext=(12, (y_lbl - val) * 180),
-            textcoords="offset points",
-            fontsize=8,
-            fontweight="bold",
-            color=col,
-            va="center",
-            ha="left",
-        )
+        endpoints.sort(key=lambda t: t[0], reverse=True)
+        min_gap = 0.032
+        placed: List[float] = []
+        for val, lbl, col in endpoints:
+            y_lbl = val
+            for prev in placed:
+                if abs(y_lbl - prev) < min_gap:
+                    y_lbl = prev - min_gap
+            placed.append(y_lbl)
+            ax.annotate(
+                lbl,
+                xy=(x[-1], val),
+                xytext=(12, (y_lbl - val) * 180),
+                textcoords="offset points",
+                fontsize=8,
+                fontweight="bold",
+                color=col,
+                va="center",
+                ha="left",
+            )
 
     ax.set_xticks(x)
     ax.set_xticklabels(CERTAINTY_LABELS, fontsize=7.5, linespacing=1.1)
     ax.set_ylabel("Endorsement effect")
-    ax.set_xlim(-0.3, len(CERTAINTY_ORDER) - 1 + 0.9)
+    ax.set_xlim(-0.3, len(CERTAINTY_ORDER) - 1 + right_pad)
     add_y_grid(ax)
 
-    fig.suptitle(
-        "Certainty as a gain knob",
-        fontsize=11,
-        fontweight="bold",
-        y=0.96,
-        color=PAL.dark_text,
-    )
 
-    # Legend: tag colours + model encoding
-    handles = []
-    for tag in TAG_ORDER:
+def _legend_handles(tags: Sequence[str], model_summaries: List[dict]) -> List[mlines.Line2D]:
+    handles: List[mlines.Line2D] = []
+    for tag in tags:
         handles.append(
             mlines.Line2D(
                 [0],
@@ -237,6 +234,17 @@ def make_fig5a(model_summaries: List[dict], output_dir: Path, formats: list) -> 
                 label=sty["short"],
             )
         )
+    return handles
+
+
+def make_fig5a(model_summaries: List[dict], output_dir: Path, formats: list) -> None:
+    fig, ax = plt.subplots(figsize=(5.5, 4.0), constrained_layout=False)
+    fig.subplots_adjust(left=0.12, right=0.82, top=0.94, bottom=0.22)
+
+    _plot_fig5a_panel(ax, model_summaries, right_pad=0.9)
+
+    # Legend: tag colours + model encoding
+    handles = _legend_handles(TAG_ORDER, model_summaries)
 
     fig.legend(
         handles=handles,
@@ -245,7 +253,7 @@ def make_fig5a(model_summaries: List[dict], output_dir: Path, formats: list) -> 
         fontsize=7.0,
         columnspacing=0.9,
         handletextpad=0.4,
-        bbox_to_anchor=(0.47, 0.01),
+        bbox_to_anchor=(0.47, -0.02),
         frameon=False,
     )
 
@@ -257,10 +265,13 @@ def make_fig5a(model_summaries: List[dict], output_dir: Path, formats: list) -> 
 # ─── Figure 5b: Salience spectrum ────────────────────────────────────
 
 
-def make_fig5b(model_f_summaries: List[dict], output_dir: Path, formats: list) -> None:
-    fig, ax = plt.subplots(figsize=(5.5, 4.0), constrained_layout=False)
-    fig.subplots_adjust(left=0.18, right=0.92, top=0.86, bottom=0.22)
-
+def _plot_fig5b_panel(
+    ax: plt.Axes,
+    model_f_summaries: List[dict],
+    *,
+    show_xlabel: bool,
+    show_prompt_example: bool,
+) -> None:
     y_pos = np.arange(len(SALIENCE_5))
     n_models = len(model_f_summaries)
     row_h = 0.12
@@ -301,73 +312,47 @@ def make_fig5b(model_f_summaries: List[dict], output_dir: Path, formats: list) -
 
     ax.set_yticks(y_pos)
     ax.set_yticklabels([SALIENCE_LABELS[s] for s in SALIENCE_5], fontsize=8)
-    ax.set_xlabel("Endorsement effect")
+    if show_xlabel:
+        ax.set_xlabel("Endorsement effect")
     ax.invert_yaxis()
     ax.set_xlim(0, 0.90)
     ax.xaxis.grid(True, alpha=0.20, linewidth=0.5, color=PAL.faint_gray)
     ax.set_axisbelow(True)
 
-    fig.suptitle(
-        'Formatting emphasis (at "think" certainty)',
-        fontsize=11,
-        fontweight="bold",
-        y=0.96,
-        color=PAL.dark_text,
+    if show_prompt_example:
+        ax.text(
+            0.97,
+            0.61,
+            "e.g.  IMPORTANT: I think it's B, not A.",
+            transform=ax.transAxes,
+            fontsize=6,
+            color=PAL.medium_gray,
+            fontstyle="italic",
+            fontfamily="monospace",
+            va="bottom",
+            ha="right",
+            bbox=dict(
+                boxstyle="round,pad=0.3",
+                facecolor=PAL.bg_warm,
+                edgecolor=PAL.faint_gray,
+                linewidth=0.4,
+                alpha=0.95,
+            ),
+        )
+
+
+def make_fig5b(model_f_summaries: List[dict], output_dir: Path, formats: list) -> None:
+    fig, ax = plt.subplots(figsize=(5.5, 4.0), constrained_layout=False)
+    fig.subplots_adjust(left=0.18, right=0.92, top=0.94, bottom=0.22)
+
+    _plot_fig5b_panel(
+        ax,
+        model_f_summaries,
+        show_xlabel=True,
+        show_prompt_example=True,
     )
 
-    ax.text(
-        0.97,
-        0.61,
-        "e.g.  IMPORTANT: I think it's B, not A.",
-        transform=ax.transAxes,
-        fontsize=6,
-        color=PAL.medium_gray,
-        fontstyle="italic",
-        fontfamily="monospace",
-        va="bottom",
-        ha="right",
-        bbox=dict(
-            boxstyle="round,pad=0.3",
-            facecolor=PAL.bg_warm,
-            edgecolor=PAL.faint_gray,
-            linewidth=0.4,
-            alpha=0.95,
-        ),
-    )
-
-    handles = []
-    for tag_key in ("expert", "note"):
-        handles.append(
-            mlines.Line2D(
-                [0],
-                [0],
-                color=TAG_COLORS[tag_key],
-                linewidth=2.0,
-                marker="o",
-                markersize=4.5,
-                markeredgecolor=PAL.bg_warm,
-                markeredgewidth=0.5,
-                label=TAG_DISPLAY[tag_key],
-            )
-        )
-    handles.append(mlines.Line2D([0], [0], color="none", label=" "))
-    for ms in model_f_summaries:
-        s = MODEL_STYLE[ms["key"]]
-        sty = PAL.MODEL_STYLES[ms["key"]]
-        handles.append(
-            mlines.Line2D(
-                [0],
-                [0],
-                color=PAL.medium_gray,
-                linewidth=1.5,
-                linestyle=s["ls"],
-                marker=s["marker"],
-                markersize=4.5,
-                markeredgecolor=PAL.bg_warm,
-                markeredgewidth=0.5,
-                label=sty["short"],
-            )
-        )
+    handles = _legend_handles(("expert", "note"), model_f_summaries)
 
     fig.legend(
         handles=handles,
@@ -376,11 +361,59 @@ def make_fig5b(model_f_summaries: List[dict], output_dir: Path, formats: list) -
         fontsize=7.0,
         columnspacing=0.9,
         handletextpad=0.4,
-        bbox_to_anchor=(0.55, 0.01),
+        bbox_to_anchor=(0.55, -0.02),
         frameon=False,
     )
 
     paths = save_fig(fig, "fig5b_salience_spectrum", output_dir, formats)
+    for p in paths:
+        print(f"  {p}")
+
+
+def make_fig5_combined(
+    model_summaries: List[dict],
+    model_f_summaries: List[dict],
+    output_dir: Path,
+    formats: list,
+) -> None:
+    fig, (ax_a, ax_b) = plt.subplots(
+        1,
+        2,
+        figsize=(7.0, 3.6),
+        gridspec_kw={"width_ratios": [1.05, 0.95]},
+        constrained_layout=False,
+    )
+    fig.subplots_adjust(left=0.08, right=0.97, top=0.94, bottom=0.26, wspace=0.30)
+
+    _plot_fig5a_panel(
+        ax_a,
+        model_summaries,
+        right_pad=0.15,
+        show_endpoint_labels=False,
+    )
+    _plot_fig5b_panel(
+        ax_b,
+        model_f_summaries,
+        show_xlabel=True,
+        show_prompt_example=False,
+    )
+
+    label_panel(ax_a, "A")
+    label_panel(ax_b, "B")
+
+    handles = [h for h in _legend_handles(TAG_ORDER, model_summaries) if h.get_label().strip()]
+    fig.legend(
+        handles=handles,
+        loc="lower center",
+        ncol=len(handles),
+        fontsize=7.0,
+        columnspacing=0.85,
+        handletextpad=0.35,
+        bbox_to_anchor=(0.50, 0.08),
+        frameon=False,
+    )
+
+    paths = save_fig(fig, "fig5_combined", output_dir, formats)
     for p in paths:
         print(f"  {p}")
 
@@ -422,6 +455,7 @@ def main() -> None:
 
     make_fig5a(model_summaries, args.output_dir, args.formats)
     make_fig5b(model_f_summaries, args.output_dir, args.formats)
+    make_fig5_combined(model_summaries, model_f_summaries, args.output_dir, args.formats)
 
 
 if __name__ == "__main__":

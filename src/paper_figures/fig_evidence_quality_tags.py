@@ -252,8 +252,8 @@ def make_figure(
     fig.subplots_adjust(
         left=0.09,
         right=0.97,
-        top=0.84,
-        bottom=0.15,
+        top=0.94,
+        bottom=0.18,
         wspace=0.32,
         hspace=0.32,
     )
@@ -446,27 +446,6 @@ def make_figure(
                 ax.set_xticks(x)
                 ax.set_xticklabels([""] * 4)
 
-    # ── Column headers ────────────────────────────────────────────────
-    for col_idx, md in enumerate(model_data):
-        model_id = md["model_id"]
-        short = next(
-            (label for key, label in MODEL_ORDER if key == model_id),
-            model_id,
-        )
-        bbox = axes_grid[0][col_idx].get_position()
-        x_mid = 0.5 * (bbox.x0 + bbox.x1)
-        fig.text(
-            x_mid,
-            0.875,
-            short,
-            ha="center",
-            va="bottom",
-            fontsize=8.8,
-            color=PAL.dark_text,
-            fontweight="bold",
-            linespacing=1.0,
-        )
-
     # ── Legend ─────────────────────────────────────────────────────────
     legend_handles = []
     for tag_key, tag_label in TAG_ORDER:
@@ -491,37 +470,16 @@ def make_figure(
             )
         )
 
-    # Position legend.
+    # Position legend (below x-axis label, caption-ready).
     fig.legend(
         handles=legend_handles,
-        loc="lower center",
-        bbox_to_anchor=(0.5, 0.035),
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.04),
         ncol=4,
         fontsize=7.0,
         frameon=False,
         columnspacing=1.4,
         handletextpad=0.5,
-    )
-
-    # ── Title ─────────────────────────────────────────────────────────
-    if is_prior_wrong:
-        slice_note = "prior-wrong slice"
-    else:
-        slice_note = "all items"
-
-    if shared_y:
-        title = (
-            f"Evidence-quality scaling by speaker tag  ({slice_note}, shared y-axis)"
-        )
-    else:
-        title = f"Evidence-quality scaling by speaker tag  ({slice_note})"
-
-    fig.suptitle(
-        title,
-        fontsize=10,
-        fontweight="bold",
-        y=0.97,
-        color=PAL.dark_text,
     )
 
     # ── Save ──────────────────────────────────────────────────────────
