@@ -54,6 +54,39 @@ DEFAULT_MODELS: Tuple[str, ...] = (
 )
 
 
+def _parse_tags(raw_tags: Optional[List[str]]) -> List[str]:
+    if not raw_tags:
+        return list(DEFAULT_TAGS)
+
+    aliases = {
+        "expert": "Expert",
+        "note": "Note",
+        "user": "User",
+        "someone online": "Someone online",
+        "someone_online": "Someone online",
+        "someone-online": "Someone online",
+        "online": "Someone online",
+    }
+
+    resolved: List[str] = []
+    seen = set()
+    for raw in raw_tags:
+        key = raw.strip().lower().replace("-", " ").replace("_", " ")
+        if key not in aliases:
+            raise ValueError(
+                f"Unknown tag '{raw}'. Allowed: Expert, Note, User, Someone online."
+            )
+        tag = aliases[key]
+        if tag in seen:
+            continue
+        seen.add(tag)
+        resolved.append(tag)
+
+    if not resolved:
+        raise ValueError("No tags selected.")
+    return resolved
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Exp10: Correct-endorsement test (truth-tracking vs gating)"
@@ -93,6 +126,27 @@ def parse_args() -> argparse.Namespace:
         "--extended-tags",
         action="store_true",
         help="Use extended tags (Expert, Note, User, Someone online) instead of default (Expert, Note).",
+    )
+    parser.add_argument(
+        "--tags",
+        nargs="+",
+        default=None,
+        help=(
+            "Explicit tag subset to run (e.g. Note or Expert Note). "
+            "Overrides --extended-tags."
+        ),
+    )
+    parser.add_argument(
+        "--instruction-text",
+        type=str,
+        default=INSTRUCTION_TEXT,
+        help="Instruction text to prepend for the I1 conditions.",
+    )
+    parser.add_argument(
+        "--uids-file",
+        type=Path,
+        default=None,
+        help="Optional newline-delimited UID file to restrict the experiment to a fixed subset.",
     )
     parser.add_argument(
         "--seed",
@@ -150,6 +204,7 @@ def run_for_model(
     output_dir: Path,
     seed: int,
     tags: List[str],
+    instruction_text: str,
 ) -> Dict:
     """Run correct-endorsement experiment for a single model."""
     print(f"\n{'='*60}")
@@ -169,7 +224,7 @@ def run_for_model(
     print(f"Token B: {tokenizer.decode([token_id_b])!r} (id={token_id_b})")
 
     # Generate all conditions
-    conditions = generate_all_conditions(tags)
+    conditions = generate_all_conditions(tags, instruction_text=instruction_text)
     condition_codes = [c.code for c in conditions]
     print(f"Conditions: {condition_codes}")
 
@@ -272,7 +327,7 @@ def run_for_model(
             "a_str": tokenizer.decode([token_id_a]),
             "b_str": tokenizer.decode([token_id_b]),
         },
-        "instruction_text": INSTRUCTION_TEXT,
+        "instruction_text": instruction_text,
         "selectivity_metrics": {
             metric: _summarize_values(metric_values[metric])
             for metric in selectivity_metrics_to_track
@@ -314,7 +369,10 @@ def main() -> None:
     args = parse_args()
 
     # Select tags
-    tags = list(EXTENDED_TAGS) if args.extended_tags else list(DEFAULT_TAGS)
+    if args.tags:
+        tags = _parse_tags(args.tags)
+    else:
+        tags = list(EXTENDED_TAGS) if args.extended_tags else list(DEFAULT_TAGS)
     n_conditions = 3 * 2 * len(tags)  # 3 endorse types x 2 instruction states x n_tags
 
     print(f"Exp10: Correct-Endorsement Test")
@@ -340,6 +398,15 @@ def main() -> None:
         rng.shuffle(shuffled)
         examples = shuffled[:args.max_examples]
 
+    if args.uids_file is not None:
+        allowed_uids = {
+            line.strip()
+            for line in args.uids_file.read_text().splitlines()
+            if line.strip()
+        }
+        examples = [ex for ex in examples if ex.uid in allowed_uids]
+        print(f"Filtered to {len(examples)} examples from UID subset {args.uids_file}")
+
     print(f"\nDataset: {len(examples)} examples")
 
     # Create output directory
@@ -363,7 +430,14 @@ def main() -> None:
     # Run for each model
     summaries = []
     for model_id in args.models:
-        summary = run_for_model(model_id, examples, args.output_dir, seed=args.seed, tags=tags)
+        summary = run_for_model(
+            model_id,
+            examples,
+            args.output_dir,
+            seed=args.seed,
+            tags=tags,
+            instruction_text=args.instruction_text,
+        )
         summaries.append(summary)
 
     # Save combined summary
@@ -371,7 +445,7 @@ def main() -> None:
         "experiment": "exp10_correct_endorsement",
         "description": "Correct-endorsement test: truth-tracking vs gating",
         "design": "3x2 factorial: Endorsement (Neutral/Wrong/Correct) x Instruction (absent/present) per tag",
-        "instruction_text": INSTRUCTION_TEXT,
+        "instruction_text": args.instruction_text,
         "tags_tested": tags,
         "conditions": {
             "N0": "Neutral, no instruction",
@@ -398,6 +472,7 @@ def main() -> None:
         },
         "n_examples": len(examples),
         "seed": args.seed,
+        "uids_file": str(args.uids_file) if args.uids_file is not None else None,
         "models": summaries,
     }
     with (args.output_dir / "summary.json").open("w") as f:
