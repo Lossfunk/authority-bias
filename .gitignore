@@ -40,7 +40,8 @@ data/
 .env
 
 # Documents / planning
-plan.md
+# plan.md
+session-ses_*.md
 edits.md
 current-stage.md
 fixing.md
