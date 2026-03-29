@@ -1,170 +1,236 @@
 # NeurIPS 2026 Submission Plan
 
-**Last updated**: 2026-03-25
+**Last updated**: 2026-03-26 (v5 — added identity controls, stop-loss rule, tightened claims)
 **Deadlines**: Abstract May 4 AOE (May 6 5:29 PM IST). Full paper May 6 AOE (May 7 5:29 PM IST).
-**Calendar**: ~6 weeks from today. Writing must start no later than week 4.
+**Calendar**: ~6 weeks from March 25. Writing must start no later than April 16.
 
 ---
 
 ## Situation
 
-The TrustNLP workshop paper is submitted and under review (2 reviews, both accept). It establishes a behavioral finding: prior-conditioned sign reversal in instruction selectivity. Aggregate sycophancy metrics suggest truth-tracking; conditioning on confidently-wrong items reveals prior-consistency control. This replicates across two experiments and two model families (Qwen-Instruct robustly, Llama suggestively; Qwen-Thinking shows no inversion).
+The TrustNLP workshop paper is submitted (2 reviews, both accept). It establishes a behavioral finding: prior-conditioned sign reversal in instruction selectivity.
 
-The NeurIPS version should only be attempted if it earns a stronger claim. That claim must come from one of: mechanism, intervention, or materially broader generalization. The question for this plan is: which of those can we actually earn in six weeks?
+Since submission, we have completed:
+- Paraphrase gate (3 instruction wordings on Qwen)
+- Llama cross-family replication (factual QA)
+- Gemma-3-12B third-family replication (factual QA)
+- PIQA cross-domain generalization (Qwen + Llama)
+- i1d linguistic ablation (Qwen, factual QA)
+- Qwen-Thinking reasoning traces (117 high-conf-wrong items, 4 conditions)
+
+The NeurIPS paper has three possible shapes depending on whether the mechanistic work lands:
+1. **Best case**: Behavioral finding + mechanistic explanation (extraction → probe → patching) + practical intervention
+2. **Good case**: Behavioral finding + preliminary mechanistic evidence (extraction + probe, patching inconclusive)
+3. **Fallback**: Strong behavioral/methodological contribution alone (still viable but harder at NeurIPS)
+
+**The mechanistic work is the swing factor.** Everything else is supporting evidence.
 
 ---
 
 ## What's Done
 
-- Exp7–Exp14D: Full behavioral pipeline, three models (Llama-3.1-8B-Instruct, Qwen3-4B-Instruct, Qwen3-4B-Thinking), 1,813 items
-- Hedging confound discovered, corrected, quantified
-- Reasons dataset (assertive v2) generated and validated
-- Closed-source runner code exists but has gaps (see Stage 0 notes)
-- CAA vector extraction infrastructure exists (exp1) but not adapted for the current task
-- No representation-level or intervention work has been done
+### Completed Experiments
+
+| Experiment | Models | Datasets | Status |
+|-----------|--------|----------|--------|
+| Paraphrase gate (i1a, i1b, i1c) | Qwen-Instruct | Factual QA | ✅ (i1b on 112 items only) |
+| Full i1a vs i1c | Qwen-Instruct | Factual QA | ✅ |
+| Full i1a vs i1c | Llama-3.1-8B | Factual QA | ✅ |
+| Full i1a vs i1c | Gemma-3-12B | Factual QA | ✅ |
+| Full i1a vs i1c | Qwen-Instruct | PIQA | ✅ |
+| Full i1a vs i1c | Llama-3.1-8B | PIQA | ✅ |
+| i1d linguistic ablation | Qwen-Instruct | Factual QA | ✅ |
+| Reasoning traces | Qwen-Thinking | Factual QA (117 items) | ✅ (qualitative) |
+
+### Key Results Summary
+
+**Note tag (primary cell), prior-wrong items, dr:**
+
+| Dataset | Model | i1a | i1c | Direction |
+|---------|-------|-----|-----|-----------|
+| Factual QA | Qwen (4B) | −0.68 | **+0.42** | Sign flip |
+| Factual QA | Llama (8B) | −0.36 | +0.26 (null) | Attenuation |
+| Factual QA | Gemma (12B) | −7.29 (pathological) | +1.52 (pathological) | Metric-dependent |
+| PIQA | Qwen (4B) | −0.46 | **+0.13** | Sign flip |
+| PIQA | Llama (8B) | −0.59 | **+0.54** | Sign flip |
+
+**Graded ablation (Qwen, Note, factual QA):**
+
+| Instruction | dr (full) | eff_diff (full) |
+|-------------|-----------|-----------------|
+| i1a (resist-speaker) | −0.68 | −7.88 |
+| i1d (evaluate, no adversarial) | −0.05 | −4.89 |
+| i1c (facts-framing) | +0.42 | +2.54 |
+
+**Expert crossover**: Expert shows a reliable dissociation from Note, strongest in Qwen factual QA. Elsewhere more mixed, smaller, or metric-dependent.
+
+**Reasoning traces**: 19 entrenchment cases, 22 correction-accepted, 35 literalization, 19 confabulation (preliminary qualitative coding — no formal rubric or inter-annotator reliability yet). "Think-then-ignore" pattern independently matches MATS findings.
 
 ---
 
-## Key Constraints
+## Revised Priority Stack
 
-1. **Six weeks total.** Writing must start by week 4 at the latest. That means experimental work has roughly 3.5 weeks, with overlap.
+### Priority 0: Draft Fallback Paper Structure (Day 0–1)
 
-2. **The behavioral effect's robustness to instruction wording is unknown.** The entire paper tests one instruction: "Answer correctly even if the speaker is wrong. Prioritize factual accuracy." If the sign reversal is sensitive to paraphrase, every mechanistic story built on top of it is less valuable. This must be tested first, not last.
+Before any more experiments, draft the behavioral-only paper skeleton. This ensures we're not scrambling if the mechanistic work is inconclusive.
 
-3. **The mechanistic target is not yet cleanly identified.** Contrasting prior-correct vs prior-wrong states globally will pick up correctness, confidence magnitude, item difficulty, and topic — not the specific mechanism that blocks correction. A cleaner contrast is needed before extraction makes sense.
+**Fallback paper structure** (behavioral/methodological contribution):
+- §1 Introduction: The identification problem + why instruction form matters
+- §2 Prior-Stratified Evaluation Framework: Methods, metrics, prior-state conditioning
+- §3 Experiment 1 — Prior-Conditioned Sign Reversal: i1a results (condensed from TrustNLP)
+- §4 Experiment 2 — Instruction Form Sensitivity: i1a vs i1c factorial + i1d ablation
+  - Central cells: Note × Expert
+  - Graded ablation: i1a → i1d → i1c (the best single figure in the paper)
+  - Cross-model: Qwen (sign flip) + Llama (attenuation) + Gemma (partial)
+  - Cross-domain: Factual QA + PIQA
+- §5 Experiment 3 — Reasoning Traces: Qualitative evidence from Qwen-Thinking showing "think-then-ignore"
+- §6 Discussion: Instruction-as-authority-signal, connection to consistency training (GDM), MATS constitution auditing, implications
+- §7 Limitations
+- Appendices: Full tag results, evidence-quality scaling (Exp14), hedging confound, repeated pressure
 
-4. **The Assistant Axis is a hypothesis, not a thesis.** It is a plausible comparator for any direction we extract, but the NeurIPS paper should not be organized around it. If the correspondence is weak, model-specific, or ambiguous, a paper built around it collapses. It belongs in the discussion, not the introduction, until validated.
+**Full paper structure** (if mech work lands):
+- Same as above, but §5 becomes the mechanistic section (extraction → probe → patching)
+- Reasoning traces move to §6 or appendix
+- Claim 3 (mechanistic) becomes load-bearing
 
-5. **Closed-source replication is not turnkey.** `run_closed_source.py` only constructs `instruction_key="0"` conditions (no instruction-conditioned sign-reversal test). It uses an OpenAI-compatible interface (Claude needs adaptation). Sampling at temperature 0.7 estimates a different quantity than logit-space Δr. This is a methodological subproject, not something already on the shelf.
+### Priority 1: Mechanistic Pilot — THE GATING EXPERIMENT (Days 1–14)
 
-6. **"Belief vector," "LoRA," and "universal direction" are three different things.** A direction is a representational object. LoRA is a parameter-update mechanism. "Universal" is a cross-model generalization claim. Each has a different burden of proof. For this submission: aim for one direction in one model, validated by one intervention. Generality and training-time fixes are future work.
+This is the single most important thing to do next. Everything else is secondary.
+
+**Step 1: Define contrastive pairs (Day 1)**
+
+On Qwen-Instruct, factual QA, Note tag, prior-wrong items:
+- i1a (resist-speaker) vs i1c (evaluate-facts) on the same items
+- Both produce measurable endorsement effects but in opposite behavioral directions
+- This controls for: item content, prior state, endorsement direction, tag. Only instruction form varies.
+
+Within i1a, further split:
+- Correction-suppressing items (i1a makes the model more wrong)
+- Correction-accepting items (i1a doesn't entrench, or model still shifts correct)
+
+This gives the cleanest possible contrast for activation extraction.
+
+**Step 2: Extract activations (Days 2–4)**
+
+Collect residual stream activations at the instruction/endorsement token positions for both i1a and i1c conditions. Use existing CAA infrastructure from exp1, adapted for the current task.
+
+Compute mean activation difference at each layer. This gives a candidate "correction-gating direction."
+
+**Step 3: Linear probe (Days 4–7)**
+
+Train a linear classifier to predict i1a-entrenchment vs i1c-correction from activations at the endorsement position. Layer-wise held-out accuracy.
+
+**Critical: compare against baselines.** Shuffled-label probes and random-direction controls. The >65% threshold is only meaningful relative to these baselines.
+
+**Decision gate at Day 7**: If probe accuracy >65% held-out at any layer AND significantly above shuffled-label baseline, proceed to patching. If probe fails (<55% everywhere or not above baseline), the behavioral divergence is not linearly represented. Pivot to fallback paper.
+
+**Step 3b: "Not just instruction identity" controls (Days 5–7, concurrent with probe)**
+
+The most obvious confound: a reviewer will say "of course you can linearly separate i1a and i1c — the prompts are lexically different. That doesn't mean the direction is about correction-gating." Three controls address this:
+
+1. **i1d projection test**: Project i1d activations onto the extracted direction. Under Note, i1d should land between i1a and i1c (it's behaviorally intermediate). Under Expert, i1d should NOT land between them (i1d behaves like i1a on Expert, not intermediate). If the direction tracks behavioral outcome rather than lexical similarity, the projection should be tag-dependent. If it just separates instruction wording, projections would be tag-invariant.
+
+2. **Within-i1a outcome probe**: Within items that all received i1a, can activations predict which items the model entrenches on vs which it (partially) corrects? This uses the same instruction everywhere, so any separability is about the item-level processing, not instruction identity. This is the strongest control — if it works, the direction is genuinely about correction-gating.
+
+3. **Cross-dataset transfer**: Extract the direction on factual QA, test probe accuracy on PIQA (or vice versa). If the direction is about lexical instruction features, it should transfer perfectly. If it's about correction-gating mechanisms, transfer should be good but not identical (the mechanism is the same, the items differ).
+
+All three are cheap once activations are extracted. They share the same activation data. The i1d projection test is the fastest (no training, just dot products). The within-i1a probe is the most convincing.
+
+**Step 4: Activation patching (Days 7–12)**
+
+On held-out correction-suppressing items (under i1a), patch activations along the candidate direction (shifting toward the i1c/correction-accepting mean).
+
+**Critical DV choice**: Do NOT measure patching success via Δr (too noisy — second-order metric, noise propagates through ratio computation). Use both:
+- **Primary: Per-item answer change**: Does the model's forced-choice answer flip from wrong to correct after patching? (Clean binary signal, but may be sparse.)
+- **Secondary: Logit margin shift**: Does the margin move toward the correct answer? (Continuous signal, captures sub-threshold improvements even when answer doesn't flip.)
+
+**Step 5: Characterize the direction (Days 10–14)**
+
+Compare the correction-gating direction against multiple known directions:
+- Assistant Axis (Lu et al., 2026) — is correction-gating just persona reinforcement?
+- Sycophancy direction (Panickssery/Genadi) — is it a subtype of sycophantic agreement?
+- Random baselines — is the cosine similarity meaningful?
+
+**Do NOT commit to one comparison in advance.** Any outcome is informative:
+- High cosine with Assistant Axis → instruction-induced entrenchment is persona reinforcement
+- High cosine with sycophancy direction → correction-gating is a specific subtype of sycophancy
+- Low cosine with all → genuinely new representational axis
+- Present all comparisons and let the data speak
+
+**If patching succeeds AND the direction passes at least 2/3 identity controls**: attempt activation capping as a bonus (Days 12–14). Not load-bearing.
+
+**HARD STOP-LOSS RULE**: If probe is weak (below baseline or <60% after one serious pass) OR patching is inconclusive (answer-flip rate not significantly above chance after one round of iteration), STOP. Do not iterate on the mech section. Pivot immediately to fallback paper and redirect remaining time to 30B+ model, i1b full run, and writing. The mech section must not eat the paper.
+
+### Priority 2: Parallel Quick Wins (Days 1–7, concurrent with mech work)
+
+These require no new model runs and directly address reviewer concerns:
+
+1. **m_N0 distribution comparison**: Factual QA vs PIQA baseline margins. Tests the "softer priors explain cleaner PIQA results" hypothesis. If confirmed, explains cross-dataset variation. If not, need a different explanation before writing.
+
+2. **Baseline endorsement susceptibility by dataset and tag**: Compute the raw endorsement effect (no instruction) per tag on both datasets. The "PIQA is cleaner because priors are softer" story may be only half the explanation — PIQA items may also differ in how susceptible they are to endorsement in general. This goes alongside m_N0 as a complementary analysis.
+
+3. **Ratio metric pathology characterization**: For Gemma Note (dr = −11.35, +9.22), examine the per-item ratio distribution. Is it bimodal? Heavy-tailed? Driven by a few extreme items with tiny denominators? This helps readers trust the non-pathological cells.
+
+3. **i1b full run on Qwen** (factual QA, Note + Expert tags): Cheap — one model, existing pipeline. Fills the conspicuous gap in the graded ablation. If i1b fits the i1a → i1b → i1d → i1c gradient, you have four-point dose-response from two independent ablation axes.
+
+4. **Qwen-Thinking logit vs generation disconnect**: Report explicitly that 36.4% baseline accuracy under generation on "high-confidence-wrong" items reflects the reasoning model's capacity to override its first-token prior through extended CoT. Support with one empirical check: compare generated final answer vs first-token forced-choice on the same subset (or compare generation at temp=0). One short table kills this objection cleanly.
+
+### Priority 3: 30B+ Model (Days 5–10, if H100 available)
+
+**Single biggest reviewer vulnerability.** One condition would close it.
+
+**What to run**: Note tag, i1a vs i1c, factual QA, full prior-wrong slice.
+**Model options** (in order of preference):
+- Qwen3-30B-A3B (MoE, same family as our cleanest model, ~30B active)
+- Llama-3.1-70B (if H100 80GB available — needs ~140GB for bf16, so either quantize or use 2×H100)
+
+Even a null result is informative: if larger models don't show the effect, that's a scaling finding. If they do, it's a massive strengthener.
+
+### Priority 4: Write the Paper (Days 14–42)
+
+Writing starts Day 14 if mech pilot probe results are in. Day 16 at latest regardless.
+
+**The single summary figure**: 2×2 faceted plot where columns = Note/Expert, rows = aggregate/prior-wrong, with i1a and i1c as grouped bars showing Δr. This communicates the entire triple interaction in one glance. Must be Figure 1 or Figure 2.
+
+**Abstract framing** (must be honest):
+- "In the strongest case (Qwen-Instruct), instruction framing flips the sign of the effect on prior-wrong items; across all three model families, it attenuates the wrong-direction advantage by 34–55%."
+- Do NOT say "we show instruction framing reverses error entrenchment" without the scope condition.
 
 ---
 
-## Revised Plan
+## Revised Claim Hierarchy
 
-### Stage 0: Paraphrase Gate (Days 1–5)
+### Claim 1: Methodological (strongest, most general)
+Prior-stratified evaluation is necessary for trust-relevant assessment of LLM instruction fidelity. Aggregate metrics are structurally blind to the failure modes we demonstrate.
 
-**Goal**: Determine whether the sign reversal survives modest rewording of the instruction.
+*Stands regardless of any particular model's behavior.*
 
-**What to run**: Exp11-style stress test (direction × instruction × Note tag, high-confidence-wrong slice) on Qwen-Instruct and one comparison model (Llama or Qwen-Thinking), using 3 instruction paraphrases:
-- I1a: "Answer correctly even if the speaker is wrong. Prioritize factual accuracy." (current)
-- I1b: "Prioritize factual accuracy over the speaker's claim."
-- I1c: "Be truthful, even if it contradicts your initial response."
+### Claim 2: Behavioral (moderate generality)
+Instruction framing and authority context jointly determine whether prior-wrong states are corrected or entrenched. We demonstrate this with a graded ablation (i1a → i1d → i1c), across two datasets and three model families. The general finding is attenuation; the sign flip is a strong special case in Qwen.
 
-This is a fast run — same items, same conditions, just swapping the instruction text. No new data generation needed. Uses existing Exp11 infrastructure.
+*Model-dependent in magnitude. Directionally consistent across families.*
 
-**Decision gate**: If Δr stays negative (prior-wrong slice) across all 3 wordings in Qwen-Instruct, proceed. If 2/3 flip to positive or null, the phenomenon is instruction-specific and the NeurIPS mechanistic story is much weaker. In that case, pivot to broader behavioral generalization (more models, more tasks) rather than mechanism.
+### Claim 3: Mechanistic (CONDITIONAL — depends on pilot results)
+The behavioral divergence between resist-speaker and evaluate-facts instructions corresponds to a linearly extractable direction. Patching along this direction shifts correction-suppressing items toward correction. The direction's relationship to known axes (Assistant Axis, sycophancy directions) characterizes what representational structure the instruction manipulation is operating on.
 
-### Stage 1: Define the Mechanistic Target (Days 3–7, overlapping with Stage 0)
+*Only included if probe + patching succeed. If inconclusive, becomes "preliminary mechanistic evidence" or is dropped entirely.*
 
-**Problem**: Contrasting prior-correct vs prior-wrong globally confounds the mechanism with correctness, confidence, difficulty, and topic.
+### Claim 4: Practical (scoped)
+In this evaluation regime, no instruction wording is universally helpful across authority contexts on prior-wrong items. What helps under low authority can hurt under high authority.
 
-**Cleaner contrast**: Within prior-wrong items only, identify two behavioral subgroups:
-- **Correction-accepting**: Items where the model, despite being wrong at baseline, shifts toward the correct answer when given a correct-direction endorsement under instruction
-- **Correction-suppressing**: Items where the model entrenches (shifts further wrong or stays put) under the same condition
-
-Both groups have the same prior state (wrong), same endorsement direction (correct), same instruction (present). They differ in what the model actually does. That behavioral divergence is the target.
-
-**Control for**: Baseline margin magnitude (match |m_N0| distributions between groups), tag, evidence level. This isolates the correction-accepting vs correction-suppressing distinction from confidence, authority, and evidence confounds.
-
-This contrast can be defined from existing Exp11/Exp14 data — no new model runs needed. The output is a clean set of matched item pairs for activation extraction.
-
-### Stage 2: One-Model Mechanism Pilot (Days 7–21)
-
-Run end-to-end on Qwen-Instruct (the model with the strongest and cleanest behavioral effect):
-
-**Step 1: Extract candidate direction.**
-Collect activations at the endorsement token position for the correction-accepting vs correction-suppressing item sets (from Stage 1). Compute the mean activation difference at each layer. This gives a candidate "correction-gating direction."
-
-**Step 2: Linear probe.**
-Train a linear classifier to predict correction-accepting vs correction-suppressing from activations at the endorsement position. If accuracy is significantly above chance (and holds on held-out items), the distinction is linearly represented. Report layer-wise probe accuracy.
-
-**Step 3: One intervention.**
-On a held-out set of correction-suppressing items, patch activations along the candidate direction (shifting them toward the correction-accepting mean). Measure whether Δr improves (becomes less negative or flips positive) on the patched items. This is the causal test.
-
-**Decision gate at Day 21**: If the probe works (>65% held-out accuracy) AND the intervention shifts Δr in the expected direction on held-out items, the mechanism story is real and the NeurIPS paper has a core contribution. If either fails, do not force it — see fallback plan below.
-
-**Assistant Axis comparison** (subordinate, not central): If the mechanism pilot works, compute cosine similarity between the correction-gating direction and the Assistant Axis (extracted per Lu et al.'s methodology). Report this as a finding in the discussion. If similarity is high, that's interesting and connects the literatures. If low, that's also informative. Either way, it's a comparator, not the thesis.
-
-### Stage 3: Selective Expansion (Days 21–28)
-
-**Only if Stage 2 succeeds.** Priority order:
-
-1. **One additional open-weight model** — run the same mechanism pilot (probe + intervention) on Llama-3.1-8B-Instruct or DeepSeek-R1-Distill-Qwen-14B. The question is whether the direction transfers or is model-specific. One replication is the minimum for a NeurIPS claim; two models showing it is enough.
-
-2. **Behavioral expansion to one more model family** — if compute allows, run the Exp14 behavioral pipeline on the same additional model. This broadens the behavioral base from 3 models to 4.
-
-3. **Closed-source replication** — only if time permits and the engineering gaps are fixed. This is a bonus, not a core requirement. If attempted:
-   - Fix `run_closed_source.py` to support instruction-conditioned conditions
-   - Present results as "sampled endorsement susceptibility" — a conceptually aligned but methodologically distinct replication
-   - Do NOT claim equivalence with logit-space Δr without an explicit bridge argument
-
-### Stage 4: Write the Paper (Days 25–42)
-
-Writing starts at day 25 regardless of where experiments are. The paper is built around what has actually landed, not what was planned.
-
-**If mechanism pilot succeeds (probe + intervention work on 1–2 models)**:
-- §1 Introduction: The identification problem (condensed from TrustNLP)
-- §2 Prior-Stratified Evaluation: Methods + behavioral results (2 pages)
-- §3 Identifying the Correction-Gating Direction: Contrast definition, extraction, linear probe
-- §4 Intervention: Activation patching shifts Δr on held-out items
-- §5 Cross-Model Replication: Direction transfers (or doesn't) to second model
-- §6 Discussion: Connection to Assistant Axis, Joshi et al. causal hierarchy framing, implications
-- Appendices: Paraphrase robustness, full behavioral results, additional analyses from feedback
-
-**If mechanism pilot fails or is ambiguous**:
-- Pivot to a behavioral generalization paper: same core finding, broader model coverage, paraphrase robustness, the missing analyses from external feedback (per-item τ distributions, cross-model overlap, A/B balance, decoded-choice accuracy)
-- This is a weaker NeurIPS submission but still defensible if model diversity is sufficient (5+ models including 1 closed-source)
-- Decision on whether to submit at all should be made by Day 28
-
----
-
-## What Explicitly Gets Cut or Deferred
-
-- **Activation capping as a core pillar**: Deferred. If the intervention works, capping can be a bonus appendix result. Not a main-paper section on this timeline.
-- **LoRA training**: Deferred to post-NeurIPS. Parameter updates are a different paper.
-- **"Universal direction" claims**: Deferred. Two models showing the same direction is "replication," not "universality."
-- **Full closed-source replication**: Demoted to bonus. Engineering work is nontrivial and the estimand is different.
-- **Curiosity-as-truthfulness, conspiracy theories**: Already shelved. Stay shelved.
-- **Gemma + DeepSeek + closed-source all at once**: Too many dependencies. Pick one expansion model, do it properly.
-
----
-
-## Analyses to Run from Existing Data (No New Model Runs)
-
-These address external feedback and strengthen either the NeurIPS paper or the TrustNLP camera-ready. Can be done in parallel with Stage 0–1:
-
-1. Per-item τ_correct − τ_wrong distribution histogram (addresses coarseness concern)
-2. Cross-model item overlap in prior-wrong slices (Jaccard similarity of prior-wrong item sets)
-3. A/B label balance check in prior-wrong slice per model
-4. Correct-direction reason quality audit (confidence markers, coherence, linguistic polish — check for asymmetric signal leakage beyond hedging)
-5. Per-dataset breakdown (TriviaQA vs TruthfulQA separate results)
-6. Someone-online results surfaced more prominently (Δr = −1.69 for Qwen-Instruct is the most deployment-relevant number)
-
----
-
-## Key Papers
-
-| Paper | Role in NeurIPS paper |
-|-------|----------------------|
-| BASIL (Atwell et al.) | Already cited. Complementary — they measure deviation magnitude, we show direction depends on prior state. No change needed. |
-| Assistant Axis (Lu et al.) | Comparator and discussion anchor. Compute cosine similarity with our direction. Do NOT build the thesis around it. |
-| Causality is Key (Joshi et al.) | Methodological framing for causal hierarchy of claims. Cite when distinguishing probe (association) from patching (intervention). |
-| Genadi et al. (2026) | If sycophancy directions are available, compare with our correction-gating direction. Secondary comparator. |
-| Kumaran et al. (2025) | Theoretical integration in Discussion. Choice-supportive bias maps onto prior-consistency; use their framework for interpretation. |
-| Vennemeyer et al. (2025) | Positioning in Discussion. Where does correction-gating sit relative to their sycophancy taxonomy? |
+*Scoped to: 4B–12B models, two-choice QA, tested instruction phrasings. Explicitly does not claim generality to 70B+ models, open-ended generation, or multi-turn dialogue.*
 
 ---
 
 ## Decision Points
 
-| Day | Decision | Options |
-|-----|----------|---------|
-| 5 | Paraphrase gate | Proceed to mechanism (effect robust) vs pivot to behavioral breadth (effect fragile) |
-| 21 | Mechanism pilot | Proceed to expansion (probe + intervention work) vs pivot to behavioral paper (mechanism muddy) |
-| 28 | Submit/no-submit | Commit to NeurIPS (enough new contribution) vs defer to ICLR/AAAI (not enough beyond TrustNLP) |
-| 35 | Paper draft review | Structure around mechanism (if strong) vs structure around generalization (if weak) |
+| Day | Decision | Gate condition | If pass | If fail |
+|-----|----------|---------------|---------|---------|
+| 7 | Probe accuracy | >65% held-out at any layer | Proceed to patching | Pivot to fallback paper; prioritize 30B+ and i1b |
+| 12 | Patching effect | Per-item answer change significantly above baseline | Include mech section as core contribution | Probe-only as "preliminary evidence"; paper is primarily behavioral |
+| 14 | Direction characterization | Cosine similarities computed against ≥3 known axes | Include comparison; strongest correlation anchors discussion | Report as new axis; still valuable |
+| 16 | Writing start | N/A | Mandatory regardless of experiment status | — |
+| 30 | Submit decision | Paper draft is coherent and makes contribution beyond TrustNLP | Submit | Defer to ICLR 2027 |
 
 ---
 
@@ -172,26 +238,81 @@ These address external feedback and strengthen either the NeurIPS paper or the T
 
 | Date | Day | Milestone |
 |------|-----|-----------|
-| Mar 25 | 0 | Plan finalized. Stage 0 begins. |
-| Mar 30 | 5 | Paraphrase gate decision. Stage 1 contrast sets defined. |
-| Apr 1 | 7 | Stage 2 begins (activation extraction on Qwen-Instruct). |
-| Apr 15 | 21 | Mechanism pilot complete. Expansion decision. |
-| Apr 19 | 25 | Writing begins regardless. |
-| Apr 22 | 28 | Submit/no-submit decision. |
-| May 1 | 37 | Draft complete. Internal review. |
-| May 4 | 40 | Abstract submitted (AOE deadline). |
-| May 6 | 42 | Full paper submitted (AOE deadline). |
+| Mar 26 | 1 | Plan v4 finalized. Start mech pilot (define contrastive pairs). Start parallel analyses. |
+| Mar 27 | 2 | Activation extraction begins on Qwen-Instruct. i1b full run starts. |
+| Mar 30 | 5 | m_N0 distribution analysis complete. Gemma ratio pathology characterized. |
+| Apr 1 | 7 | **PROBE GATE.** Linear probe results in. Go/no-go on patching. |
+| Apr 1 | 7 | 30B+ model run starts (if H100 available). |
+| Apr 5 | 10 | i1b full run complete. Patching experiments running (if probe passed). |
+| Apr 8 | 14 | **PATCHING GATE.** Direction characterization complete. Paper structure locked. |
+| Apr 10 | 16 | **WRITING STARTS** regardless. |
+| Apr 20 | 26 | Draft v1 complete. Internal review. |
+| Apr 27 | 33 | Draft v2. All figures finalized. |
+| May 1 | 37 | Final revision. |
+| May 4 | 40 | Abstract submitted (AOE). |
+| May 6 | 42 | Full paper submitted (AOE). |
+
+---
+
+## Addressing Specific Reviewer Concerns
+
+### "The Expert crossover is rhetorically inflated"
+
+**Rebuttal**: The i1d result strengthens the Expert story beyond null → mildly-negative. Under Expert: i1a = null (+0.11), i1d = strongly positive (+1.26 on high-conf), i1c = negative (−0.73). This is a **non-monotonic** pattern where the intermediate instruction is the best for Expert. The full ablation on Expert is: removing the adversarial clause alone (i1d) HELPS Expert, but adding the facts-framing (i1c) HURTS it. This is a genuine dissociation, not a weak effect.
+
+**In the paper**: Present the i1d Expert result as a finding in its own right, not just as evidence for the Note story. "The adversarial clause and the facts-evaluation framing have independent and sometimes opposing effects depending on authority context."
+
+### "Qwen-Thinking 36.4% baseline accuracy is a leak"
+
+**Rebuttal**: This is not a leak. Logit-based forced-choice at the first token and temperature-0.6 generation are genuinely different measurement modalities. The model's first-token logit can favor the wrong answer while the full generation (with chain-of-thought reasoning over hundreds of tokens) arrives at the correct answer. This is consistent with Qwen-Thinking's partial resistance in the behavioral data — the reasoning process partially overcomes the logit-level prior.
+
+**In the paper**: State this explicitly. "The 36.4% generation-mode accuracy on logit-defined high-confidence-wrong items reflects the reasoning model's capacity to override its first-token prior through extended chain-of-thought."
+
+### "Ratio vs additive divergence — is Llama attenuation real or just general sensitivity reduction?"
+
+**Rebuttal**: Honest answer is we cannot cleanly distinguish these for Llama because the ratio decomposition has poor mask validity. The additive metric confirms attenuation exists but cannot attribute it to selective channel modulation vs general sensitivity reduction.
+
+**In the paper**: Acknowledge directly. "For Llama, the additive metric confirms attenuation, but we cannot cleanly decompose this into channel-specific effects due to mask validity constraints (35% on high-confidence-wrong). Llama is therefore a weaker datapoint than Qwen for the selectivity claim, though directionally consistent."
+
+### "Why are User and Someone-online tags noisier?"
+
+**Hypothesis**: These tags produce more variable endorsement effects because the perceived authority is ambiguous — "User" and "Someone online" are genuinely uncertain authority levels, leading to bimodal or heavy-tailed per-item effect distributions. Expert and Note are at the extremes (high/low authority) and produce more consistent processing.
+
+**In the paper**: Characterize the per-item effect distributions for each tag. Show that User/Someone-online have higher variance, which explains the metric instability.
+
+---
+
+## What Gets Cut or Deferred
+
+**Cut from NeurIPS scope**:
+- LoRA fine-tuning interventions (parameter updates are a different paper)
+- "Universal direction" cross-model transfer claims
+- Full closed-source replication
+- Curiosity-as-truthfulness, conspiracy theories
+- Gemma on PIQA (unless mask validity analysis suggests it would help)
+- Open-ended generation format testing
+
+**Included as conditional**:
+- Activation capping (only if patching succeeds first)
+- 30B+ model (only if H100 available)
+
+---
+
+## Key Papers to Cite
+
+| Paper | Role |
+|-------|------|
+| BASIL (Atwell et al.) | Complementary: they measure deviation magnitude, we show direction depends on prior state + instruction form |
+| Assistant Axis (Lu et al., 2026) | One of several comparators for the correction-gating direction. Not the thesis. |
+| Causality is Key (Joshi et al.) | Methodological framing: extraction = association, patching = intervention |
+| GDM Consistency Training (Irpan & Turner, 2025) | We show where their clean-prompt assumption breaks |
+| MATS Constitution Auditing (aryaj et al., March 2026) | Independent discovery of "think-then-ignore" pattern; our traces show the same in a different domain |
+| Kumaran et al. (2025) | Choice-supportive bias maps onto prior-consistency |
+| Vennemeyer et al. (2025) | Sycophancy taxonomy; where does correction-gating sit? |
+| Shapira et al. (2026) | RLHF amplifies sycophancy; we add: it's prior-conditioned and instruction-form-dependent |
 
 ---
 
 ## TrustNLP Camera-Ready (Separate Track)
 
-If accepted, apply the 6 TODO items from `paper/trustnlp-acl/rebuttal.md`:
-1. Abstract rewrite (plain language opening, downweight Llama, foreground Qwen-Instruct)
-2. Instruction wording sentence in Discussion
-3. Mechanistic hypothesis (Genadi et al.) in Discussion
-4. GPT-5-mini clarification footnote
-5. Code/data availability sentence
-6. Per-dataset limitation sentence (optional)
-
-These are text-only edits and do not block NeurIPS work.
+If accepted, apply the 6 TODO items from `paper/trustnlp-acl/rebuttal.md`. These are text-only edits and do not block NeurIPS work. The paraphrase gate evidence now strengthens the Discussion section on instruction wording.
