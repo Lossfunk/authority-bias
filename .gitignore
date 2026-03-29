@@ -50,7 +50,10 @@ meeting-notes/
 AWS-Setup.md
 
 .cursor/
-experiments/
+experiments/*
+!experiments/
+!experiments/setup_jarvislabs.sh
+!experiments/resume_jarvislabs.sh
 
 # Credentials / secrets
 *.csv
@@ -62,6 +65,9 @@ new-phase-results/figures/
 
 # PDF figures (duplicates of PNGs)
 new-phase-results/**/*.pdf
+
+# PyTorch activation tensors (large binary artifacts, >100MB each)
+new-phase-results/**/*.pt
 
 # Large per-item raw result files (keep summaries, skip raw JSONL)
 new-phase-results/**/*_results.jsonl
