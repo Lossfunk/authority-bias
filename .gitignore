@@ -87,6 +87,11 @@ new-phase-results/**/*_checkpoint.json
 new-phase-results/**/*_checkpoint_records.jsonl
 new-phase-results/**/*_run_manifest.json
 
+# Watch-script runtime artifacts (PID files, stdout redirects, rolling logs)
+new-phase-results/**/*.pid
+new-phase-results/**/*.out
+new-phase-results/**/*.log
+
 # Smoke test directories
 new-phase-results/qwen3-4b-results/smoke_qwen/
 paper/
