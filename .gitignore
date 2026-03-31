@@ -39,9 +39,16 @@ assets/
 data/
 .env
 
+# Shell run scripts (kept local; experiment setup scripts in experiments/ are whitelisted below)
+*.sh
+
+# Session / conversation logs (Claude Code, terminal recordings, etc.)
+[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.txt
+
 # Documents / planning
 # plan.md
 session-ses_*.md
+slack-update.md
 edits.md
 current-stage.md
 fixing.md
@@ -92,6 +99,8 @@ new-phase-results/**/*.pid
 new-phase-results/**/*.out
 new-phase-results/**/*.log
 
-# Smoke test directories
-new-phase-results/qwen3-4b-results/smoke_qwen/
+# Smoke / sanity-test result directories (not archival results)
+new-phase-results/**/*_smoke/
+new-phase-results/**/smoke_*/
+
 paper/
