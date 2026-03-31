@@ -96,22 +96,13 @@ def _infer_trust_remote_code(model_name: str) -> bool:
     return "qwen" in model_name.lower()
 
 
-def load_model_and_tokenizer(
+def _resolve_token_and_trust_remote_code(
     model_name: str,
-    device: Optional[str] = None,
-    dtype: Optional[Union[str, torch.dtype]] = "auto",
-    use_auth_token: Optional[str] = None,
-    revision: Optional[str] = None,
-    trust_remote_code: Optional[bool] = None,
-):
-    """
-    Load a model + tokenizer pair with sensible defaults for this project.
-    """
-    # Prefer explicit token, otherwise fall back to common env vars set via Modal secret.
+    use_auth_token: Optional[str],
+    trust_remote_code: Optional[bool],
+) -> tuple[Optional[str], bool]:
     token = use_auth_token or os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACEHUB_API_TOKEN")
-    resolved_revision = revision or os.environ.get("HF_MODEL_REVISION")
 
-    # Allow environment override while keeping a safe model-family default.
     env_trust_remote_code = _parse_env_bool(os.environ.get("HF_TRUST_REMOTE_CODE"))
     if trust_remote_code is None:
         trust_remote_code = (
@@ -119,6 +110,25 @@ def load_model_and_tokenizer(
             if env_trust_remote_code is not None
             else _infer_trust_remote_code(model_name)
         )
+
+    return token, trust_remote_code
+
+
+def load_tokenizer(
+    model_name: str,
+    use_auth_token: Optional[str] = None,
+    revision: Optional[str] = None,
+    trust_remote_code: Optional[bool] = None,
+):
+    """
+    Load only the tokenizer with the same defaults used for model loading.
+    """
+    token, trust_remote_code = _resolve_token_and_trust_remote_code(
+        model_name=model_name,
+        use_auth_token=use_auth_token,
+        trust_remote_code=trust_remote_code,
+    )
+    resolved_revision = revision or os.environ.get("HF_MODEL_REVISION")
 
     shared_kwargs: dict = {}
     if resolved_revision:
@@ -134,6 +144,39 @@ def load_model_and_tokenizer(
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"
+    return tokenizer
+
+
+def load_model_and_tokenizer(
+    model_name: str,
+    device: Optional[str] = None,
+    dtype: Optional[Union[str, torch.dtype]] = "auto",
+    use_auth_token: Optional[str] = None,
+    revision: Optional[str] = None,
+    trust_remote_code: Optional[bool] = None,
+    prefer_flash_attention: bool = True,
+):
+    """
+    Load a model + tokenizer pair with sensible defaults for this project.
+    """
+    # Prefer explicit token, otherwise fall back to common env vars set via Modal secret.
+    token, trust_remote_code = _resolve_token_and_trust_remote_code(
+        model_name=model_name,
+        use_auth_token=use_auth_token,
+        trust_remote_code=trust_remote_code,
+    )
+    resolved_revision = revision or os.environ.get("HF_MODEL_REVISION")
+
+    shared_kwargs: dict = {}
+    if resolved_revision:
+        shared_kwargs["revision"] = resolved_revision
+
+    tokenizer = load_tokenizer(
+        model_name,
+        use_auth_token=token,
+        revision=resolved_revision,
+        trust_remote_code=trust_remote_code,
+    )
 
     resolved_dtype = _resolve_dtype(dtype)
     device_map = None
@@ -153,13 +196,31 @@ def load_model_and_tokenizer(
     model_name_lower = model_name.lower()
     if model_name_lower.startswith("meta-llama/") or "llama" in model_name_lower:
         model_kwargs["attn_implementation"] = "eager"
+    elif prefer_flash_attention and "qwen" in model_name_lower:
+        model_kwargs["attn_implementation"] = "flash_attention_2"
 
-    model = _from_pretrained_with_token(
-        AutoModelForCausalLM,
-        model_name,
-        token,
-        **model_kwargs,
-    )
+    try:
+        model = _from_pretrained_with_token(
+            AutoModelForCausalLM,
+            model_name,
+            token,
+            **model_kwargs,
+        )
+    except Exception as exc:
+        if model_kwargs.get("attn_implementation") != "flash_attention_2":
+            raise
+        retry_kwargs = dict(model_kwargs)
+        retry_kwargs.pop("attn_implementation", None)
+        print(
+            "[load_model_and_tokenizer] flash_attention_2 load failed for "
+            f"{model_name}: {exc}. Retrying without explicit attention override."
+        )
+        model = _from_pretrained_with_token(
+            AutoModelForCausalLM,
+            model_name,
+            token,
+            **retry_kwargs,
+        )
     if target_device:
         model.to(torch.device(target_device))
     return model, tokenizer
