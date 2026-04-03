@@ -41,6 +41,7 @@ data/
 
 # Shell run scripts (kept local; experiment setup scripts in experiments/ are whitelisted below)
 *.sh
+!scripts/run_piqa_mechanism_transfer.sh
 
 # Session / conversation logs (Claude Code, terminal recordings, etc.)
 [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.txt
@@ -53,6 +54,8 @@ edits.md
 current-stage.md
 fixing.md
 iteration_plan.md
+docs-to-read/
+new-phase-results.zip
 meeting-notes/
 AWS-Setup.md
 

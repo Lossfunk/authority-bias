@@ -134,6 +134,18 @@ def parse_args() -> argparse.Namespace:
         help="Torch dtype string for saved activations (float16, bfloat16, float32).",
     )
     parser.add_argument(
+        "--device",
+        type=str,
+        default="auto",
+        help="Device passed to the model loader (auto, cuda, cpu).",
+    )
+    parser.add_argument(
+        "--loader-dtype",
+        type=str,
+        default="auto",
+        help="Model dtype passed to the loader (auto, bfloat16, float16, float32).",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Only compute the selection and summary; do not load the model.",
@@ -399,6 +411,8 @@ def main() -> None:
         "results_path": str(args.results_path),
         "mc_dataset_path": str(args.mc_dataset_path),
         "tag": args.tag,
+        "device": args.device,
+        "loader_dtype": args.loader_dtype,
         "n_selected": len(selected),
         "label_counts": dict(label_counts),
         "min_abs_m_n0": args.min_abs_m_n0,
@@ -431,8 +445,8 @@ def main() -> None:
 
     model, tokenizer = load_model_and_tokenizer(
         model_name=args.model,
-        device="auto",
-        dtype="auto",
+        device=args.device,
+        dtype=args.loader_dtype,
     )
     model.eval()
     device = next(model.parameters()).device
