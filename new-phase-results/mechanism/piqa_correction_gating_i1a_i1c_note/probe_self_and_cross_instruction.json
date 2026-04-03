@@ -1,0 +1,35 @@
+{
+  "eval_extraction_dir": "new-phase-results/mechanism/piqa_correction_gating_i1a_i1c_note",
+  "eval_variants": {
+    "i1a": {
+      "accuracy": 1.0,
+      "auroc": 1.0,
+      "eval_type": "transfer",
+      "n": 284,
+      "n_correcting": 186,
+      "n_entrenching": 98
+    },
+    "i1c": {
+      "accuracy": 0.7816901408450704,
+      "auroc": 0.8965328066710556,
+      "eval_type": "transfer",
+      "n": 284,
+      "n_correcting": 186,
+      "n_entrenching": 98
+    }
+  },
+  "layer_index": 23,
+  "position": "endorsement_last",
+  "train_cv": {
+    "accuracy": 0.7640845070422535,
+    "auroc": 0.8174237436910248,
+    "eval_type": "cross_validated",
+    "n": 284,
+    "n_correcting": 186,
+    "n_entrenching": 98
+  },
+  "train_extraction_dir": "new-phase-results/mechanism/piqa_correction_gating_i1a_i1c_note",
+  "train_variants": [
+    "i1a"
+  ]
+}

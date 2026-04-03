@@ -1,0 +1,33 @@
+{
+  "build_variants": [
+    "i1a"
+  ],
+  "eval_variants": {
+    "i1a": {
+      "accuracy": 0.7483296213808464,
+      "auroc": 0.8258144806435842,
+      "n": 449,
+      "n_correcting": 298,
+      "n_entrenching": 151,
+      "score_mean": -12.322721481323242
+    },
+    "i1c": {
+      "accuracy": 0.6971046770601337,
+      "auroc": 0.7980354682430331,
+      "n": 449,
+      "n_correcting": 298,
+      "n_entrenching": 151,
+      "score_mean": 17.329383850097656
+    }
+  },
+  "layer_index": 23,
+  "position": "endorsement_last",
+  "source_extraction_dir": "new-phase-results/mechanism/piqa_correction_gating_i1a_i1c_note",
+  "source_stats": {
+    "source_correcting_projection_mean": -4.115879058837891,
+    "source_entrenching_projection_mean": -40.48149108886719,
+    "source_threshold": -22.29868507385254,
+    "vector_norm": 6.030390739440918
+  },
+  "target_extraction_dir": "new-phase-results/mechanism/qwen_correction_gating_i1a_i1c_note"
+}
