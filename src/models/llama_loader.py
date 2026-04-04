@@ -196,7 +196,7 @@ def load_model_and_tokenizer(
     model_name_lower = model_name.lower()
     if model_name_lower.startswith("meta-llama/") or "llama" in model_name_lower:
         model_kwargs["attn_implementation"] = "eager"
-    elif prefer_flash_attention and ("qwen" in model_name_lower or "gpt-oss" in model_name_lower):
+    elif prefer_flash_attention and "qwen" in model_name_lower:
         model_kwargs["attn_implementation"] = "flash_attention_2"
 
     try:

@@ -24,3 +24,9 @@ dependencies = [
     "vl-convert-python>=1.8.0",
     "scikit-learn>=1.8.0",
 ]
+
+[project.optional-dependencies]
+gpu = [
+    "kernels>=0.12.3 ; sys_platform == 'linux'",
+    "triton>=3.4 ; sys_platform == 'linux'",
+]
