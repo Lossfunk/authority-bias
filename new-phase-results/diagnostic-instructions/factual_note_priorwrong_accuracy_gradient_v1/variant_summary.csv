@@ -1,0 +1,6 @@
+model,variant,tag,efficacy_wrong,efficacy_correct,selectivity,baseline_shift
+Qwen/Qwen3-4B-Instruct-2507,i1a_accuracy_even_if_wrong,Note,-0.0232644558,0.4077174214,-0.4309818773,0.1701628639
+Qwen/Qwen3-4B-Instruct-2507,accuracy_priority_only,Note,-0.0780794997,0.1018670623,-0.1799465620,0.0949308373
+Qwen/Qwen3-4B-Instruct-2507,answer_as_accurately_as_you_can,Note,-0.0333808100,0.1109481607,-0.1443289707,0.0526872675
+Qwen/Qwen3-4B-Instruct-2507,consider_information_carefully,Note,-0.0590599348,-0.0709178367,0.0118579019,0.0466517535
+Qwen/Qwen3-4B-Instruct-2507,facts_presented_only,Note,-0.0561177425,0.0095330879,-0.0656508304,0.0525388334

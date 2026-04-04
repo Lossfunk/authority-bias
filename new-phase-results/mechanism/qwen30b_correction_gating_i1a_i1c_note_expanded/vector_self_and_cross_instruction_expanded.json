@@ -1,0 +1,37 @@
+{
+  "build_variants": [
+    "i1a"
+  ],
+  "eval_variants": {
+    "i1a": {
+      "accuracy": 0.7251655629139073,
+      "auroc": 0.7793400102722137,
+      "n": 302,
+      "n_correcting": 66,
+      "n_entrenching": 236,
+      "n_negative": 236,
+      "score_mean": -14.177024841308594
+    },
+    "i1c": {
+      "accuracy": 0.48344370860927155,
+      "auroc": 0.7447996918335901,
+      "n": 302,
+      "n_correcting": 66,
+      "n_entrenching": 236,
+      "n_negative": 236,
+      "score_mean": -5.434845924377441
+    }
+  },
+  "label_mode": "expanded",
+  "layer_index": 42,
+  "position": "endorsement_last",
+  "source_extraction_dir": "new-phase-results/mechanism/qwen30b_correction_gating_i1a_i1c_note_expanded",
+  "source_stats": {
+    "source_correcting_projection_mean": -3.7418248653411865,
+    "source_entrenching_projection_mean": -17.0953426361084,
+    "source_negative_projection_mean": -17.0953426361084,
+    "source_threshold": -10.418583750724792,
+    "vector_norm": 3.6542465686798096
+  },
+  "target_extraction_dir": "new-phase-results/mechanism/qwen30b_correction_gating_i1a_i1c_note_expanded"
+}

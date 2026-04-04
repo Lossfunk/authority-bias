@@ -1,0 +1,6 @@
+model,variant,tag,efficacy_wrong,efficacy_correct,selectivity,baseline_shift
+Qwen/Qwen3-4B-Instruct-2507,own_knowledge_first,Note,-0.0978923222,0.2308053202,-0.3286976424,0.1136936808
+Qwen/Qwen3-4B-Instruct-2507,presented_evidence_only,Note,-0.1026108937,0.0441876504,-0.1467985440,0.1025104679
+Qwen/Qwen3-4B-Instruct-2507,trust_own_knowledge_on_conflict,Note,-0.1519264221,0.1101241201,-0.2620505421,0.1547091919
+Qwen/Qwen3-4B-Instruct-2507,evaluate_presented_evidence_on_conflict,Note,-0.1921178399,0.1357285327,-0.3278463725,0.1961952100
+Qwen/Qwen3-4B-Instruct-2507,use_both_resolve_conflict_carefully,Note,-0.1366330142,0.1107407652,-0.2473737794,0.1377397602
