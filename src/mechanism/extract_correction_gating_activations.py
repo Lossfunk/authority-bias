@@ -36,7 +36,7 @@ from tqdm import tqdm
 
 from src.exp10.conditions import Exp10Condition, format_prompt
 from src.exp7.dataset_mc import MCExample, load_mc_dataset
-from src.exp7.scoring import _tokenize_for_scoring, get_ab_token_ids
+from src.exp7.scoring import _tokenize_for_scoring, get_ab_token_ids, locate_prompt_text_span
 from src.models.llama_loader import load_model_and_tokenizer
 
 
@@ -298,24 +298,23 @@ def _resolve_positions(
 ) -> Dict[str, Optional[int]]:
     tokenized = _tokenize_for_scoring(tokenizer, prompt_text)
     input_ids = tokenized["input_ids"][0].tolist()
-    prompt_no_special = tokenizer(prompt_text, add_special_tokens=False).input_ids
-    bos_offset = len(input_ids) - len(prompt_no_special)
+    prompt_start, prompt_end = locate_prompt_text_span(tokenizer, prompt_text, input_ids)
 
     positions: Dict[str, Optional[int]] = {
-        "last_token": len(input_ids) - 1,
+        "last_token": prompt_end,
         "instruction_last": None,
         "endorsement_last": None,
     }
 
     instruction_ids = _segment_token_ids(tokenizer, instruction_text)
     if instruction_ids:
-        positions["instruction_last"] = bos_offset + len(instruction_ids) - 1
+        positions["instruction_last"] = prompt_start + len(instruction_ids) - 1
 
     prefix = prompt_text.split(endorsement_line, 1)[0]
     prefix_ids = tokenizer(prefix, add_special_tokens=False).input_ids
     endorsement_ids = _segment_token_ids(tokenizer, endorsement_line)
     if endorsement_ids:
-        positions["endorsement_last"] = bos_offset + len(prefix_ids) + len(endorsement_ids) - 1
+        positions["endorsement_last"] = prompt_start + len(prefix_ids) + len(endorsement_ids) - 1
 
     # Fall back to subsequence search if the prefix-based position lands out of range.
     if positions["instruction_last"] is not None and positions["instruction_last"] >= len(input_ids):

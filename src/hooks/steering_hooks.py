@@ -10,6 +10,8 @@ from typing import Dict, List, Optional
 
 import torch
 
+from src.mechanism.hooks import get_transformer_layers
+
 
 @dataclass
 class CaptureRecord:
@@ -33,7 +35,7 @@ class ResidualHookManager:
         self._handles = []
 
     def _get_layer(self, layer_idx: int):
-        return self.model.model.layers[layer_idx]
+        return get_transformer_layers(self.model)[layer_idx]
 
     def register_capture(
         self,
@@ -112,5 +114,4 @@ def inject_steering_vector(
     with ResidualHookManager(model) as manager:
         manager.register_injection(layer_idx, pos_idx, vector, scale)
         yield
-
 

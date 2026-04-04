@@ -34,8 +34,9 @@ from tqdm import tqdm
 
 from src.exp10.conditions import Exp10Condition, format_prompt
 from src.exp7.dataset_mc import MCExample, load_mc_dataset
-from src.exp7.scoring import _tokenize_for_scoring, get_ab_token_ids
+from src.exp7.scoring import _tokenize_for_scoring, get_ab_token_ids, locate_prompt_text_span
 from src.mechanism.extract_correction_gating_activations import _resolve_positions
+from src.mechanism.hooks import get_transformer_layers
 from src.models.llama_loader import load_model_and_tokenizer
 
 
@@ -242,17 +243,17 @@ def _build_eval_prompt_record(
     else:
         tokenized = _tokenize_for_scoring(tokenizer, prompt_text)
         input_ids = tokenized["input_ids"][0].tolist()
+        prompt_start, prompt_end = locate_prompt_text_span(tokenizer, prompt_text, input_ids)
         positions = {
-            "last_token": len(input_ids) - 1,
+            "last_token": prompt_end,
             "instruction_last": None,
             "endorsement_last": None,
         }
         if end_line:
             prefix = prompt_text.split(end_line, 1)[0]
-            bos_offset = len(input_ids) - len(tokenizer(prompt_text, add_special_tokens=False).input_ids)
             prefix_ids = tokenizer(prefix, add_special_tokens=False).input_ids
             end_ids = tokenizer(end_line, add_special_tokens=False).input_ids
-            positions["endorsement_last"] = bos_offset + len(prefix_ids) + len(end_ids) - 1
+            positions["endorsement_last"] = prompt_start + len(prefix_ids) + len(end_ids) - 1
     return {
         "uid": row["uid"],
         "question": row["question"],
@@ -467,7 +468,7 @@ def main() -> None:
     examples_by_uid = {ex.uid: ex for ex in load_mc_dataset(args.mc_dataset_path)}
 
     block_index = args.layer_index - 1
-    patch_module = model.model.layers[block_index]
+    patch_module = get_transformer_layers(model)[block_index]
     args.output_dir.mkdir(parents=True, exist_ok=True)
     records_path = args.output_dir / "item_results.jsonl"
 

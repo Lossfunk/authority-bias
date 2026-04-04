@@ -42,6 +42,49 @@ def _safe_logit(p: float, eps: float = 1e-10) -> float:
     return math.log(p / (1 - p))
 
 
+def uses_harmony_chat_template(tokenizer) -> bool:
+    """Return True for tokenizers that require Harmony/chat formatting."""
+    name_or_path = str(getattr(tokenizer, "name_or_path", "")).lower()
+    return "gpt-oss" in name_or_path or "gpt_oss" in name_or_path
+
+
+def _find_subsequence(haystack: List[int], needle: List[int]) -> Optional[Tuple[int, int]]:
+    if not needle or len(needle) > len(haystack):
+        return None
+    last = len(haystack) - len(needle) + 1
+    for start in range(last):
+        if haystack[start : start + len(needle)] == needle:
+            return start, start + len(needle) - 1
+    return None
+
+
+def locate_prompt_text_span(
+    tokenizer,
+    prompt_text: str,
+    input_ids: List[int],
+) -> Tuple[int, int]:
+    """
+    Locate the raw prompt-text token span inside the model-formatted input.
+
+    For Harmony/chat-template models, the prompt is wrapped in system/user/assistant
+    control tokens; for plain causal-LM prompts, this simply returns the whole
+    prompt span after any leading BOS token.
+    """
+    prompt_ids = tokenizer(prompt_text, add_special_tokens=False).input_ids
+    if not prompt_ids:
+        raise ValueError(f"Tokenizer produced no ids for prompt text: {prompt_text!r}")
+
+    match = _find_subsequence(input_ids, list(prompt_ids))
+    if match is not None:
+        return match
+
+    if len(input_ids) >= len(prompt_ids):
+        prefix_len = len(input_ids) - len(prompt_ids)
+        return prefix_len, len(input_ids) - 1
+
+    raise ValueError("Could not locate raw prompt text span inside tokenized model input")
+
+
 def _logit_from_log_probs(logp_target: float, logp_other: float) -> float:
     """
     Compute logit from log probabilities.
@@ -177,7 +220,16 @@ def _tokenize_for_scoring(
     prompt_text: str,
 ) -> Dict[str, torch.Tensor]:
     """Tokenize a single prompt and strip terminal EOS if tokenizer adds it."""
-    inputs = tokenizer(prompt_text, return_tensors="pt", add_special_tokens=True)
+    if uses_harmony_chat_template(tokenizer):
+        inputs = tokenizer.apply_chat_template(
+            [{"role": "user", "content": prompt_text}],
+            tokenize=True,
+            add_generation_prompt=True,
+            return_tensors="pt",
+            return_dict=True,
+        )
+    else:
+        inputs = tokenizer(prompt_text, return_tensors="pt", add_special_tokens=True)
     if "input_ids" not in inputs:
         raise ValueError("Tokenizer output is missing input_ids")
 
