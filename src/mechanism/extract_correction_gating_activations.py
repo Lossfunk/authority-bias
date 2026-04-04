@@ -6,8 +6,9 @@ experimental setup. The goal here is narrow and explicit:
 
 1. Select prior-wrong Note-tag items from existing Exp10 results for Qwen.
 2. Label each item by how i1a behaved on correct endorsement:
-   - entrenching: C1 moves the model further wrong vs N0
-   - correcting: C1 moves the model toward the correct answer vs N0
+   - resisting: C1 fails to move (or worsens) the model vs N0 (delta_c1 <= epsilon)
+   - correcting: C1 moves the model toward the correct answer vs N0 (delta_c1 > epsilon)
+   Optionally annotates W1 (wrong-endorsement) susceptibility as secondary metadata.
 3. Re-run forward passes on the exact same C1 prompt template under two
    instruction wordings (default: i1a and i1c).
 4. Save hidden states at three prompt positions for every layer:
@@ -57,7 +58,7 @@ POSITION_NAMES: Tuple[str, ...] = ("last_token", "instruction_last", "endorsemen
 @dataclass
 class SelectedItem:
     uid: str
-    label: str  # entrenching | correcting
+    label: str  # resisting | correcting
     m_n0: float
     m_c1: float
     delta_c1_vs_n0: float
@@ -65,6 +66,10 @@ class SelectedItem:
     question: str
     correct_label: str
     wrong_label: str
+    m_w1: Optional[float] = None
+    delta_w1_vs_n0: Optional[float] = None
+    w1_susceptible: bool = False
+    expanded_resisting: bool = False
 
 
 def parse_args() -> argparse.Namespace:
@@ -105,6 +110,25 @@ def parse_args() -> argparse.Namespace:
         type=str,
         default=I1C_TEXT,
         help="Instruction text for condition B.",
+    )
+    parser.add_argument(
+        "--epsilon",
+        type=float,
+        default=0.0,
+        help=(
+            "Margin threshold for the correcting/resisting label. "
+            "Items with delta_c1 <= epsilon are labeled resisting (default 0.0 "
+            "reproduces the original behaviour where only delta <= 0 is resisting)."
+        ),
+    )
+    parser.add_argument(
+        "--include-w1-metadata",
+        action="store_true",
+        help=(
+            "Compute W1 (wrong-endorsement) delta for every selected item and "
+            "annotate with w1_susceptible / expanded_resisting metadata. "
+            "Does NOT change the primary C1-based label."
+        ),
     )
     parser.add_argument(
         "--min-abs-m-n0",
@@ -150,6 +174,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Only compute the selection and summary; do not load the model.",
     )
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=8,
+        help="Mini-batch size for activation extraction.",
+    )
     return parser.parse_args()
 
 
@@ -181,8 +211,12 @@ def _select_items(
     min_abs_m_n0: float,
     top_frac: float,
     allowed_uids: Optional[set[str]],
+    epsilon: float = 0.0,
+    include_w1_metadata: bool = False,
 ) -> List[SelectedItem]:
     tag_key = _normalize_tag(tag)
+    w1_code = f"W1_{tag_key}"
+    has_w1 = include_w1_metadata
     selected: List[SelectedItem] = []
     for row in _iter_jsonl(results_path):
         if allowed_uids is not None and row["uid"] not in allowed_uids:
@@ -193,20 +227,38 @@ def _select_items(
         if abs(m_n0) < min_abs_m_n0:
             continue
         m_c1 = _signed_margin(row, f"C1_{tag_key}")
-        delta = m_c1 - m_n0
-        if delta == 0:
-            continue
+        delta_c1 = m_c1 - m_n0
+
+        # Primary label: C1-based with epsilon threshold
+        label = "correcting" if delta_c1 > epsilon else "resisting"
+
+        # W1 metadata (does not change primary label)
+        m_w1: Optional[float] = None
+        delta_w1: Optional[float] = None
+        w1_susceptible = False
+        if has_w1 and w1_code in row.get("condition_results", {}):
+            m_w1 = float(_signed_margin(row, w1_code))
+            delta_w1 = float(m_w1 - m_n0)
+            w1_susceptible = delta_w1 < -epsilon
+
+        # expanded_resisting: primary resisting OR w1_susceptible
+        expanded = (label == "resisting") or w1_susceptible
+
         selected.append(
             SelectedItem(
                 uid=row["uid"],
-                label="correcting" if delta > 0 else "entrenching",
+                label=label,
                 m_n0=float(m_n0),
                 m_c1=float(m_c1),
-                delta_c1_vs_n0=float(delta),
+                delta_c1_vs_n0=float(delta_c1),
                 abs_m_n0=float(abs(m_n0)),
                 question=row["question"],
                 correct_label=row["correct_label"],
                 wrong_label=row["wrong_label"],
+                m_w1=m_w1,
+                delta_w1_vs_n0=delta_w1,
+                w1_susceptible=w1_susceptible,
+                expanded_resisting=expanded,
             )
         )
 
@@ -320,6 +372,81 @@ def _collect_hidden_states(
     return views, logit_stats, int(model_inputs["input_ids"].shape[1])
 
 
+def _prepare_batched_prompt(
+    tokenizer,
+    prompt_text: str,
+) -> Dict[str, torch.Tensor]:
+    tokenized = _tokenize_for_scoring(tokenizer, prompt_text)
+    return {key: value.squeeze(0).cpu() for key, value in tokenized.items()}
+
+
+def _collect_hidden_states_batch(
+    model,
+    device: torch.device,
+    prepared_batch: Sequence[Dict[str, object]],
+    token_id_a: int,
+    token_id_b: int,
+    save_dtype: torch.dtype,
+) -> List[Tuple[Dict[str, torch.Tensor], Dict[str, float], int]]:
+    if not prepared_batch:
+        return []
+
+    input_ids_list = [row["input_ids"] for row in prepared_batch]
+    attn_list = [row["attention_mask"] for row in prepared_batch]
+    max_len = max(int(ids.shape[0]) for ids in input_ids_list)
+    batch_size = len(prepared_batch)
+
+    input_ids = torch.zeros((batch_size, max_len), dtype=torch.long)
+    attention_mask = torch.zeros((batch_size, max_len), dtype=torch.long)
+    for i, (ids, mask) in enumerate(zip(input_ids_list, attn_list)):
+        seq_len = int(ids.shape[0])
+        input_ids[i, :seq_len] = ids
+        attention_mask[i, :seq_len] = mask
+
+    model_inputs = {
+        "input_ids": input_ids.to(device),
+        "attention_mask": attention_mask.to(device),
+    }
+
+    with torch.inference_mode():
+        outputs = model(
+            **model_inputs,
+            use_cache=False,
+            output_hidden_states=True,
+        )
+
+    hidden_states = outputs.hidden_states
+    if hidden_states is None:
+        raise RuntimeError("Model did not return hidden_states; cannot extract activations.")
+
+    seq_lens = attention_mask.sum(dim=1).tolist()
+    batch_indices = torch.arange(batch_size, device=outputs.logits.device)
+    last_indices = attention_mask.to(outputs.logits.device).sum(dim=1) - 1
+    final_logits = outputs.logits[batch_indices, last_indices, :]
+
+    results: List[Tuple[Dict[str, torch.Tensor], Dict[str, float], int]] = []
+    for i, row in enumerate(prepared_batch):
+        positions = row["positions"]
+        views: Dict[str, torch.Tensor] = {}
+        for name in POSITION_NAMES:
+            pos = positions.get(name)
+            if pos is None:
+                continue
+            layer_stack = torch.stack(
+                [layer[i, pos, :].detach().to("cpu", dtype=save_dtype) for layer in hidden_states],
+                dim=0,
+            )
+            views[name] = layer_stack
+        logits = final_logits[i]
+        logit_stats = {
+            "logit_a": float(logits[token_id_a].item()),
+            "logit_b": float(logits[token_id_b].item()),
+        }
+        results.append((views, logit_stats, int(seq_lens[i])))
+
+    return results
+
+
 def _dtype_from_arg(raw: str) -> torch.dtype:
     if not hasattr(torch, raw):
         raise ValueError(f"Unknown dtype: {raw}")
@@ -385,14 +512,21 @@ def main() -> None:
         min_abs_m_n0=args.min_abs_m_n0,
         top_frac=args.top_frac,
         allowed_uids=allowed_uids,
+        epsilon=args.epsilon,
+        include_w1_metadata=args.include_w1_metadata,
     )
 
     if args.max_items > 0:
         selected = selected[: args.max_items]
 
     label_counts = Counter(item.label for item in selected)
+    w1_susceptible_count = sum(1 for item in selected if item.w1_susceptible)
+    expanded_resisting_count = sum(1 for item in selected if item.expanded_resisting)
     print(f"Selected {len(selected)} prior-wrong {args.tag} items from {args.results_path}")
-    print(f"Label counts: {dict(label_counts)}")
+    print(f"Primary label counts: {dict(label_counts)}")
+    if args.include_w1_metadata:
+        print(f"W1 susceptible: {w1_susceptible_count}")
+        print(f"Expanded resisting (primary OR w1_susceptible): {expanded_resisting_count}")
     if not selected:
         raise SystemExit("No items selected; nothing to extract.")
 
@@ -413,8 +547,12 @@ def main() -> None:
         "tag": args.tag,
         "device": args.device,
         "loader_dtype": args.loader_dtype,
+        "epsilon": args.epsilon,
+        "include_w1_metadata": args.include_w1_metadata,
         "n_selected": len(selected),
         "label_counts": dict(label_counts),
+        "w1_susceptible_count": w1_susceptible_count,
+        "expanded_resisting_count": expanded_resisting_count,
         "min_abs_m_n0": args.min_abs_m_n0,
         "top_frac": args.top_frac,
         "instruction_variants": [
@@ -456,49 +594,66 @@ def main() -> None:
     activation_lists: Dict[str, List[torch.Tensor]] = {name: [] for name in POSITION_NAMES}
     metadata_path = args.output_dir / "metadata.jsonl"
 
+    prepared_records: List[Dict[str, object]] = []
+    for record in records:
+        positions = _resolve_positions(
+            tokenizer=tokenizer,
+            prompt_text=record["prompt_text"],
+            instruction_text=record["instruction_text"],
+            endorsement_line=record["endorsement_line"],
+        )
+        prepared = _prepare_batched_prompt(tokenizer, record["prompt_text"])
+        prepared_records.append(
+            {
+                **record,
+                "positions": positions,
+                "input_ids": prepared["input_ids"],
+                "attention_mask": prepared["attention_mask"],
+                "prompt_token_count": int(prepared["input_ids"].shape[0]),
+            }
+        )
+
+    prepared_records.sort(key=lambda row: int(row["prompt_token_count"]))
+
     with metadata_path.open("w") as metadata_file:
-        for record in tqdm(records, desc=f"Extracting {args.model}"):
-            positions = _resolve_positions(
-                tokenizer=tokenizer,
-                prompt_text=record["prompt_text"],
-                instruction_text=record["instruction_text"],
-                endorsement_line=record["endorsement_line"],
-            )
-            views, logit_stats, prompt_token_count = _collect_hidden_states(
+        for start in tqdm(
+            range(0, len(prepared_records), args.batch_size),
+            desc=f"Extracting {args.model}",
+        ):
+            batch = prepared_records[start : start + args.batch_size]
+            batch_results = _collect_hidden_states_batch(
                 model=model,
-                tokenizer=tokenizer,
                 device=device,
-                prompt_text=record["prompt_text"],
-                positions=positions,
+                prepared_batch=batch,
                 token_id_a=token_id_a,
                 token_id_b=token_id_b,
                 save_dtype=save_dtype,
             )
+            for record, (views, logit_stats, prompt_token_count) in zip(batch, batch_results):
+                for name in POSITION_NAMES:
+                    if name not in views:
+                        raise RuntimeError(
+                            f"Failed to capture required position '{name}' for UID {record['uid']} "
+                            f"variant {record['variant_label']}."
+                        )
+                    activation_lists[name].append(views[name])
 
-            for name in POSITION_NAMES:
-                if name not in views:
-                    raise RuntimeError(
-                        f"Failed to capture required position '{name}' for UID {record['uid']} "
-                        f"variant {record['variant_label']}."
-                    )
-                activation_lists[name].append(views[name])
-
-            out_record = {
-                "uid": record["uid"],
-                "variant_label": record["variant_label"],
-                "instruction_text": record["instruction_text"],
-                "item_label": record["item_label"],
-                "question": record["question"],
-                "correct_label": record["correct_label"],
-                "wrong_label": record["wrong_label"],
-                "positions": positions,
-                "prompt_token_count": prompt_token_count,
-                "prompt_text": record["prompt_text"],
-                "selection": record["selection"],
-                "metadata": record["metadata"],
-                "prompt_logits": logit_stats,
-            }
-            metadata_file.write(json.dumps(out_record) + "\n")
+                out_record = {
+                    "uid": record["uid"],
+                    "variant_label": record["variant_label"],
+                    "instruction_text": record["instruction_text"],
+                    "item_label": record["item_label"],
+                    "question": record["question"],
+                    "correct_label": record["correct_label"],
+                    "wrong_label": record["wrong_label"],
+                    "positions": record["positions"],
+                    "prompt_token_count": prompt_token_count,
+                    "prompt_text": record["prompt_text"],
+                    "selection": record["selection"],
+                    "metadata": record["metadata"],
+                    "prompt_logits": logit_stats,
+                }
+                metadata_file.write(json.dumps(out_record) + "\n")
 
     tensor_payload = {
         "model": args.model,

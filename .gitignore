@@ -43,6 +43,8 @@ data/
 *.sh
 !scripts/run_piqa_mechanism_transfer.sh
 !scripts/run_diagnostic_instruction_experiment.sh
+!scripts/run_known_direction_comparison.sh
+!scripts/run_qwen30b_full_mechanism.sh
 
 # Session / conversation logs (Claude Code, terminal recordings, etc.)
 [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.txt
@@ -82,6 +84,11 @@ new-phase-results/**/*.pt
 
 # Large per-item raw result files (keep summaries, skip raw JSONL)
 new-phase-results/**/*_results.jsonl
+new-phase-results/**/metadata.jsonl
+new-phase-results/**/selected_items.jsonl
+new-phase-results/**/selected_uids.txt
+new-phase-results/diagnostic-instructions/**/item_table.jsonl
+new-phase-results/diagnostic-instructions/**/*_summary.json
 
 # Large experiment result subdirs (raw inference output, >50MB)
 new-phase-results/llama-3.1-8b-results/exp12_instruct/

@@ -7,9 +7,9 @@ older intervention stack.
 Default experiment:
 1. Load the aligned Qwen factual-QA Note extraction.
 2. Build the within-i1a steering vector:
-      mean(correcting_i1a) - mean(entrenching_i1a)
+      mean(correcting_i1a) - mean(resisting_i1a)
    at a chosen position/layer in the *saved hidden-state indexing*.
-3. Re-run the entrenching i1a prompts only, patching the corresponding
+3. Re-run the resisting i1a prompts only, patching the corresponding
    transformer block output at the chosen prompt position.
 4. Sweep alpha and compare:
    - real vector
@@ -88,9 +88,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--target-subset",
         type=str,
-        default="entrenching",
-        choices=("entrenching", "correcting"),
-        help="Which i1a-labeled subset to evaluate.",
+        default="resisting",
+        choices=("entrenching", "resisting", "correcting", "expanded_resisting"),
+        help="Which i1a-labeled subset to evaluate (entrenching and resisting are equivalent negative classes).",
     )
     parser.add_argument(
         "--prompt-condition",
@@ -124,7 +124,7 @@ def parse_args() -> argparse.Namespace:
         "--max-items",
         type=int,
         default=0,
-        help="Optional cap on entrenching items for smoke tests (0 = all).",
+        help="Optional cap on target-subset items for smoke tests (0 = all).",
     )
     parser.add_argument(
         "--seed",
@@ -137,6 +137,18 @@ def parse_args() -> argparse.Namespace:
         type=str,
         default="auto",
         help="Model dtype passed to the loader.",
+    )
+    parser.add_argument(
+        "--device",
+        type=str,
+        default="auto",
+        help="Device passed to the model loader.",
+    )
+    parser.add_argument(
+        "--loader-dtype",
+        type=str,
+        default=None,
+        help="Optional alias for --dtype to match other mechanism scripts.",
     )
     return parser.parse_args()
 
@@ -194,12 +206,20 @@ def _endorsement_line(example: MCExample, condition: Exp10Condition) -> Optional
     return None
 
 
+def _row_matches_subset(row: Dict, target_subset: str) -> bool:
+    if target_subset in NEGATIVE_LABELS:
+        return row["item_label"] in NEGATIVE_LABELS
+    if target_subset == "expanded_resisting":
+        return bool(row.get("selection", {}).get("expanded_resisting", False))
+    return row["item_label"] == target_subset
+
+
 def _select_target_rows(metadata: Sequence[Dict], target_subset: str) -> List[int]:
     rows: List[int] = []
     for idx, row in enumerate(metadata):
         if row["variant_label"] != I1A_LABEL:
             continue
-        if row["item_label"] == target_subset:
+        if _row_matches_subset(row, target_subset):
             rows.append(idx)
     return rows
 
@@ -245,34 +265,37 @@ def _build_eval_prompt_record(
     }
 
 
+NEGATIVE_LABELS = frozenset({"entrenching", "resisting"})
+
+
 def _split_i1a_rows(metadata: Sequence[Dict]) -> Tuple[List[int], List[int], List[int]]:
     i1a_all: List[int] = []
     i1a_correcting: List[int] = []
-    i1a_entrenching: List[int] = []
+    i1a_negative: List[int] = []
     for idx, row in enumerate(metadata):
         if row["variant_label"] != I1A_LABEL:
             continue
         i1a_all.append(idx)
         if row["item_label"] == "correcting":
             i1a_correcting.append(idx)
-        elif row["item_label"] == "entrenching":
-            i1a_entrenching.append(idx)
+        elif _row_matches_subset(row, "expanded_resisting"):
+            i1a_negative.append(idx)
         else:
             raise ValueError(f"Unexpected item_label: {row['item_label']}")
-    return i1a_all, i1a_correcting, i1a_entrenching
+    return i1a_all, i1a_correcting, i1a_negative
 
 
 def _build_within_i1a_vector(
     activations: Dict[str, torch.Tensor],
     correcting_rows: Sequence[int],
-    entrenching_rows: Sequence[int],
+    negative_rows: Sequence[int],
     position: str,
     layer_index: int,
 ) -> torch.Tensor:
     pos_acts = activations[position]
     correcting_mean = pos_acts[torch.tensor(correcting_rows), layer_index, :].float().mean(dim=0)
-    entrenching_mean = pos_acts[torch.tensor(entrenching_rows), layer_index, :].float().mean(dim=0)
-    return correcting_mean - entrenching_mean
+    negative_mean = pos_acts[torch.tensor(negative_rows), layer_index, :].float().mean(dim=0)
+    return correcting_mean - negative_mean
 
 
 def _matched_random_vector(vector: torch.Tensor, seed: int) -> torch.Tensor:
@@ -333,17 +356,15 @@ def _prepare_prompt_inputs(tokenizer, prompt_text: str, device: torch.device) ->
 
 def _run_prompt(
     model,
-    tokenizer,
-    prompt_text: str,
+    model_inputs: Dict[str, torch.Tensor],
     token_position: int,
     token_id_a: int,
     token_id_b: int,
     correct_label: str,
     patch_module,
     patch_vector: Optional[torch.Tensor],
+    device: torch.device = None,
 ) -> Dict[str, object]:
-    device = _resolve_primary_device(model)
-    model_inputs = _prepare_prompt_inputs(tokenizer, prompt_text, device)
     if token_position >= int(model_inputs["input_ids"].shape[1]):
         raise IndexError(
             f"Patch position {token_position} out of range for prompt length "
@@ -354,7 +375,9 @@ def _run_prompt(
         if patch_vector is None:
             outputs = model(**model_inputs, use_cache=False)
         else:
-            with PositionPatcher(patch_module, token_position, patch_vector.to(device=device)):
+            if device is not None:
+                patch_vector = patch_vector.to(device=device)
+            with PositionPatcher(patch_module, token_position, patch_vector):
                 outputs = model(**model_inputs, use_cache=False)
 
     next_token_logits = outputs.logits[0, -1, :]
@@ -403,12 +426,13 @@ def main() -> None:
     args = parse_args()
     if args.layer_index <= 0:
         raise ValueError("layer-index must be >= 1 because 0 is the embedding state.")
+    resolved_loader_dtype = args.loader_dtype if args.loader_dtype is not None else args.dtype
 
     metadata = _load_metadata(args.extraction_dir / "metadata.jsonl")
     prompt_condition = _parse_prompt_condition(args.prompt_condition, args.instruction_text)
-    i1a_all, i1a_correcting, i1a_entrenching = _split_i1a_rows(metadata)
-    if not i1a_entrenching:
-        raise SystemExit("No entrenching i1a rows found.")
+    i1a_all, i1a_correcting, i1a_negative = _split_i1a_rows(metadata)
+    if not i1a_negative:
+        raise SystemExit("No resisting/negative i1a rows found.")
 
     vector_payload_path: Optional[Path] = None
     if args.steering_vector_path is not None:
@@ -421,7 +445,7 @@ def main() -> None:
         vector = _build_within_i1a_vector(
             activations=activations,
             correcting_rows=i1a_correcting,
-            entrenching_rows=i1a_entrenching,
+            negative_rows=i1a_negative,
             position=args.position,
             layer_index=args.layer_index,
         )
@@ -434,10 +458,11 @@ def main() -> None:
 
     model, tokenizer = load_model_and_tokenizer(
         model_name=args.model,
-        device="auto",
-        dtype=args.dtype,
+        device=args.device,
+        dtype=resolved_loader_dtype,
     )
     model.eval()
+    device = _resolve_primary_device(model)
     token_id_a, token_id_b = get_ab_token_ids(tokenizer)
     examples_by_uid = {ex.uid: ex for ex in load_mc_dataset(args.mc_dataset_path)}
 
@@ -456,27 +481,43 @@ def main() -> None:
     if args.wrong_site_position != "none":
         controls = controls + (("wrong_site", args.wrong_site_position, vector),)
 
-    with records_path.open("w") as out_file:
-        for row_idx in tqdm(target_rows, desc=f"Patching {args.target_subset} i1a items"):
-            row = metadata[row_idx]
-            example = examples_by_uid[row["uid"]]
-            eval_record = _build_eval_prompt_record(
-                tokenizer=tokenizer,
-                row=row,
-                example=example,
-                condition=prompt_condition,
+    scaled_vectors: Dict[Tuple[str, float], Optional[torch.Tensor]] = {}
+    for control_name, _position_name, base_vector in controls:
+        for alpha in alphas:
+            scaled_vectors[(control_name, float(alpha))] = (
+                None if alpha == 0 else (alpha * base_vector).to(device=device)
             )
-            prompt_text = str(eval_record["prompt_text"])
+
+    prepared_eval_records: List[Dict[str, object]] = []
+    for row_idx in target_rows:
+        row = metadata[row_idx]
+        example = examples_by_uid[row["uid"]]
+        eval_record = _build_eval_prompt_record(
+            tokenizer=tokenizer,
+            row=row,
+            example=example,
+            condition=prompt_condition,
+        )
+        model_inputs = _prepare_prompt_inputs(tokenizer, str(eval_record["prompt_text"]), device)
+        prepared_eval_records.append(
+            {
+                **eval_record,
+                "model_inputs": model_inputs,
+            }
+        )
+
+    with records_path.open("w") as out_file:
+        for eval_record in tqdm(prepared_eval_records, desc=f"Patching {args.target_subset} i1a items"):
             baseline = _run_prompt(
                 model=model,
-                tokenizer=tokenizer,
-                prompt_text=prompt_text,
+                model_inputs=eval_record["model_inputs"],
                 token_position=int(eval_record["positions"][args.position]),
                 token_id_a=token_id_a,
                 token_id_b=token_id_b,
                 correct_label=str(eval_record["correct_label"]),
                 patch_module=patch_module,
                 patch_vector=None,
+                device=device,
             )
 
             for control_name, position_name, base_vector in controls:
@@ -484,17 +525,16 @@ def main() -> None:
                 if patch_pos is None:
                     continue
                 for alpha in alphas:
-                    patch_vec = None if alpha == 0 else (alpha * base_vector)
                     patched = _run_prompt(
                         model=model,
-                        tokenizer=tokenizer,
-                        prompt_text=prompt_text,
+                        model_inputs=eval_record["model_inputs"],
                         token_position=int(patch_pos),
                         token_id_a=token_id_a,
                         token_id_b=token_id_b,
                         correct_label=str(eval_record["correct_label"]),
                         patch_module=patch_module,
-                        patch_vector=patch_vec,
+                        patch_vector=scaled_vectors[(control_name, float(alpha))],
+                        device=device,
                     )
                     out_row = {
                         "uid": eval_record["uid"],
@@ -539,7 +579,7 @@ def main() -> None:
         "block_index": block_index,
         "n_i1a_rows": len(i1a_all),
         "n_correcting_rows": len(i1a_correcting),
-        "n_entrenching_rows_total": len(i1a_entrenching),
+        "n_negative_rows_total": len(i1a_negative),
         "target_subset": args.target_subset,
         "prompt_condition": args.prompt_condition,
         "instruction_text": args.instruction_text if prompt_condition.instruction else None,

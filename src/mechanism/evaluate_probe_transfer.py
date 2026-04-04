@@ -31,6 +31,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--eval-variants", nargs="+", default=["i1a", "i1c"])
     parser.add_argument("--cv-folds", type=int, default=5)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument(
+        "--label-mode",
+        type=str,
+        default="primary",
+        choices=("primary", "expanded"),
+        help=(
+            "primary: use item_label directly; "
+            "expanded: treat selection.expanded_resisting=true as the negative class."
+        ),
+    )
     parser.add_argument("--output-path", type=Path, default=None)
     return parser.parse_args()
 
@@ -51,18 +61,27 @@ def _load_extraction(extraction_dir: Path, position: str) -> Tuple[List[Dict], t
     return metadata, payload["activations"][position]
 
 
+def _is_positive_label(row: Dict, label_mode: str) -> bool:
+    if label_mode == "primary":
+        return row["item_label"] == "correcting"
+    if label_mode == "expanded":
+        return not bool(row.get("selection", {}).get("expanded_resisting", False))
+    raise ValueError(f"Unknown label_mode: {label_mode}")
+
+
 def _slice_rows(
     metadata: Sequence[Dict],
     activations: torch.Tensor,
     variants: Sequence[str],
     layer_index: int,
+    label_mode: str,
 ) -> Tuple[np.ndarray, np.ndarray]:
     rows = [i for i, row in enumerate(metadata) if row["variant_label"] in variants]
     if not rows:
         raise ValueError(f"No rows found for variants={variants}")
     x = activations[torch.tensor(rows), layer_index, :].float().numpy()
     y = np.array(
-        [1 if metadata[i]["item_label"] == "correcting" else 0 for i in rows],
+        [1 if _is_positive_label(metadata[i], label_mode) else 0 for i in rows],
         dtype=np.int64,
     )
     return x, y
@@ -90,6 +109,7 @@ def _metrics_from_prob(y_true: np.ndarray, prob: np.ndarray) -> Dict[str, float]
         "accuracy": float(accuracy_score(y_true, pred)),
         "n": int(y_true.shape[0]),
         "n_correcting": int(np.sum(y_true == 1)),
+        "n_negative": int(np.sum(y_true == 0)),
         "n_entrenching": int(np.sum(y_true == 0)),
     }
     if len(np.unique(y_true)) == 2:
@@ -115,7 +135,7 @@ def main() -> None:
     eval_meta, eval_acts = _load_extraction(args.eval_extraction_dir, args.position)
 
     x_train, y_train = _slice_rows(
-        train_meta, train_acts, args.train_variants, args.layer_index
+        train_meta, train_acts, args.train_variants, args.layer_index, args.label_mode
     )
     probe = _build_probe(args.seed)
     probe.fit(x_train, y_train)
@@ -125,6 +145,7 @@ def main() -> None:
         "eval_extraction_dir": str(args.eval_extraction_dir),
         "position": args.position,
         "layer_index": args.layer_index,
+        "label_mode": args.label_mode,
         "train_variants": list(args.train_variants),
         "eval_variants": {},
     }
@@ -135,7 +156,9 @@ def main() -> None:
         )
 
     for variant in args.eval_variants:
-        x_eval, y_eval = _slice_rows(eval_meta, eval_acts, [variant], args.layer_index)
+        x_eval, y_eval = _slice_rows(
+            eval_meta, eval_acts, [variant], args.layer_index, args.label_mode
+        )
         prob = probe.predict_proba(x_eval)[:, 1]
         result = _metrics_from_prob(y_eval, prob)
         result["eval_type"] = "transfer"

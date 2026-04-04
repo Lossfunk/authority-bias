@@ -31,10 +31,32 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-path", type=Path, default=DEFAULT_OUTPUT_PATH)
     parser.add_argument("--min-abs-mn0", type=float, default=None)
     parser.add_argument("--max-abs-mn0", type=float, default=None)
-    parser.add_argument("--entrenching-min-mc1", type=float, default=None)
-    parser.add_argument("--entrenching-max-mc1", type=float, default=None)
+    parser.add_argument(
+        "--negative-min-mc1",
+        "--entrenching-min-mc1",
+        dest="negative_min_mc1",
+        type=float,
+        default=None,
+    )
+    parser.add_argument(
+        "--negative-max-mc1",
+        "--entrenching-max-mc1",
+        dest="negative_max_mc1",
+        type=float,
+        default=None,
+    )
     parser.add_argument("--correcting-min-mc1", type=float, default=None)
     parser.add_argument("--correcting-max-mc1", type=float, default=None)
+    parser.add_argument(
+        "--label-mode",
+        type=str,
+        default="primary",
+        choices=("primary", "expanded"),
+        help=(
+            "primary: use item_label directly; "
+            "expanded: treat selection.expanded_resisting=true as the negative class."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -46,6 +68,24 @@ def _load_metadata(path: Path) -> List[Dict]:
             if line:
                 rows.append(json.loads(line))
     return rows
+
+
+def _is_negative_label(row: Dict, label_mode: str) -> bool:
+    if label_mode == "primary":
+        return row["item_label"] in ("entrenching", "resisting")
+    if label_mode == "expanded":
+        return bool(row.get("selection", {}).get("expanded_resisting", False))
+    raise ValueError(f"Unknown label_mode: {label_mode}")
+
+
+def _is_positive_label(row: Dict, label_mode: str) -> bool:
+    if label_mode == "primary":
+        return row["item_label"] == "correcting"
+    if label_mode == "expanded":
+        return (row["item_label"] == "correcting") and (
+            not bool(row.get("selection", {}).get("expanded_resisting", False))
+        )
+    raise ValueError(f"Unknown label_mode: {label_mode}")
 
 
 def _passes_shared_filters(row: Dict, args: argparse.Namespace) -> bool:
@@ -61,13 +101,12 @@ def _passes_shared_filters(row: Dict, args: argparse.Namespace) -> bool:
 def _passes_label_filters(row: Dict, args: argparse.Namespace) -> bool:
     sel = row["selection"]
     m_c1 = float(sel["m_c1"])
-    label = row["item_label"]
-    if label == "entrenching":
-        if args.entrenching_min_mc1 is not None and m_c1 < args.entrenching_min_mc1:
+    if _is_negative_label(row, args.label_mode):
+        if args.negative_min_mc1 is not None and m_c1 < args.negative_min_mc1:
             return False
-        if args.entrenching_max_mc1 is not None and m_c1 > args.entrenching_max_mc1:
+        if args.negative_max_mc1 is not None and m_c1 > args.negative_max_mc1:
             return False
-    elif label == "correcting":
+    elif _is_positive_label(row, args.label_mode):
         if args.correcting_min_mc1 is not None and m_c1 < args.correcting_min_mc1:
             return False
         if args.correcting_max_mc1 is not None and m_c1 > args.correcting_max_mc1:
@@ -77,7 +116,7 @@ def _passes_label_filters(row: Dict, args: argparse.Namespace) -> bool:
 
 def _select_rows(metadata: Sequence[Dict], args: argparse.Namespace) -> tuple[list[int], list[int]]:
     correcting_rows: List[int] = []
-    entrenching_rows: List[int] = []
+    negative_rows: List[int] = []
     for idx, row in enumerate(metadata):
         if row["variant_label"] != "i1a":
             continue
@@ -85,11 +124,11 @@ def _select_rows(metadata: Sequence[Dict], args: argparse.Namespace) -> tuple[li
             continue
         if not _passes_label_filters(row, args):
             continue
-        if row["item_label"] == "correcting":
+        if _is_positive_label(row, args.label_mode):
             correcting_rows.append(idx)
-        elif row["item_label"] == "entrenching":
-            entrenching_rows.append(idx)
-    return correcting_rows, entrenching_rows
+        elif _is_negative_label(row, args.label_mode):
+            negative_rows.append(idx)
+    return correcting_rows, negative_rows
 
 
 def main() -> None:
@@ -98,30 +137,31 @@ def main() -> None:
     payload = torch.load(args.extraction_dir / "activations.pt", map_location="cpu")
     acts = payload["activations"][args.position]
 
-    correcting_rows, entrenching_rows = _select_rows(metadata, args)
-    if not correcting_rows or not entrenching_rows:
+    correcting_rows, negative_rows = _select_rows(metadata, args)
+    if not correcting_rows or not negative_rows:
         raise SystemExit(
             f"Need both classes after filtering; got correcting={len(correcting_rows)}, "
-            f"entrenching={len(entrenching_rows)}"
+            f"negative={len(negative_rows)}"
         )
 
     correcting_mean = acts[torch.tensor(correcting_rows), args.layer_index, :].float().mean(dim=0)
-    entrenching_mean = acts[torch.tensor(entrenching_rows), args.layer_index, :].float().mean(dim=0)
-    vector = correcting_mean - entrenching_mean
+    negative_mean = acts[torch.tensor(negative_rows), args.layer_index, :].float().mean(dim=0)
+    vector = correcting_mean - negative_mean
 
     out = {
         "vector": vector.cpu(),
         "position": args.position,
         "layer_index": args.layer_index,
+        "label_mode": args.label_mode,
         "n_correcting": len(correcting_rows),
-        "n_entrenching": len(entrenching_rows),
+        "n_negative": len(negative_rows),
         "correcting_rows": correcting_rows,
-        "entrenching_rows": entrenching_rows,
+        "negative_rows": negative_rows,
         "filters": {
             "min_abs_mn0": args.min_abs_mn0,
             "max_abs_mn0": args.max_abs_mn0,
-            "entrenching_min_mc1": args.entrenching_min_mc1,
-            "entrenching_max_mc1": args.entrenching_max_mc1,
+            "negative_min_mc1": args.negative_min_mc1,
+            "negative_max_mc1": args.negative_max_mc1,
             "correcting_min_mc1": args.correcting_min_mc1,
             "correcting_max_mc1": args.correcting_max_mc1,
         },
@@ -130,7 +170,7 @@ def main() -> None:
     }
     args.output_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save(out, args.output_path)
-    print(json.dumps({k: v for k, v in out.items() if k not in {"vector", "correcting_rows", "entrenching_rows"}}, indent=2))
+    print(json.dumps({k: v for k, v in out.items() if k not in {"vector", "correcting_rows", "negative_rows"}}, indent=2))
 
 
 if __name__ == "__main__":

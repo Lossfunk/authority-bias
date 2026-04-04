@@ -34,7 +34,11 @@ import torch
 from tqdm import tqdm
 
 from src.exp7.dataset_mc import MCExample, load_mc_dataset, create_mc_examples, save_mc_dataset
-from src.exp7.scoring import get_ab_token_ids, score_prompt_forced_choice, ForcedChoiceResult
+from src.exp7.scoring import (
+    ForcedChoiceResult,
+    get_ab_token_ids,
+    score_prompts_forced_choice_batch,
+)
 from src.exp10.conditions import (
     DEFAULT_TAGS,
     EXTENDED_TAGS,
@@ -154,6 +158,24 @@ def parse_args() -> argparse.Namespace:
         default=42,
         help="Random seed.",
     )
+    parser.add_argument(
+        "--device",
+        type=str,
+        default="auto",
+        help="Device passed to model loader (auto, cuda, cpu).",
+    )
+    parser.add_argument(
+        "--loader-dtype",
+        type=str,
+        default="auto",
+        help="Model dtype passed to model loader (auto, bfloat16, float16, float32).",
+    )
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=8,
+        help="Mini-batch size for scoring condition prompts per example.",
+    )
     return parser.parse_args()
 
 
@@ -205,6 +227,9 @@ def run_for_model(
     seed: int,
     tags: List[str],
     instruction_text: str,
+    device: str,
+    loader_dtype: str,
+    batch_size: int,
 ) -> Dict:
     """Run correct-endorsement experiment for a single model."""
     print(f"\n{'='*60}")
@@ -213,7 +238,7 @@ def run_for_model(
     print(f"{'='*60}")
 
     model, tokenizer = load_model_and_tokenizer(
-        model_name=model_id, device="auto", dtype="auto"
+        model_name=model_id, device=device, dtype=loader_dtype
     )
     model.eval()
     device = next(model.parameters()).device
@@ -254,16 +279,24 @@ def run_for_model(
     with out_path.open("w") as f:
         for ex in tqdm(examples, desc=f"Exp10 {model_id}"):
             # Generate all condition prompts and score them
-            condition_results: Dict[str, ForcedChoiceResult] = {}
             prompts_dict: Dict[str, str] = {}
-
             for cond in conditions:
                 prompt_text = format_prompt(ex, cond)
                 prompts_dict[cond.code] = prompt_text
-                result = score_prompt_forced_choice(
-                    model, tokenizer, prompt_text, device, token_id_a, token_id_b
-                )
-                condition_results[cond.code] = result
+            ordered_codes = [cond.code for cond in conditions]
+            ordered_prompts = [prompts_dict[code] for code in ordered_codes]
+            batch_results = score_prompts_forced_choice_batch(
+                model=model,
+                tokenizer=tokenizer,
+                prompt_texts=ordered_prompts,
+                device=device,
+                token_id_a=token_id_a,
+                token_id_b=token_id_b,
+                batch_size=batch_size,
+            )
+            condition_results: Dict[str, ForcedChoiceResult] = {
+                code: result for code, result in zip(ordered_codes, batch_results)
+            }
 
             # Extract fc_correct for each condition
             fc_correct: Dict[str, float] = {}
@@ -437,6 +470,9 @@ def main() -> None:
             seed=args.seed,
             tags=tags,
             instruction_text=args.instruction_text,
+            device=args.device,
+            loader_dtype=args.loader_dtype,
+            batch_size=args.batch_size,
         )
         summaries.append(summary)
 
