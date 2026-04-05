@@ -1,0 +1,39 @@
+{
+  "eval_extraction_dir": "new-phase-results/mechanism/gpt_oss_20b_correction_gating_i1a_i1c_note",
+  "eval_variants": {
+    "i1a": {
+      "accuracy": 1.0,
+      "auroc": 1.0,
+      "eval_type": "transfer",
+      "n": 810,
+      "n_correcting": 371,
+      "n_entrenching": 439,
+      "n_negative": 439
+    },
+    "i1c": {
+      "accuracy": 0.47160493827160493,
+      "auroc": 0.9262290552529947,
+      "eval_type": "transfer",
+      "n": 810,
+      "n_correcting": 371,
+      "n_entrenching": 439,
+      "n_negative": 439
+    }
+  },
+  "label_mode": "primary",
+  "layer_index": 8,
+  "position": "endorsement_last",
+  "train_cv": {
+    "accuracy": 0.6358024691358025,
+    "auroc": 0.6773971719602871,
+    "eval_type": "cross_validated",
+    "n": 810,
+    "n_correcting": 371,
+    "n_entrenching": 439,
+    "n_negative": 439
+  },
+  "train_extraction_dir": "new-phase-results/mechanism/gpt_oss_20b_correction_gating_i1a_i1c_note",
+  "train_variants": [
+    "i1a"
+  ]
+}

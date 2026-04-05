@@ -230,8 +230,9 @@ def main() -> None:
     model.eval()
 
     save_dtype = _resolve_save_dtype(args.dtype)
-    hidden_size = int(model.config.hidden_size)
-    n_layers = int(model.config.num_hidden_layers) + 1  # hidden_states includes embeddings
+    cfg = model.config.text_config if hasattr(model.config, "text_config") else model.config
+    hidden_size = int(cfg.hidden_size)
+    n_layers = int(cfg.num_hidden_layers) + 1  # hidden_states includes embeddings
     n_total = len(records) * len(args.condition_codes)
 
     activations = {

@@ -1,0 +1,141 @@
+{
+  "n0_extraction_dir": "new-phase-results/mechanism/gpt_oss_n0_note_activations",
+  "mechanism_extraction_dir": "new-phase-results/mechanism/gpt_oss_20b_correction_gating_i1a_i1c_note",
+  "position": "endorsement_last",
+  "n_items": 810,
+  "n_correcting": 371,
+  "n_resisting": 439,
+  "majority_baseline": 0.5419753086419753,
+  "best_layer": 21,
+  "best_auroc": 0.6997709815864284,
+  "best_accuracy": 0.6641975308641975,
+  "all_layers": [
+    {
+      "layer": 0,
+      "accuracy": 0.5246913580246914,
+      "auroc": 0.5
+    },
+    {
+      "layer": 1,
+      "accuracy": 0.6246913580246913,
+      "auroc": 0.6601409721923754
+    },
+    {
+      "layer": 2,
+      "accuracy": 0.6123456790123457,
+      "auroc": 0.6488773185811909
+    },
+    {
+      "layer": 3,
+      "accuracy": 0.6148148148148148,
+      "auroc": 0.6425900570397068
+    },
+    {
+      "layer": 4,
+      "accuracy": 0.6345679012345679,
+      "auroc": 0.6749412104206448
+    },
+    {
+      "layer": 5,
+      "accuracy": 0.6246913580246913,
+      "auroc": 0.6826959089820653
+    },
+    {
+      "layer": 6,
+      "accuracy": 0.6308641975308642,
+      "auroc": 0.6706678373416672
+    },
+    {
+      "layer": 7,
+      "accuracy": 0.6308641975308642,
+      "auroc": 0.6725896272464373
+    },
+    {
+      "layer": 8,
+      "accuracy": 0.6135802469135803,
+      "auroc": 0.6634780099343645
+    },
+    {
+      "layer": 9,
+      "accuracy": 0.6049382716049383,
+      "auroc": 0.6480115921384672
+    },
+    {
+      "layer": 10,
+      "accuracy": 0.6209876543209877,
+      "auroc": 0.6685188709944802
+    },
+    {
+      "layer": 11,
+      "accuracy": 0.6506172839506172,
+      "auroc": 0.6765222356617896
+    },
+    {
+      "layer": 12,
+      "accuracy": 0.6222222222222222,
+      "auroc": 0.6657129349354389
+    },
+    {
+      "layer": 13,
+      "accuracy": 0.6234567901234568,
+      "auroc": 0.6656208363777023
+    },
+    {
+      "layer": 14,
+      "accuracy": 0.6246913580246913,
+      "auroc": 0.6711406099380484
+    },
+    {
+      "layer": 15,
+      "accuracy": 0.6567901234567901,
+      "auroc": 0.6850996813389902
+    },
+    {
+      "layer": 16,
+      "accuracy": 0.6370370370370371,
+      "auroc": 0.6729641613812327
+    },
+    {
+      "layer": 17,
+      "accuracy": 0.6259259259259259,
+      "auroc": 0.6747447334974734
+    },
+    {
+      "layer": 18,
+      "accuracy": 0.6333333333333333,
+      "auroc": 0.6786896217205238
+    },
+    {
+      "layer": 19,
+      "accuracy": 0.6345679012345679,
+      "auroc": 0.6805653623464256
+    },
+    {
+      "layer": 20,
+      "accuracy": 0.6382716049382716,
+      "auroc": 0.6890752690812862
+    },
+    {
+      "layer": 21,
+      "accuracy": 0.6641975308641975,
+      "auroc": 0.6997709815864284
+    },
+    {
+      "layer": 22,
+      "accuracy": 0.6493827160493827,
+      "auroc": 0.6952704320650338
+    },
+    {
+      "layer": 23,
+      "accuracy": 0.6333333333333333,
+      "auroc": 0.6765375854214123
+    },
+    {
+      "layer": 24,
+      "accuracy": 0.6259259259259259,
+      "auroc": 0.6721444842173772
+    }
+  ],
+  "confidence_alone_auroc": 0.719547611884398,
+  "confidence_projected_out_auroc": 0.6693047786871659
+}

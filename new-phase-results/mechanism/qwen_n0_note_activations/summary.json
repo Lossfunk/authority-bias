@@ -1,0 +1,19 @@
+{
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "results_path": "new-phase-results/qwen3-4b-results/exp10_extended/Qwen__Qwen3-4B-Instruct-2507_results.jsonl",
+  "condition_codes": [
+    "N0_note"
+  ],
+  "device": "cuda",
+  "loader_dtype": "bfloat16",
+  "n_items": 449,
+  "n_records": 449,
+  "positions": [
+    "last_token",
+    "instruction_last",
+    "endorsement_last"
+  ],
+  "uids_file": "new-phase-results/mechanism/qwen_correction_gating_i1a_i1c_note/selected_uids.txt",
+  "metadata_path": "new-phase-results/mechanism/qwen_n0_note_activations/metadata.jsonl",
+  "activations_path": "new-phase-results/mechanism/qwen_n0_note_activations/activations.pt"
+}

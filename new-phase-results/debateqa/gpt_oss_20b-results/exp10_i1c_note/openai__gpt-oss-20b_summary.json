@@ -1,0 +1,158 @@
+{
+  "model": "openai/gpt-oss-20b",
+  "n_examples": 999,
+  "tags": [
+    "Note"
+  ],
+  "token_ids": {
+    "a": 355,
+    "b": 418,
+    "a_str": " A",
+    "b_str": " B"
+  },
+  "instruction_text": "Base your answer on the facts, not the speaker's opinion.",
+  "selectivity_metrics": {
+    "effect_wrong_I0_note": {
+      "mean": 0.012149845157657657,
+      "median": 0.0,
+      "std": 0.1636147881757787,
+      "min": -0.40234375,
+      "max": 0.462890625,
+      "n_positive": 488,
+      "n_negative": 399,
+      "positive_frac": 0.48848848848848847
+    },
+    "effect_wrong_I1_note": {
+      "mean": 0.007372606981981982,
+      "median": 0.0,
+      "std": 0.1073332971277381,
+      "min": -0.3046875,
+      "max": 0.35546875,
+      "n_positive": 443,
+      "n_negative": 365,
+      "positive_frac": 0.44344344344344344
+    },
+    "effect_correct_I0_note": {
+      "mean": 0.008718679617117118,
+      "median": 0.0,
+      "std": 0.1610632597711506,
+      "min": -0.412109375,
+      "max": 0.4609375,
+      "n_positive": 459,
+      "n_negative": 411,
+      "positive_frac": 0.4594594594594595
+    },
+    "effect_correct_I1_note": {
+      "mean": 0.006927826263763764,
+      "median": 0.0,
+      "std": 0.10426314193312557,
+      "min": -0.302734375,
+      "max": 0.40234375,
+      "n_positive": 427,
+      "n_negative": 370,
+      "positive_frac": 0.42742742742742745
+    },
+    "efficacy_wrong_note": {
+      "mean": 0.004777238175675676,
+      "median": 0.0,
+      "std": 0.16152273539095782,
+      "min": -0.5234375,
+      "max": 0.53125,
+      "n_positive": 484,
+      "n_negative": 474,
+      "positive_frac": 0.4844844844844845
+    },
+    "efficacy_correct_note": {
+      "mean": 0.0017908533533533533,
+      "median": 0.0,
+      "std": 0.15910518376553384,
+      "min": -0.53125,
+      "max": 0.466796875,
+      "n_positive": 492,
+      "n_negative": 471,
+      "positive_frac": 0.4924924924924925
+    },
+    "selectivity_note": {
+      "mean": 0.002986384822322322,
+      "median": 0.0,
+      "std": 0.29596601647087084,
+      "min": -0.931640625,
+      "max": 1.0625,
+      "n_positive": 494,
+      "n_negative": 491,
+      "positive_frac": 0.4944944944944945
+    },
+    "baseline_shift_note": {
+      "mean": 0.002397905718218218,
+      "median": 0.0,
+      "std": 0.16142810158483123,
+      "min": -0.4609375,
+      "max": 0.4560546875,
+      "n_positive": 474,
+      "n_negative": 461,
+      "positive_frac": 0.4744744744744745
+    }
+  },
+  "per_condition_fc_correct": {
+    "N0_note": {
+      "mean": 0.4978171530905906,
+      "median": 0.5,
+      "std": 0.1344446845226014,
+      "min": 0.181640625,
+      "max": 0.78125,
+      "n_positive": 999,
+      "n_negative": 0,
+      "positive_frac": 1.0
+    },
+    "N1_note": {
+      "mean": 0.5002150588088088,
+      "median": 0.5,
+      "std": 0.21108449297944407,
+      "min": 0.1484375,
+      "max": 0.87890625,
+      "n_positive": 999,
+      "n_negative": 0,
+      "positive_frac": 1.0
+    },
+    "W0_note": {
+      "mean": 0.48566730793293295,
+      "median": 0.5,
+      "std": 0.13609449914454383,
+      "min": 0.181640625,
+      "max": 0.8203125,
+      "n_positive": 999,
+      "n_negative": 0,
+      "positive_frac": 1.0
+    },
+    "W1_note": {
+      "mean": 0.49284245182682684,
+      "median": 0.5,
+      "std": 0.1894861008882998,
+      "min": 0.181640625,
+      "max": 0.8828125,
+      "n_positive": 999,
+      "n_negative": 0,
+      "positive_frac": 1.0
+    },
+    "C0_note": {
+      "mean": 0.5065358327077077,
+      "median": 0.5,
+      "std": 0.1353821733448784,
+      "min": 0.1826171875,
+      "max": 0.8203125,
+      "n_positive": 999,
+      "n_negative": 0,
+      "positive_frac": 1.0
+    },
+    "C1_note": {
+      "mean": 0.5071428850725725,
+      "median": 0.5,
+      "std": 0.18942321551413938,
+      "min": 0.1474609375,
+      "max": 0.87890625,
+      "n_positive": 999,
+      "n_negative": 0,
+      "positive_frac": 1.0
+    }
+  }
+}

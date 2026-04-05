@@ -71,6 +71,19 @@
 - Epistemic modes (PIQA): explicitly mentioning conflict is itself a trigger regardless of resolution direction. "Evaluate the note on its merits" (-0.328) is as bad as "trust your own knowledge" (-0.329) when preceded by "if the note conflicts with what you know."
 - Safest instructions direct attention to evidence WITHOUT framing it as conflicting with model knowledge.
 
+**Large-model mechanism replication [NEW, April 5]:**
+- **Qwen3-30B primary labels (strict C1 resisting subset):** 302 prior-wrong items but only 16 strict resisting negatives. Despite low power, a real representational signal appears at the endorsement position: best layer 25, probe CV AUROC 0.785, vector AUROC 0.884 on i1a, and causal patching shifts margins in the corrective direction with 1/16 actual flips and clean controls. Best framing: **weakly powered, not null**.
+- **Qwen3-30B expanded labels (W1-susceptibility family):** using expanded resisting labels yields 236 negatives, deeper best layer (42), probe CV AUROC 0.764, and strong i1a->i1c representational transfer (i1c AUROC 0.937). But this does **not** produce the same causal story on strict C1 prompts. Best framing: a broader **evidence-susceptibility / endorsement-arbitration** representation related to, but not identical with, strict C1 resistance.
+- **GPT-oss-20B primary labels:** healthy class balance (371 correcting / 439 resisting on 810 prior-wrong items), best layer 8, within-i1a probe CV AUROC 0.677, and very strong i1a->i1c transfer AUROC 0.926. Mean-difference vector transfer is weaker but real. Patching is modest and directionally correct rather than dramatic. Best framing: **cross-family replication, but not the flagship clean mechanism result**.
+- **Updated synthesis across scales:** Qwen3-4B still gives the cleanest causal mechanism story. Larger models still show instruction-conditioned representational structure, but the simple "two discrete modes" story weakens with scale. The safer cross-model claim is an **instruction-conditioned evidence-susceptibility direction whose behavioral expression is scale-dependent**.
+
+**DebateQA no-ground-truth domain [NEW, April 5]:**
+- 999 debatable questions (DebateQA, EACL 2026), converted to A/B forced-choice
+- Qwen3-4B: dramatic instruction-gating on prior-disagreeing endorsements (i1a dampens by 45.7pp, i1c by only 6.5pp)
+- GPT-oss-20B: modest instruction-gating on Expert tag only (i1a dampens by 6.6pp, i1c by 1.3pp; Note tag shows no differentiation)
+- GPT-oss-20B mechanistic: probe transfer AUROC 0.883 (strong representational signal), but causal patching is null (indistinguishable from random controls)
+- Same pattern as factual QA GPT-oss: decodable but not steerable
+
 **Qualitative evidence:**
 - Reasoning traces (paper-examples.md, paper-examples-piqa.md) show qualitatively different processing under i1a vs i1c
 - Under i1a: model fabricates evidence ("reliable sources in my mind", invents BFI citations)
@@ -85,11 +98,13 @@
 
 - ~~**[MANDATORY] Empirical comparison against known directions**~~ **DONE (April 4, proxy-based)**: Correction-gating direction near-orthogonal to opinion-like (cos 0.093) and authority-like (cos -0.005, 0.060) proxies. Transfer unaffected by projection. Wang et al. code review confirmed they don't produce a direction vector (layer-wise logit-lens method). Caveat: proxies only, not exact reproductions.
 - ~~Cross-domain mechanistic generalization (PIQA activations -- requires GPU)~~ **DONE (April 4)** -- cross-domain transfer confirmed
+- ~~30B mechanistic extraction~~ **DONE (April 5)** -- weakly powered but real primary signal; broader expanded label family tracks evidence susceptibility rather than strict C1 resistance
+- ~~Diagnostic instruction experiment~~ **DONE (April 4)** -- explicit conflict framing itself is a trigger
 - i1b full run on Qwen (dose-response gap)
-- **Mechanistic direction extraction on 30B or base model** (we have 30B behavioral results and base model behavioral results, but the probe/patching mechanistic pipeline has only been run on Qwen3-4B-Instruct)
-- Ambiguous/no-ground-truth domain experiments
+- **Mechanistic extraction on base model** (still the cleanest open question about what post-training changes vs preserves)
+- ~~**Ground-truth-free confabulation evaluation**~~ **CLOSED (April 5)**: Two rounds on GPT-oss-20B both negative. Forced-choice resisting behavior does not survive into generation; 424/439 items self-correct even when answer is locked in. The evidence-gating direction operates within single-forward-pass forced-choice, not autoregressive generation.
+- ~~Ambiguous/no-ground-truth domain experiments~~ **DONE (April 5)**: DebateQA dataset (999 debatable questions), behavioral + mechanistic results on Qwen3-4B and GPT-oss-20B. See Section 6.9.
 - Agentic model tests
-- **Diagnostic instruction experiment** -- 5 prompts explicitly manipulating memory-first vs evidence-first resolution (see Section 6.7)
 - The actual paper
 
 ---
@@ -673,6 +688,119 @@ For each band:
 
 **Careful framing note**: The data will support "different instructions appear to recruit different functional epistemic modes." It will NOT (by itself) prove the model has "two distinct internal representations of accuracy." The traces show reasoning STYLE consistent with memory-first processing, not direct evidence of computational mechanism. Say: "memory-first accuracy mode" and "presented-evidence-first accuracy mode" rather than "parameter-accuracy" and "evidence-accuracy."
 
+**Status update (April 5):** This experiment is now complete and was useful, but it also exposed the limits of the clean two-mode framing. The stronger conclusion is that explicit conflict framing changes evidence susceptibility; the weaker conclusion is that the field should stop casually equating that with two discrete internal modes.
+
+### 6.8 Confabulation experiment: attempted and closed [NEW, April 5; CLOSED, April 5]
+
+**Original hypothesis:** The evidence-susceptibility direction would predict confabulation (fabricated citations, invented facts, false verification claims) in free-form generation on resisting items.
+
+**Why GPT-oss-20B was the testbed:**
+- Healthiest class balance (371 correcting / 439 resisting on 810 prior-wrong items)
+- Clear cross-instruction probe transfer (AUROC 0.926)
+
+**What we ran (two rounds):**
+
+*Round 1 -- Re-answer pilot (50 resisting + 50 correcting, i1a C1_note, free-form generation with "explain your reasoning, then give Final answer: A/B"):*
+- Resisting group: 27/42 parsed correct (64%), 15 wrong
+- Correcting group: 23/38 parsed correct (61%), 15 wrong
+- The two groups are **indistinguishable** in generation mode. The forced-choice behavioral distinction collapsed entirely. The generation prompt induces self-correction.
+
+*Round 2 -- Defend-this-answer (all 439 resisting items, prompt locks in the forced-choice wrong answer and asks model to explain why it chose that answer):*
+- 424/439 self-corrected (refused to defend wrong answer, instead stated the correct answer)
+- 0/439 defended the wrong answer with confabulated support
+- 15/439 unclear
+- GPT-oss also leaked internal Harmony markers (`assistantanalysis`, `assistantfinal`) throughout, confirming output-format contamination.
+
+**Conclusion:** GPT-oss-20B refuses to confabulate in generation mode. The forced-choice resisting behavior does not survive into any form of free-form output. The forced-choice mechanism and the generation pathway are fundamentally different computational regimes for this model.
+
+**Interpretation for the paper:** The evidence-gating direction operates specifically within the single-forward-pass forced-choice regime. When given a generation opportunity (even one designed to prevent re-answering), GPT-oss overrides the forced-choice disposition and self-corrects. This is itself an interesting finding: the "resisting" state is shallow enough that chain-of-thought processing dissolves it.
+
+**Status: CLOSED.** Do not revisit confabulation on GPT-oss. If confabulation is worth pursuing later, test on Qwen3-4B (where the mechanism is sharpest and the model is less aggressively self-correcting) or treat the negative result as a boundary condition to report.
+
+**Result: negative.** See experimental details above. The confabulation line is closed.
+
+### 6.9 DebateQA: No-ground-truth domain experiment [NEW, April 5]
+
+**Dataset:** DebateQA (EACL 2026) -- 999 debatable questions (e.g. "Is gravity a force?", "Should the U.S. intervene in overseas conflicts?") with 3-12 annotated perspectives each. Converted to A/B forced-choice using most-opposing perspectives. Sources: DELPHI (505), DebatableWeb (365), ConflictingQA (130). All items marked `no_ground_truth=True`. Labels (correct/wrong) are arbitrary assignments for pipeline compatibility.
+
+**Key methodological note:** Since there is no ground truth, "prior-wrong" does not apply. Instead we condition on **prior-state**: items where the model has a strong lean in N0 (no endorsement) and the endorsement disagrees with that lean. This is the DebateQA analog of the factual QA prior-wrong analysis.
+
+#### 6.9.1 Behavioral results
+
+**Qwen3-4B-Instruct (Note tag):**
+- Strong instruction-gating effect on items with strong priors (982/999 items have |N0 - 0.5| > 0.05)
+- Mean prior strength: 0.444 (very opinionated model)
+- Disagreeing endorsement shift without instruction: 0.822 (massive -- model is very endorsement-susceptible)
+- i1a dampens disagreeing endorsement by **45.7pp** (0.822 → 0.365)
+- i1c dampens only **6.5pp** (0.822 → 0.757)
+- Effect is clean and dramatic -- instruction determines whether the model integrates or resists opposing endorsements even on questions with no correct answer
+
+**GPT-oss-20B (Note tag):**
+- Overall averages showed near-zero effect (~1% endorsement influence regardless of instruction) -- this was the initial "failure" finding
+- Prior-state analysis revealed the overall average was hiding the effect: model does respond to endorsements (~12% shift on prior-disagreeing items), but both i1a and i1c dampen equally (~8-9pp). No instruction differentiation on Note tag.
+
+**GPT-oss-20B (Expert tag):**
+- Prior-state analysis reveals instruction-dependent gating:
+  - i1a dampens disagreeing endorsements by **6.6pp** (0.064 → -0.002)
+  - i1c dampens only **1.3pp** (0.059 → 0.047)
+  - At high prior-strength threshold (0.65+): i1c dampening goes to **0.0pp** -- endorsement passes through entirely
+- Effect is directionally consistent with Qwen3-4B but much weaker in magnitude
+- Expert tag required to elicit the instruction-dependent differentiation; Note tag showed no differentiation
+
+**Interpretation:** The instruction-gating phenomenon extends to no-ground-truth debatable questions. The effect is model-dependent in magnitude: Qwen3-4B shows dramatic gating (46pp difference), GPT-oss-20B shows modest gating (6.6pp difference, Expert tag only). This suggests the gating behavior is influenced by training recipe / RLHF procedure, not purely by the task structure.
+
+#### 6.9.2 Mechanistic results (GPT-oss-20B, Expert tag)
+
+**Activation extraction:** 873 items with strong priors (threshold 0.55), labeled by whether model shifts toward disagreeing endorsement under i1a (correcting: 386) or resists (resisting: 487). Activations extracted at endorsement_last position under both i1a and i1c instructions.
+
+**Probe layer sweep (parallelized across 28 cores):**
+- Best position: endorsement_last (consistent with factual QA)
+- Best layer: **14** (factual QA best was layer 8)
+- Within-i1a probe CV AUROC: **0.603** (modest but real)
+- i1a → i1c transfer AUROC: **0.883** (strong)
+
+**Mean-difference vector transfer:**
+- i1a AUROC: 0.631, i1c AUROC: 0.636 (modest, consistent with probe)
+
+**Causal patching:**
+- **Null result.** Real vector produces no meaningful margin shift at any alpha (0.25-2.0)
+- Flip-to-correct rate: ~2% across all controls (real, wrong-sign, random, wrong-site) -- indistinguishable
+- Mean margin shift at alpha=1.0: -0.0005 (effectively zero)
+- The direction is decodable but NOT steerable via simple additive patching
+
+**Comparison to factual QA GPT-oss-20B mechanism:**
+| Metric | Factual QA | DebateQA |
+|--------|-----------|----------|
+| Best layer | 8 | 14 |
+| Probe CV AUROC | 0.677 | 0.603 |
+| Transfer AUROC | 0.926 | 0.883 |
+| Patching | Modest, directional | Null |
+
+**Interpretation:** Same pattern as factual QA: strong representational signal (probe works), but no causal effect (patching fails). The representation is a thermometer (reads the state) not a heater (doesn't change the state). In GPT-oss-20B, the decision about whether to shift or resist is distributed across layers/positions in a way that simple additive intervention at one site cannot influence.
+
+#### 6.9.3 The idiosyncrasy concern
+
+**Paras's criticism (from TrustNLP submission):** "The investigation is interesting, but we're studying LLMs which are impacted greatly by their training data. I am not sure you're uncovering deep truths here, but rather simply idiosyncratic properties of specific LLMs because of what data they have consumed."
+
+**Honest assessment -- the evidence for idiosyncrasy is growing:**
+1. Effect magnitude is wildly model-dependent: Qwen3-4B shows 46pp instruction dampening on DebateQA, GPT-oss-20B shows 6.6pp (Expert tag only), 0pp (Note tag). If this were a deep computational property, it should be more stable.
+2. Patching works on Qwen3-4B but does nothing on GPT-oss-20B. The "mechanism" is model-specific.
+3. The confabulation result: forced-choice gating evaporates in generation. The phenomenon lives only inside a specific experimental setup.
+4. Each new experiment reveals more model-specific variation rather than converging on a universal principle.
+5. GPT-oss-20B requires Expert tag (not Note) to show the effect on DebateQA -- this is a surface-level prompt sensitivity, not a deep structural property.
+
+**Evidence against pure idiosyncrasy:**
+1. Behavioral effect replicates across 3 models on factual QA (Qwen3-4B, Llama-8B, Qwen3-30B)
+2. Cross-domain transfer: factual QA direction predicts PIQA behavior (suggests shared internal structure beyond surface patterns)
+3. The direction is orthogonal to known authority/opinion proxy directions
+
+**The core tension:** We started with "instruction-dependent evidence gating" as a fundamental cognitive-like mechanism. What we may actually have is: "different RLHF recipes produce different sensitivities to specific prompt patterns." Valid finding, but it's an empirical observation about training, not a mechanistic insight about how LLMs reason.
+
+**What would address this concern:**
+- Base model experiment: does the direction exist pre-RLHF? If yes → not just an RLHF artifact
+- Cross-architecture replication with fundamentally different training pipelines
+- Showing the gating direction correlates with a training data property (e.g. frequency of accuracy-related instructions in RLHF data)
+
 ---
 
 ## 7. Framing & Positioning Discussion
@@ -747,12 +875,12 @@ This is the boldest reframing but must be stated carefully:
 
 ### 8.2 Weaknesses
 
-1. **Mechanism from one model only**: Probe + patching only on Qwen3-4B. How do we know it's not model-specific?
-2. **75% probe accuracy is moderate**: It's well above baseline (66%) but far from perfect. What does the probe miss?
+1. **The clean causal mechanism story is still concentrated in one flagship model**: Qwen3-4B remains the sharpest probe+patching result. Qwen3-30B and GPT-oss-20B replicate parts of the representational story, but not with the same cleanliness or effect size.
+2. **Probe quality is uneven across settings**: 4B results are strong, GPT-oss is decent but noisier, and 30B primary labels are heavily class-imbalanced. The right question is no longer "does a probe exist?" but "what exactly is it reading at larger scale?"
 3. **Linear-only analysis**: We regressed out confidence linearly. There could be nonlinear confidence effects we're not capturing.
-4. **No base model comparison**: We don't know if RLHF creates or amplifies the direction.
+4. **No base model mechanism yet**: We have behavioral base-vs-instruct evidence, but not the matching activation extraction / patching pipeline.
 5. ~~**No cross-domain mechanism**~~ **RESOLVED (April 4)**: Factual QA direction transfers to PIQA (74.6% acc, 0.831 AUROC) and vice versa (74.8% acc, 0.826 AUROC).
-6. **Two instruction framings**: We have i1a and i1c as the main contrast. The diagnostic experiment (Section 6.7) would expand this to 5 variants that directly test memory-first vs evidence-first modes.
+6. **The framing may still be too binary**: newer large-model results weaken the clean "two modes" story and suggest a more graded evidence-susceptibility account.
 7. **No ground-truth-free evaluation**: All our evaluations use items where we know the right answer. Real deployment doesn't have this.
 8. **Small team**: Limited bandwidth to address all weaknesses before deadline.
 
@@ -809,93 +937,97 @@ A NeurIPS reviewer in 2026 will have read or seen abstracts for all of: Wang et 
 3. The position-specificity at the endorsement token is real and not an artifact of how we extract the direction -- **SUPPORTED by endorsement vs last-token comparison (3x specificity, 4x flips)**
 4. The causal steering result adds something beyond what Wang et al. and Mammen et al. already showed -- **SUPPORTED: Wang's patching is layer-wise (reduces sycophancy 36%); ours is direction-based and item-specific (87% positive shift, 8.6% flips, 0% harm)**
 
-Current assessment: all four requirements are met at a defensible level. The paper is well-positioned for submission.
+Current assessment: all four requirements are met at a defensible level, so the paper is viable. But the more important strategic update is that we should **not** stop just because the submission is now defensible: the most fruitful remaining question is whether this direction predicts and helps explain confabulation-like behavior in freer-form settings.
 
-### 9.5 Emerging Framing: Functional Epistemic Modes (soft, April 4)
+### 9.5 Emerging Framing: Evidence-Susceptibility Direction (updated April 5)
 
-**Status**: Working hypothesis, not yet fully supported. To be refined as experiments proceed.
+**Status**: This is now the safer framing than "two functional epistemic modes."
 
-**Core idea**: Instruction-tuned models can enter different functional epistemic modes for resolving conflicts between internal knowledge and presented evidence. Under i1a-like instructions, the model enters a "memory-first accuracy mode" -- it prioritizes reconciliation with internal model knowledge. Under i1c-like instructions, it enters a "presented-evidence-first accuracy mode" -- it prioritizes evaluation of presented evidence.
+**Core idea**: Instruction wording appears to recruit an internal direction that changes how strongly the model lets presented evidence move its answer. Under i1a-like framing, the model becomes more resistant to corrective evidence; under i1c-like framing, it becomes more evidence-susceptible. This is a cleaner and more defensible statement than claiming two discrete internal modes.
 
 **What current data supports:**
-- A real mode shift in evidence processing caused by instruction wording (behavioral + mechanistic)
-- The effect is prior-conditioned, mechanistically detectable, and transfers across domains under i1a
-- Reasoning traces show qualitatively different reasoning styles consistent with the two modes
-- The cross-domain transfer result strengthens the "functional mode" interpretation: if this were just about the model's confidence on a particular question, it wouldn't transfer between trivia and physics
+- A real instruction-conditioned shift in evidence processing caused by wording alone
+- The effect is prior-conditioned, detectable from activations, and causally steerable in Qwen3-4B
+- The representation transfers across domains (factual QA <-> PIQA) and across instruction conditions
+- Larger-model results preserve the basic representational story, but with weaker and less clean behavioral expression than Qwen3-4B
 
-**What current data does NOT yet support (hypotheses to test):**
-- That the model has "two distinct internal representations of accuracy" (traces show reasoning STYLE, not computational mechanism)
-- That RLHF specifically taught "accuracy = confident defense with citations" (plausible but indirect)
-- That the modes are discrete rather than continuous (dose-response would test this)
+**What current data does NOT support:**
+- That there are two cleanly separable or universal "epistemic modes" across scales
+- That Qwen3-30B expanded labels and strict C1 resistance are the exact same causal object
+- That this direction is reducible to scalar confidence, or conversely fully independent of all richer confidence-like structure
+- That the large-model story is best understood as the same simple binary switch seen at 4B
 
-**Terminology**: Use "memory-first accuracy mode" and "presented-evidence-first accuracy mode" rather than "parameter-accuracy" and "evidence-accuracy." The former stays at the level of observable behavior; the latter implies a representational claim we can't fully back yet.
+**Best cross-scale synthesis right now:**
+- **Qwen3-4B:** cleanest flagship result; strongest case for a causal evidence-integration direction
+- **Qwen3-30B primary labels:** weakly powered but not null; supports persistence of the mechanism at larger scale without supporting strong claims
+- **Qwen3-30B expanded labels:** reveals a broader evidence-susceptibility / endorsement-arbitration representation, but not the same strict causal object as primary C1 resistance
+- **GPT-oss-20B:** real cross-family replication with good probe transfer and modest patching; useful for scope, but not as mechanistically sharp as Qwen3-4B
+
+**Terminology recommendation:**
+- Prefer **"instruction-conditioned evidence-susceptibility direction"** or **"evidence-integration / endorsement-arbitration direction"**
+- Use **"memory-first"** and **"evidence-first"** only as intuitive behavioral glosses, not as the main mechanistic claim
+- Avoid leading with **"two discrete modes"** unless future experiments justify that stronger statement
 
 **Relationship to existing literature:**
-- The GENERAL idea that prompt framing changes epistemic behavior is NOT new (Epistemic Fragility, Task Matters, Parameters vs Context)
-- The SPECIFIC mechanistic story (instruction-switchable direction at endorsement position, cross-domain transfer) still looks novel
-- "Functional epistemic modes" may be novel enough as a framing, but must not be presented as if no one noticed the broader phenomenon
-- Cite Epistemic Fragility for behavioral context, CK-PLUG for conceptual framework, Anthropic emotions for the general pattern of "internal functional states shaped by post-training"
+- The general fact that prompts change epistemic behavior is not new
+- What remains distinctive is the native, instruction-switchable internal direction plus position specificity, causal steering, and cross-domain transfer
+- The 30B/GPT-oss results make the paper stronger as a scale-and-family story, but they also push us toward a softer, more realistic framing than the original clean two-mode picture
 
-**Defensible bottom-line framing:**
-> We hypothesize that instruction-tuned models can enter different functional epistemic modes for resolving conflicts between internal knowledge and presented evidence. Our current results support this hypothesis behaviorally and mechanistically; the diagnostic experiment (Section 6.7) tests it directly with prompts that explicitly manipulate memory-first vs evidence-first resolution.
+**Defensible bottom-line framing (revised April 5, post-idiosyncrasy assessment):**
+> Instruction wording modulates evidence integration in language models: accuracy-prioritizing instructions suppress endorsement uptake while evidence-attending instructions preserve it. This effect replicates across 3 models and 3 domains (factual QA, physical intuition, debatable questions), and corresponds to a linear representational direction at the endorsement position. However, the effect's magnitude, the tag sensitivity, and the causal steerability of this direction are highly model-dependent -- suggesting the phenomenon is shaped by training recipe (particularly RLHF) rather than being a universal computational property. The base-model experiment (pending) will determine whether the direction exists pre-RLHF.
 
 ---
 
 ## 10. Priority Ordering for Next Steps
 
-### Tier 1: MANDATORY Before Paper Submission
+### Strategic update (April 5, post-DebateQA + idiosyncrasy assessment)
 
-1. ~~**Known direction comparison with ablation**~~ **DONE (April 4, proxy-based):**
-   - Correction-gating direction near-orthogonal to opinion-like (cos 0.093) and authority-like (cos -0.005, 0.060) proxies
-   - Projection ablation: transfer accuracy/AUROC unchanged after removing all 3 proxy directions; vector norm drops 0.6%
-   - Wang et al. code review (April 4): confirmed they do NOT produce a direction vector -- their analysis is layer-wise logit-lens. No "Wang sycophancy direction" exists to compare against. Resolves biggest overlap concern.
-   - Caveat: proxy-based only (not exact reproductions of Mammen/Beacon). Defensible given Wang code review and projection-ablation results.
+The DebateQA experiment is complete (Section 6.9). Key outcomes:
+- **Qwen3-4B DebateQA behavioral result is strong** (46pp instruction dampening on no-ground-truth questions)
+- **GPT-oss-20B DebateQA behavioral result is weak** (6.6pp, Expert tag only, Note tag shows nothing)
+- **GPT-oss-20B DebateQA mechanistic result is representational-only** (probe transfer 0.883 AUROC, patching null)
+- **Confabulation experiment closed** (Section 6.8) -- forced-choice gating does not survive generation
 
-2. ~~**PIQA activation extraction**~~ **DONE (April 4)** -- Cross-domain transfer confirmed. Factual<->PIQA vector transfer ~75% accuracy, AUROC >0.82.
+**The idiosyncrasy concern is now front and center** (Section 6.9.3). The accumulating evidence suggests that the effect's magnitude and mechanism are highly model-dependent, possibly driven by RLHF recipe differences rather than fundamental properties of how LLMs process evidence. This is the single biggest threat to the paper's contribution.
 
-3. ~~**Diagnostic instruction experiment**~~ **DONE (April 4):**
-   - Accuracy gradient: i1a (-0.431) >> accuracy_priority_only (-0.180) >> as_accurately_as_you_can (-0.144) >> facts_presented_only (-0.066) >> consider_info_carefully (+0.012). Monotonic.
-   - Epistemic modes: mentioning conflict is itself a trigger regardless of resolution direction.
-   - PIQA confirms same ordering, all more negative.
+### Tier 1: Must-do before writing
 
-4. ~~**Re-analyze existing base vs instruct data**~~ **DONE (April 4)**
-   - Key finding: base model ALREADY has evidence gating with expert tags (frac_dr_pos = 0.668 on prior-wrong), but NOT with note tags
-   - RLHF reorganizes (not creates) the pattern: reduces source-dependent gating, introduces general endorsement biases
-   - Confidence gradient INVERTS: base model integrates better at high confidence, instruct model gets worse
-   - Remaining gap: mechanistic extraction on base Qwen3-4B (1 GPU day) to test if the direction exists pre-RLHF
+1. **Base-model mechanistic extraction** (Qwen3-4B base)
+   - Now the MOST CRITICAL experiment. Directly addresses the idiosyncrasy concern.
+   - If the direction exists in the base model → it's not just an RLHF artifact, it's something pre-training creates and post-training modulates. This is a much stronger story.
+   - If absent in base → post-training created it, which is still interesting but confirms the "RLHF recipe" interpretation.
+   - One GPU day. This experiment alone could determine whether the paper is publishable at NeurIPS or not.
 
-**ALL TIER 1 EXPERIMENTS ARE COMPLETE. Ready for paper writing.**
+2. **Write the paper**
+   - The experimental package is large. The framing needs to honestly address model-dependence.
+   - If base-model result is positive: frame as "pre-training creates evidence-susceptibility representations; instruction-tuning gates them"
+   - If base-model result is negative: frame as "instruction-tuning creates instruction-dependent evidence gating" (weaker but still novel)
 
-### Tier 2: High Value, Do If Time Permits
+### Tier 2: Worth doing only if base-model result is positive
 
-5. **Graduated ambiguity experiment** (2-3 days, mostly dataset curation)
-   - Clear/soft/no ground truth spectrum
-   - Addresses deployment relevance
+3. **Cross-domain mechanistic transfer on DebateQA** (project factual QA direction onto DebateQA activations for Qwen3-4B)
+4. **i1b dose-response** on Qwen
 
-6. **i1b full run on Qwen** (cheap, fills dose-response gap)
+### Tier 3: Deprioritized
 
-### Tier 3: Future Work / Follow-Up Paper
+5. More GPT-oss experiments -- we've exhausted what this model can give us
+6. ~~**Confabulation**~~ -- CLOSED
+7. ~~**DebateQA no-ground-truth**~~ -- DONE
+8. Agentic models / multi-turn -- follow-up work
 
-7. **Agentic model behavioral test** (complex experimental design)
-8. **Multi-turn instruction sequences** (novel paradigm)
-9. **30B mechanistic extraction** (we have 30B behavioral results; running probe/patching on 30B activations would test if the direction scales -- feasible since Qwen3-30B-A3B is MoE with ~3B active params)
-10. **SAE decomposition of correction-gating direction**
-11. **Different post-training recipes comparison** (DPO vs RLHF vs GRPO)
-12. **Soft/conversational endorsement variants**
+### Revised execution logic
 
-### Paper Writing Timeline
+- **The base-model experiment is now a hard gate.** Its outcome determines the paper's framing and defensibility.
+- If positive: write confidently, frame as pre-training + post-training interaction
+- If negative: write more cautiously, frame as empirical characterization of RLHF-induced instruction sensitivity
+- Either way: honestly report model-dependence as a finding, not hide it
 
-- ~~April 3-4: PIQA cross-domain transfer~~ **DONE**
-- ~~April 3-4: Re-analyze base vs instruct, 30B behavioral~~ **DONE**
-- April 4-6: **Known direction comparison** (mandatory, blocks paper positioning)
-- April 4-6: **Diagnostic instruction experiment** (behavioral, cheap, can run in parallel with known direction comparison)
-- April 7-9: Follow-up mechanistic extraction if diagnostic results warrant (base model, diagnostic prompts)
-- April 10-16: Paper outline and first draft (argument: behavioral paradox → mechanistic specificity → causal leverage → distinction from adjacent work)
-- April 17-25: Revision, figures, additional experiments from Tier 2
-- April 26-May 3: Polish, get feedback, finalize abstract
-- May 4: Abstract submission
-- May 5-6: Final paper polish
-- May 6: Full paper submission
+### Updated timeline
+
+- April 5-7: base-model mechanistic extraction on Qwen3-4B base
+- April 7-14: paper writing (framing depends on base-model result)
+- April 14-22: figures, polish, internal review
+- May 1-4: abstract submission, final paper edits
 
 ---
 
@@ -943,6 +1075,14 @@ These are unfiltered ideas that came up during brainstorming. Not evaluated, jus
 | `new-phase-results/piqa/` | PIQA behavioral results |
 | `new-phase-results/qwen3-30b-results/` | 30B scale results |
 | `data/exp7_mc_dataset.jsonl` | MC dataset for confound checks |
+| `data/debateqa_mc_dataset.jsonl` | DebateQA MC dataset (999 debatable questions) |
+| `new-phase-results/debateqa/` | DebateQA behavioral results (Qwen3-4B + GPT-oss-20B) |
+| `new-phase-results/mechanism/gpt_oss_20b_debateqa_gating_expert/` | GPT-oss-20B DebateQA mechanism extraction |
+| `new-phase-results/mechanism/gpt_oss_20b_debateqa_patching_expert/` | GPT-oss-20B DebateQA causal patching (null) |
+| `src/exp10/build_debateqa_mc.py` | DebateQA → MC format conversion |
+| `src/exp10/analyze_debateqa_priorstate.py` | Prior-state analysis for DebateQA |
+| `src/mechanism/extract_debateqa_gating_activations.py` | DebateQA mechanism extraction (adapted for no-ground-truth) |
+| `src/mechanism/run_debateqa_patching.py` | DebateQA causal patching (per-item endorsement handling) |
 
 ---
 
@@ -951,3 +1091,9 @@ These are unfiltered ideas that came up during brainstorming. Not evaluated, jus
 *Update 1 (April 3): Corrections from Codex literature review -- refined novelty claim, calibrated positioning against 5 neighboring papers (Wang et al. 2508.02087, Mammen et al. 2601.13433, BASIL 2508.16846, Beacon 2510.16727, Lu et al. 2601.10387), elevated known direction comparison to mandatory Tier 1, softened overclaims on confidence independence and position localization, switched primary cognitive science anchor from backfire effect to motivated reasoning.*
 
 *Update 2 (April 4): PIQA cross-domain transfer results added (factual<->PIQA vector transfer ~75% accuracy, AUROC >0.82). Base vs instruct and 30B analyses completed. Four new papers added (Epistemic Fragility 2511.22746, CK-PLUG/Parameters vs Context 2503.15888, Task Matters 2506.06485, Inside-Out 2503.15299). Emerging "functional epistemic modes" framing added as soft hypothesis. Diagnostic instruction experiment designed (Section 6.7) to directly test memory-first vs evidence-first modes. Priority ordering and timeline updated.*
+
+*Update 3 (April 5): Added large-model mechanism replication results. Qwen3-30B primary labels now framed as weakly powered but not null; expanded 30B labels are treated as a broader evidence-susceptibility / endorsement-arbitration family rather than the same strict causal object. GPT-oss-20B is now positioned as real cross-family replication with strong probe transfer but modest patching. The overall framing has been softened from "two discrete modes" to an instruction-conditioned evidence-susceptibility direction whose behavioral expression is scale-dependent. Strategic priority had shifted to a targeted confabulation experiment on GPT-oss-20B.*
+
+*Update 4 (April 5): Confabulation experiment on GPT-oss-20B closed after two negative rounds. Round 1 (re-answer pilot, 50+50 items): resisting and correcting groups indistinguishable in generation mode (~62% correct each). Round 2 (defend-this-answer, all 439 resisting items): 424/439 self-corrected, 0/439 defended the wrong answer. The forced-choice resisting behavior does not survive into any form of free-form output. GPT-oss keeps its role as cross-family mechanism replication only. Strategic priority shifted to base-model mechanistic extraction and paper writing.*
+
+*Update 5 (April 5): DebateQA no-ground-truth experiment completed. Dataset: 999 debatable questions from DebateQA (EACL 2026), converted to A/B forced-choice. Behavioral: Qwen3-4B shows dramatic instruction-gating (45.7pp dampening under i1a vs 6.5pp under i1c); GPT-oss-20B shows modest gating on Expert tag only (6.6pp vs 1.3pp), zero differentiation on Note tag. Prior-state conditioning was critical -- overall averages hid the GPT-oss effect entirely. Mechanistic (GPT-oss-20B Expert tag): probe transfer AUROC 0.883 (strong), but causal patching null (real vector indistinguishable from random/wrong-sign controls). This matches the factual QA GPT-oss pattern: decodable but not steerable. Added Section 6.9.3 addressing Paras's idiosyncrasy concern: the accumulating evidence of model-dependent magnitudes, tag sensitivities, and patching failures suggests the phenomenon is shaped by RLHF recipe rather than being a universal property. Base-model experiment elevated to hard gate for paper framing. Parallelized probe sweep (joblib) to fix multi-hour sklearn bottleneck on 5120-dim features.*

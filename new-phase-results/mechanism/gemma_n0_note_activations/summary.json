@@ -1,0 +1,19 @@
+{
+  "model": "google/gemma-4-26B-A4B-it",
+  "results_path": "new-phase-results/gemma-4-26b-results/exp10_i1a_note/google__gemma-4-26B-A4B-it_results.jsonl",
+  "condition_codes": [
+    "N0_note"
+  ],
+  "device": "cuda",
+  "loader_dtype": "bfloat16",
+  "n_items": 887,
+  "n_records": 887,
+  "positions": [
+    "last_token",
+    "instruction_last",
+    "endorsement_last"
+  ],
+  "uids_file": "new-phase-results/mechanism/gemma_correction_gating_i1a_i1c_note/selected_uids.txt",
+  "metadata_path": "new-phase-results/mechanism/gemma_n0_note_activations/metadata.jsonl",
+  "activations_path": "new-phase-results/mechanism/gemma_n0_note_activations/activations.pt"
+}

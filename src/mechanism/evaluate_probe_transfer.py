@@ -95,6 +95,7 @@ def _build_probe(seed: int) -> Pipeline:
                 "clf",
                 LogisticRegression(
                     max_iter=5000,
+                    solver="saga",
                     class_weight="balanced",
                     random_state=seed,
                 ),
