@@ -303,11 +303,13 @@ def main() -> None:
 
     # ------------------------------------------------------------------ model
     print(f"Loading {args.model} ...")
-    model, tokenizer = load_model_and_tokenizer(
-        args.model,
-        device=args.device,
-        dtype=args.loader_dtype,
-        prefer_flash_attention=False,
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    import torch as _torch
+    _dtype = getattr(_torch, args.loader_dtype) if isinstance(args.loader_dtype, str) else args.loader_dtype
+    tokenizer = AutoTokenizer.from_pretrained(args.model, trust_remote_code=True)
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model, dtype=_dtype, device_map=args.device,
+        trust_remote_code=True, attn_implementation="eager",
     )
     model.eval()
     device = next(model.parameters()).device
@@ -483,12 +485,14 @@ def main() -> None:
     print("\nTop-10 heads by |gating divergence| on resisting items:")
     for i, h in enumerate(ranked[:10]):
         r = h["resisting"]
+        ai = r.get('attn_instruction_i1a')
+        ae = r.get('attn_endorsement_i1a')
         print(
             f"  {i+1:2d}. L{h['layer']}H{h['head']:02d}  "
             f"div={r['gating_divergence']:+.4f}  "
             f"|div|={r['abs_gating_divergence']:.4f}  "
-            f"attn_inst(i1a)={r['attn_instruction_i1a']:.3f}  "
-            f"attn_end(i1a)={r['attn_endorsement_i1a']:.3f}"
+            f"attn_inst(i1a)={f'{ai:.3f}' if ai is not None else 'N/A':>5}  "
+            f"attn_end(i1a)={f'{ae:.3f}' if ae is not None else 'N/A':>5}"
         )
 
     # ==================================================================
