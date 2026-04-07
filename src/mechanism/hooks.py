@@ -23,6 +23,8 @@ class InterventionSpec:
 
 
 def get_transformer_layers(model: nn.Module) -> nn.ModuleList:
+    if hasattr(model, "model") and hasattr(model.model, "language_model") and hasattr(model.model.language_model, "layers"):
+        return model.model.language_model.layers
     if hasattr(model, "model") and hasattr(model.model, "layers"):
         return model.model.layers
     if hasattr(model, "layers"):

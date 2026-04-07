@@ -427,7 +427,7 @@ def run_persona_variant(
 
     summary_path = output_dir / f"{mtag}_{variant_name}_summary.json"
     with summary_path.open("w") as fout:
-        json.dump(summary, f=fout, indent=2)
+        json.dump(summary, fout, indent=2)
 
     # Print key numbers.
     print(f"\n  [{persona_name} / {variant_name}] n={len(examples)}")
