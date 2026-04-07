@@ -45,6 +45,10 @@ data/
 !scripts/run_diagnostic_instruction_experiment.sh
 !scripts/run_known_direction_comparison.sh
 !scripts/run_qwen30b_full_mechanism.sh
+!scripts/run_gemma4_expanded.sh
+!scripts/run_model_pipeline.sh
+!scripts/run_olmo2_32b_full.sh
+!scripts/run_qwen35_27b_full.sh
 
 # Session / conversation logs (Claude Code, terminal recordings, etc.)
 [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.txt
@@ -62,6 +66,7 @@ new-phase-results.zip
 meeting-notes/
 AWS-Setup.md
 
+.claude/
 .cursor/
 experiments/*
 !experiments/
@@ -115,3 +120,4 @@ new-phase-results/**/*_smoke/
 new-phase-results/**/smoke_*/
 
 paper/
+papers/

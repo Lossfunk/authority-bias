@@ -1,0 +1,8084 @@
+[
+  {
+    "uid": "trivia_qa::1052",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.25,
+    "instruct_margin": 9.125,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "trivia_qa::1052",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 9.5,
+    "patched_margin": 4.125
+  },
+  {
+    "uid": "trivia_qa::108",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -5.0,
+    "patched_margin": -1.25
+  },
+  {
+    "uid": "trivia_qa::108",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 7.375,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "trivia_qa::1104",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 1.5,
+    "patched_margin": -0.375
+  },
+  {
+    "uid": "trivia_qa::1104",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.375,
+    "instruct_margin": 8.875,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "trivia_qa::112",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.25,
+    "instruct_margin": -4.75,
+    "patched_margin": -2.25
+  },
+  {
+    "uid": "trivia_qa::112",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 3.375,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "trivia_qa::1148",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 0.375,
+    "patched_margin": -0.375
+  },
+  {
+    "uid": "trivia_qa::1148",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 8.25,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "trivia_qa::1152",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 11.125,
+    "patched_margin": 4.125
+  },
+  {
+    "uid": "trivia_qa::1152",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.625,
+    "instruct_margin": 9.625,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "trivia_qa::12",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 5.625,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "trivia_qa::12",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 10.375,
+    "patched_margin": 4.25
+  },
+  {
+    "uid": "trivia_qa::1220",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 3.375,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "trivia_qa::1220",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 9.5,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "trivia_qa::1244",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": -11.625,
+    "patched_margin": -5.375
+  },
+  {
+    "uid": "trivia_qa::1244",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": -3.375,
+    "patched_margin": -1.625
+  },
+  {
+    "uid": "trivia_qa::1256",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": 3.25,
+    "patched_margin": 0.5
+  },
+  {
+    "uid": "trivia_qa::1256",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 8.5,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "trivia_qa::1392",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 1.0,
+    "patched_margin": 0.25
+  },
+  {
+    "uid": "trivia_qa::1392",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": 10.375,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "trivia_qa::1396",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": -1.875,
+    "patched_margin": -0.25
+  },
+  {
+    "uid": "trivia_qa::1396",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 1.75,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "trivia_qa::144",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 2.25,
+    "patched_margin": 0.125
+  },
+  {
+    "uid": "trivia_qa::144",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 9.5,
+    "patched_margin": 4.125
+  },
+  {
+    "uid": "trivia_qa::1440",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 3.25,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "trivia_qa::1440",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 6.375,
+    "patched_margin": 2.625
+  },
+  {
+    "uid": "trivia_qa::1460",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 2.125,
+    "patched_margin": 0.5
+  },
+  {
+    "uid": "trivia_qa::1460",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 6.625,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "trivia_qa::1464",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": -0.125,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "trivia_qa::1464",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 2.75,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "trivia_qa::1512",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.25,
+    "instruct_margin": 4.25,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "trivia_qa::1512",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": 10.875,
+    "patched_margin": 4.875
+  },
+  {
+    "uid": "trivia_qa::1556",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 2.375,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "trivia_qa::1556",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 7.875,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "trivia_qa::156",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 1.875,
+    "patched_margin": 0.875
+  },
+  {
+    "uid": "trivia_qa::156",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 5.875,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "trivia_qa::1688",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 0.75,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "trivia_qa::1688",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 4.0,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "trivia_qa::1720",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 8.875,
+    "patched_margin": 3.5
+  },
+  {
+    "uid": "trivia_qa::1720",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 8.5,
+    "patched_margin": 3.5
+  },
+  {
+    "uid": "trivia_qa::1736",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": -7.0,
+    "patched_margin": -2.5
+  },
+  {
+    "uid": "trivia_qa::1736",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 0.125,
+    "patched_margin": 0.125
+  },
+  {
+    "uid": "trivia_qa::1752",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 5.75,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "trivia_qa::1752",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 13.0,
+    "patched_margin": 5.125
+  },
+  {
+    "uid": "trivia_qa::1764",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 0.25,
+    "patched_margin": 0.25
+  },
+  {
+    "uid": "trivia_qa::1764",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 5.875,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "trivia_qa::1780",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 1.75,
+    "patched_margin": 0.25
+  },
+  {
+    "uid": "trivia_qa::1780",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": 7.625,
+    "patched_margin": 2.625
+  },
+  {
+    "uid": "trivia_qa::1792",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.5,
+    "instruct_margin": 5.5,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "trivia_qa::1792",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.375,
+    "instruct_margin": 8.125,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "trivia_qa::1808",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 8.125,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "trivia_qa::1808",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 7.875,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "trivia_qa::184",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": -0.875,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "trivia_qa::184",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.5,
+    "instruct_margin": 8.625,
+    "patched_margin": 3.5
+  },
+  {
+    "uid": "trivia_qa::1844",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -3.5,
+    "patched_margin": -0.5
+  },
+  {
+    "uid": "trivia_qa::1844",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 1.375,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "trivia_qa::1884",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.375,
+    "instruct_margin": 7.625,
+    "patched_margin": 2.625
+  },
+  {
+    "uid": "trivia_qa::1884",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.375,
+    "instruct_margin": 11.0,
+    "patched_margin": 4.625
+  },
+  {
+    "uid": "trivia_qa::1904",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": -4.375,
+    "patched_margin": -1.125
+  },
+  {
+    "uid": "trivia_qa::1904",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 2.75,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "trivia_qa::1916",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.5,
+    "instruct_margin": 4.125,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "trivia_qa::1916",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.125,
+    "instruct_margin": 5.5,
+    "patched_margin": 2.625
+  },
+  {
+    "uid": "trivia_qa::1932",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 1.25,
+    "patched_margin": 0.875
+  },
+  {
+    "uid": "trivia_qa::1932",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 5.875,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "trivia_qa::1996",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 3.75,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "trivia_qa::1996",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 4.625,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "trivia_qa::2036",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": -4.125,
+    "patched_margin": -1.125
+  },
+  {
+    "uid": "trivia_qa::2036",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 0.25,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "trivia_qa::204",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 3.125,
+    "instruct_margin": 9.375,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "trivia_qa::204",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 5.0,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "trivia_qa::2060",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": -14.25,
+    "patched_margin": -6.375
+  },
+  {
+    "uid": "trivia_qa::2060",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": -1.75,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "trivia_qa::2072",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": -1.0,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "trivia_qa::2072",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": 10.0,
+    "patched_margin": 3.75
+  },
+  {
+    "uid": "trivia_qa::2160",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": -1.375,
+    "patched_margin": -1.0
+  },
+  {
+    "uid": "trivia_qa::2160",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": 7.75,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "trivia_qa::2168",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -1.5,
+    "patched_margin": 0.125
+  },
+  {
+    "uid": "trivia_qa::2168",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 6.0,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "trivia_qa::2216",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": 0.5,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "trivia_qa::2216",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.875,
+    "instruct_margin": 8.375,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "trivia_qa::2236",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": 0.875,
+    "patched_margin": 0.0
+  },
+  {
+    "uid": "trivia_qa::2236",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 7.25,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "trivia_qa::2248",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 8.375,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "trivia_qa::2248",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 8.375,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "trivia_qa::2272",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -5.5,
+    "patched_margin": -1.75
+  },
+  {
+    "uid": "trivia_qa::2272",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 4.0,
+    "patched_margin": 1.625
+  },
+  {
+    "uid": "trivia_qa::228",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 12.125,
+    "patched_margin": 4.5
+  },
+  {
+    "uid": "trivia_qa::228",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 8.0,
+    "patched_margin": 3.0
+  },
+  {
+    "uid": "trivia_qa::2292",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -1.5,
+    "patched_margin": 0.125
+  },
+  {
+    "uid": "trivia_qa::2292",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 4.125,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "trivia_qa::2336",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -1.75,
+    "patched_margin": -0.125
+  },
+  {
+    "uid": "trivia_qa::2336",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.625,
+    "instruct_margin": 2.125,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "trivia_qa::2412",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": -1.75,
+    "patched_margin": -1.125
+  },
+  {
+    "uid": "trivia_qa::2412",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 2.0,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "trivia_qa::2420",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 6.375,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "trivia_qa::2420",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 5.875,
+    "patched_margin": 2.625
+  },
+  {
+    "uid": "trivia_qa::2440",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.875,
+    "instruct_margin": 3.375,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "trivia_qa::2440",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 8.0,
+    "patched_margin": 3.125
+  },
+  {
+    "uid": "trivia_qa::2452",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 3.5,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "trivia_qa::2452",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 6.375,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "trivia_qa::2500",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 3.25,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "trivia_qa::2500",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 8.25,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "trivia_qa::2528",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": -6.25,
+    "patched_margin": -2.875
+  },
+  {
+    "uid": "trivia_qa::2528",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": 3.75,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "trivia_qa::2572",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -3.375,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "trivia_qa::2572",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 4.625,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "trivia_qa::2640",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 11.625,
+    "patched_margin": 5.125
+  },
+  {
+    "uid": "trivia_qa::2640",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.75,
+    "instruct_margin": 7.375,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "trivia_qa::2652",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.625,
+    "instruct_margin": 6.625,
+    "patched_margin": 3.0
+  },
+  {
+    "uid": "trivia_qa::2652",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 7.125,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "trivia_qa::2672",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 12.875,
+    "patched_margin": 5.25
+  },
+  {
+    "uid": "trivia_qa::2672",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 10.25,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "trivia_qa::2700",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 13.0,
+    "patched_margin": 5.125
+  },
+  {
+    "uid": "trivia_qa::2700",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 10.625,
+    "patched_margin": 4.5
+  },
+  {
+    "uid": "trivia_qa::2736",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 0.375,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "trivia_qa::2736",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 2.625,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "trivia_qa::2740",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": -1.625,
+    "patched_margin": -1.25
+  },
+  {
+    "uid": "trivia_qa::2740",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": 2.125,
+    "patched_margin": 0.5
+  },
+  {
+    "uid": "trivia_qa::2748",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": -4.125,
+    "patched_margin": -1.75
+  },
+  {
+    "uid": "trivia_qa::2748",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 0.875,
+    "patched_margin": 0.125
+  },
+  {
+    "uid": "trivia_qa::2756",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": -7.625,
+    "patched_margin": -2.875
+  },
+  {
+    "uid": "trivia_qa::2756",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 4.375,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "trivia_qa::2816",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 2.125,
+    "patched_margin": 0.625
+  },
+  {
+    "uid": "trivia_qa::2816",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 7.875,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "trivia_qa::2884",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": -9.75,
+    "patched_margin": -3.25
+  },
+  {
+    "uid": "trivia_qa::2884",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -4.625,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "trivia_qa::2892",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 3.25,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "trivia_qa::2892",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 5.125,
+    "patched_margin": 1.875
+  },
+  {
+    "uid": "trivia_qa::2956",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": -0.25,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "trivia_qa::2956",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 3.75,
+    "patched_margin": 1.625
+  },
+  {
+    "uid": "trivia_qa::296",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -2.375,
+    "instruct_margin": -7.75,
+    "patched_margin": -3.625
+  },
+  {
+    "uid": "trivia_qa::296",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -1.125,
+    "instruct_margin": -3.5,
+    "patched_margin": -1.5
+  },
+  {
+    "uid": "trivia_qa::2976",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.75,
+    "instruct_margin": 9.75,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "trivia_qa::2976",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 8.75,
+    "patched_margin": 3.5
+  },
+  {
+    "uid": "trivia_qa::3040",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": -1.75,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "trivia_qa::3040",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": 9.5,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "trivia_qa::3152",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": -4.0,
+    "patched_margin": -1.25
+  },
+  {
+    "uid": "trivia_qa::3152",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": -2.125,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "trivia_qa::3256",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 11.125,
+    "patched_margin": 4.25
+  },
+  {
+    "uid": "trivia_qa::3256",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 8.75,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "trivia_qa::3300",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.625,
+    "instruct_margin": 2.125,
+    "patched_margin": 1.0
+  },
+  {
+    "uid": "trivia_qa::3300",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 5.5,
+    "patched_margin": 1.875
+  },
+  {
+    "uid": "trivia_qa::3320",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.875,
+    "instruct_margin": 16.125,
+    "patched_margin": 7.25
+  },
+  {
+    "uid": "trivia_qa::3320",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 3.125,
+    "instruct_margin": 12.5,
+    "patched_margin": 6.5
+  },
+  {
+    "uid": "trivia_qa::3332",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 9.625,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "trivia_qa::3332",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 7.75,
+    "patched_margin": 3.0
+  },
+  {
+    "uid": "trivia_qa::3372",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.5,
+    "instruct_margin": 9.75,
+    "patched_margin": 3.5
+  },
+  {
+    "uid": "trivia_qa::3372",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.75,
+    "instruct_margin": 11.625,
+    "patched_margin": 6.0
+  },
+  {
+    "uid": "trivia_qa::3428",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 2.625,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "trivia_qa::3428",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 4.625,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "trivia_qa::3524",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 1.5,
+    "patched_margin": 0.625
+  },
+  {
+    "uid": "trivia_qa::3524",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 7.125,
+    "patched_margin": 3.0
+  },
+  {
+    "uid": "trivia_qa::3536",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.5,
+    "instruct_margin": 10.25,
+    "patched_margin": 4.125
+  },
+  {
+    "uid": "trivia_qa::3536",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": 11.625,
+    "patched_margin": 5.75
+  },
+  {
+    "uid": "trivia_qa::3564",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 1.375,
+    "patched_margin": 0.875
+  },
+  {
+    "uid": "trivia_qa::3564",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": 3.625,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "trivia_qa::3572",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 2.375,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "trivia_qa::3572",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 5.5,
+    "patched_margin": 2.625
+  },
+  {
+    "uid": "trivia_qa::3600",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 14.625,
+    "patched_margin": 5.75
+  },
+  {
+    "uid": "trivia_qa::3600",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 10.125,
+    "patched_margin": 3.75
+  },
+  {
+    "uid": "trivia_qa::3668",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -3.0,
+    "patched_margin": -0.5
+  },
+  {
+    "uid": "trivia_qa::3668",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 0.625,
+    "patched_margin": 0.5
+  },
+  {
+    "uid": "trivia_qa::3688",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": 9.5,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "trivia_qa::3688",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.375,
+    "instruct_margin": 10.25,
+    "patched_margin": 4.5
+  },
+  {
+    "uid": "trivia_qa::3696",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": 0.75,
+    "patched_margin": -0.5
+  },
+  {
+    "uid": "trivia_qa::3696",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": 8.875,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "trivia_qa::3704",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 8.125,
+    "patched_margin": 3.5
+  },
+  {
+    "uid": "trivia_qa::3704",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 5.625,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "trivia_qa::3732",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 4.75,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "trivia_qa::3732",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 9.125,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "trivia_qa::3796",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 4.5,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "trivia_qa::3796",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 8.0,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "trivia_qa::3852",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 1.375,
+    "patched_margin": 0.25
+  },
+  {
+    "uid": "trivia_qa::3852",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": 7.125,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "trivia_qa::388",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -2.125,
+    "patched_margin": -0.25
+  },
+  {
+    "uid": "trivia_qa::388",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 3.0,
+    "patched_margin": 1.25
+  },
+  {
+    "uid": "trivia_qa::3884",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 6.75,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "trivia_qa::3884",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.375,
+    "instruct_margin": 8.375,
+    "patched_margin": 3.75
+  },
+  {
+    "uid": "trivia_qa::3924",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": 11.875,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "trivia_qa::3924",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": 7.75,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "trivia_qa::3940",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": -1.375,
+    "patched_margin": 0.0
+  },
+  {
+    "uid": "trivia_qa::3940",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 5.625,
+    "patched_margin": 2.625
+  },
+  {
+    "uid": "trivia_qa::3976",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": -12.625,
+    "patched_margin": -5.5
+  },
+  {
+    "uid": "trivia_qa::3976",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -4.25,
+    "patched_margin": -1.25
+  },
+  {
+    "uid": "trivia_qa::400",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 6.0,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "trivia_qa::400",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": 8.5,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "trivia_qa::44",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 1.5,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "trivia_qa::44",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 7.75,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "trivia_qa::492",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 3.125,
+    "instruct_margin": -1.125,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "trivia_qa::492",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.875,
+    "instruct_margin": 9.75,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "trivia_qa::500",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 3.125,
+    "instruct_margin": 2.625,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "trivia_qa::500",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 3.375,
+    "instruct_margin": 7.75,
+    "patched_margin": 3.5
+  },
+  {
+    "uid": "trivia_qa::512",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": -2.625,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "trivia_qa::512",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 3.625,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "trivia_qa::580",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": -14.5,
+    "patched_margin": -6.25
+  },
+  {
+    "uid": "trivia_qa::580",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": -9.0,
+    "patched_margin": -4.25
+  },
+  {
+    "uid": "trivia_qa::612",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.625,
+    "instruct_margin": 2.75,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "trivia_qa::612",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 6.5,
+    "patched_margin": 2.625
+  },
+  {
+    "uid": "trivia_qa::616",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": -8.75,
+    "patched_margin": -3.5
+  },
+  {
+    "uid": "trivia_qa::616",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": -2.0,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "trivia_qa::64",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": -0.75,
+    "patched_margin": -0.125
+  },
+  {
+    "uid": "trivia_qa::64",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -0.125,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "trivia_qa::756",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": -5.0,
+    "patched_margin": -1.625
+  },
+  {
+    "uid": "trivia_qa::756",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 3.875,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "trivia_qa::764",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 10.75,
+    "patched_margin": 4.25
+  },
+  {
+    "uid": "trivia_qa::764",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.875,
+    "instruct_margin": 10.375,
+    "patched_margin": 4.875
+  },
+  {
+    "uid": "trivia_qa::796",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": -8.75,
+    "patched_margin": -3.625
+  },
+  {
+    "uid": "trivia_qa::796",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 2.25,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "trivia_qa::900",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": 0.875,
+    "patched_margin": -0.375
+  },
+  {
+    "uid": "trivia_qa::900",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": -2.875,
+    "patched_margin": -1.5
+  },
+  {
+    "uid": "trivia_qa::920",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 8.125,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "trivia_qa::920",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 12.0,
+    "patched_margin": 5.375
+  },
+  {
+    "uid": "trivia_qa::924",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 4.25,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "trivia_qa::924",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 7.625,
+    "patched_margin": 3.0
+  },
+  {
+    "uid": "trivia_qa::996",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": -2.25,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "trivia_qa::996",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 3.375,
+    "patched_margin": 1.25
+  },
+  {
+    "uid": "truthful_qa::4004",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 12.125,
+    "patched_margin": 5.5
+  },
+  {
+    "uid": "truthful_qa::4004",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 8.625,
+    "patched_margin": 3.75
+  },
+  {
+    "uid": "truthful_qa::4040",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 14.25,
+    "patched_margin": 6.125
+  },
+  {
+    "uid": "truthful_qa::4040",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": 9.25,
+    "patched_margin": 4.125
+  },
+  {
+    "uid": "truthful_qa::4060",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": 10.0,
+    "patched_margin": 4.25
+  },
+  {
+    "uid": "truthful_qa::4060",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 9.0,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "truthful_qa::4064",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 1.0,
+    "patched_margin": 0.5
+  },
+  {
+    "uid": "truthful_qa::4064",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 4.75,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "truthful_qa::4068",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.5,
+    "instruct_margin": 13.75,
+    "patched_margin": 5.25
+  },
+  {
+    "uid": "truthful_qa::4068",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.375,
+    "instruct_margin": 13.375,
+    "patched_margin": 6.0
+  },
+  {
+    "uid": "truthful_qa::4072",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.625,
+    "instruct_margin": -5.875,
+    "patched_margin": -2.875
+  },
+  {
+    "uid": "truthful_qa::4072",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -0.125,
+    "instruct_margin": 5.375,
+    "patched_margin": 1.875
+  },
+  {
+    "uid": "truthful_qa::4076",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 7.125,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "truthful_qa::4076",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 10.625,
+    "patched_margin": 4.875
+  },
+  {
+    "uid": "truthful_qa::4092",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 1.125,
+    "patched_margin": 0.875
+  },
+  {
+    "uid": "truthful_qa::4092",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 4.875,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "truthful_qa::4124",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 1.5,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "truthful_qa::4124",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 6.375,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "truthful_qa::4140",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 14.625,
+    "patched_margin": 6.25
+  },
+  {
+    "uid": "truthful_qa::4140",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 9.0,
+    "patched_margin": 4.125
+  },
+  {
+    "uid": "truthful_qa::4144",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.375,
+    "instruct_margin": 2.875,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "truthful_qa::4144",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.375,
+    "instruct_margin": 8.5,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::4180",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.75,
+    "instruct_margin": 4.875,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "truthful_qa::4180",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 3.625,
+    "patched_margin": 1.625
+  },
+  {
+    "uid": "truthful_qa::4204",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 3.5,
+    "instruct_margin": -1.0,
+    "patched_margin": 0.25
+  },
+  {
+    "uid": "truthful_qa::4204",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.75,
+    "instruct_margin": 6.75,
+    "patched_margin": 3.125
+  },
+  {
+    "uid": "truthful_qa::4208",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": -8.875,
+    "patched_margin": -2.625
+  },
+  {
+    "uid": "truthful_qa::4208",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 1.125,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "truthful_qa::4220",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 16.0,
+    "patched_margin": 6.75
+  },
+  {
+    "uid": "truthful_qa::4220",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 9.25,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "truthful_qa::4244",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": 9.25,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::4244",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": 9.625,
+    "patched_margin": 4.625
+  },
+  {
+    "uid": "truthful_qa::4252",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": 14.25,
+    "patched_margin": 5.5
+  },
+  {
+    "uid": "truthful_qa::4252",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": 11.0,
+    "patched_margin": 4.875
+  },
+  {
+    "uid": "truthful_qa::4272",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 13.0,
+    "patched_margin": 4.625
+  },
+  {
+    "uid": "truthful_qa::4272",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": 10.125,
+    "patched_margin": 3.75
+  },
+  {
+    "uid": "truthful_qa::4320",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.0,
+    "instruct_margin": 7.25,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::4320",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 10.25,
+    "patched_margin": 4.625
+  },
+  {
+    "uid": "truthful_qa::4328",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 13.875,
+    "patched_margin": 6.375
+  },
+  {
+    "uid": "truthful_qa::4328",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 9.375,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "truthful_qa::4336",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.5,
+    "instruct_margin": -3.125,
+    "patched_margin": -1.0
+  },
+  {
+    "uid": "truthful_qa::4336",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 5.375,
+    "patched_margin": 1.625
+  },
+  {
+    "uid": "truthful_qa::4340",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 15.625,
+    "patched_margin": 6.375
+  },
+  {
+    "uid": "truthful_qa::4340",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 9.625,
+    "patched_margin": 4.125
+  },
+  {
+    "uid": "truthful_qa::4344",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 9.5,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "truthful_qa::4344",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 8.375,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::4348",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 10.25,
+    "patched_margin": 4.75
+  },
+  {
+    "uid": "truthful_qa::4348",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 6.125,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "truthful_qa::4444",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 4.25,
+    "patched_margin": 1.25
+  },
+  {
+    "uid": "truthful_qa::4444",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 7.125,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::4448",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.5,
+    "instruct_margin": 5.25,
+    "patched_margin": 1.25
+  },
+  {
+    "uid": "truthful_qa::4448",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 6.0,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "truthful_qa::4460",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": -1.25,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "truthful_qa::4460",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": 7.125,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "truthful_qa::4472",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": -4.625,
+    "patched_margin": -1.375
+  },
+  {
+    "uid": "truthful_qa::4472",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.625,
+    "instruct_margin": 0.875,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "truthful_qa::4508",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -5.375,
+    "patched_margin": -1.875
+  },
+  {
+    "uid": "truthful_qa::4508",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 3.75,
+    "patched_margin": 1.25
+  },
+  {
+    "uid": "truthful_qa::4520",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": 21.125,
+    "patched_margin": 9.25
+  },
+  {
+    "uid": "truthful_qa::4520",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": 11.25,
+    "patched_margin": 4.875
+  },
+  {
+    "uid": "truthful_qa::4528",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.125,
+    "instruct_margin": 2.625,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "truthful_qa::4528",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 8.375,
+    "patched_margin": 3.75
+  },
+  {
+    "uid": "truthful_qa::4540",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": 6.375,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "truthful_qa::4540",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 6.5,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "truthful_qa::4544",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": -0.75,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "truthful_qa::4544",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 7.375,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "truthful_qa::4556",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": 10.375,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "truthful_qa::4556",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 5.875,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "truthful_qa::4608",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 12.25,
+    "patched_margin": 4.875
+  },
+  {
+    "uid": "truthful_qa::4608",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 12.125,
+    "patched_margin": 5.75
+  },
+  {
+    "uid": "truthful_qa::4620",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 3.0,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "truthful_qa::4620",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.375,
+    "instruct_margin": 10.875,
+    "patched_margin": 4.25
+  },
+  {
+    "uid": "truthful_qa::4624",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": 11.125,
+    "patched_margin": 4.125
+  },
+  {
+    "uid": "truthful_qa::4624",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 11.375,
+    "patched_margin": 5.5
+  },
+  {
+    "uid": "truthful_qa::4632",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 10.75,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "truthful_qa::4632",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 6.75,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "truthful_qa::4640",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 1.375,
+    "patched_margin": 0.125
+  },
+  {
+    "uid": "truthful_qa::4640",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 7.375,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::4648",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": -10.625,
+    "patched_margin": -4.125
+  },
+  {
+    "uid": "truthful_qa::4648",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 2.375,
+    "patched_margin": 0.875
+  },
+  {
+    "uid": "truthful_qa::4656",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": -11.125,
+    "patched_margin": -4.625
+  },
+  {
+    "uid": "truthful_qa::4656",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 3.25,
+    "patched_margin": 1.25
+  },
+  {
+    "uid": "truthful_qa::4680",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.375,
+    "instruct_margin": -2.75,
+    "patched_margin": -1.875
+  },
+  {
+    "uid": "truthful_qa::4680",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": 7.25,
+    "patched_margin": 3.125
+  },
+  {
+    "uid": "truthful_qa::4684",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -1.125,
+    "patched_margin": 0.0
+  },
+  {
+    "uid": "truthful_qa::4684",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": 1.0,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "truthful_qa::4708",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.0,
+    "instruct_margin": -0.375,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "truthful_qa::4708",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 10.0,
+    "patched_margin": 4.875
+  },
+  {
+    "uid": "truthful_qa::4724",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": -3.0,
+    "patched_margin": -2.0
+  },
+  {
+    "uid": "truthful_qa::4724",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.5,
+    "instruct_margin": 6.625,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "truthful_qa::4732",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.75,
+    "instruct_margin": 0.875,
+    "patched_margin": -0.5
+  },
+  {
+    "uid": "truthful_qa::4732",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.125,
+    "instruct_margin": 10.125,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "truthful_qa::4780",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 3.375,
+    "instruct_margin": 14.0,
+    "patched_margin": 5.75
+  },
+  {
+    "uid": "truthful_qa::4780",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 3.625,
+    "instruct_margin": 12.125,
+    "patched_margin": 5.375
+  },
+  {
+    "uid": "truthful_qa::4788",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 13.125,
+    "patched_margin": 6.0
+  },
+  {
+    "uid": "truthful_qa::4788",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 12.125,
+    "patched_margin": 5.75
+  },
+  {
+    "uid": "truthful_qa::4820",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 13.5,
+    "patched_margin": 5.625
+  },
+  {
+    "uid": "truthful_qa::4820",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 9.875,
+    "patched_margin": 4.125
+  },
+  {
+    "uid": "truthful_qa::4828",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 15.125,
+    "patched_margin": 6.125
+  },
+  {
+    "uid": "truthful_qa::4828",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 8.875,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::4856",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.375,
+    "instruct_margin": -1.0,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "truthful_qa::4856",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": 8.625,
+    "patched_margin": 3.75
+  },
+  {
+    "uid": "truthful_qa::4860",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 14.875,
+    "patched_margin": 6.0
+  },
+  {
+    "uid": "truthful_qa::4860",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 9.0,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "truthful_qa::4872",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.375,
+    "instruct_margin": 14.25,
+    "patched_margin": 5.0
+  },
+  {
+    "uid": "truthful_qa::4872",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 6.875,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "truthful_qa::4992",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 14.75,
+    "patched_margin": 6.375
+  },
+  {
+    "uid": "truthful_qa::4992",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": 13.5,
+    "patched_margin": 6.875
+  },
+  {
+    "uid": "truthful_qa::4996",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": 7.375,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "truthful_qa::4996",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 11.0,
+    "patched_margin": 5.125
+  },
+  {
+    "uid": "truthful_qa::5028",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.375,
+    "instruct_margin": 8.5,
+    "patched_margin": 2.625
+  },
+  {
+    "uid": "truthful_qa::5028",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 6.75,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "truthful_qa::5040",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 8.125,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::5040",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": 9.5,
+    "patched_margin": 3.75
+  },
+  {
+    "uid": "truthful_qa::5044",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.625,
+    "instruct_margin": 17.625,
+    "patched_margin": 7.375
+  },
+  {
+    "uid": "truthful_qa::5044",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 12.5,
+    "patched_margin": 6.125
+  },
+  {
+    "uid": "truthful_qa::5052",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": -7.25,
+    "patched_margin": -2.25
+  },
+  {
+    "uid": "truthful_qa::5052",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 1.125,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "truthful_qa::5076",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 13.5,
+    "patched_margin": 6.875
+  },
+  {
+    "uid": "truthful_qa::5076",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 8.75,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "truthful_qa::5080",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 13.625,
+    "patched_margin": 6.125
+  },
+  {
+    "uid": "truthful_qa::5080",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 10.75,
+    "patched_margin": 4.625
+  },
+  {
+    "uid": "truthful_qa::5092",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 9.625,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::5092",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": 9.125,
+    "patched_margin": 4.25
+  },
+  {
+    "uid": "truthful_qa::5104",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 7.25,
+    "patched_margin": 3.125
+  },
+  {
+    "uid": "truthful_qa::5104",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 7.125,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::5112",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": -8.25,
+    "patched_margin": -3.25
+  },
+  {
+    "uid": "truthful_qa::5112",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 1.75,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "truthful_qa::5116",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 1.25,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "truthful_qa::5116",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 9.0,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::5124",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": -6.625,
+    "patched_margin": -1.875
+  },
+  {
+    "uid": "truthful_qa::5124",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 1.75,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "truthful_qa::5152",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 16.625,
+    "patched_margin": 7.375
+  },
+  {
+    "uid": "truthful_qa::5152",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 11.125,
+    "patched_margin": 5.125
+  },
+  {
+    "uid": "truthful_qa::5156",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.0,
+    "instruct_margin": 0.375,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "truthful_qa::5156",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 5.0,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "truthful_qa::5160",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": -1.375,
+    "patched_margin": -1.0
+  },
+  {
+    "uid": "truthful_qa::5160",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 1.5,
+    "patched_margin": 0.5
+  },
+  {
+    "uid": "truthful_qa::5176",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 0.375,
+    "patched_margin": 0.25
+  },
+  {
+    "uid": "truthful_qa::5176",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 5.125,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "truthful_qa::5228",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -10.0,
+    "patched_margin": -3.375
+  },
+  {
+    "uid": "truthful_qa::5228",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 7.0,
+    "patched_margin": 2.625
+  },
+  {
+    "uid": "truthful_qa::5232",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 3.25,
+    "instruct_margin": 10.75,
+    "patched_margin": 3.75
+  },
+  {
+    "uid": "truthful_qa::5232",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.625,
+    "instruct_margin": 5.5,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "truthful_qa::5244",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.375,
+    "instruct_margin": -2.25,
+    "patched_margin": -1.5
+  },
+  {
+    "uid": "truthful_qa::5244",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": -1.5,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "truthful_qa::5248",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 5.5,
+    "patched_margin": 1.875
+  },
+  {
+    "uid": "truthful_qa::5248",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 1.625,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "truthful_qa::5268",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": 17.125,
+    "patched_margin": 7.0
+  },
+  {
+    "uid": "truthful_qa::5268",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.625,
+    "instruct_margin": 13.5,
+    "patched_margin": 6.375
+  },
+  {
+    "uid": "truthful_qa::5284",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": -7.625,
+    "patched_margin": -2.5
+  },
+  {
+    "uid": "truthful_qa::5284",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.625,
+    "instruct_margin": 5.625,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "truthful_qa::5288",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 2.125,
+    "patched_margin": 1.0
+  },
+  {
+    "uid": "truthful_qa::5288",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 10.375,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::5300",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 11.5,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "truthful_qa::5300",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.5,
+    "instruct_margin": 9.25,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "truthful_qa::5320",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 9.75,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "truthful_qa::5320",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 7.75,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "truthful_qa::5328",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 5.375,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "truthful_qa::5328",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 8.25,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "truthful_qa::5332",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 7.625,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::5332",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 9.625,
+    "patched_margin": 4.625
+  },
+  {
+    "uid": "truthful_qa::5348",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 2.5,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "truthful_qa::5348",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 7.375,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "truthful_qa::5388",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": 15.125,
+    "patched_margin": 6.625
+  },
+  {
+    "uid": "truthful_qa::5388",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 9.5,
+    "patched_margin": 4.5
+  },
+  {
+    "uid": "truthful_qa::5400",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.25,
+    "instruct_margin": -6.25,
+    "patched_margin": -2.625
+  },
+  {
+    "uid": "truthful_qa::5400",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": 2.625,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "truthful_qa::5404",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 10.75,
+    "patched_margin": 3.5
+  },
+  {
+    "uid": "truthful_qa::5404",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 10.875,
+    "patched_margin": 4.875
+  },
+  {
+    "uid": "truthful_qa::5412",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 3.625,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "truthful_qa::5412",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 6.0,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "truthful_qa::5420",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.5,
+    "instruct_margin": 7.125,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "truthful_qa::5420",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.75,
+    "instruct_margin": 11.5,
+    "patched_margin": 4.75
+  },
+  {
+    "uid": "truthful_qa::5428",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.875,
+    "instruct_margin": 14.375,
+    "patched_margin": 5.875
+  },
+  {
+    "uid": "truthful_qa::5428",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.625,
+    "instruct_margin": 8.75,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::5448",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 15.25,
+    "patched_margin": 6.625
+  },
+  {
+    "uid": "truthful_qa::5448",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.5,
+    "instruct_margin": 12.125,
+    "patched_margin": 5.625
+  },
+  {
+    "uid": "truthful_qa::5456",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": 13.5,
+    "patched_margin": 5.375
+  },
+  {
+    "uid": "truthful_qa::5456",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": 11.0,
+    "patched_margin": 4.5
+  },
+  {
+    "uid": "truthful_qa::5468",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.0,
+    "instruct_margin": 12.5,
+    "patched_margin": 5.0
+  },
+  {
+    "uid": "truthful_qa::5468",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 9.0,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "truthful_qa::5472",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -11.125,
+    "patched_margin": -4.875
+  },
+  {
+    "uid": "truthful_qa::5472",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": -3.5,
+    "patched_margin": -1.75
+  },
+  {
+    "uid": "truthful_qa::5476",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.375,
+    "instruct_margin": 15.125,
+    "patched_margin": 6.25
+  },
+  {
+    "uid": "truthful_qa::5476",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 13.0,
+    "patched_margin": 5.875
+  },
+  {
+    "uid": "truthful_qa::5520",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 16.0,
+    "patched_margin": 7.0
+  },
+  {
+    "uid": "truthful_qa::5520",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 10.625,
+    "patched_margin": 4.75
+  },
+  {
+    "uid": "truthful_qa::5544",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 4.5,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "truthful_qa::5544",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 6.75,
+    "patched_margin": 3.0
+  },
+  {
+    "uid": "truthful_qa::5552",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -0.25,
+    "patched_margin": -0.125
+  },
+  {
+    "uid": "truthful_qa::5552",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 5.875,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "truthful_qa::5564",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": -1.0,
+    "patched_margin": 0.0
+  },
+  {
+    "uid": "truthful_qa::5564",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 9.5,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::5572",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 8.375,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "truthful_qa::5572",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.25,
+    "instruct_margin": 11.0,
+    "patched_margin": 4.75
+  },
+  {
+    "uid": "truthful_qa::5596",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.625,
+    "instruct_margin": 9.0,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "truthful_qa::5596",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.75,
+    "instruct_margin": 10.625,
+    "patched_margin": 5.0
+  },
+  {
+    "uid": "truthful_qa::5620",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 14.875,
+    "patched_margin": 6.5
+  },
+  {
+    "uid": "truthful_qa::5620",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": 13.125,
+    "patched_margin": 6.25
+  },
+  {
+    "uid": "truthful_qa::5664",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.25,
+    "instruct_margin": 8.25,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "truthful_qa::5664",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 6.75,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "truthful_qa::5668",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 7.25,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "truthful_qa::5668",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 5.0,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::5684",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 10.0,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "truthful_qa::5684",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 8.625,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "truthful_qa::5688",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.375,
+    "instruct_margin": 7.375,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::5688",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.375,
+    "instruct_margin": 9.375,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "truthful_qa::5692",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": -4.75,
+    "patched_margin": -1.5
+  },
+  {
+    "uid": "truthful_qa::5692",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 5.75,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "truthful_qa::5704",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 10.625,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "truthful_qa::5704",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": 9.5,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::5720",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.125,
+    "instruct_margin": 1.0,
+    "patched_margin": -0.25
+  },
+  {
+    "uid": "truthful_qa::5720",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": 8.375,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "truthful_qa::5756",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.625,
+    "instruct_margin": 1.0,
+    "patched_margin": 0.625
+  },
+  {
+    "uid": "truthful_qa::5756",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 8.125,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "truthful_qa::5772",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 7.0,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "truthful_qa::5772",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 11.0,
+    "patched_margin": 4.5
+  },
+  {
+    "uid": "truthful_qa::5836",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.375,
+    "instruct_margin": -7.625,
+    "patched_margin": -3.0
+  },
+  {
+    "uid": "truthful_qa::5836",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": 2.5,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "truthful_qa::5884",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 10.125,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "truthful_qa::5884",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": 7.75,
+    "patched_margin": 3.125
+  },
+  {
+    "uid": "truthful_qa::5896",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -2.375,
+    "patched_margin": -0.375
+  },
+  {
+    "uid": "truthful_qa::5896",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 3.125,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "truthful_qa::5928",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -3.625,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "truthful_qa::5928",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 6.75,
+    "patched_margin": 2.625
+  },
+  {
+    "uid": "truthful_qa::5936",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 15.75,
+    "patched_margin": 6.875
+  },
+  {
+    "uid": "truthful_qa::5936",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 10.25,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "truthful_qa::5940",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 11.375,
+    "patched_margin": 4.5
+  },
+  {
+    "uid": "truthful_qa::5940",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 5.75,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "truthful_qa::5964",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 15.25,
+    "patched_margin": 6.25
+  },
+  {
+    "uid": "truthful_qa::5964",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 10.0,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "truthful_qa::5968",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -1.0,
+    "instruct_margin": -8.625,
+    "patched_margin": -3.875
+  },
+  {
+    "uid": "truthful_qa::5968",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": 6.375,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "truthful_qa::6000",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.5,
+    "instruct_margin": 0.0,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "truthful_qa::6000",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -0.25,
+    "instruct_margin": -0.375,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "truthful_qa::6040",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": -3.5,
+    "patched_margin": -1.75
+  },
+  {
+    "uid": "truthful_qa::6040",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 9.125,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "truthful_qa::6048",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 9.125,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "truthful_qa::6048",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 6.875,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::6056",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.125,
+    "instruct_margin": 5.5,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "truthful_qa::6056",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.375,
+    "instruct_margin": 6.25,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "truthful_qa::6076",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 3.25,
+    "instruct_margin": 12.5,
+    "patched_margin": 5.25
+  },
+  {
+    "uid": "truthful_qa::6076",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 3.0,
+    "instruct_margin": 8.125,
+    "patched_margin": 3.5
+  },
+  {
+    "uid": "truthful_qa::6096",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": -0.875,
+    "patched_margin": -0.125
+  },
+  {
+    "uid": "truthful_qa::6096",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 3.625,
+    "patched_margin": 1.625
+  },
+  {
+    "uid": "truthful_qa::6132",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -1.125,
+    "instruct_margin": -1.875,
+    "patched_margin": -1.5
+  },
+  {
+    "uid": "truthful_qa::6132",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -0.125,
+    "instruct_margin": 2.75,
+    "patched_margin": 0.625
+  },
+  {
+    "uid": "truthful_qa::6136",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": -6.375,
+    "patched_margin": -1.875
+  },
+  {
+    "uid": "truthful_qa::6136",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 7.625,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "truthful_qa::6140",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 9.75,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "truthful_qa::6140",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 4.25,
+    "patched_margin": 1.875
+  },
+  {
+    "uid": "truthful_qa::6172",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 6.375,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::6172",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 7.625,
+    "patched_margin": 3.125
+  },
+  {
+    "uid": "truthful_qa::6184",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 3.0,
+    "instruct_margin": 14.625,
+    "patched_margin": 5.875
+  },
+  {
+    "uid": "truthful_qa::6184",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 10.25,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::6212",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 14.5,
+    "patched_margin": 5.625
+  },
+  {
+    "uid": "truthful_qa::6212",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 9.25,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::6228",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": -11.0,
+    "patched_margin": -4.75
+  },
+  {
+    "uid": "truthful_qa::6228",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.125,
+    "instruct_margin": -7.625,
+    "patched_margin": -3.25
+  },
+  {
+    "uid": "truthful_qa::6236",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 14.875,
+    "patched_margin": 6.625
+  },
+  {
+    "uid": "truthful_qa::6236",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 10.375,
+    "patched_margin": 4.5
+  },
+  {
+    "uid": "truthful_qa::6256",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": 10.0,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::6256",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 9.5,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "truthful_qa::6264",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 12.5,
+    "patched_margin": 4.875
+  },
+  {
+    "uid": "truthful_qa::6264",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": 7.375,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "truthful_qa::6272",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": 11.875,
+    "patched_margin": 4.625
+  },
+  {
+    "uid": "truthful_qa::6272",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 3.125,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "truthful_qa::6276",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 10.875,
+    "patched_margin": 4.625
+  },
+  {
+    "uid": "truthful_qa::6276",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 8.0,
+    "patched_margin": 3.5
+  },
+  {
+    "uid": "truthful_qa::6288",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 10.25,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "truthful_qa::6288",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": 5.25,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "truthful_qa::6292",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 3.125,
+    "instruct_margin": 2.375,
+    "patched_margin": 1.625
+  },
+  {
+    "uid": "truthful_qa::6292",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 3.0,
+    "instruct_margin": 6.5,
+    "patched_margin": 3.0
+  },
+  {
+    "uid": "truthful_qa::6304",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.875,
+    "instruct_margin": 5.0,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "truthful_qa::6304",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.625,
+    "instruct_margin": 7.875,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "truthful_qa::6308",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.75,
+    "instruct_margin": 4.625,
+    "patched_margin": 0.625
+  },
+  {
+    "uid": "truthful_qa::6308",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.875,
+    "instruct_margin": 9.625,
+    "patched_margin": 3.125
+  },
+  {
+    "uid": "truthful_qa::6316",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 14.125,
+    "patched_margin": 5.5
+  },
+  {
+    "uid": "truthful_qa::6316",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.125,
+    "instruct_margin": 9.75,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "truthful_qa::6328",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": -2.5,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "truthful_qa::6328",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 2.875,
+    "patched_margin": 1.25
+  },
+  {
+    "uid": "truthful_qa::6336",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": -6.25,
+    "patched_margin": -2.5
+  },
+  {
+    "uid": "truthful_qa::6336",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": -0.625,
+    "patched_margin": -0.25
+  },
+  {
+    "uid": "truthful_qa::6356",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 7.875,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "truthful_qa::6356",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 7.75,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "truthful_qa::6384",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": -13.375,
+    "patched_margin": -6.25
+  },
+  {
+    "uid": "truthful_qa::6384",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": -0.125,
+    "instruct_margin": -2.75,
+    "patched_margin": -1.125
+  },
+  {
+    "uid": "truthful_qa::6400",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.625,
+    "instruct_margin": -7.75,
+    "patched_margin": -2.875
+  },
+  {
+    "uid": "truthful_qa::6400",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 8.125,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "truthful_qa::6412",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": 0.75,
+    "patched_margin": 0.0
+  },
+  {
+    "uid": "truthful_qa::6412",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 4.375,
+    "patched_margin": 1.875
+  },
+  {
+    "uid": "truthful_qa::6432",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 3.25,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "truthful_qa::6432",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.5,
+    "instruct_margin": 8.75,
+    "patched_margin": 4.25
+  },
+  {
+    "uid": "truthful_qa::6436",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": -0.375,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "truthful_qa::6436",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 5.625,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "truthful_qa::6480",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 10.0,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "truthful_qa::6480",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 10.375,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "truthful_qa::6572",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": -0.625,
+    "patched_margin": 0.25
+  },
+  {
+    "uid": "truthful_qa::6572",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.625,
+    "instruct_margin": 3.625,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "truthful_qa::6580",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 13.125,
+    "patched_margin": 5.375
+  },
+  {
+    "uid": "truthful_qa::6580",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 3.0,
+    "instruct_margin": 11.375,
+    "patched_margin": 5.25
+  },
+  {
+    "uid": "truthful_qa::6616",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.75,
+    "instruct_margin": -0.25,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "truthful_qa::6616",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -0.625,
+    "instruct_margin": -1.5,
+    "patched_margin": -1.125
+  },
+  {
+    "uid": "truthful_qa::6652",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.875,
+    "instruct_margin": 8.375,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "truthful_qa::6652",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 3.25,
+    "instruct_margin": 9.0,
+    "patched_margin": 3.125
+  },
+  {
+    "uid": "truthful_qa::6676",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 6.375,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "truthful_qa::6676",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 7.75,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "truthful_qa::6680",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": -3.0,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "truthful_qa::6680",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 3.375,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "truthful_qa::6696",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.5,
+    "instruct_margin": -9.875,
+    "patched_margin": -4.375
+  },
+  {
+    "uid": "truthful_qa::6696",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": 9.5,
+    "patched_margin": 4.125
+  },
+  {
+    "uid": "truthful_qa::6708",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 12.0,
+    "patched_margin": 5.375
+  },
+  {
+    "uid": "truthful_qa::6708",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 10.25,
+    "patched_margin": 5.125
+  },
+  {
+    "uid": "truthful_qa::6728",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.375,
+    "instruct_margin": -4.5,
+    "patched_margin": -1.125
+  },
+  {
+    "uid": "truthful_qa::6728",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.125,
+    "instruct_margin": 1.875,
+    "patched_margin": 0.875
+  },
+  {
+    "uid": "truthful_qa::6740",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": -12.375,
+    "patched_margin": -6.25
+  },
+  {
+    "uid": "truthful_qa::6740",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": -0.25,
+    "patched_margin": -0.25
+  },
+  {
+    "uid": "truthful_qa::6752",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.125,
+    "instruct_margin": 0.375,
+    "patched_margin": -0.5
+  },
+  {
+    "uid": "truthful_qa::6752",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 2.625,
+    "patched_margin": 1.0
+  },
+  {
+    "uid": "truthful_qa::6756",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.0,
+    "instruct_margin": 2.5,
+    "patched_margin": 0.125
+  },
+  {
+    "uid": "truthful_qa::6756",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 9.625,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "truthful_qa::6776",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": 6.75,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::6776",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.25,
+    "instruct_margin": 7.375,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "truthful_qa::6784",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.625,
+    "instruct_margin": 13.0,
+    "patched_margin": 5.875
+  },
+  {
+    "uid": "truthful_qa::6784",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 7.75,
+    "patched_margin": 3.5
+  },
+  {
+    "uid": "truthful_qa::6804",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 3.75,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "truthful_qa::6804",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 9.875,
+    "patched_margin": 4.5
+  },
+  {
+    "uid": "truthful_qa::6812",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 12.5,
+    "patched_margin": 5.0
+  },
+  {
+    "uid": "truthful_qa::6812",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 10.875,
+    "patched_margin": 4.75
+  },
+  {
+    "uid": "truthful_qa::6836",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.625,
+    "instruct_margin": 15.125,
+    "patched_margin": 6.625
+  },
+  {
+    "uid": "truthful_qa::6836",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": 8.625,
+    "patched_margin": 3.75
+  },
+  {
+    "uid": "truthful_qa::6856",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.0,
+    "instruct_margin": -14.625,
+    "patched_margin": -6.625
+  },
+  {
+    "uid": "truthful_qa::6856",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": -1.375,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "truthful_qa::6864",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 14.875,
+    "patched_margin": 6.375
+  },
+  {
+    "uid": "truthful_qa::6864",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 9.625,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "truthful_qa::6900",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 8.625,
+    "patched_margin": 3.75
+  },
+  {
+    "uid": "truthful_qa::6900",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 5.625,
+    "patched_margin": 2.75
+  },
+  {
+    "uid": "truthful_qa::6916",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": -13.0,
+    "patched_margin": -5.5
+  },
+  {
+    "uid": "truthful_qa::6916",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.375,
+    "instruct_margin": -5.75,
+    "patched_margin": -2.25
+  },
+  {
+    "uid": "truthful_qa::6956",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.625,
+    "instruct_margin": -11.0,
+    "patched_margin": -4.875
+  },
+  {
+    "uid": "truthful_qa::6956",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.25,
+    "instruct_margin": 1.375,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "truthful_qa::7008",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": -2.0,
+    "patched_margin": -1.25
+  },
+  {
+    "uid": "truthful_qa::7008",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": 5.625,
+    "patched_margin": 1.875
+  },
+  {
+    "uid": "truthful_qa::7032",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 14.5,
+    "patched_margin": 6.25
+  },
+  {
+    "uid": "truthful_qa::7032",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": 9.375,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "truthful_qa::7064",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": -1.75,
+    "patched_margin": -0.125
+  },
+  {
+    "uid": "truthful_qa::7064",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 1.25,
+    "patched_margin": 0.625
+  },
+  {
+    "uid": "truthful_qa::7068",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": -1.75,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "truthful_qa::7068",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 6.0,
+    "patched_margin": 2.625
+  },
+  {
+    "uid": "truthful_qa::7112",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -1.75,
+    "instruct_margin": -13.75,
+    "patched_margin": -6.5
+  },
+  {
+    "uid": "truthful_qa::7112",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": 3.0,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "truthful_qa::7132",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 14.375,
+    "patched_margin": 5.625
+  },
+  {
+    "uid": "truthful_qa::7132",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 10.125,
+    "patched_margin": 3.875
+  },
+  {
+    "uid": "truthful_qa::7140",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": -11.625,
+    "patched_margin": -4.375
+  },
+  {
+    "uid": "truthful_qa::7140",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 1.375,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "truthful_qa::7148",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 13.5,
+    "patched_margin": 5.875
+  },
+  {
+    "uid": "truthful_qa::7148",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 7.625,
+    "patched_margin": 3.25
+  },
+  {
+    "uid": "truthful_qa::7164",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 7.125,
+    "patched_margin": 1.875
+  },
+  {
+    "uid": "truthful_qa::7164",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 10.0,
+    "patched_margin": 3.75
+  },
+  {
+    "uid": "truthful_qa::7172",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 13.875,
+    "patched_margin": 5.75
+  },
+  {
+    "uid": "truthful_qa::7172",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 12.25,
+    "patched_margin": 5.875
+  },
+  {
+    "uid": "truthful_qa::7184",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": 12.25,
+    "patched_margin": 5.0
+  },
+  {
+    "uid": "truthful_qa::7184",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 9.75,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "truthful_qa::7192",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.625,
+    "instruct_margin": 4.625,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "truthful_qa::7192",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 6.125,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::7200",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 10.75,
+    "patched_margin": 4.25
+  },
+  {
+    "uid": "truthful_qa::7200",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": 9.875,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "truthful_qa::7204",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 2.625,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "truthful_qa::7204",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 7.75,
+    "patched_margin": 3.125
+  },
+  {
+    "uid": "truthful_qa::7212",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 10.625,
+    "patched_margin": 4.125
+  },
+  {
+    "uid": "truthful_qa::7212",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 8.125,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "truthful_qa::7220",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.0,
+    "instruct_margin": -7.25,
+    "patched_margin": -3.125
+  },
+  {
+    "uid": "truthful_qa::7220",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": 7.625,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "truthful_qa::7224",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 3.625,
+    "instruct_margin": 7.75,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "truthful_qa::7224",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 3.375,
+    "instruct_margin": 8.0,
+    "patched_margin": 3.5
+  },
+  {
+    "uid": "truthful_qa::7264",
+    "label": "correcting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.625,
+    "instruct_margin": 2.625,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "truthful_qa::7264",
+    "label": "correcting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 4.125,
+    "patched_margin": 1.625
+  },
+  {
+    "uid": "trivia_qa::1000",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 11.25,
+    "patched_margin": 4.5
+  },
+  {
+    "uid": "trivia_qa::1000",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 6.875,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "trivia_qa::1024",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.75,
+    "instruct_margin": -10.875,
+    "patched_margin": -4.25
+  },
+  {
+    "uid": "trivia_qa::1024",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 0.125,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "trivia_qa::1028",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": -12.25,
+    "patched_margin": -5.75
+  },
+  {
+    "uid": "trivia_qa::1028",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": -3.875,
+    "patched_margin": -1.625
+  },
+  {
+    "uid": "trivia_qa::1080",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": -7.0,
+    "patched_margin": -2.125
+  },
+  {
+    "uid": "trivia_qa::1080",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": -1.125,
+    "patched_margin": -0.125
+  },
+  {
+    "uid": "trivia_qa::1108",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": -12.75,
+    "patched_margin": -5.25
+  },
+  {
+    "uid": "trivia_qa::1108",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.375,
+    "instruct_margin": -6.0,
+    "patched_margin": -2.125
+  },
+  {
+    "uid": "trivia_qa::1156",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": -15.5,
+    "patched_margin": -7.125
+  },
+  {
+    "uid": "trivia_qa::1156",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": -7.0,
+    "patched_margin": -2.5
+  },
+  {
+    "uid": "trivia_qa::1160",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 0.375,
+    "patched_margin": 1.0
+  },
+  {
+    "uid": "trivia_qa::1160",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.875,
+    "instruct_margin": 4.375,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "trivia_qa::1208",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 11.125,
+    "patched_margin": 4.125
+  },
+  {
+    "uid": "trivia_qa::1208",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 10.25,
+    "patched_margin": 4.25
+  },
+  {
+    "uid": "trivia_qa::1240",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": -9.75,
+    "patched_margin": -3.875
+  },
+  {
+    "uid": "trivia_qa::1240",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 2.0,
+    "patched_margin": 0.5
+  },
+  {
+    "uid": "trivia_qa::1248",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 3.625,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "trivia_qa::1248",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 4.75,
+    "patched_margin": 1.875
+  },
+  {
+    "uid": "trivia_qa::1252",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 5.125,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "trivia_qa::1252",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 2.875,
+    "patched_margin": 1.25
+  },
+  {
+    "uid": "trivia_qa::1272",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -11.75,
+    "patched_margin": -4.75
+  },
+  {
+    "uid": "trivia_qa::1272",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": 0.375,
+    "patched_margin": -0.25
+  },
+  {
+    "uid": "trivia_qa::1360",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": 7.25,
+    "patched_margin": 3.0
+  },
+  {
+    "uid": "trivia_qa::1360",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 9.5,
+    "patched_margin": 4.25
+  },
+  {
+    "uid": "trivia_qa::1408",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -13.0,
+    "patched_margin": -5.375
+  },
+  {
+    "uid": "trivia_qa::1408",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 3.125,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "trivia_qa::1436",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": -6.75,
+    "patched_margin": -2.75
+  },
+  {
+    "uid": "trivia_qa::1436",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 0.75,
+    "patched_margin": 0.125
+  },
+  {
+    "uid": "trivia_qa::1544",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": -2.5,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "trivia_qa::1544",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 5.25,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "trivia_qa::1668",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.25,
+    "instruct_margin": -8.375,
+    "patched_margin": -3.5
+  },
+  {
+    "uid": "trivia_qa::1668",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": -0.625,
+    "patched_margin": -0.375
+  },
+  {
+    "uid": "trivia_qa::1672",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -7.75,
+    "patched_margin": -2.375
+  },
+  {
+    "uid": "trivia_qa::1672",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 1.625,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "trivia_qa::1756",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": -13.625,
+    "patched_margin": -5.375
+  },
+  {
+    "uid": "trivia_qa::1756",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.5,
+    "instruct_margin": -8.25,
+    "patched_margin": -3.25
+  },
+  {
+    "uid": "trivia_qa::1796",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": -12.5,
+    "patched_margin": -5.75
+  },
+  {
+    "uid": "trivia_qa::1796",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 4.75,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "trivia_qa::1912",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -9.875,
+    "patched_margin": -3.75
+  },
+  {
+    "uid": "trivia_qa::1912",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.375,
+    "instruct_margin": -2.75,
+    "patched_margin": -1.125
+  },
+  {
+    "uid": "trivia_qa::1924",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.375,
+    "instruct_margin": -10.25,
+    "patched_margin": -4.5
+  },
+  {
+    "uid": "trivia_qa::1924",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": 2.375,
+    "patched_margin": 0.625
+  },
+  {
+    "uid": "trivia_qa::20",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": -9.5,
+    "patched_margin": -4.875
+  },
+  {
+    "uid": "trivia_qa::20",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": -3.875,
+    "patched_margin": -1.875
+  },
+  {
+    "uid": "trivia_qa::2040",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -7.5,
+    "patched_margin": -2.125
+  },
+  {
+    "uid": "trivia_qa::2040",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 1.75,
+    "patched_margin": 1.0
+  },
+  {
+    "uid": "trivia_qa::2044",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.375,
+    "instruct_margin": -13.25,
+    "patched_margin": -5.625
+  },
+  {
+    "uid": "trivia_qa::2044",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": -3.5,
+    "patched_margin": -1.5
+  },
+  {
+    "uid": "trivia_qa::2068",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": -11.5,
+    "patched_margin": -5.625
+  },
+  {
+    "uid": "trivia_qa::2068",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": -6.625,
+    "patched_margin": -2.75
+  },
+  {
+    "uid": "trivia_qa::2120",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": -5.125,
+    "patched_margin": -2.375
+  },
+  {
+    "uid": "trivia_qa::2120",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 5.875,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "trivia_qa::2176",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": -6.125,
+    "patched_margin": -3.375
+  },
+  {
+    "uid": "trivia_qa::2176",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 1.75,
+    "patched_margin": 0.5
+  },
+  {
+    "uid": "trivia_qa::2228",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -11.375,
+    "patched_margin": -4.25
+  },
+  {
+    "uid": "trivia_qa::2228",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.0,
+    "instruct_margin": -1.5,
+    "patched_margin": -0.25
+  },
+  {
+    "uid": "trivia_qa::2340",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": -10.75,
+    "patched_margin": -4.125
+  },
+  {
+    "uid": "trivia_qa::2340",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": -2.75,
+    "patched_margin": -1.25
+  },
+  {
+    "uid": "trivia_qa::236",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": -6.75,
+    "patched_margin": -1.875
+  },
+  {
+    "uid": "trivia_qa::236",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 4.75,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "trivia_qa::2436",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": -0.375,
+    "instruct_margin": -15.75,
+    "patched_margin": -7.375
+  },
+  {
+    "uid": "trivia_qa::2436",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.375,
+    "instruct_margin": -9.5,
+    "patched_margin": -3.875
+  },
+  {
+    "uid": "trivia_qa::2504",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.0,
+    "instruct_margin": -13.125,
+    "patched_margin": -6.0
+  },
+  {
+    "uid": "trivia_qa::2504",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": -0.25,
+    "instruct_margin": -2.125,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "trivia_qa::256",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.75,
+    "instruct_margin": 14.875,
+    "patched_margin": 5.875
+  },
+  {
+    "uid": "trivia_qa::256",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 3.0,
+    "instruct_margin": 12.375,
+    "patched_margin": 5.5
+  },
+  {
+    "uid": "trivia_qa::2608",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.5,
+    "instruct_margin": -13.875,
+    "patched_margin": -6.75
+  },
+  {
+    "uid": "trivia_qa::2608",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -5.25,
+    "patched_margin": -2.0
+  },
+  {
+    "uid": "trivia_qa::2668",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": 8.625,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "trivia_qa::2668",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 12.625,
+    "patched_margin": 6.0
+  },
+  {
+    "uid": "trivia_qa::2704",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": -6.0,
+    "patched_margin": -2.0
+  },
+  {
+    "uid": "trivia_qa::2704",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 6.375,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "trivia_qa::2796",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.0,
+    "instruct_margin": -10.375,
+    "patched_margin": -4.25
+  },
+  {
+    "uid": "trivia_qa::2796",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": -0.875,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "trivia_qa::2800",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.625,
+    "instruct_margin": -13.375,
+    "patched_margin": -5.625
+  },
+  {
+    "uid": "trivia_qa::2800",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": -4.375,
+    "patched_margin": -1.625
+  },
+  {
+    "uid": "trivia_qa::284",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": -9.125,
+    "patched_margin": -4.125
+  },
+  {
+    "uid": "trivia_qa::284",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": -4.5,
+    "patched_margin": -2.0
+  },
+  {
+    "uid": "trivia_qa::2932",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -7.5,
+    "patched_margin": -2.875
+  },
+  {
+    "uid": "trivia_qa::2932",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 3.5,
+    "patched_margin": 1.625
+  },
+  {
+    "uid": "trivia_qa::3028",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.25,
+    "instruct_margin": -11.0,
+    "patched_margin": -5.125
+  },
+  {
+    "uid": "trivia_qa::3028",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 0.25,
+    "patched_margin": -0.125
+  },
+  {
+    "uid": "trivia_qa::3056",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.5,
+    "instruct_margin": -11.75,
+    "patched_margin": -5.5
+  },
+  {
+    "uid": "trivia_qa::3056",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.125,
+    "instruct_margin": 0.0,
+    "patched_margin": -0.375
+  },
+  {
+    "uid": "trivia_qa::3068",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.5,
+    "instruct_margin": -15.375,
+    "patched_margin": -7.25
+  },
+  {
+    "uid": "trivia_qa::3068",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": -1.875,
+    "patched_margin": -0.5
+  },
+  {
+    "uid": "trivia_qa::3076",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.75,
+    "instruct_margin": -4.25,
+    "patched_margin": -2.25
+  },
+  {
+    "uid": "trivia_qa::3076",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 7.125,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "trivia_qa::3120",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": -13.125,
+    "patched_margin": -6.0
+  },
+  {
+    "uid": "trivia_qa::3120",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": -2.125,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "trivia_qa::3180",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": -6.25,
+    "patched_margin": -2.625
+  },
+  {
+    "uid": "trivia_qa::3180",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 3.25,
+    "patched_margin": 1.25
+  },
+  {
+    "uid": "trivia_qa::3208",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -1.25,
+    "patched_margin": 0.125
+  },
+  {
+    "uid": "trivia_qa::3208",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 0.5,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "trivia_qa::3224",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": -4.75,
+    "patched_margin": -1.125
+  },
+  {
+    "uid": "trivia_qa::3224",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 2.625,
+    "patched_margin": 1.625
+  },
+  {
+    "uid": "trivia_qa::3232",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 2.5,
+    "patched_margin": 1.25
+  },
+  {
+    "uid": "trivia_qa::3232",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.125,
+    "instruct_margin": 4.375,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "trivia_qa::3248",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": -7.625,
+    "patched_margin": -3.0
+  },
+  {
+    "uid": "trivia_qa::3248",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 6.875,
+    "patched_margin": 3.125
+  },
+  {
+    "uid": "trivia_qa::3312",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": -4.25,
+    "patched_margin": -2.125
+  },
+  {
+    "uid": "trivia_qa::3312",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.625,
+    "instruct_margin": 6.5,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "trivia_qa::3380",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -6.5,
+    "patched_margin": -2.25
+  },
+  {
+    "uid": "trivia_qa::3380",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 1.125,
+    "patched_margin": 0.625
+  },
+  {
+    "uid": "trivia_qa::3408",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 3.125,
+    "instruct_margin": -4.375,
+    "patched_margin": -2.375
+  },
+  {
+    "uid": "trivia_qa::3408",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 3.25,
+    "instruct_margin": 2.5,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "trivia_qa::344",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -9.125,
+    "patched_margin": -3.375
+  },
+  {
+    "uid": "trivia_qa::344",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": 1.625,
+    "patched_margin": 0.5
+  },
+  {
+    "uid": "trivia_qa::3496",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -12.875,
+    "patched_margin": -5.375
+  },
+  {
+    "uid": "trivia_qa::3496",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": -1.875,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "trivia_qa::3520",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": -4.25,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "trivia_qa::3520",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 5.375,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "trivia_qa::3608",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 11.75,
+    "patched_margin": 4.5
+  },
+  {
+    "uid": "trivia_qa::3608",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.75,
+    "instruct_margin": 12.5,
+    "patched_margin": 6.125
+  },
+  {
+    "uid": "trivia_qa::3632",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": -8.875,
+    "patched_margin": -3.625
+  },
+  {
+    "uid": "trivia_qa::3632",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -3.25,
+    "patched_margin": -1.25
+  },
+  {
+    "uid": "trivia_qa::3636",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 3.25,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "trivia_qa::3636",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": 8.875,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "trivia_qa::3660",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": 8.375,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "trivia_qa::3660",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 8.25,
+    "patched_margin": 2.875
+  },
+  {
+    "uid": "trivia_qa::3676",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -13.875,
+    "patched_margin": -5.875
+  },
+  {
+    "uid": "trivia_qa::3676",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": -8.25,
+    "patched_margin": -3.125
+  },
+  {
+    "uid": "trivia_qa::3792",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": -9.375,
+    "patched_margin": -3.5
+  },
+  {
+    "uid": "trivia_qa::3792",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -1.75,
+    "patched_margin": -0.375
+  },
+  {
+    "uid": "trivia_qa::3820",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": -13.875,
+    "patched_margin": -5.5
+  },
+  {
+    "uid": "trivia_qa::3820",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -1.625,
+    "patched_margin": -0.125
+  },
+  {
+    "uid": "trivia_qa::3856",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 4.625,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "trivia_qa::3856",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 6.375,
+    "patched_margin": 3.125
+  },
+  {
+    "uid": "trivia_qa::3972",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": -5.0,
+    "patched_margin": -2.125
+  },
+  {
+    "uid": "trivia_qa::3972",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.625,
+    "instruct_margin": 5.375,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "trivia_qa::3992",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": -12.75,
+    "patched_margin": -5.875
+  },
+  {
+    "uid": "trivia_qa::3992",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 1.0,
+    "patched_margin": 0.125
+  },
+  {
+    "uid": "trivia_qa::3996",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": -3.75,
+    "patched_margin": -1.875
+  },
+  {
+    "uid": "trivia_qa::3996",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": 3.75,
+    "patched_margin": 1.625
+  },
+  {
+    "uid": "trivia_qa::432",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": -6.0,
+    "patched_margin": -2.625
+  },
+  {
+    "uid": "trivia_qa::432",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 4.625,
+    "patched_margin": 1.25
+  },
+  {
+    "uid": "trivia_qa::456",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.75,
+    "instruct_margin": 14.875,
+    "patched_margin": 6.25
+  },
+  {
+    "uid": "trivia_qa::456",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 9.625,
+    "patched_margin": 4.625
+  },
+  {
+    "uid": "trivia_qa::472",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": -9.375,
+    "patched_margin": -4.125
+  },
+  {
+    "uid": "trivia_qa::472",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 5.375,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "trivia_qa::508",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": -2.0,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "trivia_qa::508",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 1.5,
+    "patched_margin": 0.875
+  },
+  {
+    "uid": "trivia_qa::524",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -10.75,
+    "patched_margin": -4.25
+  },
+  {
+    "uid": "trivia_qa::524",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 2.25,
+    "patched_margin": 0.875
+  },
+  {
+    "uid": "trivia_qa::56",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": -8.0,
+    "patched_margin": -3.5
+  },
+  {
+    "uid": "trivia_qa::56",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.625,
+    "instruct_margin": -1.0,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "trivia_qa::592",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.5,
+    "instruct_margin": -10.0,
+    "patched_margin": -4.25
+  },
+  {
+    "uid": "trivia_qa::592",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 0.25,
+    "patched_margin": -0.125
+  },
+  {
+    "uid": "trivia_qa::608",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.5,
+    "instruct_margin": -14.75,
+    "patched_margin": -5.75
+  },
+  {
+    "uid": "trivia_qa::608",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.625,
+    "instruct_margin": -2.875,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "trivia_qa::652",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": -9.125,
+    "patched_margin": -3.5
+  },
+  {
+    "uid": "trivia_qa::652",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.25,
+    "instruct_margin": 1.125,
+    "patched_margin": 0.0
+  },
+  {
+    "uid": "trivia_qa::700",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": -8.625,
+    "patched_margin": -3.125
+  },
+  {
+    "uid": "trivia_qa::700",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": -5.125,
+    "patched_margin": -1.875
+  },
+  {
+    "uid": "trivia_qa::744",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 5.0,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "trivia_qa::744",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 7.875,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "trivia_qa::792",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -4.25,
+    "patched_margin": -1.125
+  },
+  {
+    "uid": "trivia_qa::792",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 0.5,
+    "patched_margin": 0.25
+  },
+  {
+    "uid": "trivia_qa::828",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -3.25,
+    "patched_margin": -0.625
+  },
+  {
+    "uid": "trivia_qa::828",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": 1.375,
+    "patched_margin": 0.5
+  },
+  {
+    "uid": "trivia_qa::84",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 5.0,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "trivia_qa::84",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 3.875,
+    "patched_margin": 1.625
+  },
+  {
+    "uid": "trivia_qa::852",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.375,
+    "instruct_margin": -13.875,
+    "patched_margin": -6.75
+  },
+  {
+    "uid": "trivia_qa::852",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": -4.0,
+    "patched_margin": -1.625
+  },
+  {
+    "uid": "trivia_qa::940",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": -12.0,
+    "patched_margin": -5.125
+  },
+  {
+    "uid": "trivia_qa::940",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": -2.875,
+    "patched_margin": -1.5
+  },
+  {
+    "uid": "trivia_qa::968",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.25,
+    "instruct_margin": -6.75,
+    "patched_margin": -2.625
+  },
+  {
+    "uid": "trivia_qa::968",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": 6.125,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "truthful_qa::4052",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 1.0,
+    "patched_margin": 0.875
+  },
+  {
+    "uid": "truthful_qa::4052",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 2.875,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "truthful_qa::4108",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": -4.0,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "truthful_qa::4108",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": 7.375,
+    "patched_margin": 3.0
+  },
+  {
+    "uid": "truthful_qa::4212",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -1.25,
+    "instruct_margin": -13.625,
+    "patched_margin": -6.625
+  },
+  {
+    "uid": "truthful_qa::4212",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -0.125,
+    "instruct_margin": 1.5,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "truthful_qa::4228",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": -5.125,
+    "patched_margin": -2.0
+  },
+  {
+    "uid": "truthful_qa::4228",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 5.125,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "truthful_qa::4280",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": 4.625,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "truthful_qa::4280",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": 5.75,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::4332",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.25,
+    "instruct_margin": -12.875,
+    "patched_margin": -6.375
+  },
+  {
+    "uid": "truthful_qa::4332",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.375,
+    "instruct_margin": -6.0,
+    "patched_margin": -3.0
+  },
+  {
+    "uid": "truthful_qa::4400",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": -10.75,
+    "patched_margin": -3.5
+  },
+  {
+    "uid": "truthful_qa::4400",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.625,
+    "instruct_margin": -4.0,
+    "patched_margin": -1.25
+  },
+  {
+    "uid": "truthful_qa::4452",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": -7.25,
+    "patched_margin": -2.625
+  },
+  {
+    "uid": "truthful_qa::4452",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": -0.875,
+    "patched_margin": -0.125
+  },
+  {
+    "uid": "truthful_qa::4480",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -12.625,
+    "patched_margin": -5.0
+  },
+  {
+    "uid": "truthful_qa::4480",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": 6.0,
+    "patched_margin": 2.25
+  },
+  {
+    "uid": "truthful_qa::4524",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -8.25,
+    "patched_margin": -2.625
+  },
+  {
+    "uid": "truthful_qa::4524",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -3.375,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "truthful_qa::4576",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -1.375,
+    "instruct_margin": -9.875,
+    "patched_margin": -4.125
+  },
+  {
+    "uid": "truthful_qa::4576",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -0.375,
+    "instruct_margin": -0.875,
+    "patched_margin": -0.5
+  },
+  {
+    "uid": "truthful_qa::4628",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -14.5,
+    "patched_margin": -7.125
+  },
+  {
+    "uid": "truthful_qa::4628",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.25,
+    "instruct_margin": -4.25,
+    "patched_margin": -2.125
+  },
+  {
+    "uid": "truthful_qa::4672",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.375,
+    "instruct_margin": -13.125,
+    "patched_margin": -6.125
+  },
+  {
+    "uid": "truthful_qa::4672",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.0,
+    "instruct_margin": 3.0,
+    "patched_margin": 0.875
+  },
+  {
+    "uid": "truthful_qa::4704",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.25,
+    "instruct_margin": -10.625,
+    "patched_margin": -4.5
+  },
+  {
+    "uid": "truthful_qa::4704",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": -2.0,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "truthful_qa::4736",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 3.125,
+    "instruct_margin": -11.5,
+    "patched_margin": -4.625
+  },
+  {
+    "uid": "truthful_qa::4736",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.625,
+    "instruct_margin": 5.25,
+    "patched_margin": 2.375
+  },
+  {
+    "uid": "truthful_qa::4772",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.375,
+    "instruct_margin": -2.125,
+    "patched_margin": -0.875
+  },
+  {
+    "uid": "truthful_qa::4772",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 2.5,
+    "patched_margin": 1.0
+  },
+  {
+    "uid": "truthful_qa::4816",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": -6.0,
+    "patched_margin": -2.375
+  },
+  {
+    "uid": "truthful_qa::4816",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.0,
+    "instruct_margin": 1.875,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "truthful_qa::4832",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.5,
+    "instruct_margin": -9.5,
+    "patched_margin": -4.0
+  },
+  {
+    "uid": "truthful_qa::4832",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.375,
+    "instruct_margin": -4.375,
+    "patched_margin": -1.75
+  },
+  {
+    "uid": "truthful_qa::4864",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": -4.5,
+    "patched_margin": -2.5
+  },
+  {
+    "uid": "truthful_qa::4864",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": 0.625,
+    "patched_margin": -0.125
+  },
+  {
+    "uid": "truthful_qa::4944",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -1.0,
+    "instruct_margin": -12.875,
+    "patched_margin": -6.25
+  },
+  {
+    "uid": "truthful_qa::4944",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 4.75,
+    "patched_margin": 1.75
+  },
+  {
+    "uid": "truthful_qa::4948",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 6.25,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "truthful_qa::4948",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 2.125,
+    "instruct_margin": 7.5,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::4960",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": -8.5,
+    "patched_margin": -2.625
+  },
+  {
+    "uid": "truthful_qa::4960",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 6.75,
+    "patched_margin": 2.5
+  },
+  {
+    "uid": "truthful_qa::4980",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": -9.375,
+    "patched_margin": -4.25
+  },
+  {
+    "uid": "truthful_qa::4980",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 2.375,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "truthful_qa::5016",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.125,
+    "instruct_margin": -10.25,
+    "patched_margin": -4.625
+  },
+  {
+    "uid": "truthful_qa::5016",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.125,
+    "instruct_margin": -0.375,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "truthful_qa::5056",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.75,
+    "instruct_margin": -13.5,
+    "patched_margin": -6.25
+  },
+  {
+    "uid": "truthful_qa::5056",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -0.25,
+    "instruct_margin": -7.5,
+    "patched_margin": -3.0
+  },
+  {
+    "uid": "truthful_qa::5068",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.25,
+    "instruct_margin": -14.125,
+    "patched_margin": -6.125
+  },
+  {
+    "uid": "truthful_qa::5068",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.0,
+    "instruct_margin": -8.25,
+    "patched_margin": -3.5
+  },
+  {
+    "uid": "truthful_qa::5164",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.0,
+    "instruct_margin": -2.5,
+    "patched_margin": -1.375
+  },
+  {
+    "uid": "truthful_qa::5164",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.875,
+    "instruct_margin": 7.5,
+    "patched_margin": 3.625
+  },
+  {
+    "uid": "truthful_qa::5184",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.75,
+    "instruct_margin": -15.0,
+    "patched_margin": -6.875
+  },
+  {
+    "uid": "truthful_qa::5184",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -0.375,
+    "instruct_margin": -9.125,
+    "patched_margin": -3.125
+  },
+  {
+    "uid": "truthful_qa::5296",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.0,
+    "instruct_margin": 9.875,
+    "patched_margin": 4.375
+  },
+  {
+    "uid": "truthful_qa::5296",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 8.375,
+    "patched_margin": 4.0
+  },
+  {
+    "uid": "truthful_qa::5308",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.25,
+    "instruct_margin": -14.5,
+    "patched_margin": -7.5
+  },
+  {
+    "uid": "truthful_qa::5308",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.125,
+    "instruct_margin": -5.5,
+    "patched_margin": -2.25
+  },
+  {
+    "uid": "truthful_qa::5316",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": -14.75,
+    "patched_margin": -7.375
+  },
+  {
+    "uid": "truthful_qa::5316",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 2.875,
+    "patched_margin": 1.0
+  },
+  {
+    "uid": "truthful_qa::5376",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": -10.375,
+    "patched_margin": -4.25
+  },
+  {
+    "uid": "truthful_qa::5376",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": 0.625,
+    "patched_margin": 0.5
+  },
+  {
+    "uid": "truthful_qa::5396",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 6.0,
+    "patched_margin": 2.125
+  },
+  {
+    "uid": "truthful_qa::5396",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.875,
+    "instruct_margin": 4.25,
+    "patched_margin": 1.875
+  },
+  {
+    "uid": "truthful_qa::5432",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 2.375,
+    "instruct_margin": -8.875,
+    "patched_margin": -3.375
+  },
+  {
+    "uid": "truthful_qa::5432",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 0.625,
+    "patched_margin": 0.75
+  },
+  {
+    "uid": "truthful_qa::5464",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.125,
+    "instruct_margin": -9.5,
+    "patched_margin": -4.25
+  },
+  {
+    "uid": "truthful_qa::5464",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 1.625,
+    "patched_margin": 0.125
+  },
+  {
+    "uid": "truthful_qa::5508",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": -6.875,
+    "patched_margin": -3.5
+  },
+  {
+    "uid": "truthful_qa::5508",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": 2.125,
+    "patched_margin": 0.625
+  },
+  {
+    "uid": "truthful_qa::5600",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -3.125,
+    "instruct_margin": -16.25,
+    "patched_margin": -8.75
+  },
+  {
+    "uid": "truthful_qa::5600",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -1.875,
+    "instruct_margin": -10.375,
+    "patched_margin": -4.875
+  },
+  {
+    "uid": "truthful_qa::5712",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.75,
+    "instruct_margin": -11.125,
+    "patched_margin": -5.0
+  },
+  {
+    "uid": "truthful_qa::5712",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.25,
+    "instruct_margin": 4.375,
+    "patched_margin": 1.5
+  },
+  {
+    "uid": "truthful_qa::5732",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": -5.0,
+    "patched_margin": -1.125
+  },
+  {
+    "uid": "truthful_qa::5732",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.0,
+    "instruct_margin": 1.625,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "truthful_qa::5748",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.25,
+    "instruct_margin": -10.0,
+    "patched_margin": -4.25
+  },
+  {
+    "uid": "truthful_qa::5748",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -0.375,
+    "instruct_margin": 0.625,
+    "patched_margin": 0.0
+  },
+  {
+    "uid": "truthful_qa::5752",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 0.25,
+    "patched_margin": -0.375
+  },
+  {
+    "uid": "truthful_qa::5752",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.875,
+    "instruct_margin": 11.75,
+    "patched_margin": 4.875
+  },
+  {
+    "uid": "truthful_qa::5860",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.375,
+    "instruct_margin": -11.625,
+    "patched_margin": -4.875
+  },
+  {
+    "uid": "truthful_qa::5860",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": -5.875,
+    "patched_margin": -2.75
+  },
+  {
+    "uid": "truthful_qa::5888",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 3.125,
+    "instruct_margin": -5.75,
+    "patched_margin": -1.75
+  },
+  {
+    "uid": "truthful_qa::5888",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": -1.25,
+    "patched_margin": -0.25
+  },
+  {
+    "uid": "truthful_qa::6016",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.125,
+    "instruct_margin": -5.375,
+    "patched_margin": -2.625
+  },
+  {
+    "uid": "truthful_qa::6016",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": 5.375,
+    "patched_margin": 2.0
+  },
+  {
+    "uid": "truthful_qa::6064",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": -10.25,
+    "patched_margin": -3.75
+  },
+  {
+    "uid": "truthful_qa::6064",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": 3.375,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "truthful_qa::6080",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.125,
+    "instruct_margin": 9.25,
+    "patched_margin": 3.375
+  },
+  {
+    "uid": "truthful_qa::6080",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.25,
+    "instruct_margin": 10.75,
+    "patched_margin": 5.25
+  },
+  {
+    "uid": "truthful_qa::6092",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": -9.0,
+    "patched_margin": -4.0
+  },
+  {
+    "uid": "truthful_qa::6092",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": -2.0,
+    "patched_margin": -1.25
+  },
+  {
+    "uid": "truthful_qa::6284",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.875,
+    "instruct_margin": -12.625,
+    "patched_margin": -5.5
+  },
+  {
+    "uid": "truthful_qa::6284",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -0.125,
+    "instruct_margin": -5.5,
+    "patched_margin": -2.375
+  },
+  {
+    "uid": "truthful_qa::6332",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.125,
+    "instruct_margin": -6.25,
+    "patched_margin": -1.75
+  },
+  {
+    "uid": "truthful_qa::6332",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": -1.25,
+    "patched_margin": -0.25
+  },
+  {
+    "uid": "truthful_qa::6408",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 1.0,
+    "instruct_margin": -7.625,
+    "patched_margin": -3.375
+  },
+  {
+    "uid": "truthful_qa::6408",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 1.625,
+    "instruct_margin": 4.125,
+    "patched_margin": 1.625
+  },
+  {
+    "uid": "truthful_qa::6416",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -1.625,
+    "instruct_margin": -14.0,
+    "patched_margin": -6.875
+  },
+  {
+    "uid": "truthful_qa::6416",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -0.875,
+    "instruct_margin": -9.875,
+    "patched_margin": -5.0
+  },
+  {
+    "uid": "truthful_qa::6444",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.75,
+    "instruct_margin": -13.25,
+    "patched_margin": -5.625
+  },
+  {
+    "uid": "truthful_qa::6444",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": -7.875,
+    "patched_margin": -3.25
+  },
+  {
+    "uid": "truthful_qa::6492",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -14.25,
+    "patched_margin": -6.25
+  },
+  {
+    "uid": "truthful_qa::6492",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": -6.125,
+    "patched_margin": -2.375
+  },
+  {
+    "uid": "truthful_qa::6544",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": -13.125,
+    "patched_margin": -5.5
+  },
+  {
+    "uid": "truthful_qa::6544",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": -2.125,
+    "patched_margin": -0.5
+  },
+  {
+    "uid": "truthful_qa::6584",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.625,
+    "instruct_margin": -12.0,
+    "patched_margin": -5.375
+  },
+  {
+    "uid": "truthful_qa::6584",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.375,
+    "instruct_margin": 1.25,
+    "patched_margin": 0.375
+  },
+  {
+    "uid": "truthful_qa::6600",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -5.125,
+    "patched_margin": -1.375
+  },
+  {
+    "uid": "truthful_qa::6600",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -1.375,
+    "patched_margin": -0.5
+  },
+  {
+    "uid": "truthful_qa::6632",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.875,
+    "instruct_margin": -12.75,
+    "patched_margin": -5.25
+  },
+  {
+    "uid": "truthful_qa::6632",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": 3.0,
+    "patched_margin": 1.125
+  },
+  {
+    "uid": "truthful_qa::6664",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": 0.75,
+    "instruct_margin": -13.0,
+    "patched_margin": -6.875
+  },
+  {
+    "uid": "truthful_qa::6664",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.5,
+    "instruct_margin": -1.125,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "truthful_qa::6672",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": -0.5,
+    "instruct_margin": -17.75,
+    "patched_margin": -8.75
+  },
+  {
+    "uid": "truthful_qa::6672",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": -0.625,
+    "instruct_margin": -6.875,
+    "patched_margin": -2.625
+  },
+  {
+    "uid": "truthful_qa::6736",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.375,
+    "instruct_margin": -13.0,
+    "patched_margin": -5.625
+  },
+  {
+    "uid": "truthful_qa::6736",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.5,
+    "instruct_margin": -0.875,
+    "patched_margin": -0.25
+  },
+  {
+    "uid": "truthful_qa::6772",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.25,
+    "instruct_margin": -9.125,
+    "patched_margin": -2.75
+  },
+  {
+    "uid": "truthful_qa::6772",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 1.125,
+    "instruct_margin": -1.875,
+    "patched_margin": -0.375
+  },
+  {
+    "uid": "truthful_qa::6832",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 1.75,
+    "instruct_margin": -1.0,
+    "patched_margin": 0.125
+  },
+  {
+    "uid": "truthful_qa::6832",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 2.25,
+    "instruct_margin": 3.875,
+    "patched_margin": 1.375
+  },
+  {
+    "uid": "truthful_qa::6860",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.75,
+    "instruct_margin": -8.75,
+    "patched_margin": -3.375
+  },
+  {
+    "uid": "truthful_qa::6860",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.375,
+    "instruct_margin": -2.375,
+    "patched_margin": -0.75
+  },
+  {
+    "uid": "truthful_qa::6876",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.375,
+    "instruct_margin": -5.625,
+    "patched_margin": -2.875
+  },
+  {
+    "uid": "truthful_qa::6876",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": -0.75,
+    "instruct_margin": 0.25,
+    "patched_margin": -0.25
+  },
+  {
+    "uid": "truthful_qa::6880",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "A",
+    "base_margin": -0.375,
+    "instruct_margin": -13.625,
+    "patched_margin": -6.625
+  },
+  {
+    "uid": "truthful_qa::6880",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "A",
+    "base_margin": 0.625,
+    "instruct_margin": -5.75,
+    "patched_margin": -2.125
+  },
+  {
+    "uid": "truthful_qa::7160",
+    "label": "resisting",
+    "instruction": "i1a",
+    "correct_label": "B",
+    "base_margin": 0.625,
+    "instruct_margin": -4.875,
+    "patched_margin": -1.125
+  },
+  {
+    "uid": "truthful_qa::7160",
+    "label": "resisting",
+    "instruction": "i1c",
+    "correct_label": "B",
+    "base_margin": 0.625,
+    "instruct_margin": 5.0,
+    "patched_margin": 2.0
+  }
+]

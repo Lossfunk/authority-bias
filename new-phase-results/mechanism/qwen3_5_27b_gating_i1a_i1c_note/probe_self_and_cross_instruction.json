@@ -1,0 +1,39 @@
+{
+  "eval_extraction_dir": "new-phase-results/mechanism/qwen3_5_27b_gating_i1a_i1c_note",
+  "eval_variants": {
+    "i1a": {
+      "accuracy": 1.0,
+      "auroc": 1.0,
+      "eval_type": "transfer",
+      "n": 208,
+      "n_correcting": 201,
+      "n_entrenching": 7,
+      "n_negative": 7
+    },
+    "i1c": {
+      "accuracy": 0.9903846153846154,
+      "auroc": 1.0,
+      "eval_type": "transfer",
+      "n": 208,
+      "n_correcting": 201,
+      "n_entrenching": 7,
+      "n_negative": 7
+    }
+  },
+  "label_mode": "primary",
+  "layer_index": 14,
+  "position": "endorsement_last",
+  "train_cv": {
+    "accuracy": 0.8942307692307693,
+    "auroc": 0.9509594882729211,
+    "eval_type": "cross_validated",
+    "n": 208,
+    "n_correcting": 201,
+    "n_entrenching": 7,
+    "n_negative": 7
+  },
+  "train_extraction_dir": "new-phase-results/mechanism/qwen3_5_27b_gating_i1a_i1c_note",
+  "train_variants": [
+    "i1a"
+  ]
+}

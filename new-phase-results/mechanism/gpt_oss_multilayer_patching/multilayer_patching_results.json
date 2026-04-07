@@ -1,0 +1,566 @@
+{
+  "model": "openai/gpt-oss-20b",
+  "layer_aurocs": {
+    "9": 0.6779905155939638,
+    "8": 0.6776247799523661,
+    "1": 0.6739652771894151,
+    "10": 0.6715067449895036,
+    "3": 0.6624539853332957,
+    "11": 0.6591588414433242,
+    "12": 0.6538551168723583,
+    "14": 0.6529777881329606,
+    "16": 0.650839659408625,
+    "13": 0.6471363518691104
+  },
+  "experiments": [
+    {
+      "k": 1,
+      "alpha": 1.0,
+      "condition": "real",
+      "layers": [
+        9
+      ],
+      "n_items": 439,
+      "mean_shift": 0.0015660592255125284,
+      "flip_rate": 0.004555808656036446,
+      "positive_shift_rate": 0.32801822323462415
+    },
+    {
+      "k": 1,
+      "alpha": 1.0,
+      "condition": "random",
+      "layers": [
+        9
+      ],
+      "n_items": 439,
+      "mean_shift": -0.00960990888382688,
+      "flip_rate": 0.0,
+      "positive_shift_rate": 0.29157175398633256
+    },
+    {
+      "k": 1,
+      "alpha": 1.0,
+      "condition": "opposite",
+      "layers": [
+        9
+      ],
+      "n_items": 439,
+      "mean_shift": -0.006976082004555809,
+      "flip_rate": 0.0,
+      "positive_shift_rate": 0.33029612756264237
+    },
+    {
+      "k": 1,
+      "alpha": 2.0,
+      "condition": "real",
+      "layers": [
+        9
+      ],
+      "n_items": 439,
+      "mean_shift": 0.005979498861047836,
+      "flip_rate": 0.002277904328018223,
+      "positive_shift_rate": 0.3530751708428246
+    },
+    {
+      "k": 1,
+      "alpha": 2.0,
+      "condition": "random",
+      "layers": [
+        9
+      ],
+      "n_items": 439,
+      "mean_shift": -0.013169134396355354,
+      "flip_rate": 0.002277904328018223,
+      "positive_shift_rate": 0.30296127562642367
+    },
+    {
+      "k": 1,
+      "alpha": 2.0,
+      "condition": "opposite",
+      "layers": [
+        9
+      ],
+      "n_items": 439,
+      "mean_shift": -0.012386104783599089,
+      "flip_rate": 0.0,
+      "positive_shift_rate": 0.29157175398633256
+    },
+    {
+      "k": 1,
+      "alpha": 4.0,
+      "condition": "real",
+      "layers": [
+        9
+      ],
+      "n_items": 439,
+      "mean_shift": 0.015447038724373576,
+      "flip_rate": 0.004555808656036446,
+      "positive_shift_rate": 0.4054669703872437
+    },
+    {
+      "k": 1,
+      "alpha": 4.0,
+      "condition": "random",
+      "layers": [
+        9
+      ],
+      "n_items": 439,
+      "mean_shift": -0.024131548974943053,
+      "flip_rate": 0.004555808656036446,
+      "positive_shift_rate": 0.296127562642369
+    },
+    {
+      "k": 1,
+      "alpha": 4.0,
+      "condition": "opposite",
+      "layers": [
+        9
+      ],
+      "n_items": 439,
+      "mean_shift": -0.027690774487471526,
+      "flip_rate": 0.0,
+      "positive_shift_rate": 0.255125284738041
+    },
+    {
+      "k": 3,
+      "alpha": 1.0,
+      "condition": "real",
+      "layers": [
+        9,
+        8,
+        1
+      ],
+      "n_items": 439,
+      "mean_shift": 0.0060506833712984055,
+      "flip_rate": 0.00683371298405467,
+      "positive_shift_rate": 0.3917995444191344
+    },
+    {
+      "k": 3,
+      "alpha": 1.0,
+      "condition": "random",
+      "layers": [
+        9,
+        8,
+        1
+      ],
+      "n_items": 439,
+      "mean_shift": -0.020074031890660593,
+      "flip_rate": 0.002277904328018223,
+      "positive_shift_rate": 0.30068337129840544
+    },
+    {
+      "k": 3,
+      "alpha": 1.0,
+      "condition": "opposite",
+      "layers": [
+        9,
+        8,
+        1
+      ],
+      "n_items": 439,
+      "mean_shift": -0.02334851936218679,
+      "flip_rate": 0.002277904328018223,
+      "positive_shift_rate": 0.28929384965831434
+    },
+    {
+      "k": 3,
+      "alpha": 2.0,
+      "condition": "real",
+      "layers": [
+        9,
+        8,
+        1
+      ],
+      "n_items": 439,
+      "mean_shift": 0.013026765375854215,
+      "flip_rate": 0.002277904328018223,
+      "positive_shift_rate": 0.4123006833712984
+    },
+    {
+      "k": 3,
+      "alpha": 2.0,
+      "condition": "random",
+      "layers": [
+        9,
+        8,
+        1
+      ],
+      "n_items": 439,
+      "mean_shift": -0.024772209567198177,
+      "flip_rate": 0.002277904328018223,
+      "positive_shift_rate": 0.3097949886104784
+    },
+    {
+      "k": 3,
+      "alpha": 2.0,
+      "condition": "opposite",
+      "layers": [
+        9,
+        8,
+        1
+      ],
+      "n_items": 439,
+      "mean_shift": -0.0354498861047836,
+      "flip_rate": 0.004555808656036446,
+      "positive_shift_rate": 0.2642369020501139
+    },
+    {
+      "k": 3,
+      "alpha": 4.0,
+      "condition": "real",
+      "layers": [
+        9,
+        8,
+        1
+      ],
+      "n_items": 439,
+      "mean_shift": 0.04328018223234624,
+      "flip_rate": 0.011389521640091117,
+      "positive_shift_rate": 0.5193621867881549
+    },
+    {
+      "k": 3,
+      "alpha": 4.0,
+      "condition": "random",
+      "layers": [
+        9,
+        8,
+        1
+      ],
+      "n_items": 439,
+      "mean_shift": -0.04100227790432802,
+      "flip_rate": 0.002277904328018223,
+      "positive_shift_rate": 0.29157175398633256
+    },
+    {
+      "k": 3,
+      "alpha": 4.0,
+      "condition": "opposite",
+      "layers": [
+        9,
+        8,
+        1
+      ],
+      "n_items": 439,
+      "mean_shift": -0.05111047835990888,
+      "flip_rate": 0.004555808656036446,
+      "positive_shift_rate": 0.22779043280182232
+    },
+    {
+      "k": 5,
+      "alpha": 1.0,
+      "condition": "real",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3
+      ],
+      "n_items": 439,
+      "mean_shift": 0.022992596810933942,
+      "flip_rate": 0.009111617312072893,
+      "positive_shift_rate": 0.42596810933940776
+    },
+    {
+      "k": 5,
+      "alpha": 1.0,
+      "condition": "random",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3
+      ],
+      "n_items": 439,
+      "mean_shift": 0.003701594533029613,
+      "flip_rate": 0.002277904328018223,
+      "positive_shift_rate": 0.3690205011389522
+    },
+    {
+      "k": 5,
+      "alpha": 1.0,
+      "condition": "opposite",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3
+      ],
+      "n_items": 439,
+      "mean_shift": -0.02712129840546697,
+      "flip_rate": 0.0,
+      "positive_shift_rate": 0.296127562642369
+    },
+    {
+      "k": 5,
+      "alpha": 2.0,
+      "condition": "real",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3
+      ],
+      "n_items": 439,
+      "mean_shift": 0.03466685649202733,
+      "flip_rate": 0.009111617312072893,
+      "positive_shift_rate": 0.5034168564920274
+    },
+    {
+      "k": 5,
+      "alpha": 2.0,
+      "condition": "random",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3
+      ],
+      "n_items": 439,
+      "mean_shift": -0.0003559225512528474,
+      "flip_rate": 0.00683371298405467,
+      "positive_shift_rate": 0.38496583143507973
+    },
+    {
+      "k": 5,
+      "alpha": 2.0,
+      "condition": "opposite",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3
+      ],
+      "n_items": 439,
+      "mean_shift": -0.045629271070615034,
+      "flip_rate": 0.004555808656036446,
+      "positive_shift_rate": 0.2733485193621868
+    },
+    {
+      "k": 5,
+      "alpha": 4.0,
+      "condition": "real",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3
+      ],
+      "n_items": 439,
+      "mean_shift": 0.06940489749430524,
+      "flip_rate": 0.011389521640091117,
+      "positive_shift_rate": 0.592255125284738
+    },
+    {
+      "k": 5,
+      "alpha": 4.0,
+      "condition": "random",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3
+      ],
+      "n_items": 439,
+      "mean_shift": -0.0047693621867881545,
+      "flip_rate": 0.00683371298405467,
+      "positive_shift_rate": 0.39863325740318906
+    },
+    {
+      "k": 5,
+      "alpha": 4.0,
+      "condition": "opposite",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3
+      ],
+      "n_items": 439,
+      "mean_shift": -0.08584851936218679,
+      "flip_rate": 0.0,
+      "positive_shift_rate": 0.19134396355353075
+    },
+    {
+      "k": 8,
+      "alpha": 1.0,
+      "condition": "real",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3,
+        11,
+        12,
+        14
+      ],
+      "n_items": 439,
+      "mean_shift": 0.028972095671981776,
+      "flip_rate": 0.011389521640091117,
+      "positive_shift_rate": 0.4646924829157175
+    },
+    {
+      "k": 8,
+      "alpha": 1.0,
+      "condition": "random",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3,
+        11,
+        12,
+        14
+      ],
+      "n_items": 439,
+      "mean_shift": 0.010108200455580866,
+      "flip_rate": 0.002277904328018223,
+      "positive_shift_rate": 0.39863325740318906
+    },
+    {
+      "k": 8,
+      "alpha": 1.0,
+      "condition": "opposite",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3,
+        11,
+        12,
+        14
+      ],
+      "n_items": 439,
+      "mean_shift": -0.03324316628701594,
+      "flip_rate": 0.0,
+      "positive_shift_rate": 0.2619589977220957
+    },
+    {
+      "k": 8,
+      "alpha": 2.0,
+      "condition": "real",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3,
+        11,
+        12,
+        14
+      ],
+      "n_items": 439,
+      "mean_shift": 0.041785307517084286,
+      "flip_rate": 0.009111617312072893,
+      "positive_shift_rate": 0.5239179954441914
+    },
+    {
+      "k": 8,
+      "alpha": 2.0,
+      "condition": "random",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3,
+        11,
+        12,
+        14
+      ],
+      "n_items": 439,
+      "mean_shift": 0.002562642369020501,
+      "flip_rate": 0.00683371298405467,
+      "positive_shift_rate": 0.39863325740318906
+    },
+    {
+      "k": 8,
+      "alpha": 2.0,
+      "condition": "opposite",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3,
+        11,
+        12,
+        14
+      ],
+      "n_items": 439,
+      "mean_shift": -0.06328302961275627,
+      "flip_rate": 0.002277904328018223,
+      "positive_shift_rate": 0.23006833712984054
+    },
+    {
+      "k": 8,
+      "alpha": 4.0,
+      "condition": "real",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3,
+        11,
+        12,
+        14
+      ],
+      "n_items": 439,
+      "mean_shift": 0.06627277904328019,
+      "flip_rate": 0.009111617312072893,
+      "positive_shift_rate": 0.6013667425968109
+    },
+    {
+      "k": 8,
+      "alpha": 4.0,
+      "condition": "random",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3,
+        11,
+        12,
+        14
+      ],
+      "n_items": 439,
+      "mean_shift": 0.00818621867881549,
+      "flip_rate": 0.009111617312072893,
+      "positive_shift_rate": 0.4328018223234624
+    },
+    {
+      "k": 8,
+      "alpha": 4.0,
+      "condition": "opposite",
+      "layers": [
+        9,
+        8,
+        1,
+        10,
+        3,
+        11,
+        12,
+        14
+      ],
+      "n_items": 439,
+      "mean_shift": -0.10777334851936218,
+      "flip_rate": 0.002277904328018223,
+      "positive_shift_rate": 0.1548974943052392
+    }
+  ]
+}

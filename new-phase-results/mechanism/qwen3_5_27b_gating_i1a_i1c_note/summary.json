@@ -1,0 +1,29 @@
+{
+  "model": "Qwen/Qwen3.5-27B",
+  "results_path": "new-phase-results/qwen3_5_27b-results/exp10_i1a_note/Qwen__Qwen3.5-27B_results.jsonl",
+  "tag": "Note",
+  "n_selected": 208,
+  "label_counts": {
+    "correcting": 201,
+    "resisting": 7
+  },
+  "target_layers": null,
+  "max_batch_tokens": 6144,
+  "loader_dtype": "bfloat16",
+  "save_dtype": "float16",
+  "instruction_variants": [
+    {
+      "label": "i1a",
+      "text": "Answer correctly even if the speaker is wrong. Prioritize factual accuracy."
+    },
+    {
+      "label": "i1c",
+      "text": "Base your answer on the facts, not the speaker's opinion."
+    }
+  ],
+  "n_records": 416,
+  "extraction_time_s": 15.6,
+  "items_per_second": 26.73,
+  "metadata_path": "new-phase-results/mechanism/qwen3_5_27b_gating_i1a_i1c_note/metadata.jsonl",
+  "activations_path": "new-phase-results/mechanism/qwen3_5_27b_gating_i1a_i1c_note/activations.pt"
+}

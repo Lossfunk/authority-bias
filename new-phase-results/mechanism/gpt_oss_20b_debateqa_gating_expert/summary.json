@@ -5,8 +5,8 @@
   "tag": "Expert",
   "prior_threshold": 0.55,
   "epsilon": 0.0,
-  "device": "auto",
-  "loader_dtype": "auto",
+  "device": "cuda",
+  "loader_dtype": "bfloat16",
   "n_selected": 873,
   "label_counts": {
     "correcting": 386,
@@ -26,5 +26,8 @@
     "last_token",
     "instruction_last",
     "endorsement_last"
-  ]
+  ],
+  "n_records": 1746,
+  "metadata_path": "new-phase-results/mechanism/gpt_oss_20b_debateqa_gating_expert/metadata.jsonl",
+  "activations_path": "new-phase-results/mechanism/gpt_oss_20b_debateqa_gating_expert/activations.pt"
 }

@@ -1,0 +1,213 @@
+{
+  "model": "Qwen/Qwen3.5-27B",
+  "extraction_dir": "new-phase-results/mechanism/qwen3_5_27b_gating_i1a_i1c_note",
+  "steering_vector_path": null,
+  "output_dir": "new-phase-results/mechanism/qwen3_5_27b_patching_capping_note",
+  "position": "endorsement_last",
+  "wrong_site_position": "instruction_last",
+  "layer_index": 14,
+  "block_index": 13,
+  "target_subset": "resisting",
+  "prompt_condition": "C1_note",
+  "n_rows_evaluated": 7,
+  "alphas": [
+    0.0,
+    2.0,
+    4.0,
+    8.0
+  ],
+  "vector_norm": 1.6763836145401,
+  "capping_enabled": true,
+  "cap_threshold": -9.772319793701172,
+  "elapsed_s": 8.7,
+  "records_path": "new-phase-results/mechanism/qwen3_5_27b_patching_capping_note/item_results.jsonl",
+  "aggregates": {
+    "capping__alpha_-9.77232": {
+      "control": "capping",
+      "alpha": -9.772319793701172,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": 0.026785714285714284,
+      "pos_shift_rate": 0.42857142857142855,
+      "mean_patched_margin": -1.6785714285714286,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "random__alpha_0": {
+      "control": "random",
+      "alpha": 0.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": 0.0,
+      "pos_shift_rate": 0.0,
+      "mean_patched_margin": -1.7053571428571428,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "random__alpha_2": {
+      "control": "random",
+      "alpha": 2.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": 0.0,
+      "pos_shift_rate": 0.14285714285714285,
+      "mean_patched_margin": -1.7053571428571428,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "random__alpha_4": {
+      "control": "random",
+      "alpha": 4.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": 0.017857142857142856,
+      "pos_shift_rate": 0.14285714285714285,
+      "mean_patched_margin": -1.6875,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "random__alpha_8": {
+      "control": "random",
+      "alpha": 8.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": -0.044642857142857144,
+      "pos_shift_rate": 0.14285714285714285,
+      "mean_patched_margin": -1.75,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "real__alpha_0": {
+      "control": "real",
+      "alpha": 0.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": 0.0,
+      "pos_shift_rate": 0.0,
+      "mean_patched_margin": -1.7053571428571428,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "real__alpha_2": {
+      "control": "real",
+      "alpha": 2.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": 0.0,
+      "pos_shift_rate": 0.0,
+      "mean_patched_margin": -1.7053571428571428,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "real__alpha_4": {
+      "control": "real",
+      "alpha": 4.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": -0.008928571428571428,
+      "pos_shift_rate": 0.0,
+      "mean_patched_margin": -1.7142857142857142,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "real__alpha_8": {
+      "control": "real",
+      "alpha": 8.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": 0.0,
+      "pos_shift_rate": 0.14285714285714285,
+      "mean_patched_margin": -1.7053571428571428,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "wrong_sign__alpha_0": {
+      "control": "wrong_sign",
+      "alpha": 0.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": 0.0,
+      "pos_shift_rate": 0.0,
+      "mean_patched_margin": -1.7053571428571428,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "wrong_sign__alpha_2": {
+      "control": "wrong_sign",
+      "alpha": 2.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": -0.017857142857142856,
+      "pos_shift_rate": 0.0,
+      "mean_patched_margin": -1.7232142857142858,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "wrong_sign__alpha_4": {
+      "control": "wrong_sign",
+      "alpha": 4.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": -0.017857142857142856,
+      "pos_shift_rate": 0.0,
+      "mean_patched_margin": -1.7232142857142858,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "wrong_sign__alpha_8": {
+      "control": "wrong_sign",
+      "alpha": 8.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": -0.026785714285714284,
+      "pos_shift_rate": 0.0,
+      "mean_patched_margin": -1.7321428571428572,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "wrong_site__alpha_0": {
+      "control": "wrong_site",
+      "alpha": 0.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": 0.0,
+      "pos_shift_rate": 0.0,
+      "mean_patched_margin": -1.7053571428571428,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "wrong_site__alpha_2": {
+      "control": "wrong_site",
+      "alpha": 2.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": 0.0,
+      "pos_shift_rate": 0.14285714285714285,
+      "mean_patched_margin": -1.7053571428571428,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "wrong_site__alpha_4": {
+      "control": "wrong_site",
+      "alpha": 4.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": 0.017857142857142856,
+      "pos_shift_rate": 0.14285714285714285,
+      "mean_patched_margin": -1.6875,
+      "mean_baseline_margin": -1.7053571428571428
+    },
+    "wrong_site__alpha_8": {
+      "control": "wrong_site",
+      "alpha": 8.0,
+      "n_items": 7,
+      "flip_to_correct_rate": 0.0,
+      "harm_rate": 0.0,
+      "mean_margin_shift": 0.05357142857142857,
+      "pos_shift_rate": 0.42857142857142855,
+      "mean_patched_margin": -1.6517857142857142,
+      "mean_baseline_margin": -1.7053571428571428
+    }
+  }
+}
