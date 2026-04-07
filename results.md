@@ -2,7 +2,7 @@
 
 **Project**: Instruction-Dependent Evidence Gating in Language Models
 **Branch**: `neurips-submission`
-**Last updated**: 2026-04-06
+**Last updated**: 2026-04-07
 
 ---
 
@@ -50,6 +50,8 @@ Speaker tags: "Note:" (low authority), "Expert:" (high authority), "User:", "Som
 | Qwen3-30B-A3B-Instruct | Alibaba Qwen (MoE) | 30B | 3B |
 | GPT-oss-20B | OpenAI | 20B | 20B |
 | Gemma-4-26B-A4B-it | Google Gemma (MoE) | 26B | 4B |
+| Qwen3.5-27B | Alibaba Qwen | 27B | 27B |
+| OLMo-2-0325-32B-Instruct | Allen AI OLMo | 32B | 32B |
 
 ---
 
@@ -643,6 +645,189 @@ The two experiments together paint a clear picture:
 
 4. **Pre-training left a latent epistemic circuit.** The base model can already process context-dependent evidence signals — it just never generates them. RLHF activated this latent capacity by training mid-network layers to produce instruction-sensitive representations.
 
+---
+
+## 11. Cross-Model Mechanism Summary
+
+### 11.1 Comprehensive Table (All Models)
+
+| Model | Size | Prior-Wrong | N_Resisting | Probe AUROC | Patching Flip Rate (α=4) | Capping Effect | Key Finding |
+|---|---|---|---|---|---|---|---|
+| **Qwen3-4B-Instruct** | 4B | 449 | 151 | 0.81 (L23, cross-cond) | 8.6% (13/151) | +1.93 shift | Full causal circuit; evidence-specific, cross-domain |
+| **Llama-3.1-8B-Instruct** | 8B | — | — | — | — | — | Behavioral replication (attenuation, not full flip) |
+| **Gemma-3-12B-IT** | 12B | — | — | — | — | — | Behavioral: noisy, suggestive |
+| **GPT-oss-20B** | 20B | 810 | 439 | 0.677 (L8) | 0.9% (k=1), 1.4% (k=8) | +0.07 (k=5) | Distributed; decodable, weakly steerable |
+| **Gemma-4-26B-A4B-it** | 26B (4B active) | 887 | 1 (strict) / 409 (expanded) | 0.617 (L25) | — | — | Near-zero entrenchment; confidence-only epistemic system |
+| **Qwen3.5-27B** | 27B | 208 | 7 | — | 0% (7 items, underpowered) | ~0 | Too few resisting items for mechanism analysis |
+| **Qwen3-30B-A3B** | 30B (3B active) | 302 | 16 | 0.785 (L25) | 6.3% (1/16) at α=4 | +1.03 shift | Weakly powered but directionally correct |
+| **OLMo-2-32B-Instruct** | 32B | 320 | 21 | — | 0% (21 items) | ~0 | Null patching; possible different architecture |
+
+### 11.2 Interpretation
+
+- **Qwen3-4B** remains the only model with a fully characterized, causally validated gating circuit at single-layer resolution.
+- **GPT-oss-20B** has the representational structure (strong probe, strong i1a→i1c transfer AUROC 0.926) but the computation is distributed across layers, making single-layer patching insufficient.
+- **Qwen3-30B-A3B** shows directional effects (6.3% flip at α=4, 12.5% at α=8) despite only 16 resisting items — consistent with the Qwen family mechanism.
+- **Qwen3.5-27B** and **OLMo-2-32B** have too few resisting items (7 and 21 respectively) for meaningful causal tests. Null patching results are underpowered, not necessarily negative.
+- **Gemma-4-26B** is fundamentally different: nearly all items correct under i1a (1/887 resisting), so there is almost nothing to steer.
+
+---
+
+## 12. Head-Level Gating Circuit (Qwen3-4B)
+
+### 12.1 Method
+
+For each attention head in layers 22–24 (the gating region), we compute:
+1. **Gating divergence**: difference in head output margin between i1a and i1c conditions
+2. **Attention allocation**: fraction of attention to instruction vs. endorsement tokens
+3. **Ablation effect**: impact of zeroing individual head outputs on model behavior
+
+### 12.2 Top Gating Heads
+
+| Head | Gating Divergence | Attention Pattern | Role |
+|---|---|---|---|
+| **L24.H8** | Large (endorsement-reader) | High attention to endorsement tokens | Reads speaker evidence |
+| **L23.H7** | -2.01 (correcting), -0.87 (resisting) | ~58% attention to instruction | Reads instruction content |
+| **L23.H12** | -0.61 (correcting), -0.30 (resisting) | Mixed instruction + endorsement | Integrates both signals |
+
+### 12.3 Complementary Attention Specialization
+
+Heads divide into two functional classes:
+- **Endorsement-readers** (e.g., L22.H0, L22.H17): >45% attention to endorsement tokens, carry evidence signal
+- **Instruction-readers** (e.g., L22.H13, L22.H21, L23.H14): >90% attention to instruction tokens, carry instruction-mode signal
+
+The two classes produce complementary representations that are combined downstream.
+
+### 12.4 Distributed Mechanism
+
+Top-5 head cascade produces only ~2% flip rate vs. 8.6% for full-layer patching at L23. The gating computation is distributed across many heads within each layer, not concentrated in a few "gating heads."
+
+### 12.5 L22.H3 Surprise
+
+L22.H3 ranks 65th by gating divergence but has the highest single-head ablation effect. High attention to instruction tokens (51% i1a) but small divergence — suggesting it carries a stable instruction signal that the downstream circuit depends on, even though its own output doesn't change much between conditions. The circuit depends on this head's baseline contribution, not its differential contribution.
+
+---
+
+## 13. Temporal Commitment Dynamics (Qwen3-4B)
+
+### 13.1 Method
+
+Intervene with the correction-gating vector at different layers to map when the model commits to its answer. For each intervention layer, patch the i1c vector into i1a activations at the endorsement position and measure downstream flip rate.
+
+### 13.2 Intervention Timing Results
+
+| Intervention Layer | Flip Rate | Mean Margin Shift | Interpretation |
+|---|---|---|---|
+| L14 | 0.0% | -0.28 | Too early; harmful |
+| L16 | 0.0% | -0.21 | Still harmful |
+| **L18** | **2.0%** (3/151) | **-0.08** | Vulnerability window opens |
+| L20 | 0.7% (1/151) | -0.37 | Window closing |
+| L22 | 0.0% | -0.38 | Window closed |
+| **L24** | **0.0%** | **-0.04** | Point of no return |
+| L26–L34 | 0.0% | ~0 | Post-commitment |
+
+### 13.3 Key Findings
+
+1. **Vulnerability window at L18**: The only layer where mid-stream intervention produces flips. Before L18, the model hasn't begun computing the answer. After L20, it's committed.
+2. **Point of no return at L24**: By L24, margin shifts drop to near-zero. The decision is crystallized.
+3. **Resisting items maintain higher entropy**: Mean entropy at L24 is 0.45 (resisting) vs 0.25 (correcting) under i1a — resisting items are less certain but still committed to the wrong answer.
+4. **Non-monotonic intervention pattern**: The margin shift is most negative (harmful) at L14, becomes least negative at L18 (the vulnerability window), then worsens again before settling near zero. This is consistent with a brief window where the computation is "in flight" and susceptible to redirection.
+
+### 13.4 Entropy Profiles
+
+Resisting items under i1a show consistently higher entropy than correcting items throughout layers 25–36 (mean 0.42 vs 0.23 at L30). Under i1c, the gap narrows. The instruction changes whether high-entropy items resolve toward the correct or wrong answer.
+
+---
+
+## 14. Multiplicative vs Additive Gating (Qwen3-4B)
+
+### 14.1 Hypothesis
+
+If the gating mechanism is multiplicative (gate × evidence), then the product of gate value and evidence component norm should predict margin divergence better than an additive model.
+
+### 14.2 Regression Results (Layer 22)
+
+| Model | R² | Adj R² | Interpretation |
+|---|---|---|---|
+| Multiplicative (gate × evidence) | 0.025% | -0.20% | Null |
+| Additive (gate + evidence) | 0.058% | -0.39% | Null |
+| Full (gate + evidence + interaction) | 0.22% | -0.46% | Null |
+
+**Multiplicative model refuted**: R² < 0.3% for all models. Neither gate values nor evidence component norms, nor their interaction, predict item-level margin divergence.
+
+### 14.3 But Gate Values Cleanly Separate Groups
+
+Despite the regression null, gate values show clean group separation:
+
+| Group | Mean Gate (i1a) | Mean Gate (i1c) | Shift |
+|---|---|---|---|
+| Correcting | -0.31 | -0.04 | +0.27 |
+| Resisting | -2.10 | -1.62 | +0.48 |
+
+### 14.4 Key Finding: Correction Instruction Processed Even When Resisted
+
+The i1a→i1c gate shift is LARGER for resisting items (+0.48) than correcting items (+0.27). At layer 24, mean gate values shift from 1.62 to 3.23 for resisting items under i1c. The model processes the correction instruction — the gate opens — but the downstream computation still doesn't flip the answer. The gate is necessary but not sufficient for correction.
+
+---
+
+## 15. Persona-Conditioned Evidence Gating
+
+### 15.1 Method
+
+Test whether different system-prompt personas (default, scientist, skeptic, judge, empath, therapist) modulate how Qwen3-4B gates evidence. Six personas × 2 instruction variants (i1a, i1c) × 2 speaker tags (Expert, Note).
+
+### 15.2 Results Summary
+
+**Expert tag (all personas)**:
+- Correction rate: 0.0% across ALL personas and both instructions
+- Resistance rate: 99.7%–100.0%
+- No persona breaks through Expert-tag entrenchment
+
+**Note tag**:
+
+| Persona | i1a Correction | i1c Correction | i1a C1−W1 Shift |
+|---|---|---|---|
+| default | 0.0% | 0.0% | +0.002 |
+| scientist | 0.2% | 0.2% | -0.006 |
+| skeptic | 0.0% | 0.0% | -0.007 |
+| judge | 0.4% | 0.1% | -0.024 |
+| **empath** | **3.1%** | **1.0%** | -0.000 |
+| therapist | 0.3% | 0.0% | -0.000 |
+
+### 15.3 Empath: The Only Significant Persona
+
+The empath persona is the only one that significantly differs from default (p < 0.005, bootstrap permutation, Note tag). It achieves 3.1% correction under i1a vs. 0.0% for default. The mechanism is **margin compression**: empath brings W1 margins from -0.90 (default) to -0.16, bringing items closer to the decision boundary without improving evidence discrimination (C1−W1 shift ≈ 0).
+
+### 15.4 Key Finding: Near-Null Result
+
+Personas do not substantially modulate evidence gating. The C1−W1 margin shift (evidence discrimination) is <0.03 for all personas. This supports the interpretation that **evidence gating is a representational phenomenon** (what the model computes at the endorsement position) **rather than a persona-level phenomenon** (what role the model plays). The gating circuit operates below the persona abstraction layer.
+
+---
+
+## 16. Gemma-4-26B Expanded Extraction
+
+### 16.1 Strict Labels
+
+- 887 prior-wrong items out of 1,813
+- Only **1 out of 887** resists correction under i1a (near-zero entrenchment)
+- The model is almost universally endorsement-susceptible
+
+### 16.2 Expanded Labels (W1 Susceptibility)
+
+To enable mechanism analysis despite near-zero strict resistance:
+- **409 expanded-resisting** items (susceptible to wrong endorsement under W1)
+- **478 expanded-correcting** items
+- Expanded labels extracted with both i1a and i1c activations (1,774 total records)
+
+### 16.3 Interpretation
+
+Gemma-4-26B's epistemic system is qualitatively different from Qwen/GPT-oss:
+- Almost no instruction-dependent entrenchment (the defining phenomenon is absent)
+- N0 probe collapses to near-chance after confidence removal (Section 7.3: 0.526 AUROC)
+- Behavior is almost entirely explained by confidence level
+- The expanded extraction enables analysis of a different question: what determines susceptibility to misleading evidence, rather than instruction-dependent gating
+
+---
+
 ### Open Questions
 
 1. What is the "third thing" (beyond confidence and position) in the N0 representation?
@@ -651,7 +836,7 @@ The two experiments together paint a clear picture:
 
 ---
 
-## 11. File Locations
+## 17. File Locations
 
 ### Result Directories
 
@@ -663,6 +848,7 @@ The two experiments together paint a clear picture:
 | `new-phase-results/gemma-4-26b-results/` | Gemma-4-26B behavioral |
 | `new-phase-results/llama-3.1-8b-results/` | Llama-3.1-8B behavioral |
 | `new-phase-results/debateqa/` | DebateQA behavioral (all models) |
+| `new-phase-results/exp10_persona_sweep/` | Persona sweep analysis (6 personas) |
 | `new-phase-results/piqa/` | PIQA behavioral |
 | `new-phase-results/mechanism/` | All mechanism extractions, probes, patching |
 | `new-phase-results/reasoning-traces/` | GPT-oss confabulation pilot |
@@ -686,6 +872,14 @@ The two experiments together paint a clear picture:
 | `mechanism/gpt_oss_multilayer_patching/` | GPT-oss multi-layer patching results |
 | `mechanism/cmap_base_instruct/` | CMAP cross-model patching (base vs instruct) |
 | `mechanism/cmap_layer_sweep/` | CMAP single-layer sweep + reverse CMAP |
+| `mechanism/gating_head_surgery/` | Head-level gating attribution (L22-24) |
+| `mechanism/temporal_commitment/` | Temporal commitment dynamics (layer sweep) |
+| `mechanism/multiplicative_gating/` | Multiplicative vs additive gating test |
+| `mechanism/qwen3_5_27b_gating_i1a_i1c_note/` | Qwen3.5-27B extraction (208 items) |
+| `mechanism/qwen3_5_27b_patching_capping_note/` | Qwen3.5-27B patching (7 resisting) |
+| `mechanism/olmo2_32b_gating_i1a_i1c_note/` | OLMo-2-32B extraction (320 items) |
+| `mechanism/olmo2_32b_patching_capping_note/` | OLMo-2-32B patching (21 resisting) |
+| `mechanism/gemma4_expanded_gating_i1a_i1c_note/` | Gemma-4-26B expanded extraction (887 items) |
 
 ### Analysis Scripts
 

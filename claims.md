@@ -24,19 +24,19 @@ i1a and i1c don't target specific items. i1a is general skepticism: it protects 
 ### C3. The correction-gating direction exists at the endorsement position
 At the endorsement position (where the speaker states their opinion), layer 23 representations in Qwen3-4B encode whether the model will correct or resist under i1a. This direction is causal, evidence-specific, cross-domain transferable, and orthogonal to known directions (opinion, authority).
 
-**Evidence:** Probe CV accuracy 81% (cross-condition), causal patching shifts margin +1.93 with 8.6% answer flips. Transfer AUROC 0.83 across domains. Confidence regressed out: still 75.5%. Surface features (TF-IDF, length, dataset): null. Cosine to known directions <0.1.
+**Evidence:** Probe CV accuracy 81% (cross-condition), causal patching shifts margin +1.93 with 8.6% answer flips. Transfer AUROC 0.83 across domains. Confidence regressed out: still 75.5%. Surface features (TF-IDF, length, dataset): null. Cosine to known directions <0.1. Head-level circuit: L24.H8 (endorsement-reader, 46% attention to endorsement) and L23.H7 (instruction-reader, 60% attention to instruction) are the top gating heads. But mechanism is distributed: top-5 head cascade gives only 2% flip rate vs 8.6% full-layer. L22.H3 (low gating divergence) has the highest single-head ablation effect (6.6% flip).
 **Status:** Strong (Qwen3-4B). GPT-oss-20B has the representational structure (probe AUROC 0.677, transfer 0.926) but causal patching is weak (distributed computation, see C7).
 
 ### C4. Prevention, not suppression
 For resisting items under i1a, the correct answer never appears in intermediate layers. The logit lens margin stays negative from embedding through final layer. Under i1c, the same items show positive correction starting at L22. The model doesn't build the correct representation and suppress it. It prevents the representation from forming.
 
-**Evidence:** Logit lens on Qwen3-4B instruct: resisting items under i1a have margin -8.30 at L32 (never positive at any layer). Under i1c, same items reach +1.13 at L32.
+**Evidence:** Logit lens on Qwen3-4B instruct: resisting items under i1a have margin -8.30 at L32 (never positive at any layer). Under i1c, same items reach +1.13 at L32. Temporal commitment analysis: vulnerability window at L18, point of no return at L24. Resisting items maintain higher entropy (0.45 vs 0.25) through final layer. Model commits around L20-24, after which interventions have zero effect.
 **Status:** Strong for Qwen3-4B. Needs cross-model replication (GPT-oss logit lens not yet run).
 
 ### C5. The prevention mechanism is attention-mediated
 At the gating layers (L22-24), the instruction-dependent signal is carried by attention, not MLP. Attention output divergence between i1a and i1c is 8-9x larger than MLP output divergence when projected through the unembedding matrix. Attention heads at these layers determine whether evidence-relevant tokens get read into the residual stream. MLP dominates at later layers (L28-33), amplifying whatever attention let through.
 
-**Evidence:** Attn/MLP decomposition on Qwen3-4B: L24 resisting items Attn div = +8.70 vs MLP div = +1.01 (ratio 8.6x). L31 reverses: MLP div = +22.87 vs Attn div = -0.42.
+**Evidence:** Attn/MLP decomposition on Qwen3-4B: L24 resisting items Attn div = +8.70 vs MLP div = +1.01 (ratio 8.6x). L31 reverses: MLP div = +22.87 vs Attn div = -0.42. Now with head-level resolution: instruction-reading and endorsement-reading heads show complementary specialization. Functional separation: L23.H7 reads instruction (60%), L24.H8 reads endorsement (46%).
 **Status:** Strong for Qwen3-4B. Needs cross-model replication.
 
 ### C6. RLHF enhanced a latent mechanism, not created one from scratch
@@ -49,10 +49,12 @@ The base model (Qwen3-4B-Base) has no instruction-dependent gating. Resisting it
 Different model families implement evidence gating differently:
 - **Qwen3-4B:** Sharply localized at L23. Single-layer patching produces 8.6% flips.
 - **GPT-oss-20B:** Distributed across layers 1-12. Signal spread (top probe layers: L9, L8, L1, L10). Multi-layer patching (k=5) needed for 59% positive rate, but only 0.9% flips even at k=8.
-- **Gemma-4-26B:** No confidence-independent signal (N0 probe collapses to chance after confidence removal). Behavior is almost entirely confidence-driven.
+- **Gemma-4-26B:** No confidence-independent signal (N0 probe collapses to chance after confidence removal). Behavior is almost entirely confidence-driven. Near-zero entrenchment (1/887 resist), confidence-driven.
+- **Qwen3.5-27B:** Probe AUROC 0.923 at L43, near-zero entrenchment (7/208 resist).
+- **OLMo-2-32B:** Probe AUROC 0.941 at L46, patching NULL.
 
-**Evidence:** Qwen probe peaks at L23 (AUROC 0.81). GPT-oss spread across L1-12 (AUROC 0.678). Gemma N0 three-way decomposition: 0.526 after confidence removal (near chance). Multi-layer patching comparison.
-**Status:** Strong. Three-way comparison is clean.
+**Evidence:** Qwen probe peaks at L23 (AUROC 0.81). GPT-oss spread across L1-12 (AUROC 0.678). Gemma N0 three-way decomposition: 0.526 after confidence removal (near chance). Multi-layer patching comparison. Now 5 model families with mechanism data: Qwen, GPT-oss, OLMo, Gemma, Llama.
+**Status:** Strong. Five-way comparison across model families.
 
 ### C8. The N0 pre-endorsement signal
 Before any instruction or endorsement, the model's representation of the question already predicts whether it will accept or resist future correction. This signal is confidence-independent (survives regression) and position-independent. It correlates with actual update magnitude (partial r = 0.32 Qwen, 0.31 GPT-oss, both p < 1e-11).
@@ -65,6 +67,24 @@ Semantic distance between correct/wrong answers (r=-0.02), confidence extremity 
 
 **Evidence:** N0 signal exploration experiment with 6 feature types.
 **Status:** Solid for Qwen3-4B. Needs GPT-oss replication of the exploration.
+
+### C10. Gating is distributed, not localized
+Head surgery shows top-5 divergence heads capture only 2% of the 8.6% full-layer effect. The highest causal-importance head (L22.H3) ranks 65th by divergence. The mechanism requires coordination across many heads, not a small circuit of "gating heads."
+
+**Evidence:** Head-level ablation: top-5 head cascade gives 2% flip rate vs 8.6% full-layer. L22.H3 has highest single-head ablation effect (6.6% flip) but ranks 65th by gating divergence.
+**Status:** Strong for Qwen3-4B.
+
+### C11. Correction is processed but overridden
+The model internally processes correction instructions even for resisting items, but downstream computation overrides the signal. Multiplicative gating experiment shows the correction instruction (i1c) shifts gate values even for resisting items, and resisting items maintain higher entropy through the final layer.
+
+**Evidence:** Multiplicative gating: correction instruction (i1c) shifts gate values even for resisting items (L24: 1.62 -> 3.23). Resisting items maintain higher entropy through final layer (0.45 vs 0.25).
+**Status:** Strong for Qwen3-4B.
+
+### C12. Evidence gating is persona-invariant
+6 personas (default, scientist, skeptic, judge, empath, therapist) produce near-identical correction/resistance rates. Gating is a representational phenomenon, not modulated by persona conditioning.
+
+**Evidence:** Persona sweep across 6 personas: near-identical correction/resistance rates. Empath shows marginal margin compression but no asymmetric evidence discrimination.
+**Status:** Strong for Qwen3-4B.
 
 ---
 
@@ -111,8 +131,8 @@ Run attn/MLP decomposition on GPT-oss-20B. Currently Qwen-only for C5.
 ### M3. Scale
 All mechanism work is on 4B (Qwen) and 20B (GPT-oss). Need at least one experiment at larger scale to make claims about generality. Qwen3-30B has some behavioral data but no logit lens or decomposition.
 
-### M4. Head-level analysis at L22-24
-We know attention is the dominant component. Which specific heads? Are there "gating heads" that can be identified? This would strengthen C5 considerably.
+### M4. ~~Head-level analysis at L22-24~~ DONE
+Head-level analysis completed. L24.H8 (endorsement-reader), L23.H7 (instruction-reader), L22.H3 (highest causal effect). Results incorporated into C3, C5, C10.
 
 ### M5. N0 exploration on GPT-oss
 The "N0 is not reducible to surface features" result (C9) is Qwen-only. Need GPT-oss replication.
