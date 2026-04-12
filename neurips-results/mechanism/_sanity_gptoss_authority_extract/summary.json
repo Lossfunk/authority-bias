@@ -1,0 +1,52 @@
+{
+  "model": "openai/gpt-oss-20b",
+  "arm": "natural",
+  "n_selected_uids": 20,
+  "included_styles": [
+    "authoritative_verified",
+    "weak",
+    "uncertain",
+    "assertive"
+  ],
+  "style_rows_available": {
+    "authoritative_verified": 810,
+    "weak": 810,
+    "uncertain": 810,
+    "assertive": 810
+  },
+  "mask_counts": {
+    "selected_uids": 20,
+    "mask_primary": 20,
+    "mask_primary_w1": 14,
+    "mask_primary_c1": 20,
+    "mask_cross": 20,
+    "mask_cross_w1": 14,
+    "mask_cross_c1": 20,
+    "mask_think": 0
+  },
+  "target_layers": [
+    20,
+    30
+  ],
+  "max_batch_tokens": 4096,
+  "fallback_batch_size": 4,
+  "loader_dtype": "bfloat16",
+  "save_dtype": "float16",
+  "n_records": 240,
+  "elapsed_seconds": 2.86,
+  "records_per_second": 83.9684,
+  "style_counter": {
+    "authoritative_verified": 60,
+    "weak": 60,
+    "uncertain": 60,
+    "assertive": 60
+  },
+  "condition_counter": {
+    "N0_note": 80,
+    "C1_note": 80,
+    "W1_note": 80
+  },
+  "metadata_path": "/root/persona-vectors/neurips-results/mechanism/_sanity_gptoss_authority_extract/metadata.jsonl",
+  "activations_path": "/root/persona-vectors/neurips-results/mechanism/_sanity_gptoss_authority_extract/activations.pt",
+  "label_masks_path": "/root/persona-vectors/neurips-results/mechanism/_sanity_gptoss_authority_extract/label_masks.json"
+}

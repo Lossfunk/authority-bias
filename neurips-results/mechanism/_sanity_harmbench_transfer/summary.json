@@ -1,0 +1,16 @@
+{
+  "model": "openai/gpt-oss-20b",
+  "direction_path": "/root/persona-vectors/neurips-results/mechanism/_sanity_gptoss_compliance_analysis/primary_direction.pt",
+  "layer": 20,
+  "position": "endorsement_end",
+  "n_prompts": 4,
+  "n_refusal": 0,
+  "refusal_rate": 0.0,
+  "auroc_projection_vs_refusal": null,
+  "randomized_score_baseline": {
+    "n_runs": 100,
+    "auroc_mean": null,
+    "auroc_std": null,
+    "auroc_values": []
+  }
+}

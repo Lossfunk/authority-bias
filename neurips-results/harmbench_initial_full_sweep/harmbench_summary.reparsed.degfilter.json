@@ -1,0 +1,842 @@
+[
+  {
+    "config_id": "add_shared_within_label_k0_a0_L16",
+    "n": 400,
+    "mode": "add",
+    "alpha": 0.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.99,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.085,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 463.7925
+  },
+  {
+    "config_id": "add_shared_within_label_k0_a0_L18",
+    "n": 400,
+    "mode": "add",
+    "alpha": 0.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.99,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.085,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 463.7925
+  },
+  {
+    "config_id": "add_shared_within_label_k0_a0_L20",
+    "n": 400,
+    "mode": "add",
+    "alpha": 0.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.99,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.085,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 463.7925
+  },
+  {
+    "config_id": "add_shared_within_label_k0_a10_L16",
+    "n": 400,
+    "mode": "add",
+    "alpha": 10.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.985,
+    "compliance_rate": 0.0075,
+    "effective_compliance_rate": 0.0075,
+    "likely_refusal_truncated_rate": 0.08,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 457.13
+  },
+  {
+    "config_id": "add_shared_within_label_k0_a10_L18",
+    "n": 400,
+    "mode": "add",
+    "alpha": 10.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9875,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.0825,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.0075,
+    "mean_response_len_chars": 459.785
+  },
+  {
+    "config_id": "add_shared_within_label_k0_a10_L20",
+    "n": 400,
+    "mode": "add",
+    "alpha": 10.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.99,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.09,
+    "degenerate_rate": 0.0,
+    "uncertain_rate": 0.0075,
+    "mean_response_len_chars": 461.85
+  },
+  {
+    "config_id": "add_shared_within_label_k0_a5_L16",
+    "n": 400,
+    "mode": "add",
+    "alpha": 5.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.99,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.08,
+    "degenerate_rate": 0.0,
+    "uncertain_rate": 0.0075,
+    "mean_response_len_chars": 459.215
+  },
+  {
+    "config_id": "add_shared_within_label_k0_a5_L18",
+    "n": 400,
+    "mode": "add",
+    "alpha": 5.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9875,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.085,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.0075,
+    "mean_response_len_chars": 460.035
+  },
+  {
+    "config_id": "add_shared_within_label_k0_a5_L20",
+    "n": 400,
+    "mode": "add",
+    "alpha": 5.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9925,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.0925,
+    "degenerate_rate": 0.0,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 460.5425
+  },
+  {
+    "config_id": "baseline_L16",
+    "n": 400,
+    "mode": "none",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.99,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.085,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 463.7925
+  },
+  {
+    "config_id": "baseline_L18",
+    "n": 400,
+    "mode": "none",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.99,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.085,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 463.7925
+  },
+  {
+    "config_id": "baseline_L20",
+    "n": 400,
+    "mode": "none",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.99,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.085,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 463.7925
+  },
+  {
+    "config_id": "interpolate_mean_a0.3_L16",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 0.3,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.985,
+    "compliance_rate": 0.0,
+    "effective_compliance_rate": 0.0,
+    "likely_refusal_truncated_rate": 0.09,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.0125,
+    "mean_response_len_chars": 451.585
+  },
+  {
+    "config_id": "interpolate_mean_a0.3_L18",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 0.3,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.99,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.0975,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 461.1575
+  },
+  {
+    "config_id": "interpolate_mean_a0.3_L20",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 0.3,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9875,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.09,
+    "degenerate_rate": 0.005,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 459.2075
+  },
+  {
+    "config_id": "interpolate_mean_a0.5_L16",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 0.5,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.98,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.095,
+    "degenerate_rate": 0.01,
+    "uncertain_rate": 0.0075,
+    "mean_response_len_chars": 457.1475
+  },
+  {
+    "config_id": "interpolate_mean_a0.5_L18",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 0.5,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9875,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.0775,
+    "degenerate_rate": 0.0075,
+    "uncertain_rate": 0.0025,
+    "mean_response_len_chars": 457.845
+  },
+  {
+    "config_id": "interpolate_mean_a0.5_L20",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 0.5,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.995,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.095,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.0,
+    "mean_response_len_chars": 459.11
+  },
+  {
+    "config_id": "interpolate_mean_a0.7_L16",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 0.7,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9725,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.0875,
+    "degenerate_rate": 0.025,
+    "uncertain_rate": 0.0,
+    "mean_response_len_chars": 463.475
+  },
+  {
+    "config_id": "interpolate_mean_a0.7_L18",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 0.7,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9825,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.0825,
+    "degenerate_rate": 0.015,
+    "uncertain_rate": 0.0,
+    "mean_response_len_chars": 457.6075
+  },
+  {
+    "config_id": "interpolate_mean_a0.7_L20",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 0.7,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.985,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.075,
+    "degenerate_rate": 0.005,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 453.4925
+  },
+  {
+    "config_id": "interpolate_mean_a0_L16",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.99,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.085,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 463.7925
+  },
+  {
+    "config_id": "interpolate_mean_a0_L18",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.99,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.085,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 463.7925
+  },
+  {
+    "config_id": "interpolate_mean_a0_L20",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.99,
+    "compliance_rate": 0.0025,
+    "effective_compliance_rate": 0.0025,
+    "likely_refusal_truncated_rate": 0.085,
+    "degenerate_rate": 0.0025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 463.7925
+  },
+  {
+    "config_id": "interpolate_mean_a1_L16",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 1.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.97,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.105,
+    "degenerate_rate": 0.0225,
+    "uncertain_rate": 0.0025,
+    "mean_response_len_chars": 480.8875
+  },
+  {
+    "config_id": "interpolate_mean_a1_L18",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 1.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9725,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.095,
+    "degenerate_rate": 0.0175,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 452.94
+  },
+  {
+    "config_id": "interpolate_mean_a1_L20",
+    "n": 400,
+    "mode": "interpolate_mean",
+    "alpha": 1.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.98,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.09,
+    "degenerate_rate": 0.01,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 450.7525
+  },
+  {
+    "config_id": "replace_mean_a0.3_L16",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 0.3,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.965,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.1075,
+    "degenerate_rate": 0.025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 481.3925
+  },
+  {
+    "config_id": "replace_mean_a0.3_L18",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 0.3,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.965,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.0775,
+    "degenerate_rate": 0.025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 450.8325
+  },
+  {
+    "config_id": "replace_mean_a0.3_L20",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 0.3,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9825,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.0925,
+    "degenerate_rate": 0.0075,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 449.7975
+  },
+  {
+    "config_id": "replace_mean_a0.5_L16",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 0.5,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.965,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.1075,
+    "degenerate_rate": 0.025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 481.3925
+  },
+  {
+    "config_id": "replace_mean_a0.5_L18",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 0.5,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.965,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.0775,
+    "degenerate_rate": 0.025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 450.8325
+  },
+  {
+    "config_id": "replace_mean_a0.5_L20",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 0.5,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9825,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.0925,
+    "degenerate_rate": 0.0075,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 449.7975
+  },
+  {
+    "config_id": "replace_mean_a0.7_L16",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 0.7,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.965,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.1075,
+    "degenerate_rate": 0.025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 481.3925
+  },
+  {
+    "config_id": "replace_mean_a0.7_L18",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 0.7,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.965,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.0775,
+    "degenerate_rate": 0.025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 450.8325
+  },
+  {
+    "config_id": "replace_mean_a0.7_L20",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 0.7,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9825,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.0925,
+    "degenerate_rate": 0.0075,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 449.7975
+  },
+  {
+    "config_id": "replace_mean_a0_L16",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.965,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.1075,
+    "degenerate_rate": 0.025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 481.3925
+  },
+  {
+    "config_id": "replace_mean_a0_L18",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.965,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.0775,
+    "degenerate_rate": 0.025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 450.8325
+  },
+  {
+    "config_id": "replace_mean_a0_L20",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9825,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.0925,
+    "degenerate_rate": 0.0075,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 449.7975
+  },
+  {
+    "config_id": "replace_mean_a1_L16",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 1.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.965,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.1075,
+    "degenerate_rate": 0.025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 481.3925
+  },
+  {
+    "config_id": "replace_mean_a1_L18",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 1.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.965,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.0775,
+    "degenerate_rate": 0.025,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 450.8325
+  },
+  {
+    "config_id": "replace_mean_a1_L20",
+    "n": 400,
+    "mode": "replace_mean",
+    "alpha": 1.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "refusal_rate": 0.9825,
+    "compliance_rate": 0.005,
+    "effective_compliance_rate": 0.005,
+    "likely_refusal_truncated_rate": 0.0925,
+    "degenerate_rate": 0.0075,
+    "uncertain_rate": 0.005,
+    "mean_response_len_chars": 449.7975
+  }
+]

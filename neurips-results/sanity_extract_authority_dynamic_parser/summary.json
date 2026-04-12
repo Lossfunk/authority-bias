@@ -1,0 +1,49 @@
+{
+  "model": "openai/gpt-oss-20b",
+  "arm": "natural",
+  "n_selected_uids": 120,
+  "included_styles": [
+    "authoritative_verified",
+    "weak",
+    "uncertain",
+    "assertive",
+    "think"
+  ],
+  "style_rows_available": {
+    "authoritative_verified": 810,
+    "weak": 810,
+    "uncertain": 810,
+    "assertive": 810,
+    "think": 810
+  },
+  "mask_counts": {
+    "selected_uids": 120,
+    "mask_primary": 117,
+    "mask_primary_w1": 95,
+    "mask_primary_c1": 117,
+    "mask_cross": 116,
+    "mask_cross_w1": 94,
+    "mask_cross_c1": 116,
+    "mask_think": 103
+  },
+  "target_layers": [
+    2,
+    5,
+    10,
+    15,
+    18,
+    20,
+    22,
+    24,
+    26,
+    28,
+    30,
+    32,
+    35,
+    38
+  ],
+  "max_batch_tokens": 8192,
+  "fallback_batch_size": 4,
+  "loader_dtype": "bfloat16",
+  "save_dtype": "float16"
+}

@@ -1,0 +1,50 @@
+{
+  "pooled_authority": {
+    "pooled_authority": 1.0,
+    "content": -0.24728858470916748,
+    "endorsement_presence": 0.9568782448768616,
+    "authority_given_correct": 0.9906788468360901,
+    "authority_given_wrong": 0.9917646050453186,
+    "shared_within_label": 1.0
+  },
+  "content": {
+    "pooled_authority": -0.24728858470916748,
+    "content": 1.0,
+    "endorsement_presence": -0.37307116389274597,
+    "authority_given_correct": -0.12436793744564056,
+    "authority_given_wrong": -0.35865598917007446,
+    "shared_within_label": -0.24728858470916748
+  },
+  "endorsement_presence": {
+    "pooled_authority": 0.9568782448768616,
+    "content": -0.37307116389274597,
+    "endorsement_presence": 1.0,
+    "authority_given_correct": 0.9296603202819824,
+    "authority_given_wrong": 0.9662026762962341,
+    "shared_within_label": 0.9568782448768616
+  },
+  "authority_given_correct": {
+    "pooled_authority": 0.9906788468360901,
+    "content": -0.12436793744564056,
+    "endorsement_presence": 0.9296603202819824,
+    "authority_given_correct": 1.0,
+    "authority_given_wrong": 0.9650742411613464,
+    "shared_within_label": 0.9906788468360901
+  },
+  "authority_given_wrong": {
+    "pooled_authority": 0.9917646050453186,
+    "content": -0.35865598917007446,
+    "endorsement_presence": 0.9662026762962341,
+    "authority_given_correct": 0.9650742411613464,
+    "authority_given_wrong": 1.0,
+    "shared_within_label": 0.9917646050453186
+  },
+  "shared_within_label": {
+    "pooled_authority": 1.0,
+    "content": -0.24728858470916748,
+    "endorsement_presence": 0.9568782448768616,
+    "authority_given_correct": 0.9906788468360901,
+    "authority_given_wrong": 0.9917646050453186,
+    "shared_within_label": 1.0
+  }
+}

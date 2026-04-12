@@ -1,0 +1,46 @@
+{
+  "positions": [
+    "endorsement_start",
+    "endorsed_answer",
+    "endorsement_end",
+    "answer_position",
+    "endorsement_mean"
+  ],
+  "layers": [
+    20
+  ],
+  "w1_auroc_matrix": [
+    [
+      0.8
+    ],
+    [
+      0.4444444444444445
+    ],
+    [
+      0.888888888888889
+    ],
+    [
+      0.44444444444444453
+    ],
+    [
+      0.1777777777777778
+    ]
+  ],
+  "c1_auroc_matrix": [
+    [
+      null
+    ],
+    [
+      null
+    ],
+    [
+      null
+    ],
+    [
+      null
+    ],
+    [
+      null
+    ]
+  ]
+}

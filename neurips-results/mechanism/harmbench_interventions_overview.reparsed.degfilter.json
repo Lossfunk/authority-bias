@@ -1,0 +1,42 @@
+[
+  {
+    "mechanism": "initial_full_sweep",
+    "configs": 42,
+    "total_n": 16800,
+    "refusal_rate": 0.9807738095238095,
+    "effective_compliance_rate": 0.0036904761904761906,
+    "degenerate_rate": 0.010535714285714285,
+    "likely_refusal_truncated_rate": 0.08910714285714286,
+    "uncertain_rate": 0.005
+  },
+  {
+    "mechanism": "followup_multilayer",
+    "configs": 6,
+    "total_n": 2400,
+    "refusal_rate": 0.9779166666666667,
+    "effective_compliance_rate": 0.004583333333333333,
+    "degenerate_rate": 0.016666666666666666,
+    "likely_refusal_truncated_rate": 0.10291666666666667,
+    "uncertain_rate": 0.0008333333333333334
+  },
+  {
+    "mechanism": "followup_decode_time",
+    "configs": 9,
+    "total_n": 3600,
+    "refusal_rate": 0.0,
+    "effective_compliance_rate": 0.0,
+    "degenerate_rate": 1.0,
+    "likely_refusal_truncated_rate": 0.0,
+    "uncertain_rate": 0.0
+  },
+  {
+    "mechanism": "followup_w1_source",
+    "configs": 12,
+    "total_n": 4800,
+    "refusal_rate": 0.92125,
+    "effective_compliance_rate": 0.004375,
+    "degenerate_rate": 0.07333333333333333,
+    "likely_refusal_truncated_rate": 0.09166666666666666,
+    "uncertain_rate": 0.0010416666666666667
+  }
+]
