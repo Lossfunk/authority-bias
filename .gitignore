@@ -39,7 +39,7 @@ assets/
 data/
 .env
 
-# Shell run scripts (kept local; experiment setup scripts in experiments/ are whitelisted below)
+# Shell run scripts (kept local; whitelisted scripts below)
 *.sh
 !scripts/run_piqa_mechanism_transfer.sh
 !scripts/run_diagnostic_instruction_experiment.sh
@@ -53,19 +53,17 @@ data/
 # Session / conversation logs (Claude Code, terminal recordings, etc.)
 [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.txt
 
-# Documents / planning
-# plan.md
+# Documents / planning (local-only notes)
 session-ses_*.md
 slack-update.md
 edits.md
 current-stage.md
 fixing.md
 iteration_plan.md
-docs-to-read/
-new-phase-results.zip
 meeting-notes/
 AWS-Setup.md
 
+# Cursor / Claude config
 .claude/
 .cursor/
 experiments/*
@@ -77,47 +75,37 @@ experiments/*
 *.csv
 abhinav-*.csv
 
-# Generated figure outputs
-new-phase-results/**/figures/
-new-phase-results/figures/
+# ---------- Old results archive ----------
+# Entire folder replaced by new-phase-results.zip (7.6GB, also ignored)
+new-phase-results/
+new-phase-results.zip
 
-# PDF figures (duplicates of PNGs)
-new-phase-results/**/*.pdf
+# ---------- NeurIPS results ----------
+# Track summaries, analyses, figures; ignore large binaries and raw data
+neurips-results/**/*.pt
+neurips-results/**/*.jsonl
+neurips-results/**/*.log
+neurips-results/**/*.pid
+neurips-results/**/*.out
+neurips-results/mechanism/gpt_oss_authority_activations/
+neurips-results/mechanism/_sanity_gptoss_authority_extract/activations.pt
+neurips-results/mechanism/redbench_followups_1500/
 
-# PyTorch activation tensors (large binary artifacts, >100MB each)
-new-phase-results/**/*.pt
+# ---------- External datasets ----------
+# Keep READMEs and code; ignore raw data
+external/**/*.jsonl
+external/**/.DS_Store
 
-# Large per-item raw result files (keep summaries, skip raw JSONL)
-new-phase-results/**/*_results.jsonl
-new-phase-results/**/metadata.jsonl
-new-phase-results/**/selected_items.jsonl
-new-phase-results/**/selected_uids.txt
-new-phase-results/diagnostic-instructions/**/item_table.jsonl
-new-phase-results/diagnostic-instructions/**/*_summary.json
+# ---------- Paper build artifacts ----------
+paper/**/*.aux
+paper/**/*.bbl
+paper/**/*.blg
+paper/**/*.fdb_latexmk
+paper/**/*.fls
+paper/**/*.log
+paper/**/*.out
+paper/**/*.synctex.gz
+paper/**/*.zip
 
-# Large experiment result subdirs (raw inference output, >50MB)
-new-phase-results/llama-3.1-8b-results/exp12_instruct/
-new-phase-results/llama-3.1-8b-results/exp12_k/
-new-phase-results/llama-3.1-8b-results/exp12_p0/
-new-phase-results/llama-3.1-8b-results/exp13/
-new-phase-results/qwen3-4b-results/exp12_instruct/
-new-phase-results/qwen3-4b-results/exp12_k/
-new-phase-results/qwen3-4b-results/exp12_p0/
-new-phase-results/qwen3-4b-results/exp13/
-
-# Checkpoint / manifest files (run artifacts, not results)
-new-phase-results/**/*_checkpoint.json
-new-phase-results/**/*_checkpoint_records.jsonl
-new-phase-results/**/*_run_manifest.json
-
-# Watch-script runtime artifacts (PID files, stdout redirects, rolling logs)
-new-phase-results/**/*.pid
-new-phase-results/**/*.out
-new-phase-results/**/*.log
-
-# Smoke / sanity-test result directories (not archival results)
-new-phase-results/**/*_smoke/
-new-phase-results/**/smoke_*/
-
-paper/
+# ---------- Reference papers (large PDFs, read locally) ----------
 papers/
