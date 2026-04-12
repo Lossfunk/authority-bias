@@ -1,0 +1,895 @@
+{
+  "mask_primary": [
+    "trivia_qa::1008",
+    "trivia_qa::1012",
+    "trivia_qa::1028",
+    "trivia_qa::1032",
+    "trivia_qa::1036",
+    "trivia_qa::1052",
+    "trivia_qa::1056",
+    "trivia_qa::1068",
+    "trivia_qa::1072",
+    "trivia_qa::1088",
+    "trivia_qa::1092",
+    "trivia_qa::1096",
+    "trivia_qa::1104",
+    "trivia_qa::1108",
+    "trivia_qa::1116",
+    "trivia_qa::112",
+    "trivia_qa::1132",
+    "trivia_qa::1148",
+    "trivia_qa::1156",
+    "trivia_qa::116"
+  ],
+  "mask_primary_w1": [
+    "trivia_qa::1008",
+    "trivia_qa::1012",
+    "trivia_qa::1028",
+    "trivia_qa::1036",
+    "trivia_qa::1052",
+    "trivia_qa::1056",
+    "trivia_qa::1068",
+    "trivia_qa::1072",
+    "trivia_qa::1088",
+    "trivia_qa::1092",
+    "trivia_qa::1096",
+    "trivia_qa::1104",
+    "trivia_qa::1116",
+    "trivia_qa::116"
+  ],
+  "mask_primary_c1": [
+    "trivia_qa::1008",
+    "trivia_qa::1012",
+    "trivia_qa::1028",
+    "trivia_qa::1032",
+    "trivia_qa::1036",
+    "trivia_qa::1052",
+    "trivia_qa::1056",
+    "trivia_qa::1068",
+    "trivia_qa::1072",
+    "trivia_qa::1088",
+    "trivia_qa::1092",
+    "trivia_qa::1096",
+    "trivia_qa::1104",
+    "trivia_qa::1108",
+    "trivia_qa::1116",
+    "trivia_qa::112",
+    "trivia_qa::1132",
+    "trivia_qa::1148",
+    "trivia_qa::1156",
+    "trivia_qa::116"
+  ],
+  "mask_cross": [
+    "trivia_qa::1008",
+    "trivia_qa::1012",
+    "trivia_qa::1028",
+    "trivia_qa::1032",
+    "trivia_qa::1036",
+    "trivia_qa::1052",
+    "trivia_qa::1056",
+    "trivia_qa::1068",
+    "trivia_qa::1072",
+    "trivia_qa::1088",
+    "trivia_qa::1092",
+    "trivia_qa::1096",
+    "trivia_qa::1104",
+    "trivia_qa::1108",
+    "trivia_qa::1116",
+    "trivia_qa::112",
+    "trivia_qa::1132",
+    "trivia_qa::1148",
+    "trivia_qa::1156",
+    "trivia_qa::116"
+  ],
+  "mask_cross_w1": [
+    "trivia_qa::1008",
+    "trivia_qa::1012",
+    "trivia_qa::1028",
+    "trivia_qa::1036",
+    "trivia_qa::1052",
+    "trivia_qa::1056",
+    "trivia_qa::1068",
+    "trivia_qa::1072",
+    "trivia_qa::1088",
+    "trivia_qa::1092",
+    "trivia_qa::1096",
+    "trivia_qa::1104",
+    "trivia_qa::1116",
+    "trivia_qa::116"
+  ],
+  "mask_cross_c1": [
+    "trivia_qa::1008",
+    "trivia_qa::1012",
+    "trivia_qa::1028",
+    "trivia_qa::1032",
+    "trivia_qa::1036",
+    "trivia_qa::1052",
+    "trivia_qa::1056",
+    "trivia_qa::1068",
+    "trivia_qa::1072",
+    "trivia_qa::1088",
+    "trivia_qa::1092",
+    "trivia_qa::1096",
+    "trivia_qa::1104",
+    "trivia_qa::1108",
+    "trivia_qa::1116",
+    "trivia_qa::112",
+    "trivia_qa::1132",
+    "trivia_qa::1148",
+    "trivia_qa::1156",
+    "trivia_qa::116"
+  ],
+  "mask_think": [],
+  "outcomes_by_uid_style": {
+    "trivia_qa::1008": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1012": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1028": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1032": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": false,
+        "w1_flip": false
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": false,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": false,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1036": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1052": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": true
+      }
+    },
+    "trivia_qa::1056": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1068": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1072": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1088": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1092": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1096": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1104": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1108": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": false,
+        "w1_flip": true
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": false,
+        "w1_flip": true
+      }
+    },
+    "trivia_qa::1116": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::112": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": false,
+        "w1_flip": true
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": false,
+        "w1_flip": true
+      }
+    },
+    "trivia_qa::1132": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": false,
+        "w1_flip": true
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::1148": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": false,
+        "w1_flip": true
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      }
+    },
+    "trivia_qa::1156": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": true
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": false,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    },
+    "trivia_qa::116": {
+      "authoritative_verified": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "weak": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "uncertain": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      },
+      "assertive": {
+        "n0_parse_valid": true,
+        "c1_parse_valid": true,
+        "w1_parse_valid": true,
+        "all3_parse_valid": true,
+        "n0_correct": true,
+        "c1_correction": true,
+        "w1_flip": false
+      }
+    }
+  },
+  "counts": {
+    "selected_uids": 20,
+    "mask_primary": 20,
+    "mask_primary_w1": 14,
+    "mask_primary_c1": 20,
+    "mask_cross": 20,
+    "mask_cross_w1": 14,
+    "mask_cross_c1": 20,
+    "mask_think": 0
+  }
+}

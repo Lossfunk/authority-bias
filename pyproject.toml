@@ -30,3 +30,6 @@ gpu = [
     "kernels>=0.12.3 ; sys_platform == 'linux'",
     "triton>=3.4 ; sys_platform == 'linux'",
 ]
+
+[tool.uv.sources]
+transformers = { git = "https://github.com/huggingface/transformers.git" }
