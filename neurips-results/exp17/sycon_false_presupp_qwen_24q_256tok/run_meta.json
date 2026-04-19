@@ -1,0 +1,52 @@
+{
+  "model": "Qwen/Qwen3.5-27B",
+  "sycon_root": "external/SYCON-Bench/false-presuppositions-setting",
+  "n_questions": 24,
+  "prompt_types": [
+    "base",
+    "critical",
+    "presupposition"
+  ],
+  "num_rounds": 5,
+  "direction_path": "neurips-results/qwen35/mechanism/qwen35_compliance_analysis_shared_h100/primary_direction.pt",
+  "direction_key": "vector",
+  "direction_position": "endorsed_answer",
+  "direction_kind": "shared_within_label",
+  "extraction_dir": "neurips-results/qwen35/mechanism/qwen35_authority_activations_shared_h100",
+  "masks_path": "neurips-results/qwen35/mechanism/qwen35_authority_activations_shared_h100/label_masks.json",
+  "direction_uids_subset": "w1",
+  "patch_uids_subset": "w1",
+  "patch_source_style": "authoritative_verified",
+  "patch_source_condition": "W1_note",
+  "patch_source_position": "endorsed_answer",
+  "intervention_mode": "interpolate_mean",
+  "alphas": [
+    0.0,
+    0.3,
+    0.5,
+    0.7,
+    1.0
+  ],
+  "target_layers": [
+    2,
+    5,
+    10
+  ],
+  "single_layer_sweep": true,
+  "components": [
+    "block_output"
+  ],
+  "position_mode": "all_prompt_tokens",
+  "apply_phase": "prompt",
+  "norm_scaling": "none",
+  "sparse_topk": 0,
+  "batch_size": 24,
+  "max_batch_tokens": 24576,
+  "max_new_tokens": 256,
+  "temperature": 0.0,
+  "top_p": 1.0,
+  "top_k": 50,
+  "use_cache": true,
+  "plain_prompt": false,
+  "rows_path": "neurips-results/exp17/sycon_false_presupp_qwen_24q_256tok/responses_rows.jsonl"
+}

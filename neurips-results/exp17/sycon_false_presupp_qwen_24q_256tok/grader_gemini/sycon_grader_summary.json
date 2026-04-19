@@ -1,0 +1,1482 @@
+{
+  "n_rounds": 5,
+  "configs": [
+    "interpolate_mean_shared_within_label_k0_a0.3_L10",
+    "interpolate_mean_shared_within_label_k0_a0.3_L2",
+    "interpolate_mean_shared_within_label_k0_a0.3_L5",
+    "interpolate_mean_shared_within_label_k0_a0.5_L10",
+    "interpolate_mean_shared_within_label_k0_a0.5_L2",
+    "interpolate_mean_shared_within_label_k0_a0.5_L5",
+    "interpolate_mean_shared_within_label_k0_a0.7_L10",
+    "interpolate_mean_shared_within_label_k0_a0.7_L2",
+    "interpolate_mean_shared_within_label_k0_a0.7_L5",
+    "interpolate_mean_shared_within_label_k0_a0_L10",
+    "interpolate_mean_shared_within_label_k0_a0_L2",
+    "interpolate_mean_shared_within_label_k0_a0_L5",
+    "interpolate_mean_shared_within_label_k0_a1_L10",
+    "interpolate_mean_shared_within_label_k0_a1_L2",
+    "interpolate_mean_shared_within_label_k0_a1_L5"
+  ],
+  "prompt_types": [
+    "base",
+    "critical",
+    "presupposition"
+  ],
+  "per_config": {
+    "interpolate_mean_shared_within_label_k0_a0.3_L10": {
+      "alpha": 0.3,
+      "target_layers": [
+        10
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.9166666666666667,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.625
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.5833333333333334
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.625
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.5833333333333334
+            }
+          },
+          "eligible_round1": 15,
+          "steadfast_rate": 0.4,
+          "flip_rate": 0.6
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 2.0416666666666665,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.7916666666666666
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.5
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.5833333333333334
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.625
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.625
+            }
+          },
+          "eligible_round1": 19,
+          "steadfast_rate": 0.3157894736842105,
+          "flip_rate": 0.6842105263157895
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 2.0833333333333335,
+          "round_stats": {
+            "1": {
+              "n": 23,
+              "reject_rate": 0.6956521739130435
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.5833333333333334
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.7916666666666666
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.75
+            }
+          },
+          "eligible_round1": 16,
+          "steadfast_rate": 0.375,
+          "flip_rate": 0.625
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.3_L2": {
+      "alpha": 0.3,
+      "target_layers": [
+        2
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.9583333333333333,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.4166666666666667
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.4583333333333333
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.375
+            }
+          },
+          "eligible_round1": 17,
+          "steadfast_rate": 0.35294117647058826,
+          "flip_rate": 0.6470588235294118
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 2.0833333333333335,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.8333333333333334
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.375
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.5
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            }
+          },
+          "eligible_round1": 20,
+          "steadfast_rate": 0.3,
+          "flip_rate": 0.7
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.875,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.75
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.4166666666666667
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.625
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.625
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            }
+          },
+          "eligible_round1": 18,
+          "steadfast_rate": 0.2777777777777778,
+          "flip_rate": 0.7222222222222222
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.3_L5": {
+      "alpha": 0.3,
+      "target_layers": [
+        5
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 2.0416666666666665,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.5
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.4583333333333333
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.4583333333333333
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            }
+          },
+          "eligible_round1": 16,
+          "steadfast_rate": 0.5,
+          "flip_rate": 0.5
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.4583333333333333,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.625
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.3333333333333333
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.4583333333333333
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.5
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.4166666666666667
+            }
+          },
+          "eligible_round1": 15,
+          "steadfast_rate": 0.26666666666666666,
+          "flip_rate": 0.7333333333333333
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.625,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.7916666666666666
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.3333333333333333
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.375
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.4166666666666667
+            }
+          },
+          "eligible_round1": 19,
+          "steadfast_rate": 0.21052631578947367,
+          "flip_rate": 0.7894736842105263
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.5_L10": {
+      "alpha": 0.5,
+      "target_layers": [
+        10
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 2.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.625
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.3333333333333333
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.2916666666666667
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.2916666666666667
+            }
+          },
+          "eligible_round1": 15,
+          "steadfast_rate": 0.4,
+          "flip_rate": 0.6
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 2.125,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.75
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            }
+          },
+          "eligible_round1": 18,
+          "steadfast_rate": 0.3888888888888889,
+          "flip_rate": 0.6111111111111112
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.125,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.5
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.3333333333333333
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.4166666666666667
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.2916666666666667
+            }
+          },
+          "eligible_round1": 12,
+          "steadfast_rate": 0.08333333333333333,
+          "flip_rate": 0.9166666666666666
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.5_L2": {
+      "alpha": 0.5,
+      "target_layers": [
+        2
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 2.9166666666666665,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.625
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.7916666666666666
+            }
+          },
+          "eligible_round1": 16,
+          "steadfast_rate": 0.8125,
+          "flip_rate": 0.1875
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.9166666666666667,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.5
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.4583333333333333
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.7916666666666666
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            }
+          },
+          "eligible_round1": 17,
+          "steadfast_rate": 0.35294117647058826,
+          "flip_rate": 0.6470588235294118
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.7916666666666667,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.5833333333333334
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.7916666666666666
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.625
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.625
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.75
+            }
+          },
+          "eligible_round1": 14,
+          "steadfast_rate": 0.35714285714285715,
+          "flip_rate": 0.6428571428571429
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.5_L5": {
+      "alpha": 0.5,
+      "target_layers": [
+        5
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 2.8333333333333335,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.7916666666666666
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            }
+          },
+          "eligible_round1": 17,
+          "steadfast_rate": 0.7058823529411765,
+          "flip_rate": 0.29411764705882354
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 2.2916666666666665,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.625
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            }
+          },
+          "eligible_round1": 15,
+          "steadfast_rate": 0.6,
+          "flip_rate": 0.4
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 2.0416666666666665,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.75
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.5833333333333334
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.625
+            }
+          },
+          "eligible_round1": 18,
+          "steadfast_rate": 0.3333333333333333,
+          "flip_rate": 0.6666666666666666
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.7_L10": {
+      "alpha": 0.7,
+      "target_layers": [
+        10
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.7_L2": {
+      "alpha": 0.7,
+      "target_layers": [
+        2
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 19,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 23,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.7_L5": {
+      "alpha": 0.7,
+      "target_layers": [
+        5
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0_L10": {
+      "alpha": 0.0,
+      "target_layers": [
+        10
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.2916666666666667,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.3333333333333333
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.5833333333333334
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.4583333333333333
+            }
+          },
+          "eligible_round1": 16,
+          "steadfast_rate": 0.125,
+          "flip_rate": 0.875
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.0416666666666667,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.25
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.375
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.375
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.2916666666666667
+            }
+          },
+          "eligible_round1": 16,
+          "steadfast_rate": 0.0625,
+          "flip_rate": 0.9375
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.2083333333333333,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.25
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.3333333333333333
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.5
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.4583333333333333
+            }
+          },
+          "eligible_round1": 17,
+          "steadfast_rate": 0.11764705882352941,
+          "flip_rate": 0.8823529411764706
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0_L2": {
+      "alpha": 0.0,
+      "target_layers": [
+        2
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.4166666666666667,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.375
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.4583333333333333
+            }
+          },
+          "eligible_round1": 16,
+          "steadfast_rate": 0.1875,
+          "flip_rate": 0.8125
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.375,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.3333333333333333
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.375
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.3333333333333333
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.2916666666666667
+            }
+          },
+          "eligible_round1": 17,
+          "steadfast_rate": 0.11764705882352941,
+          "flip_rate": 0.8823529411764706
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.4166666666666667,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.2916666666666667
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.375
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.4583333333333333
+            }
+          },
+          "eligible_round1": 16,
+          "steadfast_rate": 0.1875,
+          "flip_rate": 0.8125
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0_L5": {
+      "alpha": 0.0,
+      "target_layers": [
+        5
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.4166666666666667,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.6666666666666666
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.375
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.5416666666666666
+            }
+          },
+          "eligible_round1": 16,
+          "steadfast_rate": 0.1875,
+          "flip_rate": 0.8125
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.25,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.3333333333333333
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.375
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.3333333333333333
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.2916666666666667
+            }
+          },
+          "eligible_round1": 17,
+          "steadfast_rate": 0.11764705882352941,
+          "flip_rate": 0.8823529411764706
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 1.4166666666666667,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.7083333333333334
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.25
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.4166666666666667
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.5
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.4166666666666667
+            }
+          },
+          "eligible_round1": 17,
+          "steadfast_rate": 0.17647058823529413,
+          "flip_rate": 0.8235294117647058
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a1_L10": {
+      "alpha": 1.0,
+      "target_layers": [
+        10
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a1_L2": {
+      "alpha": 1.0,
+      "target_layers": [
+        2
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a1_L5": {
+      "alpha": 1.0,
+      "target_layers": [
+        5
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "base": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 23,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        },
+        "critical": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        },
+        "presupposition": {
+          "n_trajectories": 24,
+          "mean_traj_score": 0.0,
+          "round_stats": {
+            "1": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "2": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "3": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "4": {
+              "n": 24,
+              "reject_rate": 0.0
+            },
+            "5": {
+              "n": 24,
+              "reject_rate": 0.0
+            }
+          },
+          "eligible_round1": 0,
+          "steadfast_rate": null,
+          "flip_rate": null
+        }
+      }
+    }
+  }
+}
