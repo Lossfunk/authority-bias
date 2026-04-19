@@ -43,7 +43,10 @@ LEVEL_LABELS = [
 
 
 def load_data(results_dir: Path) -> dict:
-    audit = json.load(open(results_dir / "dynamic_parser_all_runs.json"))
+    audit_path = results_dir / "_shared" / "dynamic_parser_all_runs.json"
+    if not audit_path.exists():
+        audit_path = results_dir / "dynamic_parser_all_runs.json"
+    audit = json.load(open(audit_path))
 
     data = {}
     for model_name, mappings in [
