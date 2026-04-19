@@ -47,12 +47,10 @@ def get_component_modules(model: nn.Module) -> Dict[Tuple[int, str], nn.Module]:
     mapping: Dict[Tuple[int, str], nn.Module] = {}
     for layer_idx, layer in enumerate(layers):
         mapping[(layer_idx, "block_output")] = layer
-        if not hasattr(layer, "self_attn"):
-            raise ValueError(f"Layer {layer_idx} missing self_attn module")
-        if not hasattr(layer, "mlp"):
-            raise ValueError(f"Layer {layer_idx} missing mlp module")
-        mapping[(layer_idx, "attention_output")] = layer.self_attn
-        mapping[(layer_idx, "mlp_output")] = layer.mlp
+        if hasattr(layer, "self_attn"):
+            mapping[(layer_idx, "attention_output")] = layer.self_attn
+        if hasattr(layer, "mlp"):
+            mapping[(layer_idx, "mlp_output")] = layer.mlp
     return mapping
 
 

@@ -23,12 +23,14 @@ from src.exp16.run_dissociation_test import (
     _set_torch_seed,
     _trim_generated_output_ids,
 )
+from src.exp16.va_subspace import load_basis_by_layer, normalize_torch, project_out_torch
 from src.mechanism.hooks import (
     _extract_hidden,
     _replace_hidden,
     get_component_modules,
     get_transformer_layers,
 )
+from src.mechanism.hooks_v2 import setup_h100_optimizations, try_compile_model
 from src.models.llama_loader import load_model_and_tokenizer
 
 
@@ -56,6 +58,7 @@ class TargetSpec:
     component: str
     direction: Optional[torch.Tensor]
     patch_mean: Optional[torch.Tensor]
+    nuisance_basis: Optional[torch.Tensor] = None
 
 
 class ExtractionStore:
@@ -130,6 +133,8 @@ def parse_args() -> argparse.Namespace:
                        "authority_given_correct",
                        "authority_given_wrong",
                        "shared_within_label",
+                       "w1_minus_c1",
+                       "c1_minus_w1",
                    ),
                    help="Direction type when deriving vectors from extraction artifacts.")
     p.add_argument("--extraction-dir", type=Path, default=None,
@@ -164,6 +169,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--apply-phase", choices=("prompt", "decode", "both"), default="prompt")
     p.add_argument("--intervention-mode", choices=("add", "subtract", "replace_mean", "interpolate_mean"), default="add")
     p.add_argument("--norm-scaling", choices=("none", "resid_norm", "resid_std"), default="none")
+    p.add_argument("--project-out-subspace-path", type=Path, default=None,
+                   help="Optional nuisance subspace payload with basis_by_layer; residualizes directions or patch deltas.")
     p.add_argument("--sparse-topk", type=int, default=0,
                    help="If >0, keep only top-k absolute dimensions of direction vectors.")
     p.add_argument("--collect-margin-diagnostics", action="store_true",
@@ -173,8 +180,11 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--temperature", type=float, default=0.6)
     p.add_argument("--top-p", type=float, default=0.9)
     p.add_argument("--top-k", type=int, default=50)
+    p.add_argument("--answer-suffix", type=str, default="",
+                   help="Suffix appended after the base prompt (e.g. freegen instruction).")
     p.add_argument("--greedy", action="store_true", help="Use greedy decoding (do_sample=False).")
     p.add_argument("--no-cache", action="store_true", help="Disable generation KV cache.")
+    p.add_argument("--no-compile", action="store_true", help="Disable torch.compile optimization.")
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--plain-prompt", action="store_true")
     return p.parse_args()
@@ -366,6 +376,7 @@ def _build_jobs(
     conditions: List[str],
     tokenizer,
     plain_prompt: bool,
+    answer_suffix: str = "",
 ) -> List[Dict[str, Any]]:
     jobs = []
     for uid in uids:
@@ -377,7 +388,10 @@ def _build_jobs(
             if cond is None:
                 continue
             base = _format_exp16_prompt(ex=ex, condition=cond, endorsement_style=ENDORSEMENT_STYLE).rstrip()
-            prompt_text = f"{base}\n"
+            if answer_suffix:
+                prompt_text = f"{base}\n{answer_suffix}".strip()
+            else:
+                prompt_text = f"{base}\n"
             model_prompt = _format_chat_prompt(tokenizer, prompt_text, plain_prompt)
             positions = _compute_prompt_positions(
                 tokenizer=tokenizer,
@@ -459,6 +473,8 @@ def _direction_from_store(
             "authority_given_correct": zeros.clone(),
             "authority_given_wrong": zeros.clone(),
             "shared_within_label": zeros.clone(),
+            "w1_minus_c1": zeros.clone(),
+            "c1_minus_w1": zeros.clone(),
         }
 
     mean_c1 = m_c1.mean(dim=0)
@@ -492,6 +508,8 @@ def _direction_from_store(
 
     authority_given_correct = mean_c1 - mean_n0
     authority_given_wrong = mean_w1 - mean_n0
+    w1_minus_c1 = mean_w1 - mean_c1
+    c1_minus_w1 = mean_c1 - mean_w1
     pooled_authority = 0.5 * (authority_given_correct + authority_given_wrong)
     content = mean_all_c1 - mean_all_w1
     endorsement_presence = 0.5 * (mean_all_c1 + mean_all_w1) - mean_n0
@@ -504,6 +522,8 @@ def _direction_from_store(
         "authority_given_correct": _normalize_vector(authority_given_correct),
         "authority_given_wrong": _normalize_vector(authority_given_wrong),
         "shared_within_label": _normalize_vector(shared_within_label),
+        "w1_minus_c1": _normalize_vector(w1_minus_c1),
+        "c1_minus_w1": _normalize_vector(c1_minus_w1),
     }
 
 
@@ -618,6 +638,9 @@ def _make_intervention_hook(
             d = spec.direction.to(hidden.device, dtype=hidden.dtype)
         if spec.patch_mean is not None:
             p = spec.patch_mean.to(hidden.device, dtype=hidden.dtype)
+        nuisance_basis = None
+        if spec.nuisance_basis is not None:
+            nuisance_basis = spec.nuisance_basis.to(hidden.device, dtype=hidden.dtype)
 
         for row_idx, row_positions in enumerate(positions_by_row):
             if row_idx >= hidden.shape[0]:
@@ -630,18 +653,27 @@ def _make_intervention_hook(
                 if intervention_mode in {"add", "subtract"}:
                     if d is None:
                         continue
-                    delta = _scale_delta(base, d, alpha, norm_scaling)
+                    direction = d if nuisance_basis is None else normalize_torch(project_out_torch(d, nuisance_basis))
+                    if float(direction.norm()) == 0.0:
+                        continue
+                    delta = _scale_delta(base, direction, alpha, norm_scaling)
                     if intervention_mode == "subtract":
                         delta = -delta
                     updated[row_idx, pos, :] = base + delta
                 elif intervention_mode == "replace_mean":
                     if p is None:
                         continue
-                    updated[row_idx, pos, :] = p
+                    target = p
+                    if nuisance_basis is not None:
+                        target = base + project_out_torch(p - base, nuisance_basis)
+                    updated[row_idx, pos, :] = target
                 elif intervention_mode == "interpolate_mean":
                     if p is None:
                         continue
-                    updated[row_idx, pos, :] = base + alpha * (p - base)
+                    delta_to_patch = p - base
+                    if nuisance_basis is not None:
+                        delta_to_patch = project_out_torch(delta_to_patch, nuisance_basis)
+                    updated[row_idx, pos, :] = base + alpha * delta_to_patch
                 else:
                     raise ValueError(f"Unknown intervention mode: {intervention_mode}")
         return _replace_hidden(output, updated)
@@ -756,12 +788,13 @@ def _generate_steered_batch(
         "max_new_tokens": max_new_tokens,
         "do_sample": do_sample,
         "temperature": temperature if do_sample else 1.0,
-        "top_p": top_p,
-        "top_k": top_k,
         "pad_token_id": tokenizer.pad_token_id,
         "eos_token_id": tokenizer.eos_token_id,
         "use_cache": use_cache,
     }
+    if do_sample:
+        gen_kwargs["top_p"] = top_p
+        gen_kwargs["top_k"] = top_k
     if tokenizer.pad_token_id is None and tokenizer.eos_token_id is not None:
         gen_kwargs["pad_token_id"] = tokenizer.eos_token_id
 
@@ -866,6 +899,7 @@ def _parse_and_score(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
 def main() -> None:
     args = parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
+    setup_h100_optimizations()
 
     alphas = _parse_alphas(args.alphas)
     conditions = _parse_csv(args.conditions)
@@ -907,6 +941,9 @@ def main() -> None:
     condition_map = _build_condition_map(conditions)
 
     model, tokenizer = load_model_and_tokenizer(model_name=args.model, device="auto", dtype="auto")
+    model.eval()
+    if not args.no_compile:
+        model = try_compile_model(model)
     layers = get_transformer_layers(model)
     n_layers = len(layers)
     component_modules = get_component_modules(model)
@@ -921,6 +958,7 @@ def main() -> None:
         conditions=conditions,
         tokenizer=tokenizer,
         plain_prompt=args.plain_prompt,
+        answer_suffix=args.answer_suffix,
     )
     print(
         f"Model loaded: {args.model}, layers={n_layers} | jobs={len(jobs)} "
@@ -942,6 +980,7 @@ def main() -> None:
 
     direction_cache: Dict[Tuple[int, str], torch.Tensor] = {}
     patch_cache: Dict[Tuple[int, str, str, str], torch.Tensor] = {}
+    nuisance_basis_by_layer = load_basis_by_layer(args.project_out_subspace_path) if args.project_out_subspace_path else {}
 
     def direction_for(layer_val: int) -> torch.Tensor:
         key = (layer_val, direction_position)
@@ -964,6 +1003,9 @@ def main() -> None:
             )
             vec = dirs[args.direction_kind]
         vec = _sparsify_vector(vec, args.sparse_topk)
+        nuisance_basis = nuisance_basis_by_layer.get(layer_val)
+        if nuisance_basis is not None:
+            vec = normalize_torch(project_out_torch(vec, nuisance_basis))
         direction_cache[key] = vec
         return vec
 
@@ -1009,6 +1051,7 @@ def main() -> None:
             for layer_val in layer_group:
                 d = None
                 p = None
+                nuisance_basis = nuisance_basis_by_layer.get(layer_val)
                 if args.intervention_mode in {"add", "subtract"}:
                     d = direction_for(layer_val)
                 else:
@@ -1016,7 +1059,15 @@ def main() -> None:
                 for component in components:
                     if (layer_val, component) not in component_modules:
                         raise ValueError(f"Component target not found: layer={layer_val}, component={component}")
-                    target_specs.append(TargetSpec(layer=layer_val, component=component, direction=d, patch_mean=p))
+                    target_specs.append(
+                        TargetSpec(
+                            layer=layer_val,
+                            component=component,
+                            direction=d,
+                            patch_mean=p,
+                            nuisance_basis=nuisance_basis,
+                        )
+                    )
 
             print(f"\n=== {config_id} ===")
             for alpha in alphas:
@@ -1059,6 +1110,7 @@ def main() -> None:
                                 "direction_kind": args.direction_kind,
                                 "direction_position": direction_position,
                                 "direction_source": "extraction" if extraction_store is not None else "file",
+                                "project_out_subspace_path": str(args.project_out_subspace_path) if args.project_out_subspace_path else None,
                             }
                         )
                     alpha_rows.extend(batch_rows)
@@ -1105,16 +1157,19 @@ def main() -> None:
         "apply_phase": args.apply_phase,
         "intervention_mode": args.intervention_mode,
         "norm_scaling": args.norm_scaling,
+        "project_out_subspace_path": str(args.project_out_subspace_path) if args.project_out_subspace_path else None,
         "sparse_topk": args.sparse_topk,
         "collect_margin_diagnostics": bool(args.collect_margin_diagnostics),
         "patch_source_style": args.patch_source_style,
         "patch_source_condition": args.patch_source_condition,
         "patch_source_position": patch_source_position,
+        "answer_suffix": args.answer_suffix,
         "temperature": args.temperature,
         "top_p": args.top_p,
         "top_k": args.top_k,
         "greedy": bool(args.greedy),
         "use_cache": not args.no_cache,
+        "no_compile": bool(args.no_compile),
         "batch_size": args.batch_size,
         "max_new_tokens": args.max_new_tokens,
         "elapsed_seconds": round(elapsed, 2),

@@ -24,6 +24,7 @@ import re
 import time
 import urllib.error
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import mean, median, stdev
@@ -131,6 +132,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--api-timeout-seconds", type=float, default=120.0)
     parser.add_argument("--api-max-retries", type=int, default=4)
     parser.add_argument("--api-sleep-seconds", type=float, default=0.0)
+    parser.add_argument("--api-concurrency", type=int, default=1, help="Concurrent API requests for backend=api.")
+    parser.add_argument("--no-reasoning", action="store_true", help="Disable model reasoning/thinking tokens via OpenRouter reasoning effort=none.")
     parser.add_argument("--overwrite", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     return parser.parse_args()
@@ -365,6 +368,17 @@ def _extract_final_answer(
     tail_for_final_cue = post_think_text[-240:]
     has_final_cue = any(pattern.search(tail_for_final_cue) for pattern in FINAL_CUE_PATTERNS)
     if not has_final_cue:
+        short_text = post_think_text.strip()
+        if short_text and len(short_text) <= 240:
+            fallback = _parse_by_last_anywhere(
+                _normalize_for_match(short_text),
+                correct_answer_norm=_normalize_for_match(correct_answer),
+                wrong_answer_norm=_normalize_for_match(wrong_answer),
+                correct_label=correct_label,
+                wrong_label=wrong_label,
+            )
+            if fallback in {"A", "B"}:
+                return fallback, "answer_text:short_no_cue"
         return None, "none:no_final_cue"
 
     correct_answer_norm = _normalize_for_match(correct_answer)
@@ -906,6 +920,7 @@ def _request_openai_compatible_chat_completion(
     presence_penalty: float,
     max_tokens: int,
     timeout_seconds: float,
+    no_reasoning: bool = False,
 ) -> str:
     url = f"{api_base.rstrip('/')}/chat/completions"
     body: Dict[str, object] = {
@@ -918,6 +933,8 @@ def _request_openai_compatible_chat_completion(
         body["top_p"] = top_p
         if presence_penalty != 0.0:
             body["presence_penalty"] = presence_penalty
+    if no_reasoning:
+        body["reasoning"] = {"effort": "none"}
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
@@ -1006,6 +1023,92 @@ def _request_gemini_generate_content(
     return full_text
 
 
+def _generate_api_one(
+    job: DissociationJob,
+    *,
+    api_provider: str,
+    api_base: str,
+    api_key: str,
+    openrouter_http_referer: str,
+    openrouter_app_title: str,
+    model_name: str,
+    max_new_tokens: int,
+    temperature: float,
+    top_p: float,
+    top_k: int,
+    presence_penalty: float,
+    timeout_seconds: float,
+    max_retries: int,
+    sleep_seconds: float,
+    no_reasoning: bool = False,
+) -> Dict[str, object]:
+    prompt = job.prompt_text
+    last_exc: Optional[Exception] = None
+    raw_text: Optional[str] = None
+    for attempt in range(1, max_retries + 1):
+        try:
+            if api_provider in {"openai", "openrouter"}:
+                raw_text = _request_openai_compatible_chat_completion(
+                    api_base=api_base,
+                    api_key=api_key,
+                    api_provider=api_provider,
+                    openrouter_http_referer=openrouter_http_referer,
+                    openrouter_app_title=openrouter_app_title,
+                    model_name=model_name,
+                    prompt=prompt,
+                    temperature=temperature,
+                    top_p=top_p,
+                    presence_penalty=presence_penalty,
+                    max_tokens=max_new_tokens,
+                    timeout_seconds=timeout_seconds,
+                    no_reasoning=no_reasoning,
+                )
+            else:
+                raw_text = _request_gemini_generate_content(
+                    api_base=api_base,
+                    api_key=api_key,
+                    model_name=model_name,
+                    prompt=prompt,
+                    temperature=temperature,
+                    top_p=top_p,
+                    top_k=top_k,
+                    max_tokens=max_new_tokens,
+                    timeout_seconds=timeout_seconds,
+                )
+            break
+        except (urllib.error.HTTPError, urllib.error.URLError, json.JSONDecodeError, ValueError) as exc:
+            last_exc = exc
+            if attempt >= max_retries:
+                break
+            time.sleep(1.2 * attempt)
+
+    if raw_text is None:
+        return {
+            "raw_text": "",
+            "output_ids": [],
+            "n_output_tokens": 0,
+            "error": (
+                f"API generation failed for uid={job.ex.uid}, "
+                f"condition={job.condition_code}, arm={job.arm}: {last_exc}"
+            ),
+        }
+    if sleep_seconds > 0:
+        time.sleep(sleep_seconds)
+    return {
+        "raw_text": raw_text,
+        "output_ids": [],
+        "n_output_tokens": 0,
+    }
+
+
+def _append_result_rows(path: Path, rows: Sequence[Dict[str, object]]) -> None:
+    if not rows:
+        return
+    with path.open("a") as f:
+        for row in rows:
+            f.write(json.dumps(row) + "\n")
+
+
 def _generate_api(
     jobs: Sequence[DissociationJob],
     *,
@@ -1023,63 +1126,60 @@ def _generate_api(
     timeout_seconds: float,
     max_retries: int,
     sleep_seconds: float,
+    api_concurrency: int,
+    no_reasoning: bool = False,
 ) -> List[Dict[str, object]]:
-    outputs: List[Dict[str, object]] = []
-    for job in tqdm(jobs, desc=f"Generating (api:{api_provider})"):
-        prompt = job.prompt_text
-        last_exc: Optional[Exception] = None
-        raw_text: Optional[str] = None
-        for attempt in range(1, max_retries + 1):
-            try:
-                if api_provider in {"openai", "openrouter"}:
-                    raw_text = _request_openai_compatible_chat_completion(
-                        api_base=api_base,
-                        api_key=api_key,
-                        api_provider=api_provider,
-                        openrouter_http_referer=openrouter_http_referer,
-                        openrouter_app_title=openrouter_app_title,
-                        model_name=model_name,
-                        prompt=prompt,
-                        temperature=temperature,
-                        top_p=top_p,
-                        presence_penalty=presence_penalty,
-                        max_tokens=max_new_tokens,
-                        timeout_seconds=timeout_seconds,
-                    )
-                else:
-                    raw_text = _request_gemini_generate_content(
-                        api_base=api_base,
-                        api_key=api_key,
-                        model_name=model_name,
-                        prompt=prompt,
-                        temperature=temperature,
-                        top_p=top_p,
-                        top_k=top_k,
-                        max_tokens=max_new_tokens,
-                        timeout_seconds=timeout_seconds,
-                    )
-                break
-            except (urllib.error.HTTPError, urllib.error.URLError, json.JSONDecodeError, ValueError) as exc:
-                last_exc = exc
-                if attempt >= max_retries:
-                    break
-                time.sleep(1.2 * attempt)
-
-        if raw_text is None:
-            raise RuntimeError(
-                f"API generation failed for uid={job.ex.uid}, condition={job.condition_code}, arm={job.arm}: {last_exc}"
+    if api_concurrency <= 1:
+        return [
+            _generate_api_one(
+                job,
+                api_provider=api_provider,
+                api_base=api_base,
+                api_key=api_key,
+                openrouter_http_referer=openrouter_http_referer,
+                openrouter_app_title=openrouter_app_title,
+                model_name=model_name,
+                max_new_tokens=max_new_tokens,
+                temperature=temperature,
+                top_p=top_p,
+                top_k=top_k,
+                presence_penalty=presence_penalty,
+                timeout_seconds=timeout_seconds,
+                max_retries=max_retries,
+                sleep_seconds=sleep_seconds,
+                no_reasoning=no_reasoning,
             )
+            for job in tqdm(jobs, desc=f"Generating (api:{api_provider})")
+        ]
 
-        outputs.append(
-            {
-                "raw_text": raw_text,
-                "output_ids": [],
-                "n_output_tokens": 0,
-            }
-        )
-        if sleep_seconds > 0:
-            time.sleep(sleep_seconds)
-    return outputs
+    outputs: List[Optional[Dict[str, object]]] = [None] * len(jobs)
+    with ThreadPoolExecutor(max_workers=max(1, api_concurrency)) as ex:
+        future_map = {
+            ex.submit(
+                _generate_api_one,
+                job,
+                api_provider=api_provider,
+                api_base=api_base,
+                api_key=api_key,
+                openrouter_http_referer=openrouter_http_referer,
+                openrouter_app_title=openrouter_app_title,
+                model_name=model_name,
+                max_new_tokens=max_new_tokens,
+                temperature=temperature,
+                top_p=top_p,
+                top_k=top_k,
+                presence_penalty=presence_penalty,
+                timeout_seconds=timeout_seconds,
+                max_retries=max_retries,
+                sleep_seconds=sleep_seconds,
+                no_reasoning=no_reasoning,
+            ): idx
+            for idx, job in enumerate(jobs)
+        }
+        for future in tqdm(as_completed(future_map), total=len(future_map), desc=f"Generating (api:{api_provider}, c={api_concurrency})"):
+            idx = future_map[future]
+            outputs[idx] = future.result()
+    return [out for out in outputs if out is not None]
 
 
 def _expected_note_support(cond: Exp10Condition, ex: MCExample) -> str:
@@ -1393,28 +1493,30 @@ def main() -> None:
                 )
             )
     else:
-        generations = _generate_api(
-            jobs,
-            api_provider=args.api_provider,
-            api_base=str(api_base),
-            api_key=str(api_key),
-            openrouter_http_referer=args.openrouter_http_referer,
-            openrouter_app_title=args.openrouter_app_title,
-            model_name=args.model,
-            max_new_tokens=args.max_new_tokens,
-            temperature=args.temperature,
-            top_p=args.top_p,
-            top_k=args.top_k,
-            presence_penalty=args.presence_penalty,
-            timeout_seconds=args.api_timeout_seconds,
-            max_retries=args.api_max_retries,
-            sleep_seconds=args.api_sleep_seconds,
-        )
         new_rows = []
-        for job, gen in zip(jobs, generations, strict=True):
-            scored = _score_generation(job, gen)
-            new_rows.append(
-                _build_result_row(
+        if args.api_concurrency <= 1:
+            iterator = tqdm(jobs, desc=f"Generating (api:{args.api_provider})")
+            for job in iterator:
+                gen = _generate_api_one(
+                    job,
+                    api_provider=args.api_provider,
+                    api_base=str(api_base),
+                    api_key=str(api_key),
+                    openrouter_http_referer=args.openrouter_http_referer,
+                    openrouter_app_title=args.openrouter_app_title,
+                    model_name=args.model,
+                    max_new_tokens=args.max_new_tokens,
+                    temperature=args.temperature,
+                    top_p=args.top_p,
+                    top_k=args.top_k,
+                    presence_penalty=args.presence_penalty,
+                    timeout_seconds=args.api_timeout_seconds,
+                    max_retries=args.api_max_retries,
+                    sleep_seconds=args.api_sleep_seconds,
+                    no_reasoning=args.no_reasoning,
+                )
+                scored = _score_generation(job, gen)
+                row = _build_result_row(
                     model_name=args.model,
                     backend=args.backend,
                     api_provider=args.api_provider,
@@ -1423,12 +1525,58 @@ def main() -> None:
                     generation=gen,
                     scored=scored,
                 )
-            )
+                new_rows.append(row)
+                _append_result_rows(out_path, [row])
+        else:
+            completed_rows: List[Optional[Dict[str, object]]] = [None] * len(jobs)
+            with ThreadPoolExecutor(max_workers=max(1, args.api_concurrency)) as ex:
+                future_map = {
+                    ex.submit(
+                        _generate_api_one,
+                        job,
+                        api_provider=args.api_provider,
+                        api_base=str(api_base),
+                        api_key=str(api_key),
+                        openrouter_http_referer=args.openrouter_http_referer,
+                        openrouter_app_title=args.openrouter_app_title,
+                        model_name=args.model,
+                        max_new_tokens=args.max_new_tokens,
+                        temperature=args.temperature,
+                        top_p=args.top_p,
+                        top_k=args.top_k,
+                        presence_penalty=args.presence_penalty,
+                        timeout_seconds=args.api_timeout_seconds,
+                        max_retries=args.api_max_retries,
+                        sleep_seconds=args.api_sleep_seconds,
+                        no_reasoning=args.no_reasoning,
+                    ): idx
+                    for idx, job in enumerate(jobs)
+                }
+                progress = tqdm(
+                    as_completed(future_map),
+                    total=len(future_map),
+                    desc=f"Generating (api:{args.api_provider}, c={args.api_concurrency})",
+                )
+                for future in progress:
+                    idx = future_map[future]
+                    job = jobs[idx]
+                    gen = future.result()
+                    scored = _score_generation(job, gen)
+                    row = _build_result_row(
+                        model_name=args.model,
+                        backend=args.backend,
+                        api_provider=args.api_provider,
+                        api_base=str(api_base),
+                        job=job,
+                        generation=gen,
+                        scored=scored,
+                    )
+                    completed_rows[idx] = row
+                    _append_result_rows(out_path, [row])
+            new_rows = [row for row in completed_rows if row is not None]
 
-    if new_rows:
-        with out_path.open("a") as f:
-            for row in new_rows:
-                f.write(json.dumps(row) + "\n")
+    if new_rows and args.backend != "api":
+        _append_result_rows(out_path, new_rows)
 
     # Build summary over full file (existing + new) for stable resume semantics.
     all_rows: List[Dict[str, object]] = []
@@ -1443,8 +1591,18 @@ def main() -> None:
         "api_provider": args.api_provider if args.backend == "api" else None,
         "api_base": str(api_base) if args.backend == "api" else None,
         "torch_runtime_mode": torch_mode,
-        "source_results_path": str(args.source_results_path),
+        "selection_source": (
+            "uids_file" if args.uids_file is not None else
+            "selected_items_path" if args.selected_items_path is not None else
+            "source_results_path"
+        ),
+        "source_results_path": (
+            str(args.source_results_path)
+            if args.uids_file is None and args.selected_items_path is None
+            else None
+        ),
         "selected_items_path": str(args.selected_items_path) if args.selected_items_path else None,
+        "uids_file": str(args.uids_file) if args.uids_file else None,
         "mc_dataset_path": str(args.mc_dataset_path),
         "output_path": str(out_path),
         "n_selected_items": len(selected),
@@ -1467,6 +1625,7 @@ def main() -> None:
         "api_timeout_seconds": args.api_timeout_seconds,
         "api_max_retries": args.api_max_retries,
         "api_sleep_seconds": args.api_sleep_seconds,
+        "api_concurrency": args.api_concurrency if args.backend == "api" else None,
         "openrouter_http_referer": args.openrouter_http_referer,
         "openrouter_app_title": args.openrouter_app_title,
         "plain_prompt": args.plain_prompt,
