@@ -92,9 +92,19 @@ neurips-results/mechanism/_sanity_gptoss_authority_extract/activations.pt
 neurips-results/mechanism/redbench_followups_1500/
 
 # ---------- External datasets ----------
-# Keep READMEs and code; ignore raw data
+# Keep READMEs and code; ignore raw data / heavy activation dumps / run logs
 external/**/*.jsonl
 external/**/.DS_Store
+external/**/activations/
+external/**/*.log
+external/**/*.pt
+
+# ---------- Paper-specific figure bundles ----------
+# Separate write-ups (not part of the NeurIPS submission) with their own
+# build artifacts kept local.
+figures/assistant-axis-paper/
+figures/claude-generated-figures/
+figures/valence-arousal-paper/
 
 # ---------- Paper build artifacts ----------
 paper/**/*.aux
