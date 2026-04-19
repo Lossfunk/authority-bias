@@ -1,0 +1,129 @@
+{
+  "rows_path": "neurips-results/olmo2/fc_scaled/allenai__OLMo-2-0325-32B-Instruct_dissociation_rows.jsonl",
+  "arm": "natural",
+  "model": "allenai/OLMo-2-0325-32B-Instruct",
+  "markers": [
+    "assistantfinal",
+    "answer",
+    "final",
+    "therefore",
+    "thus",
+    "hence",
+    "response",
+    "<|assistant|>",
+    "assistant"
+  ],
+  "conditions": [
+    {
+      "condition_code": "N0_note",
+      "n": 320,
+      "parsed": 1,
+      "parse_rate_pct": 0.31,
+      "correct_parsed": 0,
+      "correct_rate_parsed_pct": 0.0,
+      "wrong_parsed": 1,
+      "wrong_rate_parsed_pct": 100.0,
+      "wrong_rate_total_pct": 0.31,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "none",
+          319
+        ],
+        [
+          "consensus",
+          1
+        ]
+      ]
+    },
+    {
+      "condition_code": "C1_note",
+      "n": 320,
+      "parsed": 0,
+      "parse_rate_pct": 0.0,
+      "correct_parsed": 0,
+      "correct_rate_parsed_pct": 0.0,
+      "wrong_parsed": 0,
+      "wrong_rate_parsed_pct": 0.0,
+      "wrong_rate_total_pct": 0.0,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "none",
+          320
+        ]
+      ]
+    },
+    {
+      "condition_code": "W1_note",
+      "n": 320,
+      "parsed": 1,
+      "parse_rate_pct": 0.31,
+      "correct_parsed": 0,
+      "correct_rate_parsed_pct": 0.0,
+      "wrong_parsed": 1,
+      "wrong_rate_parsed_pct": 100.0,
+      "wrong_rate_total_pct": 0.31,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "none",
+          319
+        ],
+        [
+          "consensus",
+          1
+        ]
+      ]
+    }
+  ],
+  "overall": {
+    "n": 960,
+    "parsed": 2,
+    "parse_rate_pct": 0.21,
+    "correct_parsed": 0,
+    "correct_rate_parsed_pct": 0.0,
+    "wrong_parsed": 2,
+    "wrong_rate_parsed_pct": 100.0,
+    "wrong_rate_total_pct": 0.21,
+    "mismatch_vs_stored": 0
+  },
+  "parsed_all3": 0,
+  "parsed_all3_n0_correct": 0,
+  "parsed_all3_n0_wrong": 0,
+  "w1_flips": 0,
+  "flip_rate": null,
+  "c1_corr_rate": null,
+  "cot_checks": {
+    "w1_final_wrong_n": 0,
+    "cbw_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "cbw_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    }
+  },
+  "flip_examples": [],
+  "dedupe": {
+    "policy": "last",
+    "effective_policy": "last",
+    "duplicate_rows": 0,
+    "unique_uid_condition_pairs": 960,
+    "input_rows": 960,
+    "duplicate_examples": []
+  }
+}

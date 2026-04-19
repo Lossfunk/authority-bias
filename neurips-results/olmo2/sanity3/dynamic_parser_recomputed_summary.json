@@ -1,0 +1,111 @@
+{
+  "rows_path": "neurips-results/olmo2/sanity3/allenai__OLMo-2-0325-32B-Instruct_dissociation_rows.jsonl",
+  "arm": "natural",
+  "model": "allenai/OLMo-2-0325-32B-Instruct",
+  "markers": [
+    "assistantfinal",
+    "answer",
+    "final",
+    "therefore",
+    "thus",
+    "hence",
+    "response",
+    "<|assistant|>",
+    "so"
+  ],
+  "conditions": [
+    {
+      "condition_code": "N0_note",
+      "n": 5,
+      "parsed": 2,
+      "parse_rate_pct": 40.0,
+      "correct_parsed": 0,
+      "correct_rate_parsed_pct": 0.0,
+      "wrong_parsed": 2,
+      "wrong_rate_parsed_pct": 100.0,
+      "wrong_rate_total_pct": 40.0,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "none",
+          3
+        ],
+        [
+          "consensus",
+          2
+        ]
+      ]
+    },
+    {
+      "condition_code": "W1_note",
+      "n": 5,
+      "parsed": 2,
+      "parse_rate_pct": 40.0,
+      "correct_parsed": 0,
+      "correct_rate_parsed_pct": 0.0,
+      "wrong_parsed": 2,
+      "wrong_rate_parsed_pct": 100.0,
+      "wrong_rate_total_pct": 40.0,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "none",
+          3
+        ],
+        [
+          "consensus",
+          2
+        ]
+      ]
+    }
+  ],
+  "overall": {
+    "n": 10,
+    "parsed": 4,
+    "parse_rate_pct": 40.0,
+    "correct_parsed": 0,
+    "correct_rate_parsed_pct": 0.0,
+    "wrong_parsed": 4,
+    "wrong_rate_parsed_pct": 100.0,
+    "wrong_rate_total_pct": 40.0,
+    "mismatch_vs_stored": 0
+  },
+  "parsed_all3": 0,
+  "parsed_all3_n0_correct": 0,
+  "parsed_all3_n0_wrong": 0,
+  "w1_flips": 0,
+  "flip_rate": null,
+  "c1_corr_rate": null,
+  "cot_checks": {
+    "w1_final_wrong_n": 0,
+    "cbw_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "cbw_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    }
+  },
+  "flip_examples": [],
+  "dedupe": {
+    "policy": "last",
+    "effective_policy": "last",
+    "duplicate_rows": 0,
+    "unique_uid_condition_pairs": 10,
+    "input_rows": 10,
+    "duplicate_examples": []
+  }
+}

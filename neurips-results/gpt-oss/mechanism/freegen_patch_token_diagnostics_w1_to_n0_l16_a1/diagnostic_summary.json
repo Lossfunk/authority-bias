@@ -1,0 +1,55 @@
+{
+  "generation": {
+    "n_rows": 64,
+    "baseline_correct_rate": 0.625,
+    "patched_correct_rate": 0.625,
+    "baseline_wrong_rate": 0.375,
+    "patched_wrong_rate": 0.375,
+    "correct_to_wrong_flips": 4,
+    "wrong_to_correct_flips": 4
+  },
+  "teacher_forced": {
+    "mean_total_margin_delta": 0.03125,
+    "mean_first_token_margin_delta": -0.01171875,
+    "margin_sign_flips_positive_to_negative": 0
+  },
+  "prompt_hidden_delta_norm_mean": {
+    "16": {
+      "note_end": 2139.2650756835938,
+      "answer_position": 0.0,
+      "endorsement_mean": 142.61771976947784
+    },
+    "18": {
+      "note_end": 2670.8181343078613,
+      "answer_position": 226.13699984550476,
+      "endorsement_mean": 178.05458974838257
+    },
+    "20": {
+      "note_end": 5932.8398361206055,
+      "answer_position": 469.0285449028015,
+      "endorsement_mean": 395.52278661727905
+    }
+  },
+  "config": {
+    "model": "openai/gpt-oss-20b",
+    "condition_code": "W1_note",
+    "uids_subset": "w1",
+    "max_items": 64,
+    "target_layer": 16,
+    "capture_layers": [
+      16,
+      18,
+      20
+    ],
+    "component": "block_output",
+    "position_mode": "note_end",
+    "intervention_mode": "interpolate_mean",
+    "alpha": 1.0,
+    "patch_source_style": "authoritative_verified",
+    "patch_source_condition": "N0_note",
+    "patch_source_position": "endorsement_end",
+    "max_new_tokens": 256,
+    "endorsement_style": "authoritative_verified",
+    "elapsed_seconds": 307.44
+  }
+}

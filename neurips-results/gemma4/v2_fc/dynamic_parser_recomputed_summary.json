@@ -1,0 +1,133 @@
+{
+  "rows_path": "neurips-results/gemma4/v2_fc/google__gemma-4-26B-A4B-it_dissociation_rows.jsonl",
+  "arm": "natural",
+  "model": "google/gemma-4-26B-A4B-it",
+  "markers": [
+    "assistantfinal",
+    "answer",
+    "final",
+    "therefore",
+    "thus",
+    "hence",
+    "response",
+    "<|assistant|>",
+    "so"
+  ],
+  "conditions": [
+    {
+      "condition_code": "N0_note",
+      "n": 887,
+      "parsed": 21,
+      "parse_rate_pct": 2.37,
+      "correct_parsed": 15,
+      "correct_rate_parsed_pct": 71.43,
+      "wrong_parsed": 6,
+      "wrong_rate_parsed_pct": 28.57,
+      "wrong_rate_total_pct": 0.68,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "none",
+          866
+        ],
+        [
+          "consensus",
+          21
+        ]
+      ]
+    },
+    {
+      "condition_code": "C1_note",
+      "n": 887,
+      "parsed": 8,
+      "parse_rate_pct": 0.9,
+      "correct_parsed": 7,
+      "correct_rate_parsed_pct": 87.5,
+      "wrong_parsed": 1,
+      "wrong_rate_parsed_pct": 12.5,
+      "wrong_rate_total_pct": 0.11,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "none",
+          879
+        ],
+        [
+          "consensus",
+          8
+        ]
+      ]
+    },
+    {
+      "condition_code": "W1_note",
+      "n": 887,
+      "parsed": 38,
+      "parse_rate_pct": 4.28,
+      "correct_parsed": 23,
+      "correct_rate_parsed_pct": 60.53,
+      "wrong_parsed": 15,
+      "wrong_rate_parsed_pct": 39.47,
+      "wrong_rate_total_pct": 1.69,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "none",
+          849
+        ],
+        [
+          "consensus",
+          38
+        ]
+      ]
+    }
+  ],
+  "overall": {
+    "n": 2661,
+    "parsed": 67,
+    "parse_rate_pct": 2.52,
+    "correct_parsed": 45,
+    "correct_rate_parsed_pct": 67.16,
+    "wrong_parsed": 22,
+    "wrong_rate_parsed_pct": 32.84,
+    "wrong_rate_total_pct": 0.83,
+    "mismatch_vs_stored": 0
+  },
+  "parsed_all3": 0,
+  "parsed_all3_n0_correct": 0,
+  "parsed_all3_n0_wrong": 0,
+  "w1_flips": 0,
+  "flip_rate": null,
+  "c1_corr_rate": null,
+  "cot_checks": {
+    "w1_final_wrong_n": 0,
+    "cbw_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "cbw_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    }
+  },
+  "flip_examples": [],
+  "dedupe": {
+    "policy": "last",
+    "effective_policy": "last",
+    "duplicate_rows": 0,
+    "unique_uid_condition_pairs": 2661,
+    "input_rows": 2661,
+    "duplicate_examples": []
+  }
+}

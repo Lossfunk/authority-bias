@@ -1,0 +1,29 @@
+{
+  "extraction_dir": "/root/persona-vectors/neurips-results/gemma4/mechanism/gemma4_authority_activations",
+  "output_dir": "/root/persona-vectors/neurips-results/gemma4/mechanism/gemma4_compliance_analysis",
+  "n_metadata_rows": 13305,
+  "mask_counts": {
+    "selected_uids": 887,
+    "mask_primary": 842,
+    "mask_primary_w1": 758,
+    "mask_primary_c1": 84,
+    "mask_cross": 810,
+    "mask_cross_w1": 731,
+    "mask_cross_c1": 79,
+    "mask_think": 806
+  },
+  "primary_pair": {
+    "position": "endorsement_mean",
+    "layer": 22
+  },
+  "files": {
+    "directions": "/root/persona-vectors/neurips-results/gemma4/mechanism/gemma4_compliance_analysis/directions.pt",
+    "primary_direction": "/root/persona-vectors/neurips-results/gemma4/mechanism/gemma4_compliance_analysis/primary_direction.pt",
+    "cosine_similarities": "/root/persona-vectors/neurips-results/gemma4/mechanism/gemma4_compliance_analysis/cosine_similarities.json",
+    "layer_position_sweep": "/root/persona-vectors/neurips-results/gemma4/mechanism/gemma4_compliance_analysis/layer_position_sweep.json",
+    "probe_results": "/root/persona-vectors/neurips-results/gemma4/mechanism/gemma4_compliance_analysis/probe_results.json",
+    "projection_analysis": "/root/persona-vectors/neurips-results/gemma4/mechanism/gemma4_compliance_analysis/projection_analysis.json",
+    "trajectory_analysis": "/root/persona-vectors/neurips-results/gemma4/mechanism/gemma4_compliance_analysis/trajectory_analysis.json",
+    "null_controls": "/root/persona-vectors/neurips-results/gemma4/mechanism/gemma4_compliance_analysis/null_controls.json"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "model": "google/gemma-4-26B-A4B-it",
+  "mc_dataset_path": "data/piqa_mc_validation.jsonl",
+  "n_examples_loaded": 1838,
+  "n_eval_uids": 200,
+  "conditions": [
+    "N0_note"
+  ],
+  "n_jobs": 200,
+  "n_batches": 25,
+  "n_configs": 15,
+  "target_layers": [
+    20,
+    22,
+    24
+  ],
+  "single_layer_sweep": true,
+  "components": [
+    "block_output"
+  ],
+  "position_mode": "endorsement_span",
+  "apply_phase": "prompt",
+  "direction_path": "neurips-results/gemma4/mechanism/gemma4_compliance_analysis_no_thinking/primary_direction.pt",
+  "direction_key": "vector",
+  "direction_position": "endorsement_mean",
+  "extraction_dir": "neurips-results/gemma4/mechanism/gemma4_authority_activations_no_thinking",
+  "patch_source_position": "endorsement_mean",
+  "patch_source_style": "authoritative_verified",
+  "patch_source_condition": "W1_note",
+  "batch_size": 8,
+  "max_batch_tokens": 24576,
+  "max_new_tokens": 256,
+  "temperature": 0.0,
+  "top_p": 1.0,
+  "top_k": 50,
+  "use_cache": true,
+  "elapsed_seconds": 5992.06,
+  "rows_path": "neurips-results/gemma4/mechanism/piqa_forward_patch_200_freegen_no_thinking/piqa_rows.jsonl",
+  "summary_path": "neurips-results/gemma4/mechanism/piqa_forward_patch_200_freegen_no_thinking/piqa_summary.json"
+}

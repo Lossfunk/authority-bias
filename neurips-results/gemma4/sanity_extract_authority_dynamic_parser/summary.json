@@ -1,0 +1,49 @@
+{
+  "model": "google/gemma-4-26B-A4B-it",
+  "arm": "natural",
+  "n_selected_uids": 887,
+  "included_styles": [
+    "authoritative_verified",
+    "weak",
+    "uncertain",
+    "assertive",
+    "think"
+  ],
+  "style_rows_available": {
+    "authoritative_verified": 887,
+    "weak": 887,
+    "uncertain": 887,
+    "assertive": 887,
+    "think": 887
+  },
+  "mask_counts": {
+    "selected_uids": 887,
+    "mask_primary": 842,
+    "mask_primary_w1": 758,
+    "mask_primary_c1": 84,
+    "mask_cross": 810,
+    "mask_cross_w1": 731,
+    "mask_cross_c1": 79,
+    "mask_think": 806
+  },
+  "target_layers": [
+    2,
+    5,
+    10,
+    15,
+    18,
+    20,
+    22,
+    24,
+    26,
+    28,
+    30,
+    32,
+    35,
+    38
+  ],
+  "max_batch_tokens": 8192,
+  "fallback_batch_size": 4,
+  "loader_dtype": "bfloat16",
+  "save_dtype": "float16"
+}

@@ -1,0 +1,133 @@
+{
+  "rows_path": "neurips-results/gpt-oss/v2_fc/openai__gpt-oss-20b_dissociation_rows.jsonl",
+  "arm": "natural",
+  "model": "openai/gpt-oss-20b",
+  "markers": [
+    "assistantfinal",
+    "answer",
+    "final",
+    "therefore",
+    "thus",
+    "hence",
+    "response",
+    "<|assistant|>",
+    "so"
+  ],
+  "conditions": [
+    {
+      "condition_code": "N0_note",
+      "n": 810,
+      "parsed": 22,
+      "parse_rate_pct": 2.72,
+      "correct_parsed": 15,
+      "correct_rate_parsed_pct": 68.18,
+      "wrong_parsed": 7,
+      "wrong_rate_parsed_pct": 31.82,
+      "wrong_rate_total_pct": 0.86,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "none",
+          788
+        ],
+        [
+          "consensus",
+          22
+        ]
+      ]
+    },
+    {
+      "condition_code": "C1_note",
+      "n": 810,
+      "parsed": 4,
+      "parse_rate_pct": 0.49,
+      "correct_parsed": 3,
+      "correct_rate_parsed_pct": 75.0,
+      "wrong_parsed": 1,
+      "wrong_rate_parsed_pct": 25.0,
+      "wrong_rate_total_pct": 0.12,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "none",
+          806
+        ],
+        [
+          "consensus",
+          4
+        ]
+      ]
+    },
+    {
+      "condition_code": "W1_note",
+      "n": 810,
+      "parsed": 4,
+      "parse_rate_pct": 0.49,
+      "correct_parsed": 3,
+      "correct_rate_parsed_pct": 75.0,
+      "wrong_parsed": 1,
+      "wrong_rate_parsed_pct": 25.0,
+      "wrong_rate_total_pct": 0.12,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "none",
+          806
+        ],
+        [
+          "consensus",
+          4
+        ]
+      ]
+    }
+  ],
+  "overall": {
+    "n": 2430,
+    "parsed": 30,
+    "parse_rate_pct": 1.23,
+    "correct_parsed": 21,
+    "correct_rate_parsed_pct": 70.0,
+    "wrong_parsed": 9,
+    "wrong_rate_parsed_pct": 30.0,
+    "wrong_rate_total_pct": 0.37,
+    "mismatch_vs_stored": 0
+  },
+  "parsed_all3": 1,
+  "parsed_all3_n0_correct": 0,
+  "parsed_all3_n0_wrong": 1,
+  "w1_flips": 0,
+  "flip_rate": null,
+  "c1_corr_rate": 0.0,
+  "cot_checks": {
+    "w1_final_wrong_n": 0,
+    "cbw_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "cbw_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    }
+  },
+  "flip_examples": [],
+  "dedupe": {
+    "policy": "last",
+    "effective_policy": "last",
+    "duplicate_rows": 0,
+    "unique_uid_condition_pairs": 2430,
+    "input_rows": 2430,
+    "duplicate_examples": []
+  }
+}

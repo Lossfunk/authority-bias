@@ -1,0 +1,84 @@
+{
+  "rows_path": "neurips-results/grok/n0_baseline_freegen/x-ai__grok-4.20-multi-agent_dissociation_rows.jsonl",
+  "arm": "natural",
+  "model": "x-ai/grok-4.20-multi-agent",
+  "markers": [
+    "assistantfinal",
+    "answer",
+    "final",
+    "therefore",
+    "thus",
+    "hence",
+    "response",
+    "<|assistant|>"
+  ],
+  "conditions": [
+    {
+      "condition_code": "N0_note",
+      "n": 1813,
+      "parsed": 0,
+      "parse_rate_pct": 0.0,
+      "correct_parsed": 0,
+      "correct_rate_parsed_pct": 0.0,
+      "wrong_parsed": 0,
+      "wrong_rate_parsed_pct": 0.0,
+      "wrong_rate_total_pct": 0.0,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "none",
+          1813
+        ]
+      ]
+    }
+  ],
+  "overall": {
+    "n": 1813,
+    "parsed": 0,
+    "parse_rate_pct": 0.0,
+    "correct_parsed": 0,
+    "correct_rate_parsed_pct": 0.0,
+    "wrong_parsed": 0,
+    "wrong_rate_parsed_pct": 0.0,
+    "wrong_rate_total_pct": 0.0,
+    "mismatch_vs_stored": 0
+  },
+  "parsed_all3": 0,
+  "parsed_all3_n0_correct": 0,
+  "parsed_all3_n0_wrong": 0,
+  "w1_flips": 0,
+  "flip_rate": null,
+  "c1_corr_rate": null,
+  "cot_checks": {
+    "w1_final_wrong_n": 0,
+    "cbw_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "cbw_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    }
+  },
+  "flip_examples": [],
+  "dedupe": {
+    "policy": "last",
+    "effective_policy": "last",
+    "duplicate_rows": 0,
+    "unique_uid_condition_pairs": 1813,
+    "input_rows": 1813,
+    "duplicate_examples": []
+  }
+}

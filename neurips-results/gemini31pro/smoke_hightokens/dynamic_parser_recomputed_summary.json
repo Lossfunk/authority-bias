@@ -1,0 +1,84 @@
+{
+  "rows_path": "neurips-results/gemini31pro/smoke_hightokens/google__gemini-3.1-pro-preview_dissociation_rows.jsonl",
+  "arm": "natural",
+  "model": "google/gemini-3.1-pro-preview",
+  "markers": [
+    "assistantfinal",
+    "answer",
+    "final",
+    "therefore",
+    "thus",
+    "hence",
+    "response",
+    "<|assistant|>"
+  ],
+  "conditions": [
+    {
+      "condition_code": "N0_note",
+      "n": 5,
+      "parsed": 5,
+      "parse_rate_pct": 100.0,
+      "correct_parsed": 5,
+      "correct_rate_parsed_pct": 100.0,
+      "wrong_parsed": 0,
+      "wrong_rate_parsed_pct": 0.0,
+      "wrong_rate_total_pct": 0.0,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "consensus",
+          5
+        ]
+      ]
+    }
+  ],
+  "overall": {
+    "n": 5,
+    "parsed": 5,
+    "parse_rate_pct": 100.0,
+    "correct_parsed": 5,
+    "correct_rate_parsed_pct": 100.0,
+    "wrong_parsed": 0,
+    "wrong_rate_parsed_pct": 0.0,
+    "wrong_rate_total_pct": 0.0,
+    "mismatch_vs_stored": 0
+  },
+  "parsed_all3": 0,
+  "parsed_all3_n0_correct": 0,
+  "parsed_all3_n0_wrong": 0,
+  "w1_flips": 0,
+  "flip_rate": null,
+  "c1_corr_rate": null,
+  "cot_checks": {
+    "w1_final_wrong_n": 0,
+    "cbw_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "cbw_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    }
+  },
+  "flip_examples": [],
+  "dedupe": {
+    "policy": "last",
+    "effective_policy": "last",
+    "duplicate_rows": 0,
+    "unique_uid_condition_pairs": 5,
+    "input_rows": 5,
+    "duplicate_examples": []
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "rows_path": "neurips-results/grok/grok420_n0_baseline_freegen/x-ai__grok-4.20_dissociation_rows.jsonl",
+  "arm": "natural",
+  "model": "x-ai/grok-4.20",
+  "markers": [
+    "assistantfinal",
+    "answer",
+    "final",
+    "therefore",
+    "thus",
+    "hence",
+    "response",
+    "<|assistant|>",
+    "so"
+  ],
+  "conditions": [
+    {
+      "condition_code": "N0_note",
+      "n": 1813,
+      "parsed": 1717,
+      "parse_rate_pct": 94.7,
+      "correct_parsed": 1554,
+      "correct_rate_parsed_pct": 90.51,
+      "wrong_parsed": 163,
+      "wrong_rate_parsed_pct": 9.49,
+      "wrong_rate_total_pct": 8.99,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "consensus",
+          1717
+        ],
+        [
+          "none",
+          96
+        ]
+      ]
+    }
+  ],
+  "overall": {
+    "n": 1813,
+    "parsed": 1717,
+    "parse_rate_pct": 94.7,
+    "correct_parsed": 1554,
+    "correct_rate_parsed_pct": 90.51,
+    "wrong_parsed": 163,
+    "wrong_rate_parsed_pct": 9.49,
+    "wrong_rate_total_pct": 8.99,
+    "mismatch_vs_stored": 0
+  },
+  "parsed_all3": 0,
+  "parsed_all3_n0_correct": 0,
+  "parsed_all3_n0_wrong": 0,
+  "w1_flips": 0,
+  "flip_rate": null,
+  "c1_corr_rate": null,
+  "cot_checks": {
+    "w1_final_wrong_n": 0,
+    "cbw_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "cbw_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    }
+  },
+  "flip_examples": [],
+  "dedupe": {
+    "policy": "last",
+    "effective_policy": "last",
+    "duplicate_rows": 0,
+    "unique_uid_condition_pairs": 1813,
+    "input_rows": 1813,
+    "duplicate_examples": []
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "model": "allenai/OLMo-2-0325-32B-Instruct",
+  "direction_path": "neurips-results/olmo2/mechanism/olmo2_compliance_analysis/primary_direction.pt",
+  "direction_key": "vector",
+  "direction_position": "answer_position",
+  "direction_kind": "shared_within_label",
+  "direction_source": "extraction",
+  "extraction_dir": "neurips-results/olmo2/mechanism/olmo2_authority_activations",
+  "masks_path": "neurips-results/olmo2/mechanism/olmo2_authority_activations/label_masks.json",
+  "uids_file": null,
+  "uids_subset": "w1",
+  "direction_uids_subset": "w1",
+  "patch_uids_subset": "w1",
+  "n_uids": 93,
+  "conditions": [
+    "N0_note"
+  ],
+  "alphas": [
+    0.0,
+    1.0,
+    3.0,
+    5.0,
+    10.0,
+    15.0
+  ],
+  "target_layers": [
+    10,
+    16,
+    22
+  ],
+  "single_layer_sweep": true,
+  "position_modes": [
+    "endorsement_span"
+  ],
+  "components": [
+    "block_output"
+  ],
+  "apply_phase": "prompt",
+  "intervention_mode": "add",
+  "norm_scaling": "none",
+  "project_out_subspace_path": null,
+  "sparse_topk": 0,
+  "collect_margin_diagnostics": false,
+  "patch_source_style": "authoritative_verified",
+  "patch_source_condition": "W1_note",
+  "patch_source_position": "answer_position",
+  "answer_suffix": "Answer the question in one short sentence using the full answer text, not option letters.",
+  "temperature": 0.0,
+  "top_p": 0.9,
+  "top_k": 50,
+  "greedy": true,
+  "use_cache": true,
+  "no_compile": false,
+  "batch_size": 8,
+  "max_new_tokens": 256,
+  "elapsed_seconds": 952.83,
+  "rows_path": "neurips-results/olmo2/mechanism/additive_steering_test_256/steering_rows.jsonl",
+  "summary_path": "neurips-results/olmo2/mechanism/additive_steering_test_256/steering_summary.json"
+}

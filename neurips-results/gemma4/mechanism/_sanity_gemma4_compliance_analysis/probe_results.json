@@ -1,0 +1,107 @@
+{
+  "nested_w1": {
+    "task": "w1",
+    "metrics": {
+      "auroc": 0.3571428571428571,
+      "accuracy": 0.5789473684210527,
+      "n_eval": 19,
+      "n_total": 19
+    },
+    "selected_pairs_by_fold": [
+      {
+        "position": "endorsement_end",
+        "layer": 20
+      },
+      {
+        "position": "endorsement_start",
+        "layer": 22
+      },
+      {
+        "position": "endorsement_mean",
+        "layer": 22
+      },
+      {
+        "position": "answer_position",
+        "layer": 22
+      },
+      {
+        "position": "endorsement_end",
+        "layer": 20
+      }
+    ],
+    "pair_frequency": {
+      "endorsement_end::L20": 2,
+      "endorsement_start::L22": 1,
+      "endorsement_mean::L22": 1,
+      "answer_position::L22": 1
+    },
+    "primary_pair": {
+      "position": "endorsement_end",
+      "layer": 20
+    }
+  },
+  "nested_c1": {
+    "task": "c1",
+    "metrics": {
+      "auroc": null,
+      "accuracy": null,
+      "n_eval": 0,
+      "n_total": 20
+    },
+    "selected_pairs_by_fold": [],
+    "pair_frequency": {},
+    "primary_pair": {
+      "position": "endorsement_start",
+      "layer": 20
+    }
+  },
+  "primary_pair": {
+    "position": "endorsement_end",
+    "layer": 20,
+    "mean_heatmap_auroc": 0.5285714285714286
+  },
+  "primary_pair_metrics": {
+    "w1_auroc": 0.35714285714285715,
+    "w1_auroc_oriented": 0.6428571428571428,
+    "w1_auroc_ci95": {
+      "low": 0.1,
+      "high": 0.6470588235294117
+    },
+    "c1_auroc": null,
+    "c1_auroc_oriented": null,
+    "c1_auroc_ci95": {
+      "low": null,
+      "high": null
+    },
+    "w1_n": 19,
+    "c1_n": 20,
+    "pvalue_vs_random_direction_w1": 0.6336633663366337,
+    "pvalue_vs_shuffled_w1": 0.6336633663366337
+  },
+  "task_specific_direction_checks": {
+    "w1_shared_direction_cv_auroc": 0.4857142857142857,
+    "w1_wrong_direction_cv_auroc": 0.6,
+    "c1_shared_direction_cv_auroc": null,
+    "c1_correct_direction_cv_auroc": null
+  },
+  "baselines": {
+    "majority_w1": {
+      "accuracy": 0.7368421052631579,
+      "auroc": 0.5
+    },
+    "majority_c1": {
+      "accuracy": 1.0,
+      "auroc": null
+    },
+    "authority_level_only_w1": {
+      "auroc": 0.8235071806500378,
+      "accuracy": 0.8289473684210527,
+      "n": 76
+    },
+    "authority_level_only_c1": {
+      "auroc": null,
+      "accuracy": null,
+      "n": 80
+    }
+  }
+}

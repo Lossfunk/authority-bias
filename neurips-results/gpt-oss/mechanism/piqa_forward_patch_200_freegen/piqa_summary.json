@@ -1,0 +1,392 @@
+[
+  {
+    "config_id": "interpolate_mean_a0_L16",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 134,
+    "parse_rate": 0.67,
+    "accuracy_parsed": 0.753731343283582,
+    "wrong_rate_parsed": 0.2462686567164179,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": null,
+    "matched_flips": null,
+    "matched_flip_rate": null
+  },
+  {
+    "config_id": "interpolate_mean_a0.3_L16",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 134,
+    "parse_rate": 0.67,
+    "accuracy_parsed": 0.7686567164179104,
+    "wrong_rate_parsed": 0.23134328358208955,
+    "flip_rate_parsed": 0.23134328358208955,
+    "mode": "interpolate_mean",
+    "alpha": 0.3,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": 101,
+    "matched_flips": 9,
+    "matched_flip_rate": 0.0891089108910891
+  },
+  {
+    "config_id": "interpolate_mean_a0.5_L16",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 153,
+    "parse_rate": 0.765,
+    "accuracy_parsed": 0.738562091503268,
+    "wrong_rate_parsed": 0.26143790849673204,
+    "flip_rate_parsed": 0.26143790849673204,
+    "mode": "interpolate_mean",
+    "alpha": 0.5,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": 101,
+    "matched_flips": 7,
+    "matched_flip_rate": 0.06930693069306931
+  },
+  {
+    "config_id": "interpolate_mean_a0.7_L16",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 175,
+    "parse_rate": 0.875,
+    "accuracy_parsed": 0.6857142857142857,
+    "wrong_rate_parsed": 0.3142857142857143,
+    "flip_rate_parsed": 0.3142857142857143,
+    "mode": "interpolate_mean",
+    "alpha": 0.7,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": 101,
+    "matched_flips": 12,
+    "matched_flip_rate": 0.1188118811881188
+  },
+  {
+    "config_id": "interpolate_mean_a1_L16",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 177,
+    "parse_rate": 0.885,
+    "accuracy_parsed": 0.6610169491525424,
+    "wrong_rate_parsed": 0.3389830508474576,
+    "flip_rate_parsed": 0.3389830508474576,
+    "mode": "interpolate_mean",
+    "alpha": 1.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": 101,
+    "matched_flips": 19,
+    "matched_flip_rate": 0.18811881188118812
+  },
+  {
+    "config_id": "interpolate_mean_a0_L18",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 134,
+    "parse_rate": 0.67,
+    "accuracy_parsed": 0.753731343283582,
+    "wrong_rate_parsed": 0.2462686567164179,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": null,
+    "matched_flips": null,
+    "matched_flip_rate": null
+  },
+  {
+    "config_id": "interpolate_mean_a0.3_L18",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 150,
+    "parse_rate": 0.75,
+    "accuracy_parsed": 0.7066666666666667,
+    "wrong_rate_parsed": 0.29333333333333333,
+    "flip_rate_parsed": 0.29333333333333333,
+    "mode": "interpolate_mean",
+    "alpha": 0.3,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": 101,
+    "matched_flips": 8,
+    "matched_flip_rate": 0.07920792079207921
+  },
+  {
+    "config_id": "interpolate_mean_a0.5_L18",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 175,
+    "parse_rate": 0.875,
+    "accuracy_parsed": 0.6685714285714286,
+    "wrong_rate_parsed": 0.3314285714285714,
+    "flip_rate_parsed": 0.3314285714285714,
+    "mode": "interpolate_mean",
+    "alpha": 0.5,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": 101,
+    "matched_flips": 9,
+    "matched_flip_rate": 0.0891089108910891
+  },
+  {
+    "config_id": "interpolate_mean_a0.7_L18",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 177,
+    "parse_rate": 0.885,
+    "accuracy_parsed": 0.672316384180791,
+    "wrong_rate_parsed": 0.327683615819209,
+    "flip_rate_parsed": 0.327683615819209,
+    "mode": "interpolate_mean",
+    "alpha": 0.7,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": 101,
+    "matched_flips": 11,
+    "matched_flip_rate": 0.10891089108910891
+  },
+  {
+    "config_id": "interpolate_mean_a1_L18",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 176,
+    "parse_rate": 0.88,
+    "accuracy_parsed": 0.6988636363636364,
+    "wrong_rate_parsed": 0.30113636363636365,
+    "flip_rate_parsed": 0.30113636363636365,
+    "mode": "interpolate_mean",
+    "alpha": 1.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": 101,
+    "matched_flips": 10,
+    "matched_flip_rate": 0.09900990099009901
+  },
+  {
+    "config_id": "interpolate_mean_a0_L20",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 134,
+    "parse_rate": 0.67,
+    "accuracy_parsed": 0.753731343283582,
+    "wrong_rate_parsed": 0.2462686567164179,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": null,
+    "matched_flips": null,
+    "matched_flip_rate": null
+  },
+  {
+    "config_id": "interpolate_mean_a0.3_L20",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 145,
+    "parse_rate": 0.725,
+    "accuracy_parsed": 0.7586206896551724,
+    "wrong_rate_parsed": 0.2413793103448276,
+    "flip_rate_parsed": 0.2413793103448276,
+    "mode": "interpolate_mean",
+    "alpha": 0.3,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": 101,
+    "matched_flips": 3,
+    "matched_flip_rate": 0.0297029702970297
+  },
+  {
+    "config_id": "interpolate_mean_a0.5_L20",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 145,
+    "parse_rate": 0.725,
+    "accuracy_parsed": 0.6689655172413793,
+    "wrong_rate_parsed": 0.3310344827586207,
+    "flip_rate_parsed": 0.3310344827586207,
+    "mode": "interpolate_mean",
+    "alpha": 0.5,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": 101,
+    "matched_flips": 8,
+    "matched_flip_rate": 0.07920792079207921
+  },
+  {
+    "config_id": "interpolate_mean_a0.7_L20",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 153,
+    "parse_rate": 0.765,
+    "accuracy_parsed": 0.7124183006535948,
+    "wrong_rate_parsed": 0.2875816993464052,
+    "flip_rate_parsed": 0.2875816993464052,
+    "mode": "interpolate_mean",
+    "alpha": 0.7,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": 101,
+    "matched_flips": 9,
+    "matched_flip_rate": 0.0891089108910891
+  },
+  {
+    "config_id": "interpolate_mean_a1_L20",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 160,
+    "parse_rate": 0.8,
+    "accuracy_parsed": 0.65625,
+    "wrong_rate_parsed": 0.34375,
+    "flip_rate_parsed": 0.34375,
+    "mode": "interpolate_mean",
+    "alpha": 1.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none",
+    "matched_baseline_correct": 101,
+    "matched_flips": 14,
+    "matched_flip_rate": 0.13861386138613863
+  }
+]

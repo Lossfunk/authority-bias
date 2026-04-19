@@ -1,0 +1,90 @@
+{
+  "rows_path": "neurips-results/gemma4/no_thinking_freegen_baseline/google__gemma-4-26B-A4B-it_dissociation_rows.jsonl",
+  "arm": "natural",
+  "model": "google/gemma-4-26B-A4B-it",
+  "markers": [
+    "assistantfinal",
+    "answer",
+    "final",
+    "therefore",
+    "thus",
+    "hence",
+    "response",
+    "<|assistant|>",
+    "so",
+    "<|thought|>"
+  ],
+  "conditions": [
+    {
+      "condition_code": "N0_note",
+      "n": 887,
+      "parsed": 862,
+      "parse_rate_pct": 97.18,
+      "correct_parsed": 776,
+      "correct_rate_parsed_pct": 90.02,
+      "wrong_parsed": 86,
+      "wrong_rate_parsed_pct": 9.98,
+      "wrong_rate_total_pct": 9.7,
+      "mismatch_vs_stored": 0,
+      "method_counts": [
+        [
+          "consensus",
+          862
+        ],
+        [
+          "none",
+          25
+        ]
+      ]
+    }
+  ],
+  "overall": {
+    "n": 887,
+    "parsed": 862,
+    "parse_rate_pct": 97.18,
+    "correct_parsed": 776,
+    "correct_rate_parsed_pct": 90.02,
+    "wrong_parsed": 86,
+    "wrong_rate_parsed_pct": 9.98,
+    "wrong_rate_total_pct": 9.7,
+    "mismatch_vs_stored": 0
+  },
+  "parsed_all3": 0,
+  "parsed_all3_n0_correct": 0,
+  "parsed_all3_n0_wrong": 0,
+  "w1_flips": 0,
+  "flip_rate": null,
+  "c1_corr_rate": null,
+  "cot_checks": {
+    "w1_final_wrong_n": 0,
+    "cbw_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "cbw_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_generation": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    },
+    "reasoned_prompt": {
+      "num": 0,
+      "den": 0,
+      "rate": null
+    }
+  },
+  "flip_examples": [],
+  "dedupe": {
+    "policy": "last",
+    "effective_policy": "last",
+    "duplicate_rows": 0,
+    "unique_uid_condition_pairs": 887,
+    "input_rows": 887,
+    "duplicate_examples": []
+  }
+}

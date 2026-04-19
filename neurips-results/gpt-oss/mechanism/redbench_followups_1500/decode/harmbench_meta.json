@@ -1,0 +1,38 @@
+{
+  "model": "openai/gpt-oss-20b",
+  "dataset_name": "walledai/HarmBench",
+  "dataset_config": null,
+  "dataset_split": "test",
+  "prompts_jsonl": "data/redbench_1500.jsonl",
+  "n_prompts": 1500,
+  "n_configs": 9,
+  "direction_path": "neurips-results/mechanism/gpt_oss_compliance_analysis/primary_direction.pt",
+  "direction_key": "vector",
+  "direction_position": "endorsement_end",
+  "extraction_dir": "neurips-results/mechanism/gpt_oss_authority_activations",
+  "patch_source_position": "endorsement_end",
+  "patch_source_style": "authoritative_verified",
+  "patch_source_condition": "N0_note",
+  "direction_uids_subset": "w1",
+  "patch_uids_subset": "w1",
+  "target_layers": [
+    16,
+    18,
+    20
+  ],
+  "single_layer_sweep": true,
+  "components": [
+    "block_output"
+  ],
+  "position_mode": "endorsement_span",
+  "apply_phase": "decode",
+  "temperature": 0.0,
+  "top_p": 1.0,
+  "top_k": 50,
+  "max_new_tokens": 128,
+  "batch_size": 8,
+  "use_cache": true,
+  "elapsed_seconds": 14074.96,
+  "rows_path": "neurips-results/mechanism/redbench_followups_1500/decode/harmbench_rows.jsonl",
+  "summary_path": "neurips-results/mechanism/redbench_followups_1500/decode/harmbench_summary.json"
+}

@@ -1,0 +1,57 @@
+{
+  "model": "google/gemma-4-26B-A4B-it",
+  "arm": "natural",
+  "n_selected_uids": 887,
+  "included_styles": [
+    "authoritative_verified",
+    "weak",
+    "uncertain",
+    "assertive",
+    "think"
+  ],
+  "style_rows_available": {
+    "authoritative_verified": 887,
+    "weak": 887,
+    "uncertain": 887,
+    "assertive": 887,
+    "think": 887
+  },
+  "mask_counts": {
+    "selected_uids": 887,
+    "mask_primary": 842,
+    "mask_primary_w1": 758,
+    "mask_primary_c1": 84,
+    "mask_cross": 810,
+    "mask_cross_w1": 731,
+    "mask_cross_c1": 79,
+    "mask_think": 806
+  },
+  "target_layers": [
+    15,
+    18,
+    20,
+    22
+  ],
+  "max_batch_tokens": 8192,
+  "fallback_batch_size": 8,
+  "loader_dtype": "auto",
+  "save_dtype": "float16",
+  "n_records": 13305,
+  "elapsed_seconds": 290.66,
+  "records_per_second": 45.7755,
+  "style_counter": {
+    "authoritative_verified": 2661,
+    "weak": 2661,
+    "uncertain": 2661,
+    "assertive": 2661,
+    "think": 2661
+  },
+  "condition_counter": {
+    "N0_note": 4435,
+    "C1_note": 4435,
+    "W1_note": 4435
+  },
+  "metadata_path": "neurips-results/gemma4/mechanism/gemma4_authority_activations_no_thinking/metadata.jsonl",
+  "activations_path": "neurips-results/gemma4/mechanism/gemma4_authority_activations_no_thinking/activations.pt",
+  "label_masks_path": "neurips-results/gemma4/mechanism/gemma4_authority_activations_no_thinking/label_masks.json"
+}

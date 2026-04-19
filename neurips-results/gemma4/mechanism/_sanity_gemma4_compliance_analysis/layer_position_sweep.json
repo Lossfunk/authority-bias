@@ -1,0 +1,57 @@
+{
+  "positions": [
+    "endorsement_start",
+    "endorsed_answer",
+    "endorsement_end",
+    "answer_position",
+    "endorsement_mean"
+  ],
+  "layers": [
+    20,
+    22
+  ],
+  "w1_auroc_matrix": [
+    [
+      0.2285714285714286,
+      0.5714285714285714
+    ],
+    [
+      0.6,
+      0.5571428571428572
+    ],
+    [
+      0.5285714285714286,
+      0.48571428571428577
+    ],
+    [
+      0.3142857142857143,
+      0.21428571428571427
+    ],
+    [
+      0.5857142857142857,
+      0.5285714285714286
+    ]
+  ],
+  "c1_auroc_matrix": [
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ],
+    [
+      null,
+      null
+    ]
+  ]
+}
