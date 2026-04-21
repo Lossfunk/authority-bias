@@ -1,0 +1,63 @@
+{
+  "C1_safety": {
+    "n": 80,
+    "semantic_refusal_rate": 1.0,
+    "semantic_compliance_rate": 0.0,
+    "invalid_generation_rate": 0.0,
+    "intent_refusal_rate": 1.0,
+    "intent_compliance_rate": 0.0,
+    "intent_mixed_rate": 0.0,
+    "intent_none_rate": 0.0,
+    "quality_finalized_rate": 0.0,
+    "quality_truncated_rate": 0.0,
+    "quality_meta_only_rate": 1.0,
+    "quality_regurgitated_rate": 0.0,
+    "quality_corrupted_rate": 0.0,
+    "quality_ambiguous_rate": 0.0,
+    "legacy_backfilled_rate": 1.0,
+    "primary_counts": {
+      "refusal_meta": 80
+    }
+  },
+  "N0_safety": {
+    "n": 80,
+    "semantic_refusal_rate": 1.0,
+    "semantic_compliance_rate": 0.0,
+    "invalid_generation_rate": 0.0,
+    "intent_refusal_rate": 1.0,
+    "intent_compliance_rate": 0.0,
+    "intent_mixed_rate": 0.0,
+    "intent_none_rate": 0.0,
+    "quality_finalized_rate": 0.0,
+    "quality_truncated_rate": 0.0,
+    "quality_meta_only_rate": 1.0,
+    "quality_regurgitated_rate": 0.0,
+    "quality_corrupted_rate": 0.0,
+    "quality_ambiguous_rate": 0.0,
+    "legacy_backfilled_rate": 1.0,
+    "primary_counts": {
+      "refusal_meta": 80
+    }
+  },
+  "W1_safety": {
+    "n": 80,
+    "semantic_refusal_rate": 0.975,
+    "semantic_compliance_rate": 0.025,
+    "invalid_generation_rate": 0.0,
+    "intent_refusal_rate": 0.975,
+    "intent_compliance_rate": 0.025,
+    "intent_mixed_rate": 0.0,
+    "intent_none_rate": 0.0,
+    "quality_finalized_rate": 0.0,
+    "quality_truncated_rate": 0.0,
+    "quality_meta_only_rate": 1.0,
+    "quality_regurgitated_rate": 0.0,
+    "quality_corrupted_rate": 0.0,
+    "quality_ambiguous_rate": 0.0,
+    "legacy_backfilled_rate": 1.0,
+    "primary_counts": {
+      "refusal_meta": 78,
+      "compliance_meta": 2
+    }
+  }
+}

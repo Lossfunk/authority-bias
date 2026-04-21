@@ -1,0 +1,131 @@
+{
+  "model": "Qwen/Qwen3.5-27B",
+  "lexicon_path": "external/nrc-vad/unpacked/NRC-VAD-Lexicon-v2.1/Unigrams/unigrams-NRC-VAD-Lexicon-v2.1.txt",
+  "output_dir": "neurips-results/qwen35/mechanism/lexical_va_plane",
+  "position_name": "last_token",
+  "prompt_template": "{word}",
+  "n_words": 4000,
+  "target_layers": [
+    2,
+    5,
+    10
+  ],
+  "compliance_position": "endorsed_answer",
+  "compliance_kind": "shared_within_label",
+  "summary_by_layer": {
+    "2": {
+      "valence_corr": 0.199203636126667,
+      "arousal_corr": 0.16220995571307364,
+      "valence_r2_pc": 0.03968207234677901,
+      "arousal_r2_pc": 0.031155055303857315,
+      "pre_orthogonal_cosine": 0.337687242678087,
+      "explained_variance_ratio": [
+        0.9921402853386951,
+        0.0015067164914039021,
+        0.0001244220925749307,
+        7.864928738794176e-05,
+        7.302071341999223e-05,
+        5.7856141559673126e-05,
+        4.6567194590971005e-05,
+        3.566703686221682e-05,
+        3.406993481877392e-05,
+        3.366267882939596e-05,
+        3.123562807128363e-05,
+        3.0284998798938478e-05,
+        2.8880534732676095e-05,
+        2.8326298330539905e-05,
+        2.7542779764859712e-05,
+        2.647070554570758e-05
+      ],
+      "compliance_overlap": {
+        "position": "endorsed_answer",
+        "direction_kind": "shared_within_label",
+        "uids_subset": "all",
+        "cosine_valence": 0.04136000726847539,
+        "cosine_arousal": -0.01955338890550446,
+        "plane_norm_fraction": 0.04574915611865918,
+        "plane_coords": [
+          0.04136001691222191,
+          -0.019553393125534058
+        ]
+      }
+    },
+    "5": {
+      "valence_corr": 0.29738414814479436,
+      "arousal_corr": 0.2338371237787236,
+      "valence_r2_pc": 0.08843732528009396,
+      "arousal_r2_pc": 0.05993829317180965,
+      "pre_orthogonal_cosine": -0.29450384732354246,
+      "explained_variance_ratio": [
+        0.9781904648840832,
+        0.002153011856874776,
+        0.0008370657559438449,
+        0.00029087681179759293,
+        0.0002395790438528359,
+        0.00021656329200182367,
+        0.0001674202280459227,
+        0.00013886866373757773,
+        0.00012167514302875203,
+        0.00010864584794032924,
+        0.00010374410309065295,
+        9.63905819660318e-05,
+        9.077189779793321e-05,
+        8.663354360538809e-05,
+        8.181962050018876e-05,
+        8.0599865081191e-05
+      ],
+      "compliance_overlap": {
+        "position": "endorsed_answer",
+        "direction_kind": "shared_within_label",
+        "uids_subset": "all",
+        "cosine_valence": 0.05321273663934964,
+        "cosine_arousal": 0.032126977503001926,
+        "plane_norm_fraction": 0.06215897303422592,
+        "plane_coords": [
+          0.05321275815367699,
+          0.03212699294090271
+        ]
+      }
+    },
+    "10": {
+      "valence_corr": 0.3290039195194863,
+      "arousal_corr": 0.26519902710442494,
+      "valence_r2_pc": 0.10824357842282362,
+      "arousal_r2_pc": 0.07806596479370909,
+      "pre_orthogonal_cosine": -0.30328925590159894,
+      "explained_variance_ratio": [
+        0.9616317900442786,
+        0.008727946748363212,
+        0.002040158992172969,
+        0.0005305993542581496,
+        0.0005289582637671184,
+        0.00040736447119320274,
+        0.0003466454483401339,
+        0.0003043461949368652,
+        0.0002469622488677706,
+        0.00022745232161906136,
+        0.00021057524618494215,
+        0.00019953462454819936,
+        0.00019018109838856725,
+        0.00018318208645278834,
+        0.00016679460119022453,
+        0.0001565252153606474
+      ],
+      "compliance_overlap": {
+        "position": "endorsed_answer",
+        "direction_kind": "shared_within_label",
+        "uids_subset": "all",
+        "cosine_valence": -0.013103884935872005,
+        "cosine_arousal": -0.028477100738598576,
+        "plane_norm_fraction": 0.031347361917236354,
+        "plane_coords": [
+          -0.013103886507451534,
+          -0.028477104380726814
+        ]
+      }
+    }
+  },
+  "files": {
+    "va_plane": "neurips-results/qwen35/mechanism/lexical_va_plane/va_plane.pt"
+  }
+}

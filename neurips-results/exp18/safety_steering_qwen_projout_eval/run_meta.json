@@ -1,0 +1,47 @@
+{
+  "model": "Qwen/Qwen3.5-27B",
+  "extraction_dir": "neurips-results/exp16/safety_probe_qwen_activations_real",
+  "prompts_jsonl": "data/harmbench_safety80.jsonl",
+  "prompt_ids_key": "eval_ids",
+  "layers": [
+    5,
+    18
+  ],
+  "alphas": [
+    0.0,
+    0.5,
+    1.0
+  ],
+  "direction_kind": "w1_minus_c1",
+  "factual_direction_path": "neurips-results/qwen35/mechanism/qwen35_compliance_analysis_shared_h100/primary_direction.pt",
+  "controls": [
+    "none",
+    "real",
+    "random",
+    "shuffled",
+    "wrong_layer",
+    "factual"
+  ],
+  "condition": "N0_safety",
+  "components": [
+    "block_output"
+  ],
+  "position_mode": "all_prompt_tokens",
+  "apply_phase": "prompt",
+  "intervention_mode": "project_out_direction",
+  "max_new_tokens": 256,
+  "temperature": 0.0,
+  "seed": 42,
+  "wrong_layer_map": {
+    "5": 22,
+    "10": 22,
+    "18": 35,
+    "22": 35,
+    "28": 10,
+    "35": 10
+  },
+  "d_model": 5120,
+  "n_model_layers": 64,
+  "n_prompts_eval": 40,
+  "rows_path": "neurips-results/exp18/safety_steering_qwen_projout_eval/rows.jsonl"
+}

@@ -1,0 +1,138 @@
+{
+  "base": {
+    "conditions_strict": {
+      "N0_note": {
+        "n": 810,
+        "parsed": 798,
+        "parse_rate": 0.9851851851851852,
+        "correct": 615,
+        "wrong": 183,
+        "correct_total_rate": 0.7592592592592593,
+        "wrong_total_rate": 0.22592592592592592,
+        "correct_parsed_rate": 0.7706766917293233,
+        "wrong_parsed_rate": 0.22932330827067668,
+        "no_parse": 12
+      },
+      "C1_note": {
+        "n": 810,
+        "parsed": 804,
+        "parse_rate": 0.9925925925925926,
+        "correct": 761,
+        "wrong": 43,
+        "correct_total_rate": 0.9395061728395062,
+        "wrong_total_rate": 0.05308641975308642,
+        "correct_parsed_rate": 0.9465174129353234,
+        "wrong_parsed_rate": 0.053482587064676616,
+        "no_parse": 6
+      },
+      "W1_note": {
+        "n": 810,
+        "parsed": 794,
+        "parse_rate": 0.980246913580247,
+        "correct": 223,
+        "wrong": 571,
+        "correct_total_rate": 0.27530864197530863,
+        "wrong_total_rate": 0.7049382716049383,
+        "correct_parsed_rate": 0.28085642317380355,
+        "wrong_parsed_rate": 0.7191435768261965,
+        "no_parse": 16
+      }
+    },
+    "conditions_fuzzy": {
+      "N0_note": {
+        "n": 810,
+        "parsed": 798,
+        "parse_rate": 0.9851851851851852,
+        "correct": 615,
+        "wrong": 183,
+        "correct_total_rate": 0.7592592592592593,
+        "wrong_total_rate": 0.22592592592592592,
+        "correct_parsed_rate": 0.7706766917293233,
+        "wrong_parsed_rate": 0.22932330827067668,
+        "no_parse": 12
+      },
+      "C1_note": {
+        "n": 810,
+        "parsed": 804,
+        "parse_rate": 0.9925925925925926,
+        "correct": 761,
+        "wrong": 43,
+        "correct_total_rate": 0.9395061728395062,
+        "wrong_total_rate": 0.05308641975308642,
+        "correct_parsed_rate": 0.9465174129353234,
+        "wrong_parsed_rate": 0.053482587064676616,
+        "no_parse": 6
+      },
+      "W1_note": {
+        "n": 810,
+        "parsed": 794,
+        "parse_rate": 0.980246913580247,
+        "correct": 223,
+        "wrong": 571,
+        "correct_total_rate": 0.27530864197530863,
+        "wrong_total_rate": 0.7049382716049383,
+        "correct_parsed_rate": 0.28085642317380355,
+        "wrong_parsed_rate": 0.7191435768261965,
+        "no_parse": 16
+      }
+    },
+    "n0_categories_strict": {
+      "correct": 615,
+      "wrong_mentions_both": 179,
+      "no_parse": 12,
+      "wrong_confidently": 4
+    },
+    "n0_split": {
+      "trivia_qa": {
+        "correct": 383,
+        "strict_correct": 383,
+        "strict_wrong": 77,
+        "strict_parsed": 460,
+        "n": 467,
+        "wrong_mentions_both": 77,
+        "no_parse": 7
+      },
+      "truthful_qa": {
+        "correct": 232,
+        "strict_correct": 232,
+        "strict_wrong": 106,
+        "strict_parsed": 338,
+        "n": 343,
+        "wrong_mentions_both": 102,
+        "wrong_confidently": 4,
+        "no_parse": 5
+      }
+    },
+    "no_parse_overlap": {
+      "max_jaccard_ge_thresh": 0,
+      "count": 12
+    },
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so",
+      "assistantfinalthe",
+      "assistantfinalthey",
+      "assistantfinalit",
+      "assistantfinalno",
+      "assistantfinalyes",
+      "assistantfinalyou",
+      "assistantfinalnone",
+      "assistantfinalnothing",
+      "assistantfinala",
+      "assistantfinalthere",
+      "assistantfinalsir",
+      "assistantfinaljohn",
+      "assistantfinalgeorge",
+      "assistantfinalhe"
+    ],
+    "rows_path": "neurips-results/gpt-oss/v2_freegen/openai__gpt-oss-20b_dissociation_rows.jsonl",
+    "n_rows": 2430
+  }
+}

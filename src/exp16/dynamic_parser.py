@@ -21,6 +21,62 @@ def norm(text: str) -> str:
     return " ".join("".join(ch.lower() if ch.isalnum() else " " for ch in str(text)).split())
 
 
+def _token_set(text: str) -> set[str]:
+    return {tok for tok in norm(text).split() if tok}
+
+
+def _jaccard(a: set[str], b: set[str]) -> float:
+    if not a or not b:
+        return 0.0
+    inter = len(a & b)
+    if inter == 0:
+        return 0.0
+    return inter / float(len(a | b))
+
+
+def fuzzy_label_by_token_jaccard(
+    text: str,
+    *,
+    correct_answer: str,
+    wrong_answer: str,
+    correct_label: str,
+    wrong_label: str,
+    threshold: float = 0.60,
+    min_overlap: int = 2,
+    margin: float = 0.10,
+) -> tuple[str | None, dict[str, Any]]:
+    """Conservative fuzzy fallback for strict parser failures.
+
+    Returns a label only when one option has strong token-set overlap with
+    normalized generation text and is clearly separated from the other option.
+    """
+    text_tokens = _token_set(text)
+    correct_tokens = _token_set(correct_answer)
+    wrong_tokens = _token_set(wrong_answer)
+
+    jc = _jaccard(text_tokens, correct_tokens)
+    jw = _jaccard(text_tokens, wrong_tokens)
+    oc = len(text_tokens & correct_tokens)
+    ow = len(text_tokens & wrong_tokens)
+
+    label: str | None = None
+    if jc >= threshold and oc >= min_overlap and (jc - jw) >= margin:
+        label = correct_label
+    elif jw >= threshold and ow >= min_overlap and (jw - jc) >= margin:
+        label = wrong_label
+
+    return label, {
+        "method": "fuzzy_token_jaccard",
+        "jaccard_correct": jc,
+        "jaccard_wrong": jw,
+        "overlap_correct": oc,
+        "overlap_wrong": ow,
+        "threshold": threshold,
+        "min_overlap": min_overlap,
+        "margin": margin,
+    }
+
+
 def strip_prompt_echo(nraw: str, nprompt: str) -> str:
     if not nraw:
         return nraw
@@ -109,12 +165,26 @@ def dynamic_parse_row(row: dict[str, Any], markers: list[str]) -> tuple[str | No
 
     votes = [x for x in (s1, s2, s3, s4) if x in {"A", "B"}]
     if not votes:
-        return None, {"method": "none", "marker": marker, "votes": votes, "text": text}
+        fuzzy_label, fuzzy_meta = fuzzy_label_by_token_jaccard(
+            text,
+            correct_answer=row["correct_answer"],
+            wrong_answer=row["wrong_answer"],
+            correct_label=cl,
+            wrong_label=wl,
+        )
+        return None, {
+            "method": "none",
+            "marker": marker,
+            "votes": votes,
+            "text": text,
+            "fuzzy_label": fuzzy_label,
+            "fuzzy_meta": fuzzy_meta,
+        }
 
     vc = Counter(votes)
     ordered = vc.most_common()
     if len(ordered) == 1 or (len(ordered) > 1 and ordered[0][1] > ordered[1][1]):
-        return ordered[0][0], {"method": "consensus", "marker": marker, "votes": votes, "text": text}
+        return ordered[0][0], {"method": "consensus", "marker": marker, "votes": votes, "text": text, "fuzzy_label": None}
     if s2 in {"A", "B"}:
-        return s2, {"method": "tie_marker", "marker": marker, "votes": votes, "text": text}
-    return None, {"method": "tie_unresolved", "marker": marker, "votes": votes, "text": text}
+        return s2, {"method": "tie_marker", "marker": marker, "votes": votes, "text": text, "fuzzy_label": None}
+    return None, {"method": "tie_unresolved", "marker": marker, "votes": votes, "text": text, "fuzzy_label": None}

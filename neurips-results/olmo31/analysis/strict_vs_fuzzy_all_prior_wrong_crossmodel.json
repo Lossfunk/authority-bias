@@ -1,0 +1,506 @@
+{
+  "base": {
+    "conditions_strict": {
+      "N0_note": {
+        "n": 504,
+        "parsed": 395,
+        "parse_rate": 0.7837301587301587,
+        "correct": 186,
+        "wrong": 209,
+        "correct_total_rate": 0.36904761904761907,
+        "wrong_total_rate": 0.4146825396825397,
+        "correct_parsed_rate": 0.4708860759493671,
+        "wrong_parsed_rate": 0.529113924050633,
+        "no_parse": 109
+      },
+      "C1_note": {
+        "n": 504,
+        "parsed": 377,
+        "parse_rate": 0.748015873015873,
+        "correct": 346,
+        "wrong": 31,
+        "correct_total_rate": 0.6865079365079365,
+        "wrong_total_rate": 0.061507936507936505,
+        "correct_parsed_rate": 0.9177718832891246,
+        "wrong_parsed_rate": 0.08222811671087533,
+        "no_parse": 127
+      },
+      "W1_note": {
+        "n": 504,
+        "parsed": 398,
+        "parse_rate": 0.7896825396825397,
+        "correct": 40,
+        "wrong": 358,
+        "correct_total_rate": 0.07936507936507936,
+        "wrong_total_rate": 0.7103174603174603,
+        "correct_parsed_rate": 0.10050251256281408,
+        "wrong_parsed_rate": 0.8994974874371859,
+        "no_parse": 106
+      }
+    },
+    "conditions_fuzzy": {
+      "N0_note": {
+        "n": 504,
+        "parsed": 400,
+        "parse_rate": 0.7936507936507936,
+        "correct": 186,
+        "wrong": 214,
+        "correct_total_rate": 0.36904761904761907,
+        "wrong_total_rate": 0.4246031746031746,
+        "correct_parsed_rate": 0.465,
+        "wrong_parsed_rate": 0.535,
+        "no_parse": 104
+      },
+      "C1_note": {
+        "n": 504,
+        "parsed": 382,
+        "parse_rate": 0.7579365079365079,
+        "correct": 351,
+        "wrong": 31,
+        "correct_total_rate": 0.6964285714285714,
+        "wrong_total_rate": 0.061507936507936505,
+        "correct_parsed_rate": 0.918848167539267,
+        "wrong_parsed_rate": 0.08115183246073299,
+        "no_parse": 122
+      },
+      "W1_note": {
+        "n": 504,
+        "parsed": 421,
+        "parse_rate": 0.8353174603174603,
+        "correct": 40,
+        "wrong": 381,
+        "correct_total_rate": 0.07936507936507936,
+        "wrong_total_rate": 0.7559523809523809,
+        "correct_parsed_rate": 0.09501187648456057,
+        "wrong_parsed_rate": 0.9049881235154394,
+        "no_parse": 83
+      }
+    },
+    "n0_categories_strict": {
+      "correct": 186,
+      "wrong_confidently": 188,
+      "no_parse": 109,
+      "wrong_mentions_both": 21
+    },
+    "n0_split": {
+      "trivia_qa": {
+        "correct": 91,
+        "strict_correct": 91,
+        "strict_wrong": 64,
+        "strict_parsed": 155,
+        "n": 167,
+        "wrong_confidently": 61,
+        "no_parse": 12,
+        "wrong_mentions_both": 3
+      },
+      "truthful_qa": {
+        "no_parse": 97,
+        "n": 337,
+        "wrong_confidently": 127,
+        "strict_correct": 95,
+        "strict_wrong": 145,
+        "strict_parsed": 240,
+        "correct": 95,
+        "wrong_mentions_both": 18
+      }
+    },
+    "no_parse_overlap": {
+      "max_jaccard_ge_thresh": 5,
+      "count": 109
+    },
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so"
+    ],
+    "rows_path": "neurips-results/olmo31/diagnostic_all_prior_wrong_authoritative/allenai__OLMo-3.1-32B-Instruct_dissociation_rows.jsonl",
+    "n_rows": 1512
+  },
+  "qwen35": {
+    "conditions_strict": {
+      "N0_note": {
+        "n": 504,
+        "parsed": 503,
+        "parse_rate": 0.998015873015873,
+        "correct": 318,
+        "wrong": 185,
+        "correct_total_rate": 0.6309523809523809,
+        "wrong_total_rate": 0.36706349206349204,
+        "correct_parsed_rate": 0.6322067594433399,
+        "wrong_parsed_rate": 0.36779324055666,
+        "no_parse": 1
+      },
+      "C1_note": {
+        "n": 504,
+        "parsed": 500,
+        "parse_rate": 0.9920634920634921,
+        "correct": 326,
+        "wrong": 174,
+        "correct_total_rate": 0.6468253968253969,
+        "wrong_total_rate": 0.34523809523809523,
+        "correct_parsed_rate": 0.652,
+        "wrong_parsed_rate": 0.348,
+        "no_parse": 4
+      },
+      "W1_note": {
+        "n": 504,
+        "parsed": 503,
+        "parse_rate": 0.998015873015873,
+        "correct": 246,
+        "wrong": 257,
+        "correct_total_rate": 0.4880952380952381,
+        "wrong_total_rate": 0.5099206349206349,
+        "correct_parsed_rate": 0.48906560636182905,
+        "wrong_parsed_rate": 0.510934393638171,
+        "no_parse": 1
+      }
+    },
+    "conditions_fuzzy": {
+      "N0_note": {
+        "n": 504,
+        "parsed": 503,
+        "parse_rate": 0.998015873015873,
+        "correct": 318,
+        "wrong": 185,
+        "correct_total_rate": 0.6309523809523809,
+        "wrong_total_rate": 0.36706349206349204,
+        "correct_parsed_rate": 0.6322067594433399,
+        "wrong_parsed_rate": 0.36779324055666,
+        "no_parse": 1
+      },
+      "C1_note": {
+        "n": 504,
+        "parsed": 500,
+        "parse_rate": 0.9920634920634921,
+        "correct": 326,
+        "wrong": 174,
+        "correct_total_rate": 0.6468253968253969,
+        "wrong_total_rate": 0.34523809523809523,
+        "correct_parsed_rate": 0.652,
+        "wrong_parsed_rate": 0.348,
+        "no_parse": 4
+      },
+      "W1_note": {
+        "n": 504,
+        "parsed": 503,
+        "parse_rate": 0.998015873015873,
+        "correct": 246,
+        "wrong": 257,
+        "correct_total_rate": 0.4880952380952381,
+        "wrong_total_rate": 0.5099206349206349,
+        "correct_parsed_rate": 0.48906560636182905,
+        "wrong_parsed_rate": 0.510934393638171,
+        "no_parse": 1
+      }
+    },
+    "n0_categories_strict": {
+      "correct": 318,
+      "wrong_mentions_both": 185,
+      "no_parse": 1
+    },
+    "n0_split": {
+      "trivia_qa": {
+        "correct": 118,
+        "strict_correct": 118,
+        "strict_wrong": 49,
+        "strict_parsed": 167,
+        "n": 167,
+        "wrong_mentions_both": 49
+      },
+      "truthful_qa": {
+        "correct": 200,
+        "strict_correct": 200,
+        "strict_wrong": 136,
+        "strict_parsed": 336,
+        "n": 337,
+        "wrong_mentions_both": 136,
+        "no_parse": 1
+      }
+    },
+    "no_parse_overlap": {
+      "max_jaccard_ge_thresh": 0,
+      "count": 1
+    },
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so"
+    ],
+    "rows_path": "neurips-results/qwen35/authoritative_verified_shared_h100/Qwen__Qwen3.5-27B_dissociation_rows.jsonl",
+    "n_rows": 1512
+  },
+  "gemma4": {
+    "conditions_strict": {
+      "N0_note": {
+        "n": 265,
+        "parsed": 252,
+        "parse_rate": 0.9509433962264151,
+        "correct": 196,
+        "wrong": 56,
+        "correct_total_rate": 0.7396226415094339,
+        "wrong_total_rate": 0.21132075471698114,
+        "correct_parsed_rate": 0.7777777777777778,
+        "wrong_parsed_rate": 0.2222222222222222,
+        "no_parse": 13
+      },
+      "C1_note": {
+        "n": 265,
+        "parsed": 253,
+        "parse_rate": 0.9547169811320755,
+        "correct": 249,
+        "wrong": 4,
+        "correct_total_rate": 0.939622641509434,
+        "wrong_total_rate": 0.01509433962264151,
+        "correct_parsed_rate": 0.9841897233201581,
+        "wrong_parsed_rate": 0.015810276679841896,
+        "no_parse": 12
+      },
+      "W1_note": {
+        "n": 265,
+        "parsed": 258,
+        "parse_rate": 0.9735849056603774,
+        "correct": 39,
+        "wrong": 219,
+        "correct_total_rate": 0.1471698113207547,
+        "wrong_total_rate": 0.8264150943396227,
+        "correct_parsed_rate": 0.1511627906976744,
+        "wrong_parsed_rate": 0.8488372093023255,
+        "no_parse": 7
+      }
+    },
+    "conditions_fuzzy": {
+      "N0_note": {
+        "n": 265,
+        "parsed": 253,
+        "parse_rate": 0.9547169811320755,
+        "correct": 197,
+        "wrong": 56,
+        "correct_total_rate": 0.7433962264150943,
+        "wrong_total_rate": 0.21132075471698114,
+        "correct_parsed_rate": 0.7786561264822134,
+        "wrong_parsed_rate": 0.22134387351778656,
+        "no_parse": 12
+      },
+      "C1_note": {
+        "n": 265,
+        "parsed": 255,
+        "parse_rate": 0.9622641509433962,
+        "correct": 251,
+        "wrong": 4,
+        "correct_total_rate": 0.9471698113207547,
+        "wrong_total_rate": 0.01509433962264151,
+        "correct_parsed_rate": 0.984313725490196,
+        "wrong_parsed_rate": 0.01568627450980392,
+        "no_parse": 10
+      },
+      "W1_note": {
+        "n": 265,
+        "parsed": 260,
+        "parse_rate": 0.9811320754716981,
+        "correct": 39,
+        "wrong": 221,
+        "correct_total_rate": 0.1471698113207547,
+        "wrong_total_rate": 0.8339622641509434,
+        "correct_parsed_rate": 0.15,
+        "wrong_parsed_rate": 0.85,
+        "no_parse": 5
+      }
+    },
+    "n0_categories_strict": {
+      "correct": 196,
+      "wrong_confidently": 48,
+      "no_parse": 13,
+      "wrong_mentions_both": 8
+    },
+    "n0_split": {
+      "trivia_qa": {
+        "correct": 78,
+        "strict_correct": 78,
+        "strict_wrong": 16,
+        "strict_parsed": 94,
+        "n": 98,
+        "wrong_confidently": 13,
+        "no_parse": 4,
+        "wrong_mentions_both": 3
+      },
+      "truthful_qa": {
+        "correct": 118,
+        "strict_correct": 118,
+        "strict_wrong": 40,
+        "strict_parsed": 158,
+        "n": 167,
+        "wrong_confidently": 35,
+        "no_parse": 9,
+        "wrong_mentions_both": 5
+      }
+    },
+    "no_parse_overlap": {
+      "max_jaccard_ge_thresh": 1,
+      "count": 13
+    },
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so",
+      "<|thought|>"
+    ],
+    "rows_path": "neurips-results/gemma4/v2_freegen/google__gemma-4-26B-A4B-it_dissociation_rows.jsonl",
+    "n_rows": 795
+  },
+  "gptoss": {
+    "conditions_strict": {
+      "N0_note": {
+        "n": 202,
+        "parsed": 199,
+        "parse_rate": 0.9851485148514851,
+        "correct": 118,
+        "wrong": 81,
+        "correct_total_rate": 0.5841584158415841,
+        "wrong_total_rate": 0.400990099009901,
+        "correct_parsed_rate": 0.592964824120603,
+        "wrong_parsed_rate": 0.40703517587939697,
+        "no_parse": 3
+      },
+      "C1_note": {
+        "n": 202,
+        "parsed": 202,
+        "parse_rate": 1.0,
+        "correct": 192,
+        "wrong": 10,
+        "correct_total_rate": 0.9504950495049505,
+        "wrong_total_rate": 0.04950495049504951,
+        "correct_parsed_rate": 0.9504950495049505,
+        "wrong_parsed_rate": 0.04950495049504951,
+        "no_parse": 0
+      },
+      "W1_note": {
+        "n": 202,
+        "parsed": 198,
+        "parse_rate": 0.9801980198019802,
+        "correct": 21,
+        "wrong": 177,
+        "correct_total_rate": 0.10396039603960396,
+        "wrong_total_rate": 0.8762376237623762,
+        "correct_parsed_rate": 0.10606060606060606,
+        "wrong_parsed_rate": 0.8939393939393939,
+        "no_parse": 4
+      }
+    },
+    "conditions_fuzzy": {
+      "N0_note": {
+        "n": 202,
+        "parsed": 199,
+        "parse_rate": 0.9851485148514851,
+        "correct": 118,
+        "wrong": 81,
+        "correct_total_rate": 0.5841584158415841,
+        "wrong_total_rate": 0.400990099009901,
+        "correct_parsed_rate": 0.592964824120603,
+        "wrong_parsed_rate": 0.40703517587939697,
+        "no_parse": 3
+      },
+      "C1_note": {
+        "n": 202,
+        "parsed": 202,
+        "parse_rate": 1.0,
+        "correct": 192,
+        "wrong": 10,
+        "correct_total_rate": 0.9504950495049505,
+        "wrong_total_rate": 0.04950495049504951,
+        "correct_parsed_rate": 0.9504950495049505,
+        "wrong_parsed_rate": 0.04950495049504951,
+        "no_parse": 0
+      },
+      "W1_note": {
+        "n": 202,
+        "parsed": 198,
+        "parse_rate": 0.9801980198019802,
+        "correct": 21,
+        "wrong": 177,
+        "correct_total_rate": 0.10396039603960396,
+        "wrong_total_rate": 0.8762376237623762,
+        "correct_parsed_rate": 0.10606060606060606,
+        "wrong_parsed_rate": 0.8939393939393939,
+        "no_parse": 4
+      }
+    },
+    "n0_categories_strict": {
+      "correct": 118,
+      "wrong_mentions_both": 79,
+      "no_parse": 3,
+      "wrong_confidently": 2
+    },
+    "n0_split": {
+      "trivia_qa": {
+        "correct": 38,
+        "strict_correct": 38,
+        "strict_wrong": 25,
+        "strict_parsed": 63,
+        "n": 64,
+        "wrong_mentions_both": 25,
+        "no_parse": 1
+      },
+      "truthful_qa": {
+        "correct": 80,
+        "strict_correct": 80,
+        "strict_wrong": 56,
+        "strict_parsed": 136,
+        "n": 138,
+        "wrong_mentions_both": 54,
+        "wrong_confidently": 2,
+        "no_parse": 2
+      }
+    },
+    "no_parse_overlap": {
+      "max_jaccard_ge_thresh": 0,
+      "count": 3
+    },
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so",
+      "assistantfinalthe",
+      "assistantfinalno",
+      "assistantfinalnothing",
+      "assistantfinalit",
+      "assistantfinalthey",
+      "assistantfinalnone",
+      "assistantfinalyes",
+      "assistantfinalyou",
+      "assistantfinalyour",
+      "assistantfinalhe",
+      "assistantfinalthere",
+      "assistant",
+      "assistantfinalbecause",
+      "assistantfinalin",
+      "assistantfinalbill",
+      "assistantfinalnot"
+    ],
+    "rows_path": "neurips-results/gpt-oss/v2_freegen/openai__gpt-oss-20b_dissociation_rows.jsonl",
+    "n_rows": 606
+  }
+}

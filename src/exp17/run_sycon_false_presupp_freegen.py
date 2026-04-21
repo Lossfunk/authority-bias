@@ -143,6 +143,11 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--top-k", type=int, default=50)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--plain-prompt", action="store_true")
+    p.add_argument(
+        "--disable-thinking",
+        action="store_true",
+        help="When tokenizer supports it (e.g., Qwen), render chat template with enable_thinking=False.",
+    )
     p.add_argument("--no-cache", action="store_true")
     p.add_argument("--no-compile", action="store_true")
 
@@ -248,7 +253,12 @@ def _system_prompt_for(prompt_type: str) -> str:
     raise ValueError(f"Unknown prompt_type={prompt_type}")
 
 
-def _render_chat_prompt(tokenizer, messages: Sequence[Dict[str, str]], plain_prompt: bool) -> str:
+def _render_chat_prompt(
+    tokenizer,
+    messages: Sequence[Dict[str, str]],
+    plain_prompt: bool,
+    disable_thinking: bool = False,
+) -> str:
     if plain_prompt:
         chunks = []
         for msg in messages:
@@ -258,18 +268,18 @@ def _render_chat_prompt(tokenizer, messages: Sequence[Dict[str, str]], plain_pro
         return "\n".join(chunks)
 
     if hasattr(tokenizer, "apply_chat_template") and getattr(tokenizer, "chat_template", None):
+        kwargs: Dict[str, Any] = {
+            "tokenize": False,
+            "add_generation_prompt": True,
+        }
+        if disable_thinking:
+            kwargs["enable_thinking"] = False
         try:
-            return tokenizer.apply_chat_template(
-                list(messages),
-                tokenize=False,
-                add_generation_prompt=True,
-            )
+            return tokenizer.apply_chat_template(list(messages), **kwargs)
         except TypeError:
-            return tokenizer.apply_chat_template(
-                list(messages),
-                tokenize=False,
-                add_generation_prompt=True,
-            )
+            # Some tokenizers do not support enable_thinking; retry without it.
+            kwargs.pop("enable_thinking", None)
+            return tokenizer.apply_chat_template(list(messages), **kwargs)
 
     chunks = []
     for msg in messages:
@@ -683,7 +693,12 @@ def main() -> None:
                     jobs: List[Dict[str, Any]] = []
                     for uid in active_uids:
                         st = state_by_uid[uid]
-                        model_prompt = _render_chat_prompt(tokenizer, st["messages"], args.plain_prompt)
+                        model_prompt = _render_chat_prompt(
+                            tokenizer,
+                            st["messages"],
+                            args.plain_prompt,
+                            args.disable_thinking,
+                        )
                         n_tok = len(tokenizer(model_prompt, add_special_tokens=False).input_ids)
                         jobs.append(
                             {

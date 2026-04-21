@@ -1,0 +1,125 @@
+{
+  "base": {
+    "conditions_strict": {
+      "N0_note": {
+        "n": 504,
+        "parsed": 395,
+        "parse_rate": 0.7837301587301587,
+        "correct": 186,
+        "wrong": 209,
+        "correct_total_rate": 0.36904761904761907,
+        "wrong_total_rate": 0.4146825396825397,
+        "correct_parsed_rate": 0.4708860759493671,
+        "wrong_parsed_rate": 0.529113924050633,
+        "no_parse": 109
+      },
+      "C1_note": {
+        "n": 504,
+        "parsed": 377,
+        "parse_rate": 0.748015873015873,
+        "correct": 346,
+        "wrong": 31,
+        "correct_total_rate": 0.6865079365079365,
+        "wrong_total_rate": 0.061507936507936505,
+        "correct_parsed_rate": 0.9177718832891246,
+        "wrong_parsed_rate": 0.08222811671087533,
+        "no_parse": 127
+      },
+      "W1_note": {
+        "n": 504,
+        "parsed": 398,
+        "parse_rate": 0.7896825396825397,
+        "correct": 40,
+        "wrong": 358,
+        "correct_total_rate": 0.07936507936507936,
+        "wrong_total_rate": 0.7103174603174603,
+        "correct_parsed_rate": 0.10050251256281408,
+        "wrong_parsed_rate": 0.8994974874371859,
+        "no_parse": 106
+      }
+    },
+    "conditions_fuzzy": {
+      "N0_note": {
+        "n": 504,
+        "parsed": 400,
+        "parse_rate": 0.7936507936507936,
+        "correct": 186,
+        "wrong": 214,
+        "correct_total_rate": 0.36904761904761907,
+        "wrong_total_rate": 0.4246031746031746,
+        "correct_parsed_rate": 0.465,
+        "wrong_parsed_rate": 0.535,
+        "no_parse": 104
+      },
+      "C1_note": {
+        "n": 504,
+        "parsed": 382,
+        "parse_rate": 0.7579365079365079,
+        "correct": 351,
+        "wrong": 31,
+        "correct_total_rate": 0.6964285714285714,
+        "wrong_total_rate": 0.061507936507936505,
+        "correct_parsed_rate": 0.918848167539267,
+        "wrong_parsed_rate": 0.08115183246073299,
+        "no_parse": 122
+      },
+      "W1_note": {
+        "n": 504,
+        "parsed": 421,
+        "parse_rate": 0.8353174603174603,
+        "correct": 40,
+        "wrong": 381,
+        "correct_total_rate": 0.07936507936507936,
+        "wrong_total_rate": 0.7559523809523809,
+        "correct_parsed_rate": 0.09501187648456057,
+        "wrong_parsed_rate": 0.9049881235154394,
+        "no_parse": 83
+      }
+    },
+    "n0_categories_strict": {
+      "correct": 186,
+      "wrong_confidently": 188,
+      "no_parse": 109,
+      "wrong_mentions_both": 21
+    },
+    "n0_split": {
+      "trivia_qa": {
+        "correct": 91,
+        "strict_correct": 91,
+        "strict_wrong": 64,
+        "strict_parsed": 155,
+        "n": 167,
+        "wrong_confidently": 61,
+        "no_parse": 12,
+        "wrong_mentions_both": 3
+      },
+      "truthful_qa": {
+        "no_parse": 97,
+        "n": 337,
+        "wrong_confidently": 127,
+        "strict_correct": 95,
+        "strict_wrong": 145,
+        "strict_parsed": 240,
+        "correct": 95,
+        "wrong_mentions_both": 18
+      }
+    },
+    "no_parse_overlap": {
+      "max_jaccard_ge_thresh": 5,
+      "count": 109
+    },
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so"
+    ],
+    "rows_path": "neurips-results/olmo31/diagnostic_all_prior_wrong_authoritative/allenai__OLMo-3.1-32B-Instruct_dissociation_rows.jsonl",
+    "n_rows": 1512
+  }
+}

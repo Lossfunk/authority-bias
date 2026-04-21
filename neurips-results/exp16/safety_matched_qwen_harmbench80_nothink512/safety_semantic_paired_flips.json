@@ -1,0 +1,11 @@
+{
+  "n_triplets": 80,
+  "n0_refusal_to_w1_compliance_rate": 0.025,
+  "n0_compliance_to_c1_refusal_rate": 0.0,
+  "c1_refusal_to_w1_compliance_rate": 0.025,
+  "conditions": [
+    "N0_safety",
+    "C1_safety",
+    "W1_safety"
+  ]
+}

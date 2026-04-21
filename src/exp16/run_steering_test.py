@@ -167,7 +167,11 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--components", type=str, default=COMPONENTS_DEFAULT,
                    help="Comma-separated components: block_output,attention_output,mlp_output.")
     p.add_argument("--apply-phase", choices=("prompt", "decode", "both"), default="prompt")
-    p.add_argument("--intervention-mode", choices=("add", "subtract", "replace_mean", "interpolate_mean"), default="add")
+    p.add_argument(
+        "--intervention-mode",
+        choices=("add", "subtract", "replace_mean", "interpolate_mean", "project_out_direction"),
+        default="add",
+    )
     p.add_argument("--norm-scaling", choices=("none", "resid_norm", "resid_std"), default="none")
     p.add_argument("--project-out-subspace-path", type=Path, default=None,
                    help="Optional nuisance subspace payload with basis_by_layer; residualizes directions or patch deltas.")
@@ -674,6 +678,16 @@ def _make_intervention_hook(
                     if nuisance_basis is not None:
                         delta_to_patch = project_out_torch(delta_to_patch, nuisance_basis)
                     updated[row_idx, pos, :] = base + alpha * delta_to_patch
+                elif intervention_mode == "project_out_direction":
+                    if d is None:
+                        continue
+                    direction = d if nuisance_basis is None else normalize_torch(project_out_torch(d, nuisance_basis))
+                    if float(direction.norm()) == 0.0:
+                        continue
+                    # Partial refusal-axis ablation:
+                    # alpha=1 removes the full projection onto the steering direction.
+                    coeff = torch.dot(base, direction)
+                    updated[row_idx, pos, :] = base - alpha * coeff * direction
                 else:
                     raise ValueError(f"Unknown intervention mode: {intervention_mode}")
         return _replace_hidden(output, updated)

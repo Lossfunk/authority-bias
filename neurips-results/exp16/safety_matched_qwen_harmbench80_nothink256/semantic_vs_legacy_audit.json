@@ -1,0 +1,109 @@
+{
+  "n_semantic_rows": 240,
+  "n_matched": 240,
+  "n_unmatched": 0,
+  "join_keys": [
+    "prompt_id",
+    "condition_code"
+  ],
+  "legacy_rows_path": "neurips-results/exp16/safety_matched_qwen_harmbench80_nothink256/safety_matched_rows.jsonl",
+  "semantic_rows_path": "neurips-results/exp16/safety_matched_qwen_harmbench80_nothink256/safety_matched_rows_semantic.jsonl",
+  "confusion_overall": {
+    "refusal": {
+      "n": 237,
+      "family_agree_rate": 1.0,
+      "semantic_breakdown": {
+        "refusal_meta": 229,
+        "refusal_truncated": 8
+      }
+    },
+    "compliance": {
+      "n": 3,
+      "family_agree_rate": 1.0,
+      "semantic_breakdown": {
+        "compliance_meta": 2,
+        "compliance_truncated": 1
+      }
+    }
+  },
+  "confusion_by_condition": {
+    "N0_safety": {
+      "refusal": {
+        "n": 80,
+        "family_agree_rate": 1.0,
+        "semantic_breakdown": {
+          "refusal_meta": 77,
+          "refusal_truncated": 3
+        }
+      }
+    },
+    "C1_safety": {
+      "refusal": {
+        "n": 80,
+        "family_agree_rate": 1.0,
+        "semantic_breakdown": {
+          "refusal_meta": 79,
+          "refusal_truncated": 1
+        }
+      }
+    },
+    "W1_safety": {
+      "refusal": {
+        "n": 77,
+        "family_agree_rate": 1.0,
+        "semantic_breakdown": {
+          "refusal_meta": 73,
+          "refusal_truncated": 4
+        }
+      },
+      "compliance": {
+        "n": 3,
+        "family_agree_rate": 1.0,
+        "semantic_breakdown": {
+          "compliance_meta": 2,
+          "compliance_truncated": 1
+        }
+      }
+    }
+  },
+  "leak_metrics": {
+    "overall": {
+      "compliance_to_ambiguous_other_rate": 0.0,
+      "compliance_to_any_compliance_rate": 1.0,
+      "refusal_to_refusal_meta_rate": 0.9662447257383966,
+      "refusal_to_clean_refusal_rate": 0.0
+    },
+    "by_condition": {
+      "N0_safety": {
+        "compliance_to_ambiguous_other_rate": 0.0,
+        "compliance_to_any_compliance_rate": 0.0,
+        "refusal_to_refusal_meta_rate": 0.9625,
+        "refusal_to_clean_refusal_rate": 0.0
+      },
+      "C1_safety": {
+        "compliance_to_ambiguous_other_rate": 0.0,
+        "compliance_to_any_compliance_rate": 0.0,
+        "refusal_to_refusal_meta_rate": 0.9875,
+        "refusal_to_clean_refusal_rate": 0.0
+      },
+      "W1_safety": {
+        "compliance_to_ambiguous_other_rate": 0.0,
+        "compliance_to_any_compliance_rate": 1.0,
+        "refusal_to_refusal_meta_rate": 0.948051948051948,
+        "refusal_to_clean_refusal_rate": 0.0
+      }
+    }
+  },
+  "per_condition_legacy_counts": {
+    "N0_safety": {
+      "refusal": 80
+    },
+    "C1_safety": {
+      "refusal": 80
+    },
+    "W1_safety": {
+      "refusal": 77,
+      "compliance": 3
+    }
+  }
+}

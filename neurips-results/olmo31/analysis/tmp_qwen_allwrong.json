@@ -1,0 +1,125 @@
+{
+  "base": {
+    "conditions_strict": {
+      "N0_note": {
+        "n": 208,
+        "parsed": 64,
+        "parse_rate": 0.3076923076923077,
+        "correct": 26,
+        "wrong": 38,
+        "correct_total_rate": 0.125,
+        "wrong_total_rate": 0.18269230769230768,
+        "correct_parsed_rate": 0.40625,
+        "wrong_parsed_rate": 0.59375,
+        "no_parse": 144
+      },
+      "C1_note": {
+        "n": 208,
+        "parsed": 82,
+        "parse_rate": 0.3942307692307692,
+        "correct": 36,
+        "wrong": 46,
+        "correct_total_rate": 0.17307692307692307,
+        "wrong_total_rate": 0.22115384615384615,
+        "correct_parsed_rate": 0.43902439024390244,
+        "wrong_parsed_rate": 0.5609756097560976,
+        "no_parse": 126
+      },
+      "W1_note": {
+        "n": 208,
+        "parsed": 89,
+        "parse_rate": 0.42788461538461536,
+        "correct": 48,
+        "wrong": 41,
+        "correct_total_rate": 0.23076923076923078,
+        "wrong_total_rate": 0.1971153846153846,
+        "correct_parsed_rate": 0.5393258426966292,
+        "wrong_parsed_rate": 0.4606741573033708,
+        "no_parse": 119
+      }
+    },
+    "conditions_fuzzy": {
+      "N0_note": {
+        "n": 208,
+        "parsed": 64,
+        "parse_rate": 0.3076923076923077,
+        "correct": 26,
+        "wrong": 38,
+        "correct_total_rate": 0.125,
+        "wrong_total_rate": 0.18269230769230768,
+        "correct_parsed_rate": 0.40625,
+        "wrong_parsed_rate": 0.59375,
+        "no_parse": 144
+      },
+      "C1_note": {
+        "n": 208,
+        "parsed": 82,
+        "parse_rate": 0.3942307692307692,
+        "correct": 36,
+        "wrong": 46,
+        "correct_total_rate": 0.17307692307692307,
+        "wrong_total_rate": 0.22115384615384615,
+        "correct_parsed_rate": 0.43902439024390244,
+        "wrong_parsed_rate": 0.5609756097560976,
+        "no_parse": 126
+      },
+      "W1_note": {
+        "n": 208,
+        "parsed": 89,
+        "parse_rate": 0.42788461538461536,
+        "correct": 48,
+        "wrong": 41,
+        "correct_total_rate": 0.23076923076923078,
+        "wrong_total_rate": 0.1971153846153846,
+        "correct_parsed_rate": 0.5393258426966292,
+        "wrong_parsed_rate": 0.4606741573033708,
+        "no_parse": 119
+      }
+    },
+    "n0_categories_strict": {
+      "correct": 26,
+      "wrong_mentions_both": 34,
+      "no_parse": 144,
+      "wrong_confidently": 4
+    },
+    "n0_split": {
+      "trivia_qa": {
+        "correct": 15,
+        "strict_correct": 15,
+        "strict_wrong": 19,
+        "strict_parsed": 34,
+        "n": 72,
+        "wrong_mentions_both": 19,
+        "no_parse": 38
+      },
+      "truthful_qa": {
+        "no_parse": 106,
+        "n": 136,
+        "wrong_mentions_both": 15,
+        "strict_correct": 11,
+        "strict_wrong": 19,
+        "strict_parsed": 30,
+        "correct": 11,
+        "wrong_confidently": 4
+      }
+    },
+    "no_parse_overlap": {
+      "max_jaccard_ge_thresh": 0,
+      "count": 144
+    },
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "assistant",
+      "so"
+    ],
+    "rows_path": "neurips-results/qwen35/freegen_scaled/Qwen__Qwen3.5-27B_dissociation_rows.jsonl",
+    "n_rows": 624
+  }
+}

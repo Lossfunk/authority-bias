@@ -119,3 +119,11 @@ paper/**/*.zip
 
 # ---------- Reference papers (large PDFs, read locally) ----------
 papers/
+
+# ---------- Large zip / lexicon files ----------
+*.zip
+NRC-VAD-Lexicon-v2.1.zip
+.tmp_NRC-VAD-Lexicon-v2.1.zip
+
+# ---------- Local markdown notes ----------
+The Invisible Gulf Red thread.md

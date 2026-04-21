@@ -1,0 +1,126 @@
+{
+  "base": {
+    "conditions_strict": {
+      "N0_note": {
+        "n": 887,
+        "parsed": 864,
+        "parse_rate": 0.9740698985343855,
+        "correct": 778,
+        "wrong": 86,
+        "correct_total_rate": 0.8771138669673055,
+        "wrong_total_rate": 0.09695603156708005,
+        "correct_parsed_rate": 0.9004629629629629,
+        "wrong_parsed_rate": 0.09953703703703703,
+        "no_parse": 23
+      },
+      "C1_note": {
+        "n": 887,
+        "parsed": 867,
+        "parse_rate": 0.9774520856820744,
+        "correct": 860,
+        "wrong": 7,
+        "correct_total_rate": 0.9695603156708005,
+        "wrong_total_rate": 0.007891770011273957,
+        "correct_parsed_rate": 0.9919261822376009,
+        "wrong_parsed_rate": 0.008073817762399077,
+        "no_parse": 20
+      },
+      "W1_note": {
+        "n": 887,
+        "parsed": 866,
+        "parse_rate": 0.9763246899661782,
+        "correct": 275,
+        "wrong": 591,
+        "correct_total_rate": 0.3100338218714769,
+        "wrong_total_rate": 0.6662908680947013,
+        "correct_parsed_rate": 0.31755196304849886,
+        "wrong_parsed_rate": 0.6824480369515011,
+        "no_parse": 21
+      }
+    },
+    "conditions_fuzzy": {
+      "N0_note": {
+        "n": 887,
+        "parsed": 865,
+        "parse_rate": 0.9751972942502819,
+        "correct": 779,
+        "wrong": 86,
+        "correct_total_rate": 0.8782412626832018,
+        "wrong_total_rate": 0.09695603156708005,
+        "correct_parsed_rate": 0.900578034682081,
+        "wrong_parsed_rate": 0.09942196531791908,
+        "no_parse": 22
+      },
+      "C1_note": {
+        "n": 887,
+        "parsed": 869,
+        "parse_rate": 0.979706877113867,
+        "correct": 862,
+        "wrong": 7,
+        "correct_total_rate": 0.971815107102593,
+        "wrong_total_rate": 0.007891770011273957,
+        "correct_parsed_rate": 0.9919447640966629,
+        "wrong_parsed_rate": 0.00805523590333717,
+        "no_parse": 18
+      },
+      "W1_note": {
+        "n": 887,
+        "parsed": 868,
+        "parse_rate": 0.9785794813979707,
+        "correct": 275,
+        "wrong": 593,
+        "correct_total_rate": 0.3100338218714769,
+        "wrong_total_rate": 0.6685456595264938,
+        "correct_parsed_rate": 0.31682027649769584,
+        "wrong_parsed_rate": 0.6831797235023042,
+        "no_parse": 19
+      }
+    },
+    "n0_categories_strict": {
+      "correct": 778,
+      "wrong_mentions_both": 21,
+      "wrong_confidently": 65,
+      "no_parse": 23
+    },
+    "n0_split": {
+      "trivia_qa": {
+        "correct": 438,
+        "strict_correct": 438,
+        "strict_wrong": 32,
+        "strict_parsed": 470,
+        "n": 481,
+        "wrong_mentions_both": 9,
+        "wrong_confidently": 23,
+        "no_parse": 11
+      },
+      "truthful_qa": {
+        "correct": 340,
+        "strict_correct": 340,
+        "strict_wrong": 54,
+        "strict_parsed": 394,
+        "n": 406,
+        "wrong_confidently": 42,
+        "no_parse": 12,
+        "wrong_mentions_both": 12
+      }
+    },
+    "no_parse_overlap": {
+      "max_jaccard_ge_thresh": 1,
+      "count": 23
+    },
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so",
+      "<|thought|>"
+    ],
+    "rows_path": "neurips-results/gemma4/v2_freegen/google__gemma-4-26B-A4B-it_dissociation_rows.jsonl",
+    "n_rows": 2661
+  }
+}

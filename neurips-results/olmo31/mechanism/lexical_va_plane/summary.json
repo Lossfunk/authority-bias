@@ -1,0 +1,169 @@
+{
+  "model": "allenai/OLMo-3.1-32B-Instruct",
+  "lexicon_path": "external/nrc-vad/unpacked/NRC-VAD-Lexicon-v2.1/Unigrams/unigrams-NRC-VAD-Lexicon-v2.1.txt",
+  "output_dir": "neurips-results/olmo31/mechanism/lexical_va_plane",
+  "position_name": "last_token",
+  "prompt_template": "{word}",
+  "n_words": 4000,
+  "target_layers": [
+    5,
+    15,
+    18,
+    22
+  ],
+  "compliance_position": "endorsement_start",
+  "compliance_kind": "shared_within_label",
+  "summary_by_layer": {
+    "5": {
+      "valence_corr": 0.2696310185085066,
+      "arousal_corr": 0.23792212598350154,
+      "valence_r2_pc": 0.07270086863197056,
+      "arousal_r2_pc": 0.05907208438799416,
+      "pre_orthogonal_cosine": -0.19427936678397287,
+      "explained_variance_ratio": [
+        0.17511630183465668,
+        0.05343639332547934,
+        0.014149766702781402,
+        0.008388060318915381,
+        0.007272805299893531,
+        0.006324186376848916,
+        0.005459284744667066,
+        0.004497765646073269,
+        0.0043649590901204535,
+        0.004061662122795041,
+        0.003790137994759317,
+        0.0037208993130761602,
+        0.0034489075197348517,
+        0.003172947625458929,
+        0.0031134782726009555,
+        0.0029163686687659392
+      ],
+      "compliance_overlap": {
+        "position": "endorsement_start",
+        "direction_kind": "shared_within_label",
+        "uids_subset": "all",
+        "cosine_valence": 0.0036683922902758775,
+        "cosine_arousal": 0.02461185276827635,
+        "plane_norm_fraction": 0.02488373751966267,
+        "plane_coords": [
+          0.0036683923099189997,
+          0.024611853063106537
+        ]
+      }
+    },
+    "15": {
+      "valence_corr": 0.2680360499563559,
+      "arousal_corr": 0.2095224886121372,
+      "valence_r2_pc": 0.07184332055879661,
+      "arousal_r2_pc": 0.04461187558696755,
+      "pre_orthogonal_cosine": -0.12593229668470612,
+      "explained_variance_ratio": [
+        0.4057455623169609,
+        0.15896277510631862,
+        0.018010059186364273,
+        0.009556372164996337,
+        0.00813098131541923,
+        0.006791848141670586,
+        0.005856228955372854,
+        0.004895214857645293,
+        0.004277364851603447,
+        0.004048676593777757,
+        0.0035840016713057504,
+        0.0033469820217321223,
+        0.0032188028943015926,
+        0.0029361793950803622,
+        0.0028942291884767237,
+        0.0027090310421587173
+      ],
+      "compliance_overlap": {
+        "position": "endorsement_start",
+        "direction_kind": "shared_within_label",
+        "uids_subset": "all",
+        "cosine_valence": -0.010790354601055412,
+        "cosine_arousal": 0.024648762252390537,
+        "plane_norm_fraction": 0.026907121866265954,
+        "plane_coords": [
+          -0.010790355503559113,
+          0.024648763239383698
+        ]
+      }
+    },
+    "18": {
+      "valence_corr": 0.26582049919469547,
+      "arousal_corr": 0.22055946427870807,
+      "valence_r2_pc": 0.07066053538230332,
+      "arousal_r2_pc": 0.04894185402957163,
+      "pre_orthogonal_cosine": 0.07395422619120329,
+      "explained_variance_ratio": [
+        0.32925697816368993,
+        0.1710605740152587,
+        0.02156984294513964,
+        0.011867346535089801,
+        0.01020781164633064,
+        0.008117183479625775,
+        0.007604866603462666,
+        0.006229790993773836,
+        0.0050829715177106985,
+        0.004911449133570984,
+        0.004449448254194991,
+        0.004177983786876985,
+        0.003915394399824148,
+        0.003609405759361485,
+        0.0033139327329825235,
+        0.0031794998499286922
+      ],
+      "compliance_overlap": {
+        "position": "endorsement_start",
+        "direction_kind": "shared_within_label",
+        "uids_subset": "all",
+        "cosine_valence": -0.006502490586495589,
+        "cosine_arousal": 0.014993584393222735,
+        "plane_norm_fraction": 0.016342886718370475,
+        "plane_coords": [
+          -0.00650249095633626,
+          0.014993584714829922
+        ]
+      }
+    },
+    "22": {
+      "valence_corr": 0.24578283191440262,
+      "arousal_corr": 0.21357214761670898,
+      "valence_r2_pc": 0.06040919963025937,
+      "arousal_r2_pc": 0.045653257237617484,
+      "pre_orthogonal_cosine": 0.028786210427413694,
+      "explained_variance_ratio": [
+        0.29262561622420596,
+        0.22370252393425052,
+        0.02482028196437532,
+        0.014796065455225294,
+        0.011339331574269943,
+        0.009020290389237452,
+        0.009000274546944222,
+        0.0070765405223810595,
+        0.005973263359438359,
+        0.005148393400362063,
+        0.0049046237221530556,
+        0.004232765068641967,
+        0.004202173288244827,
+        0.00378625284808127,
+        0.0034885598481770616,
+        0.0033983576997760807
+      ],
+      "compliance_overlap": {
+        "position": "endorsement_start",
+        "direction_kind": "shared_within_label",
+        "uids_subset": "all",
+        "cosine_valence": -0.008774237192960258,
+        "cosine_arousal": -0.001492294906388987,
+        "plane_norm_fraction": 0.008900234707135067,
+        "plane_coords": [
+          -0.00877423770725727,
+          -0.0014922950649634004
+        ]
+      }
+    }
+  },
+  "files": {
+    "va_plane": "neurips-results/olmo31/mechanism/lexical_va_plane/va_plane.pt"
+  }
+}

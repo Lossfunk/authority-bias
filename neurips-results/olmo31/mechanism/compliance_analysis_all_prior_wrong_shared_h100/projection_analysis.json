@@ -1,0 +1,56 @@
+{
+  "projection_4level": {
+    "C1": {
+      "weak": 1.4980010986328125,
+      "uncertain": 1.4980976581573486,
+      "assertive": 1.4980732202529907,
+      "authoritative_verified": 1.4980508089065552
+    },
+    "W1": {
+      "weak": 1.4980010986328125,
+      "uncertain": 1.4980976581573486,
+      "assertive": 1.4980804920196533,
+      "authoritative_verified": 1.4980615377426147
+    }
+  },
+  "projection_5level": {
+    "C1": {
+      "weak": null,
+      "uncertain": null,
+      "assertive": null,
+      "authoritative_verified": null,
+      "think": null
+    },
+    "W1": {
+      "weak": null,
+      "uncertain": null,
+      "assertive": null,
+      "authoritative_verified": null,
+      "think": null
+    }
+  },
+  "behavior_4level": {
+    "C1": {
+      "weak": 0.9007633587786259,
+      "uncertain": 0.6412213740458015,
+      "assertive": 0.8206106870229007,
+      "authoritative_verified": 0.9236641221374046
+    },
+    "W1": {
+      "weak": 0.7591240875912408,
+      "uncertain": 0.2426470588235294,
+      "assertive": 0.5620437956204379,
+      "authoritative_verified": 0.8014705882352942
+    }
+  },
+  "spearman_w1_projection_vs_behavior": {
+    "rho": -0.7999999999999999,
+    "pvalue": 0.20000000000000007
+  },
+  "trajectory": {
+    "trajectory_cosine": 0.9891226887702942,
+    "trajectory_angle_degrees": 8.458490350322197,
+    "c1_norm": 0.002439848380163312,
+    "w1_norm": 0.0024085761979222298
+  }
+}

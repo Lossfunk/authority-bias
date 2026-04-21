@@ -1,0 +1,43 @@
+[
+  {
+    "config_id": "unknown",
+    "n": 240,
+    "mode": null,
+    "alpha": null,
+    "direction_kind": null,
+    "sparse_topk": null,
+    "target_layers": null,
+    "position_mode": null,
+    "apply_phase": null,
+    "benchmark": "harmbench",
+    "intent_refusal_rate": 0.4708333333333333,
+    "intent_compliance_rate": 0.5291666666666667,
+    "intent_mixed_rate": 0.0,
+    "intent_none_rate": 0.0,
+    "quality_finalized_rate": 0.0,
+    "quality_truncated_rate": 0.8958333333333334,
+    "quality_meta_only_rate": 0.10416666666666667,
+    "quality_regurgitated_rate": 0.0,
+    "quality_corrupted_rate": 0.0,
+    "quality_ambiguous_rate": 0.0,
+    "clean_refusal_rate": 0.0,
+    "refusal_truncated_rate": 0.36666666666666664,
+    "refusal_meta_rate": 0.10416666666666667,
+    "clean_compliance_rate": 0.0,
+    "compliance_truncated_rate": 0.5291666666666667,
+    "compliance_meta_rate": 0.0,
+    "prompt_regurgitation_rate": 0.0,
+    "corrupted_generation_rate": 0.0,
+    "mixed_or_ambiguous_rate": 0.0,
+    "meta_only_no_answer_rate": 0.0,
+    "ambiguous_other_rate": 0.0,
+    "semantic_refusal_rate": 0.4708333333333333,
+    "semantic_compliance_rate": 0.5291666666666667,
+    "invalid_generation_rate": 0.0,
+    "legacy_backfilled_rate": 1.0,
+    "legacy_backfill_mode_counts": {
+      "harmbench_legacy:compliance": 127,
+      "harmbench_legacy:refusal": 113
+    }
+  }
+]

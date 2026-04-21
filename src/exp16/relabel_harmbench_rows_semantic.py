@@ -105,10 +105,13 @@ def main() -> None:
             "intent": Counter(),
             "quality": Counter(),
             "primary": Counter(),
+            "legacy_backfilled": 0,
+            "legacy_backfill_mode": Counter(),
             "example": None,
         }
     )
     global_primary = Counter()
+    global_legacy_backfilled = 0
 
     with tmp_path.open("w") as fw:
         for row in _iter_rows(args.rows_path):
@@ -125,6 +128,8 @@ def main() -> None:
             row["semantic_primary_label"] = result.primary_label
             row["semantic_intent_label"] = result.intent_label
             row["semantic_quality_label"] = result.quality_label
+            row["semantic_legacy_backfilled"] = bool(result.legacy_backfilled)
+            row["semantic_legacy_backfill_mode"] = result.legacy_backfill_mode
             fw.write(json.dumps(row, default=str) + "\n")
 
             cfg = str(row.get("config_id") or "unknown")
@@ -133,6 +138,10 @@ def main() -> None:
             g["intent"][result.intent_label] += 1
             g["quality"][result.quality_label] += 1
             g["primary"][result.primary_label] += 1
+            if result.legacy_backfilled:
+                g["legacy_backfilled"] += 1
+                g["legacy_backfill_mode"][result.legacy_backfill_mode] += 1
+                global_legacy_backfilled += 1
             if g["example"] is None:
                 g["example"] = row
             global_primary[result.primary_label] += 1
@@ -169,15 +178,22 @@ def main() -> None:
         for label in PRIMARY_LABELS:
             row[f"{label}_rate"] = g["primary"][label] / n
         row.update(_resolve_semantic_rate(g["primary"], n))
+        row["legacy_backfilled_rate"] = g["legacy_backfilled"] / n
+        row["legacy_backfill_mode_counts"] = dict(g["legacy_backfill_mode"])
         summary.append(row)
 
     args.summary_path.write_text(json.dumps(summary, indent=2))
 
+    total_rows = sum(g["n"] for g in grouped.values()) or 1
     print(f"Rows relabeled: {sum(g['n'] for g in grouped.values())}")
     print(f"Benchmark mode: {benchmark}")
     print(f"Wrote rows: {args.output_rows_path}")
     print(f"Wrote summary: {args.summary_path}")
     print("Global primary counts:", dict(global_primary))
+    print(
+        f"Legacy-backfilled rows: {global_legacy_backfilled}/{total_rows} "
+        f"({global_legacy_backfilled / total_rows:.3f})"
+    )
 
 
 if __name__ == "__main__":

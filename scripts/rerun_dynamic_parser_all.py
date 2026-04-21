@@ -331,6 +331,10 @@ def rewrite_row_labels(rows_all: list[dict[str, Any]], arm: str) -> int:
         )
         parsed["final_answer_label"] = label
         parsed["final_answer_parse_method"] = f"dynamic:{meta['method']}:{meta['marker']}"
+        parsed["final_answer_label_fuzzy"] = meta.get("fuzzy_label")
+        fuzzy_meta = meta.get("fuzzy_meta")
+        if isinstance(fuzzy_meta, dict):
+            parsed["final_answer_fuzzy_meta"] = fuzzy_meta
         parsed["final_is_correct"] = (label == row.get("correct_label")) if label in {"A", "B"} else None
         note_ok = parsed.get("note_support_is_correct")
         parsed["dissociation_note_correct_final_wrong"] = bool(note_ok is True and parsed["final_is_correct"] is False)

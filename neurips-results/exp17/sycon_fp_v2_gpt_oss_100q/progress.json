@@ -1,0 +1,12 @@
+{
+  "last_update": "2026-04-19 16:53:52",
+  "status": "completed",
+  "rows_total": 6000,
+  "rows_generated_this_run": 4000,
+  "elapsed_seconds": 9790.62,
+  "n_configs": 12,
+  "prompt_types": [
+    "presupposition"
+  ],
+  "num_rounds": 5
+}
