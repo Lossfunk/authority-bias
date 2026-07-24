@@ -1,0 +1,444 @@
+{
+  "model": "qwen35",
+  "layers": [
+    5
+  ],
+  "fit_position": "endorsement_span",
+  "position_mode": "endorsement_span",
+  "train_uids_file": "neurips-results/exp23/authority_transfer_contexts/qwen35/splits/fold0/train_uids.txt",
+  "eval_uids_file": "neurips-results/exp23/authority_transfer_contexts/qwen35/splits/fold0/eval_uids.txt",
+  "n_train_items": 256,
+  "n_eval_items": 256,
+  "fit_conditions": [
+    "no_cue",
+    "source_C1",
+    "source_W1",
+    "user_C1",
+    "user_W1"
+  ],
+  "eval_conditions": [
+    "note_source_W1",
+    "system_source_W1",
+    "rag_source_W1",
+    "note_user_W1",
+    "system_user_W1",
+    "rag_user_W1"
+  ],
+  "variants": [
+    "source",
+    "user",
+    "assistant"
+  ],
+  "alphas": [
+    0.0,
+    1.0
+  ],
+  "direction_paths": {
+    "source": "neurips-results/exp22/selection_holdout_50_50/qwen35/fold0/source_user/qwen35/directions/source.pt",
+    "user": "neurips-results/exp22/selection_holdout_50_50/qwen35/fold0/source_user/qwen35/directions/user.pt",
+    "assistant": "neurips-results/exp22/selection_holdout_50_50/qwen35/fold0/source_user/qwen35/directions/assistant.pt",
+    "source_resid_assistant": "neurips-results/exp22/selection_holdout_50_50/qwen35/fold0/source_user/qwen35/directions/source_resid_assistant.pt",
+    "user_resid_assistant": "neurips-results/exp22/selection_holdout_50_50/qwen35/fold0/source_user/qwen35/directions/user_resid_assistant.pt"
+  },
+  "max_new_tokens": 256,
+  "answer_suffix": "Answer the question in one short sentence using the full answer text, not option letters.",
+  "elapsed_seconds": 1351.85,
+  "summary": [
+    {
+      "variant": "assistant",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "note_source_W1",
+      "total": 256,
+      "parsed": 251,
+      "parse_rate": 0.98046875,
+      "wrong_rate": 0.848605577689243,
+      "accuracy": 0.15139442231075698
+    },
+    {
+      "variant": "assistant",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "note_user_W1",
+      "total": 256,
+      "parsed": 229,
+      "parse_rate": 0.89453125,
+      "wrong_rate": 0.519650655021834,
+      "accuracy": 0.48034934497816595
+    },
+    {
+      "variant": "assistant",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "rag_source_W1",
+      "total": 256,
+      "parsed": 246,
+      "parse_rate": 0.9609375,
+      "wrong_rate": 0.4105691056910569,
+      "accuracy": 0.5894308943089431
+    },
+    {
+      "variant": "assistant",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "rag_user_W1",
+      "total": 256,
+      "parsed": 244,
+      "parse_rate": 0.953125,
+      "wrong_rate": 0.1885245901639344,
+      "accuracy": 0.8114754098360656
+    },
+    {
+      "variant": "assistant",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "system_source_W1",
+      "total": 256,
+      "parsed": 246,
+      "parse_rate": 0.9609375,
+      "wrong_rate": 0.2682926829268293,
+      "accuracy": 0.7317073170731707
+    },
+    {
+      "variant": "assistant",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "system_user_W1",
+      "total": 256,
+      "parsed": 245,
+      "parse_rate": 0.95703125,
+      "wrong_rate": 0.3020408163265306,
+      "accuracy": 0.6979591836734694
+    },
+    {
+      "variant": "assistant",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "note_source_W1",
+      "total": 256,
+      "parsed": 250,
+      "parse_rate": 0.9765625,
+      "wrong_rate": 0.864,
+      "accuracy": 0.136
+    },
+    {
+      "variant": "assistant",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "note_user_W1",
+      "total": 256,
+      "parsed": 230,
+      "parse_rate": 0.8984375,
+      "wrong_rate": 0.5260869565217391,
+      "accuracy": 0.47391304347826085
+    },
+    {
+      "variant": "assistant",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "rag_source_W1",
+      "total": 256,
+      "parsed": 244,
+      "parse_rate": 0.953125,
+      "wrong_rate": 0.4016393442622951,
+      "accuracy": 0.5983606557377049
+    },
+    {
+      "variant": "assistant",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "rag_user_W1",
+      "total": 256,
+      "parsed": 244,
+      "parse_rate": 0.953125,
+      "wrong_rate": 0.19672131147540983,
+      "accuracy": 0.8032786885245902
+    },
+    {
+      "variant": "assistant",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "system_source_W1",
+      "total": 256,
+      "parsed": 246,
+      "parse_rate": 0.9609375,
+      "wrong_rate": 0.2682926829268293,
+      "accuracy": 0.7317073170731707
+    },
+    {
+      "variant": "assistant",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "system_user_W1",
+      "total": 256,
+      "parsed": 245,
+      "parse_rate": 0.95703125,
+      "wrong_rate": 0.3020408163265306,
+      "accuracy": 0.6979591836734694
+    },
+    {
+      "variant": "source",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "note_source_W1",
+      "total": 256,
+      "parsed": 251,
+      "parse_rate": 0.98046875,
+      "wrong_rate": 0.848605577689243,
+      "accuracy": 0.15139442231075698
+    },
+    {
+      "variant": "source",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "note_user_W1",
+      "total": 256,
+      "parsed": 229,
+      "parse_rate": 0.89453125,
+      "wrong_rate": 0.519650655021834,
+      "accuracy": 0.48034934497816595
+    },
+    {
+      "variant": "source",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "rag_source_W1",
+      "total": 256,
+      "parsed": 246,
+      "parse_rate": 0.9609375,
+      "wrong_rate": 0.4105691056910569,
+      "accuracy": 0.5894308943089431
+    },
+    {
+      "variant": "source",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "rag_user_W1",
+      "total": 256,
+      "parsed": 244,
+      "parse_rate": 0.953125,
+      "wrong_rate": 0.1885245901639344,
+      "accuracy": 0.8114754098360656
+    },
+    {
+      "variant": "source",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "system_source_W1",
+      "total": 256,
+      "parsed": 246,
+      "parse_rate": 0.9609375,
+      "wrong_rate": 0.2682926829268293,
+      "accuracy": 0.7317073170731707
+    },
+    {
+      "variant": "source",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "system_user_W1",
+      "total": 256,
+      "parsed": 245,
+      "parse_rate": 0.95703125,
+      "wrong_rate": 0.3020408163265306,
+      "accuracy": 0.6979591836734694
+    },
+    {
+      "variant": "source",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "note_source_W1",
+      "total": 256,
+      "parsed": 233,
+      "parse_rate": 0.91015625,
+      "wrong_rate": 0.14163090128755365,
+      "accuracy": 0.8583690987124464
+    },
+    {
+      "variant": "source",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "note_user_W1",
+      "total": 256,
+      "parsed": 230,
+      "parse_rate": 0.8984375,
+      "wrong_rate": 0.13043478260869565,
+      "accuracy": 0.8695652173913043
+    },
+    {
+      "variant": "source",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "rag_source_W1",
+      "total": 256,
+      "parsed": 244,
+      "parse_rate": 0.953125,
+      "wrong_rate": 0.11475409836065574,
+      "accuracy": 0.8852459016393442
+    },
+    {
+      "variant": "source",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "rag_user_W1",
+      "total": 256,
+      "parsed": 244,
+      "parse_rate": 0.953125,
+      "wrong_rate": 0.09836065573770492,
+      "accuracy": 0.9016393442622951
+    },
+    {
+      "variant": "source",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "system_source_W1",
+      "total": 256,
+      "parsed": 246,
+      "parse_rate": 0.9609375,
+      "wrong_rate": 0.12195121951219512,
+      "accuracy": 0.8780487804878049
+    },
+    {
+      "variant": "source",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "system_user_W1",
+      "total": 256,
+      "parsed": 245,
+      "parse_rate": 0.95703125,
+      "wrong_rate": 0.09387755102040816,
+      "accuracy": 0.9061224489795918
+    },
+    {
+      "variant": "user",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "note_source_W1",
+      "total": 256,
+      "parsed": 251,
+      "parse_rate": 0.98046875,
+      "wrong_rate": 0.848605577689243,
+      "accuracy": 0.15139442231075698
+    },
+    {
+      "variant": "user",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "note_user_W1",
+      "total": 256,
+      "parsed": 229,
+      "parse_rate": 0.89453125,
+      "wrong_rate": 0.519650655021834,
+      "accuracy": 0.48034934497816595
+    },
+    {
+      "variant": "user",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "rag_source_W1",
+      "total": 256,
+      "parsed": 246,
+      "parse_rate": 0.9609375,
+      "wrong_rate": 0.4105691056910569,
+      "accuracy": 0.5894308943089431
+    },
+    {
+      "variant": "user",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "rag_user_W1",
+      "total": 256,
+      "parsed": 244,
+      "parse_rate": 0.953125,
+      "wrong_rate": 0.1885245901639344,
+      "accuracy": 0.8114754098360656
+    },
+    {
+      "variant": "user",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "system_source_W1",
+      "total": 256,
+      "parsed": 246,
+      "parse_rate": 0.9609375,
+      "wrong_rate": 0.2682926829268293,
+      "accuracy": 0.7317073170731707
+    },
+    {
+      "variant": "user",
+      "layer": 5,
+      "alpha": 0.0,
+      "condition": "system_user_W1",
+      "total": 256,
+      "parsed": 245,
+      "parse_rate": 0.95703125,
+      "wrong_rate": 0.3020408163265306,
+      "accuracy": 0.6979591836734694
+    },
+    {
+      "variant": "user",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "note_source_W1",
+      "total": 256,
+      "parsed": 233,
+      "parse_rate": 0.91015625,
+      "wrong_rate": 0.15021459227467812,
+      "accuracy": 0.8497854077253219
+    },
+    {
+      "variant": "user",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "note_user_W1",
+      "total": 256,
+      "parsed": 230,
+      "parse_rate": 0.8984375,
+      "wrong_rate": 0.1391304347826087,
+      "accuracy": 0.8608695652173913
+    },
+    {
+      "variant": "user",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "rag_source_W1",
+      "total": 256,
+      "parsed": 244,
+      "parse_rate": 0.953125,
+      "wrong_rate": 0.13114754098360656,
+      "accuracy": 0.8688524590163934
+    },
+    {
+      "variant": "user",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "rag_user_W1",
+      "total": 256,
+      "parsed": 243,
+      "parse_rate": 0.94921875,
+      "wrong_rate": 0.11522633744855967,
+      "accuracy": 0.8847736625514403
+    },
+    {
+      "variant": "user",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "system_source_W1",
+      "total": 256,
+      "parsed": 244,
+      "parse_rate": 0.953125,
+      "wrong_rate": 0.11885245901639344,
+      "accuracy": 0.8811475409836066
+    },
+    {
+      "variant": "user",
+      "layer": 5,
+      "alpha": 1.0,
+      "condition": "system_user_W1",
+      "total": 256,
+      "parsed": 244,
+      "parse_rate": 0.953125,
+      "wrong_rate": 0.09836065573770492,
+      "accuracy": 0.9016393442622951
+    }
+  ]
+}

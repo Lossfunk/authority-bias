@@ -1,0 +1,62 @@
+{
+  "model": "openai/gpt-oss-20b",
+  "direction_path": "results/exp20/caa_sycophancy/gpt_oss/directions/sycophancy.pt",
+  "direction_key": "vector_by_layer",
+  "direction_position": "answer_last_token",
+  "direction_kind": "shared_within_label",
+  "direction_source": "file",
+  "extraction_dir": null,
+  "masks_path": "<REPO_ROOT>/results/gpt-oss/mechanism/gpt_oss_authority_activations/label_masks.json",
+  "uids_file": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/gpt_oss/splits/fold0/eval_uids.txt",
+  "uids_subset": "w1",
+  "direction_uids_subset": "w1",
+  "direction_uids_file": null,
+  "patch_uids_subset": "w1",
+  "patch_uids_file": null,
+  "n_direction_uids": 612,
+  "n_patch_uids": 612,
+  "n_uids": 256,
+  "conditions": [
+    "W1_note"
+  ],
+  "alphas": [
+    0.0,
+    0.25,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "target_layers": [
+    16,
+    18,
+    20
+  ],
+  "single_layer_sweep": true,
+  "position_modes": [
+    "endorsement_span"
+  ],
+  "components": [
+    "block_output"
+  ],
+  "apply_phase": "prompt",
+  "intervention_mode": "subtract",
+  "norm_scaling": "none",
+  "project_out_subspace_path": null,
+  "sparse_topk": 0,
+  "collect_margin_diagnostics": false,
+  "patch_source_style": "authoritative_verified",
+  "patch_source_condition": "W1_note",
+  "patch_source_position": "answer_last_token",
+  "answer_suffix": "Answer the question in one short sentence using the full answer text, not option letters.",
+  "temperature": 0.6,
+  "top_p": 0.9,
+  "top_k": 50,
+  "greedy": false,
+  "use_cache": true,
+  "no_compile": false,
+  "batch_size": 256,
+  "max_new_tokens": 256,
+  "elapsed_seconds": 281.74,
+  "rows_path": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/gpt_oss/fold0/mitigation_trivia_caa/steering_rows.jsonl",
+  "summary_path": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/gpt_oss/fold0/mitigation_trivia_caa/steering_summary.json"
+}

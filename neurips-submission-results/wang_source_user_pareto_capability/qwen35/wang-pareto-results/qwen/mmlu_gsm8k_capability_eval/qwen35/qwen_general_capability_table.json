@@ -1,0 +1,145 @@
+{
+  "model": "qwen35",
+  "layer": 5,
+  "position_mode": "answer_position",
+  "capability": {
+    "mmlu_pro": [
+      {
+        "variant": "residualized",
+        "alpha": 0.0,
+        "accuracy": 0.6066666666666667,
+        "delta_pp_vs_alpha0": 0.0,
+        "parsed": 300,
+        "total": 300,
+        "parse_rate": 1.0
+      },
+      {
+        "variant": "residualized",
+        "alpha": 0.75,
+        "accuracy": 0.6,
+        "delta_pp_vs_alpha0": -0.667,
+        "parsed": 300,
+        "total": 300,
+        "parse_rate": 1.0
+      },
+      {
+        "variant": "residualized",
+        "alpha": 1.0,
+        "accuracy": 0.5959595959595959,
+        "delta_pp_vs_alpha0": -1.071,
+        "parsed": 297,
+        "total": 300,
+        "parse_rate": 0.99
+      },
+      {
+        "variant": "assistant",
+        "alpha": 0.0,
+        "accuracy": 0.6066666666666667,
+        "delta_pp_vs_alpha0": 0.0,
+        "parsed": 300,
+        "total": 300,
+        "parse_rate": 1.0
+      },
+      {
+        "variant": "assistant",
+        "alpha": 1.0,
+        "accuracy": 0.6066666666666667,
+        "delta_pp_vs_alpha0": 0.0,
+        "parsed": 300,
+        "total": 300,
+        "parse_rate": 1.0
+      },
+      {
+        "variant": "caa",
+        "alpha": 0.0,
+        "accuracy": 0.6066666666666667,
+        "delta_pp_vs_alpha0": 0.0,
+        "parsed": 300,
+        "total": 300,
+        "parse_rate": 1.0
+      },
+      {
+        "variant": "caa",
+        "alpha": 1.0,
+        "accuracy": 0.6066666666666667,
+        "delta_pp_vs_alpha0": 0.0,
+        "parsed": 300,
+        "total": 300,
+        "parse_rate": 1.0
+      }
+    ],
+    "gsm8k": [
+      {
+        "variant": "residualized",
+        "alpha": 0.0,
+        "accuracy": 0.465,
+        "delta_pp_vs_alpha0": 0.0,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0
+      },
+      {
+        "variant": "residualized",
+        "alpha": 0.75,
+        "accuracy": 0.425,
+        "delta_pp_vs_alpha0": -4.0,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0
+      },
+      {
+        "variant": "residualized",
+        "alpha": 1.0,
+        "accuracy": 0.425,
+        "delta_pp_vs_alpha0": -4.0,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0
+      },
+      {
+        "variant": "assistant",
+        "alpha": 0.0,
+        "accuracy": 0.465,
+        "delta_pp_vs_alpha0": 0.0,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0
+      },
+      {
+        "variant": "assistant",
+        "alpha": 1.0,
+        "accuracy": 0.465,
+        "delta_pp_vs_alpha0": 0.0,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0
+      },
+      {
+        "variant": "caa",
+        "alpha": 0.0,
+        "accuracy": 0.465,
+        "delta_pp_vs_alpha0": 0.0,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0
+      },
+      {
+        "variant": "caa",
+        "alpha": 1.0,
+        "accuracy": 0.465,
+        "delta_pp_vs_alpha0": 0.0,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0
+      }
+    ]
+  },
+  "pareto_reference": {
+    "w1_trivia_wrong_rate_base": 0.427,
+    "w1_trivia_wrong_rate_residualized_alpha_0_75": 0.049,
+    "w1_trivia_delta_pp": -37.8,
+    "w1_piqa_wrong_rate_base": 0.573,
+    "w1_piqa_wrong_rate_residualized_alpha_0_75": 0.042,
+    "w1_piqa_delta_pp": -53.1
+  }
+}

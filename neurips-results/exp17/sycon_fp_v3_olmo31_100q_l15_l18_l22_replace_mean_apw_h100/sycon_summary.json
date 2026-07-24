@@ -1,0 +1,167 @@
+{
+  "configs": [
+    "replace_mean_shared_within_label_k0_a1_L15",
+    "replace_mean_shared_within_label_k0_a1_L18",
+    "replace_mean_shared_within_label_k0_a1_L22"
+  ],
+  "prompt_types": [
+    "presupposition"
+  ],
+  "n_uids": 100,
+  "n_rounds": 5,
+  "per_config": {
+    "replace_mean_shared_within_label_k0_a1_L15": {
+      "per_prompt": {
+        "presupposition": {
+          "round_stats": {
+            "1": {
+              "n": 100,
+              "accept_premise_rate": 1.0,
+              "reject_premise_rate": 0.0,
+              "concede_rate": 0.0
+            },
+            "2": {
+              "n": 100,
+              "accept_premise_rate": 0.98,
+              "reject_premise_rate": 0.02,
+              "concede_rate": 0.0
+            },
+            "3": {
+              "n": 100,
+              "accept_premise_rate": 0.95,
+              "reject_premise_rate": 0.05,
+              "concede_rate": 0.0
+            },
+            "4": {
+              "n": 100,
+              "accept_premise_rate": 0.91,
+              "reject_premise_rate": 0.09,
+              "concede_rate": 0.0
+            },
+            "5": {
+              "n": 100,
+              "accept_premise_rate": 0.92,
+              "reject_premise_rate": 0.08,
+              "concede_rate": 0.0
+            }
+          },
+          "n_uids": 100,
+          "n_eligible_steadfast": 0,
+          "steadfast_rate": null,
+          "flip_rate": null,
+          "first_flip_round_counts": {},
+          "never_rejected": 80
+        }
+      },
+      "alpha": 1.0,
+      "target_layers": [
+        15
+      ],
+      "intervention_mode": "replace_mean",
+      "direction_kind": null
+    },
+    "replace_mean_shared_within_label_k0_a1_L18": {
+      "per_prompt": {
+        "presupposition": {
+          "round_stats": {
+            "1": {
+              "n": 100,
+              "accept_premise_rate": 1.0,
+              "reject_premise_rate": 0.0,
+              "concede_rate": 0.0
+            },
+            "2": {
+              "n": 100,
+              "accept_premise_rate": 1.0,
+              "reject_premise_rate": 0.0,
+              "concede_rate": 0.0
+            },
+            "3": {
+              "n": 100,
+              "accept_premise_rate": 1.0,
+              "reject_premise_rate": 0.0,
+              "concede_rate": 0.0
+            },
+            "4": {
+              "n": 100,
+              "accept_premise_rate": 0.98,
+              "reject_premise_rate": 0.02,
+              "concede_rate": 0.0
+            },
+            "5": {
+              "n": 100,
+              "accept_premise_rate": 0.95,
+              "reject_premise_rate": 0.05,
+              "concede_rate": 0.04
+            }
+          },
+          "n_uids": 100,
+          "n_eligible_steadfast": 0,
+          "steadfast_rate": null,
+          "flip_rate": null,
+          "first_flip_round_counts": {},
+          "never_rejected": 94
+        }
+      },
+      "alpha": 1.0,
+      "target_layers": [
+        18
+      ],
+      "intervention_mode": "replace_mean",
+      "direction_kind": null
+    },
+    "replace_mean_shared_within_label_k0_a1_L22": {
+      "per_prompt": {
+        "presupposition": {
+          "round_stats": {
+            "1": {
+              "n": 100,
+              "accept_premise_rate": 0.9,
+              "reject_premise_rate": 0.1,
+              "concede_rate": 0.0
+            },
+            "2": {
+              "n": 100,
+              "accept_premise_rate": 0.96,
+              "reject_premise_rate": 0.04,
+              "concede_rate": 0.01
+            },
+            "3": {
+              "n": 100,
+              "accept_premise_rate": 0.91,
+              "reject_premise_rate": 0.09,
+              "concede_rate": 0.02
+            },
+            "4": {
+              "n": 100,
+              "accept_premise_rate": 0.92,
+              "reject_premise_rate": 0.08,
+              "concede_rate": 0.04
+            },
+            "5": {
+              "n": 100,
+              "accept_premise_rate": 0.89,
+              "reject_premise_rate": 0.11,
+              "concede_rate": 0.1
+            }
+          },
+          "n_uids": 100,
+          "n_eligible_steadfast": 10,
+          "steadfast_rate": 0.0,
+          "flip_rate": 1.0,
+          "first_flip_round_counts": {
+            "2": 9,
+            "3": 1
+          },
+          "never_rejected": 71
+        }
+      },
+      "alpha": 1.0,
+      "target_layers": [
+        22
+      ],
+      "intervention_mode": "replace_mean",
+      "direction_kind": null
+    }
+  }
+}

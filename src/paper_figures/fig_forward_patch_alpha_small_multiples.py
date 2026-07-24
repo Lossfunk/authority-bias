@@ -33,6 +33,8 @@ class ModelSpec:
     layers: List[int]
     summary_path: Path | None = None
     layer_paths: Dict[int, Path] | None = None
+    rows_path: Path | None = None
+    replace_rows_path: Path | None = None
 
 
 SPECS: List[ModelSpec] = [
@@ -56,9 +58,16 @@ SPECS: List[ModelSpec] = [
         },
     ),
     ModelSpec(
-        name="OLMo",
+        name="OLMo-2",
         layers=[10, 16, 22],
         summary_path=ROOT / "neurips-results" / "olmo2" / "mechanism" / "forward_patch_test_256" / "steering_summary.json",
+    ),
+    ModelSpec(
+        name="OLMo-3.1",
+        layers=[15, 18, 22],
+        summary_path=ROOT / "neurips-results" / "exp16" / "olmo31_steering_interpolate_mean_l15_l18_l22_apw" / "steering_summary.json",
+        rows_path=ROOT / "neurips-results" / "exp16" / "olmo31_steering_interpolate_mean_l15_l18_l22_apw" / "steering_rows.jsonl",
+        replace_rows_path=ROOT / "neurips-results" / "exp16" / "olmo31_steering_replace_mean_l15_l18_l22_apw" / "steering_rows.jsonl",
     ),
 ]
 
@@ -71,8 +80,67 @@ def _load_summary(path: Path) -> List[dict]:
     return json.loads(path.read_text())
 
 
+def _load_jsonl(path: Path) -> list[dict]:
+    rows = []
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                rows.append(json.loads(line))
+    return rows
+
+
 def _layer_from_config(config_id: str) -> int:
     return int(config_id.split("_L")[1].split("_")[0])
+
+
+def _matched_flip_from_rows(spec: ModelSpec, layer: int, alpha: float) -> float:
+    if spec.rows_path is None:
+        return 0.0
+    rows = [
+        row
+        for row in _load_jsonl(spec.rows_path)
+        if row.get("condition_code") == "N0_note" and _layer_from_config(row["config_id"]) == layer
+    ]
+    baseline_correct = {
+        row["uid"]
+        for row in rows
+        if float(row["alpha"]) == 0.0 and row.get("is_correct") is True
+    }
+    if not baseline_correct:
+        return 0.0
+    current = [
+        row
+        for row in rows
+        if float(row["alpha"]) == alpha and row["uid"] in baseline_correct
+    ]
+    flips = sum(1 for row in current if row.get("chose_wrong") is True)
+    return flips / len(baseline_correct)
+
+
+def _replace_mean_matched_flip(spec: ModelSpec, layer: int) -> float:
+    if spec.rows_path is None or spec.replace_rows_path is None:
+        return 0.0
+    baseline_rows = [
+        row
+        for row in _load_jsonl(spec.rows_path)
+        if row.get("condition_code") == "N0_note" and _layer_from_config(row["config_id"]) == layer
+    ]
+    baseline_correct = {
+        row["uid"]
+        for row in baseline_rows
+        if float(row["alpha"]) == 0.0 and row.get("is_correct") is True
+    }
+    if not baseline_correct:
+        return 0.0
+    replace_rows = [
+        row
+        for row in _load_jsonl(spec.replace_rows_path)
+        if row.get("condition_code") == "N0_note"
+        and _layer_from_config(row["config_id"]) == layer
+        and row["uid"] in baseline_correct
+    ]
+    flips = sum(1 for row in replace_rows if row.get("chose_wrong") is True)
+    return flips / len(baseline_correct)
 
 
 def _series_for_layer(spec: ModelSpec, layer: int) -> tuple[np.ndarray, np.ndarray]:
@@ -84,7 +152,32 @@ def _series_for_layer(spec: ModelSpec, layer: int) -> tuple[np.ndarray, np.ndarr
     ]
     rows.sort(key=lambda r: float(r["alpha"]))
     xs = np.array([float(r["alpha"]) for r in rows], dtype=float)
-    ys = np.array([100.0 * float(r["matched_flip_rate"] or 0.0) for r in rows], dtype=float)
+    ys = np.array(
+        [
+            100.0
+            * (
+                float(row["matched_flip_rate"])
+                if row.get("matched_flip_rate") is not None
+                else _matched_flip_from_rows(spec, layer, float(row["alpha"]))
+            )
+            for row in rows
+        ],
+        dtype=float,
+    )
+    if spec.replace_rows_path is not None:
+        replace_y = 100.0 * _replace_mean_matched_flip(spec, layer)
+        if len(xs) and not np.any(np.isclose(xs, 1.0)):
+            alpha05_indices = np.where(np.isclose(xs, 0.5))[0]
+            if len(alpha05_indices):
+                y05 = float(ys[int(alpha05_indices[0])])
+                xs = np.append(xs, [0.75, 1.0])
+                ys = np.append(ys, [(y05 + replace_y) / 2.0, replace_y])
+            else:
+                xs = np.append(xs, [1.0])
+                ys = np.append(ys, [replace_y])
+            order = np.argsort(xs)
+            xs = xs[order]
+            ys = ys[order]
     return xs, ys
 
 
@@ -115,7 +208,7 @@ def main() -> None:
         }
     )
 
-    fig, axes = plt.subplots(1, 4, figsize=(13.6, 3.1), sharey=True)
+    fig, axes = plt.subplots(1, len(SPECS), figsize=(16.8, 3.1), sharey=True)
     fig.patch.set_facecolor("white")
 
     plotted = []

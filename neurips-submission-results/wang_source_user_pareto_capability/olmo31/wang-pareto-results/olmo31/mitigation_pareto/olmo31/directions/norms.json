@@ -1,0 +1,28 @@
+{
+  "rows": [
+    {
+      "layer": 15,
+      "source_position": "endorsement_start",
+      "authority_norm": 0.9999999403953552,
+      "assistant_norm": 1.0000003576278687,
+      "residualized_norm": 1.0,
+      "cos_authority_assistant": -0.005321649368852377
+    },
+    {
+      "layer": 18,
+      "source_position": "endorsement_start",
+      "authority_norm": 1.0,
+      "assistant_norm": 1.0000007152557373,
+      "residualized_norm": 1.0,
+      "cos_authority_assistant": -0.012023421935737133
+    },
+    {
+      "layer": 22,
+      "source_position": "endorsement_start",
+      "authority_norm": 1.0,
+      "assistant_norm": 1.0000003576278687,
+      "residualized_norm": 1.0,
+      "cos_authority_assistant": -0.02754005417227745
+    }
+  ]
+}

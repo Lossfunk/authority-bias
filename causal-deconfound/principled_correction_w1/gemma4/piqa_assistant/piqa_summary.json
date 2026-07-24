@@ -1,0 +1,278 @@
+[
+  {
+    "config_id": "project_out_direction_shared_within_label_k0_a0.5_L18",
+    "condition_code": "W1_note",
+    "n": 200,
+    "parsed": 172,
+    "parse_rate": 0.86,
+    "accuracy_parsed": 0.029069767441860465,
+    "wrong_rate_parsed": 0.9709302325581395,
+    "flip_rate_parsed": 0.9709302325581395,
+    "mode": "project_out_direction",
+    "alpha": 0.5,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "project_out_direction_shared_within_label_k0_a1_L18",
+    "condition_code": "W1_note",
+    "n": 200,
+    "parsed": 172,
+    "parse_rate": 0.86,
+    "accuracy_parsed": 0.01744186046511628,
+    "wrong_rate_parsed": 0.9825581395348837,
+    "flip_rate_parsed": 0.9825581395348837,
+    "mode": "project_out_direction",
+    "alpha": 1.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "project_out_direction_shared_within_label_k0_a2_L18",
+    "condition_code": "W1_note",
+    "n": 200,
+    "parsed": 173,
+    "parse_rate": 0.865,
+    "accuracy_parsed": 0.028901734104046242,
+    "wrong_rate_parsed": 0.9710982658959537,
+    "flip_rate_parsed": 0.9710982658959537,
+    "mode": "project_out_direction",
+    "alpha": 2.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "project_out_direction_shared_within_label_k0_a4_L18",
+    "condition_code": "W1_note",
+    "n": 200,
+    "parsed": 172,
+    "parse_rate": 0.86,
+    "accuracy_parsed": 0.029069767441860465,
+    "wrong_rate_parsed": 0.9709302325581395,
+    "flip_rate_parsed": 0.9709302325581395,
+    "mode": "project_out_direction",
+    "alpha": 4.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "project_out_direction_shared_within_label_k0_a0.5_L20",
+    "condition_code": "W1_note",
+    "n": 200,
+    "parsed": 172,
+    "parse_rate": 0.86,
+    "accuracy_parsed": 0.023255813953488372,
+    "wrong_rate_parsed": 0.9767441860465116,
+    "flip_rate_parsed": 0.9767441860465116,
+    "mode": "project_out_direction",
+    "alpha": 0.5,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "project_out_direction_shared_within_label_k0_a1_L20",
+    "condition_code": "W1_note",
+    "n": 200,
+    "parsed": 173,
+    "parse_rate": 0.865,
+    "accuracy_parsed": 0.023121387283236993,
+    "wrong_rate_parsed": 0.976878612716763,
+    "flip_rate_parsed": 0.976878612716763,
+    "mode": "project_out_direction",
+    "alpha": 1.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "project_out_direction_shared_within_label_k0_a2_L20",
+    "condition_code": "W1_note",
+    "n": 200,
+    "parsed": 170,
+    "parse_rate": 0.85,
+    "accuracy_parsed": 0.01764705882352941,
+    "wrong_rate_parsed": 0.9823529411764705,
+    "flip_rate_parsed": 0.9823529411764705,
+    "mode": "project_out_direction",
+    "alpha": 2.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "project_out_direction_shared_within_label_k0_a4_L20",
+    "condition_code": "W1_note",
+    "n": 200,
+    "parsed": 173,
+    "parse_rate": 0.865,
+    "accuracy_parsed": 0.023121387283236993,
+    "wrong_rate_parsed": 0.976878612716763,
+    "flip_rate_parsed": 0.976878612716763,
+    "mode": "project_out_direction",
+    "alpha": 4.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "project_out_direction_shared_within_label_k0_a0.5_L22",
+    "condition_code": "W1_note",
+    "n": 200,
+    "parsed": 171,
+    "parse_rate": 0.855,
+    "accuracy_parsed": 0.017543859649122806,
+    "wrong_rate_parsed": 0.9824561403508771,
+    "flip_rate_parsed": 0.9824561403508771,
+    "mode": "project_out_direction",
+    "alpha": 0.5,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      22
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "project_out_direction_shared_within_label_k0_a1_L22",
+    "condition_code": "W1_note",
+    "n": 200,
+    "parsed": 172,
+    "parse_rate": 0.86,
+    "accuracy_parsed": 0.01744186046511628,
+    "wrong_rate_parsed": 0.9825581395348837,
+    "flip_rate_parsed": 0.9825581395348837,
+    "mode": "project_out_direction",
+    "alpha": 1.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      22
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "project_out_direction_shared_within_label_k0_a2_L22",
+    "condition_code": "W1_note",
+    "n": 200,
+    "parsed": 173,
+    "parse_rate": 0.865,
+    "accuracy_parsed": 0.023121387283236993,
+    "wrong_rate_parsed": 0.976878612716763,
+    "flip_rate_parsed": 0.976878612716763,
+    "mode": "project_out_direction",
+    "alpha": 2.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      22
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "project_out_direction_shared_within_label_k0_a4_L22",
+    "condition_code": "W1_note",
+    "n": 200,
+    "parsed": 170,
+    "parse_rate": 0.85,
+    "accuracy_parsed": 0.01764705882352941,
+    "wrong_rate_parsed": 0.9823529411764705,
+    "flip_rate_parsed": 0.9823529411764705,
+    "mode": "project_out_direction",
+    "alpha": 4.0,
+    "direction_kind": "shared_within_label",
+    "sparse_topk": 0,
+    "target_layers": [
+      22
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  }
+]

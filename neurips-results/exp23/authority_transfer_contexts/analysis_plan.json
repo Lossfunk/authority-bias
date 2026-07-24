@@ -1,0 +1,15 @@
+{
+  "table": "For each model/context/condition, report alpha=0 baseline wrong-rate and alpha=1 wrong-rate after source/user/assistant removal.",
+  "primary_rows": [
+    "system_source_W1",
+    "rag_source_W1"
+  ],
+  "controls": [
+    "note_source_W1",
+    "note_user_W1",
+    "system_user_W1",
+    "rag_user_W1",
+    "assistant"
+  ],
+  "appendix_claim": "Transfer is supported if source removal lowers source-authority wrong-rate in system/RAG contexts while assistant removal remains flat and user removal is weaker/off-target."
+}

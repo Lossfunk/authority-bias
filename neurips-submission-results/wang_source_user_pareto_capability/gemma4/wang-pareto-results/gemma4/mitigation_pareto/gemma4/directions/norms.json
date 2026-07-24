@@ -1,0 +1,28 @@
+{
+  "rows": [
+    {
+      "layer": 18,
+      "source_position": "endorsement_mean",
+      "authority_norm": 1.0,
+      "assistant_norm": 1.0000001192092896,
+      "residualized_norm": 0.9999999403953552,
+      "cos_authority_assistant": -0.15762056410312653
+    },
+    {
+      "layer": 20,
+      "source_position": "endorsement_mean",
+      "authority_norm": 1.0,
+      "assistant_norm": 1.0000003576278687,
+      "residualized_norm": 0.9999998211860657,
+      "cos_authority_assistant": -0.11228659003973007
+    },
+    {
+      "layer": 22,
+      "source_position": "endorsement_mean",
+      "authority_norm": 1.0,
+      "assistant_norm": 1.000000238418579,
+      "residualized_norm": 1.0,
+      "cos_authority_assistant": -0.028262123465538025
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "model": "gpt_oss",
+  "layer": 18,
+  "position": "endorsement_end",
+  "direction_path": "/home/persona-vectors/neurips-results/gpt-oss/mechanism/gpt_oss_compliance_analysis/primary_direction.pt",
+  "va_plane_path": "/home/persona-vectors/neurips-results/gpt-oss/mechanism/lexical_va_plane/va_plane.pt",
+  "authority_norm": 1.0,
+  "authority_affect_residual_norm": 0.9987861514091492,
+  "authority_affect_component_norm": 0.04925883933901787,
+  "authority_affect_component_norm_fraction": 0.04925883933901787,
+  "basis_rows": 2,
+  "basis_dim": 2880
+}

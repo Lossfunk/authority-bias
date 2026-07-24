@@ -1,0 +1,51 @@
+{
+  "summary": [
+    {
+      "config_id": "mmlu_pro_subtract_L10_answer_position",
+      "alpha": 0.0,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 300,
+      "parse_rate": 1.0,
+      "accuracy": 0.3466666666666667
+    },
+    {
+      "config_id": "mmlu_pro_subtract_L10_answer_position",
+      "alpha": 1.0,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 300,
+      "parse_rate": 1.0,
+      "accuracy": 0.34
+    },
+    {
+      "config_id": "mmlu_pro_subtract_L16_answer_position",
+      "alpha": 0.0,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 300,
+      "parse_rate": 1.0,
+      "accuracy": 0.3466666666666667
+    },
+    {
+      "config_id": "mmlu_pro_subtract_L16_answer_position",
+      "alpha": 1.0,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 300,
+      "parse_rate": 1.0,
+      "accuracy": 0.3466666666666667
+    }
+  ],
+  "model": "allenai/OLMo-2-0325-32B-Instruct",
+  "layers": [
+    10,
+    16
+  ],
+  "task": "mmlu_pro",
+  "answer_suffix": "Do not explain. Do not show reasoning. Output exactly one option letter and nothing else.",
+  "max_new_tokens": 256,
+  "batch_size": 16,
+  "max_batch_tokens": 65536,
+  "elapsed_seconds": 182.73
+}

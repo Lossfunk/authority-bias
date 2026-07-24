@@ -1,0 +1,41 @@
+{
+  "experiment": "exp23_authority_transfer_contexts",
+  "created_unix": 1778122446.2121618,
+  "execute": true,
+  "seed": 20260506,
+  "fold": "fold0",
+  "models": {
+    "olmo31": {
+      "model_id": "allenai/OLMo-3.1-32B-Instruct",
+      "layers": [
+        15,
+        18,
+        22
+      ],
+      "folds": {
+        "fold0": {
+          "output_dir": "neurips-results/exp23/authority_transfer_contexts/olmo31/fold0",
+          "summary_path": "neurips-results/exp23/authority_transfer_contexts/olmo31/fold0/authority_transfer_summary.json",
+          "elapsed_seconds": 1796.08
+        }
+      }
+    }
+  },
+  "protocol": {
+    "fit": "Fit source/user directions on standard note prompts using train_uids only.",
+    "eval": "Evaluate same directions on held-out system and RAG transfer prompts.",
+    "split": "mask_primary_w1 seeded 50/50; fold1 swaps fold0 train/eval.",
+    "primary_success": "source-vector removal selectively reduces source authority transfer prompts more than user/assistant controls."
+  },
+  "speedups": {
+    "nohup_safe": true,
+    "uv": "intended launcher uses uv run python -m src.exp23.run_authority_transfer_contexts --execute",
+    "dynamic_token_batches": true,
+    "torch_compile": false,
+    "env": {
+      "USE_HUB_KERNELS": "NO",
+      "TOKENIZERS_PARALLELISM": "false",
+      "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True"
+    }
+  }
+}

@@ -11,9 +11,8 @@ Run::
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
-from typing import Dict, List, Sequence
+from typing import Dict, List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -24,85 +23,90 @@ from matplotlib.patches import PathPatch
 from src.paper_figures.axis_theme import AXIS, apply_axis_theme, save_fig
 
 
-RESULTS_JSON = Path("neurips-results/_shared/dynamic_parser_all_runs.json")
 OUTPUT_DIR = Path("figures/neurips/v2/final")
 FONT_DIR = Path("/Users/majortimberwolf/Library/Fonts")
 
 
-# Qwen-3.5-27B does not have a dissociation run in the shared index yet —
-# pull the numbers from the authoritative-verified H100 re-parse
-# (`qwen35/authoritative_verified_shared_h100/dynamic_parser_recomputed_summary.md`):
-#   N0 acc (parsed) 74.94%, W1 acc (parsed) 49.70%, flip rate 44.87% (608/1355).
-QWEN_FREEGEN = {
-    "n0_acc": 0.7494,
-    "w1_acc": 0.4970,
-    "flip": 0.4487,
-}
-
-
-MODELS: List[Dict] = [
+# Hard-coded plotting data for the final NeurIPS hero figure.
+#
+# Units:
+#   - n0_acc / w1_acc / flip are percentages, not fractions.
+#   - n0_correct is the denominator for the flip-rate Wilson interval.
+#   - w1_flips is the numerator for the flip-rate Wilson interval.
+#
+# The first four entries form the top row; the remaining entries form the
+# lower row.  This keeps open-weight models on top and the closed-source
+# frontier models on the lower row.
+HERO_ROWS: List[Dict] = [
     {
-        "label": "OLMo-2-32B",
-        "run_key": "allenai/OLMo-2-0325-32B-Instruct::v2_olmo2_freegen",
+        "label": "OLMo-3.1-32B",
+        "n0_acc": 46.83,
+        "w1_acc": 9.49,
+        "flip": 82.88,
+        "n0_correct": 146,
+        "w1_flips": 121,
     },
     {
         "label": "GPT-oss-20B",
-        "run_key": "openai/gpt-oss-20b::v2_gpt_oss_freegen",
+        "n0_acc": 77.06766917293233,
+        "w1_acc": 28.085642317380355,
+        "flip": 65.359477124183,
+        "n0_correct": 612,
+        "w1_flips": 400,
     },
     {
         "label": "Gemma-4-26B",
-        "run_key": "google/gemma-4-26B-A4B-it::gemma4__no_thinking_freegen_merged_authoritative",
+        "n0_acc": 90.02320185614849,
+        "w1_acc": 33.21799307958477,
+        "flip": 62.87978863936592,
+        "n0_correct": 757,
+        "w1_flips": 476,
     },
     {
         "label": "Qwen-3.5-27B",
-        "run_key": "__qwen_manual__",
+        "n0_acc": 74.94,
+        "w1_acc": 49.70,
+        "flip": 44.87,
+        "n0_correct": 1355,
+        "w1_flips": 608,
     },
     {
         "label": "GPT-5.4",
-        "run_key": "openai/gpt-5.4::gpt54_native_pool_staged",
+        "n0_acc": 91.87219730941703,
+        "w1_acc": 57.36102626756261,
+        "flip": 42.61992619926199,
+        "n0_correct": 1626,
+        "w1_flips": 693,
     },
     {
         "label": "Grok-4.20",
-        "run_key": "x-ai/grok-4.20::grok__grok420_dissociation_freegen",
-    },
-    {
-        "label": "Gemini-3.1-Pro",
-        "run_key": "google/gemini-3.1-pro-preview::gemini31pro__dissociation_freegen",
+        "n0_acc": 90.65420560747664,
+        "w1_acc": 11.078199052132701,
+        "flip": 87.4829001367989,
+        "n0_correct": 1462,
+        "w1_flips": 1279,
     },
 ]
 
 
 # Fig-3 palette: charcoal / warm gray / terracotta.
-BAR_N0 = "#3B3734"     # near-black, baseline accuracy
-BAR_W1 = "#BFB8AD"     # warm gray, accuracy under W1
-BAR_FLIP = "#C76E6A"   # red / terracotta, the headline bar
+BAR_N0 = "#3B3734"       # near-black, normalized baseline-correct set
+BAR_W1 = "#BFB8AD"       # warm gray, remains correct under W1
+ARROW_FLIP = "#C76E6A"   # red / terracotta, right-to-wrong decrease arrow
 
 BASELINE_RULE = "#8F8780"
 INK = "#2A2724"
 INK_SOFT = "#5F5954"
 
 
-def _compile(run: dict) -> Dict[str, float]:
-    return {
-        "n0_acc": float(run.get("n0_acc") or 0.0) * 100.0,
-        "w1_acc": float(run.get("w1_acc") or 0.0) * 100.0,
-        "flip": float(run.get("flip_rate") or 0.0) * 100.0,
-    }
-
-
-def _collect(models: Sequence[Dict], runs: Dict[str, dict]) -> List[Dict]:
-    out: List[Dict] = []
-    for m in models:
-        if m["run_key"] == "__qwen_manual__":
-            out.append({
-                **m,
-                "n0_acc": QWEN_FREEGEN["n0_acc"] * 100.0,
-                "w1_acc": QWEN_FREEGEN["w1_acc"] * 100.0,
-                "flip":   QWEN_FREEGEN["flip"]   * 100.0,
-            })
-        else:
-            out.append({**m, **_compile(runs.get(m["run_key"], {}))})
-    return out
+def _wilson_ci_pct(k: int, n: int, z: float = 1.959963984540054) -> tuple[float, float]:
+    if n <= 0:
+        return (0.0, 0.0)
+    phat = k / n
+    denom = 1.0 + z * z / n
+    centre = (phat + z * z / (2.0 * n)) / denom
+    half = z * np.sqrt((phat * (1.0 - phat) + z * z / (4.0 * n)) / n) / denom
+    return 100.0 * max(0.0, centre - half), 100.0 * min(1.0, centre + half)
 
 
 def _round_bar(
@@ -113,6 +117,9 @@ def _round_bar(
     color: str,
     label_fs: float = 8.2,
     corner_frac: float = 0.05,
+    bottom: float = 0.0,
+    label: str | None = None,
+    label_y: float | None = None,
 ) -> None:
     """Fig-3 style bar: flat bottom, rounded top corners only.
 
@@ -125,8 +132,8 @@ def _round_bar(
 
     x0 = x - width / 2.0
     x1 = x + width / 2.0
-    y0 = 0.0
-    y1 = height
+    y0 = bottom
+    y1 = bottom + height
 
     # Aspect-aware corner radius: in data units we multiply the x-radius
     # by the axes aspect so the top appears circular on the rendered
@@ -192,34 +199,118 @@ def _round_bar(
     )
     ax.add_patch(patch)
 
-    # Value label
-    ax.text(
-        x,
-        height + 1.8,
-        f"{height:.0f}",
-        ha="center",
-        va="bottom",
-        fontsize=label_fs,
-        color=INK_SOFT,
-        fontweight="normal",
-    )
+    if label is not None:
+        ax.text(
+            x,
+            (y1 + 1.8) if label_y is None else label_y,
+            label,
+            ha="center",
+            va="bottom",
+            fontsize=label_fs,
+            color=INK_SOFT,
+            fontweight="normal",
+            linespacing=1.05,
+        )
 
 
 def _draw_group(
     ax: plt.Axes, centre: float, row: Dict, bar_width: float, gap: float
 ) -> None:
-    triples = [
-        (-1, row["n0_acc"], BAR_N0),
-        (0,  row["w1_acc"], BAR_W1),
-        (1,  row["flip"],   BAR_FLIP),
-    ]
-    for slot, value, color in triples:
-        x = centre + slot * (bar_width + gap)
-        _round_bar(ax, x, value, bar_width, color)
+    baseline_x = centre - (bar_width * 0.78 + gap)
+    outcome_x = centre + (bar_width * 0.78 + gap)
+    flip = float(row["flip"])
+    retained = max(0.0, 100.0 - flip)
+    flip_ci_lo, flip_ci_hi = _wilson_ci_pct(int(row["w1_flips"]), int(row["n0_correct"]))
+    retained_ci_lo = max(0.0, 100.0 - flip_ci_hi)
+    retained_ci_hi = min(100.0, 100.0 - flip_ci_lo)
+
+    _round_bar(
+        ax,
+        baseline_x,
+        100.0,
+        bar_width,
+        BAR_N0,
+        label=f"100\n({row['n0_acc']:.0f}% of all)",
+        label_fs=9.6,
+    )
+    _round_bar(
+        ax,
+        outcome_x,
+        retained,
+        bar_width,
+        BAR_W1,
+        label=f"{retained:.0f}",
+        label_fs=9.6,
+    )
+    ax.errorbar(
+        outcome_x,
+        retained,
+        yerr=[[max(0.0, retained - retained_ci_lo)], [max(0.0, retained_ci_hi - retained)]],
+        fmt="none",
+        ecolor="#7E766E",
+        elinewidth=0.75,
+        capsize=2.4,
+        capthick=0.75,
+        zorder=5,
+    )
+    arrow_x = outcome_x + bar_width * 0.52
+    arrow_top = 99.5
+    arrow_bottom = max(retained + 1.4, 2.0)
+    if flip >= 3.0:
+        # Use an editable text glyph rather than a Matplotlib arrow patch.
+        # This keeps the SVG easy to select and move in Figma.
+        ax.text(
+            arrow_x,
+            (arrow_top + arrow_bottom) / 2,
+            "↓",
+            ha="center",
+            va="center",
+            fontsize=28,
+            color=ARROW_FLIP,
+            fontweight="medium",
+            zorder=5,
+        )
+        label_y = max((arrow_top + arrow_bottom) / 2, retained + 8)
+        ax.text(
+            arrow_x + 0.045,
+            label_y,
+            f"{flip:.0f}% flip",
+            ha="left",
+            va="center",
+            fontsize=9.0,
+            color=ARROW_FLIP,
+            fontweight="medium",
+            zorder=6,
+        )
+    else:
+        ax.text(
+            arrow_x,
+            99.0,
+            "–",
+            ha="center",
+            va="center",
+            fontsize=15,
+            color=ARROW_FLIP,
+            fontweight="medium",
+            zorder=5,
+        )
+        ax.text(
+            arrow_x + 0.045,
+            99.0,
+            f"{flip:.0f}% flip",
+            ha="left",
+            va="center",
+            fontsize=9.0,
+            color=ARROW_FLIP,
+            fontweight="medium",
+            zorder=6,
+        )
 
 
 def main() -> None:
     apply_axis_theme()
+    # Keep SVG text as editable <text> nodes for Figma/Illustrator workflows.
+    plt.rcParams["svg.fonttype"] = "none"
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     for font_path in (
@@ -231,19 +322,7 @@ def main() -> None:
         if font_path.exists():
             font_manager.fontManager.addfont(str(font_path))
 
-    runs = json.loads(RESULTS_JSON.read_text())
-    rows = _collect(MODELS, runs)
-
-    # Geometry — tighter than before, Fig-3 vibe.
-    bar_width = 0.29
-    gap = 0.018
-    model_span = 3 * bar_width + 2 * gap
-    inter_model = 0.72
-    step = model_span + inter_model
-    centres = np.arange(len(rows)) * step
-
-    x_min = centres[0] - model_span / 2 - 0.35
-    x_max = centres[-1] + model_span / 2 + 0.35
+    rows = HERO_ROWS
 
     plt.rcParams["font.family"] = "sans-serif"
     plt.rcParams["font.sans-serif"] = [
@@ -255,69 +334,99 @@ def main() -> None:
         "Arial",
         "DejaVu Sans",
     ]
-    fig = plt.figure(figsize=(12.4, 4.2))
+    fig = plt.figure(figsize=(6.8, 4.9))
     fig.patch.set_facecolor("white")
-    ax = fig.add_axes([0.045, 0.12, 0.93, 0.73])
-    ax.set_facecolor("white")
+    axes = [
+        fig.add_axes([0.105, 0.54, 0.86, 0.31]),
+        fig.add_axes([0.105, 0.14, 0.86, 0.31]),
+    ]
 
-    ax.set_xlim(x_min, x_max)
-    ax.set_ylim(0, 106)
+    row_chunks = [rows[:4], rows[4:]]
+    for ax, chunk in zip(axes, row_chunks):
+        # Geometry: four models per row so the final TeX figure remains readable.
+        bar_width = 0.33
+        gap = 0.12
+        model_span = 2 * bar_width + gap
+        inter_model = 0.74
+        step = model_span + inter_model
+        centres = np.arange(len(chunk)) * step
+        x_min = centres[0] - model_span / 2 - 0.22
+        x_max = centres[-1] + model_span / 2 + 0.34
 
-    for xi, row in zip(centres, rows):
-        _draw_group(ax, xi, row, bar_width, gap)
+        ax.set_facecolor("white")
+        ax.set_xlim(x_min, x_max)
+        ax.set_ylim(0, 112)
 
-    # Per-group baseline rule across the bar group (Fig-3 signature).
-    half_span = model_span / 2 + 0.16
-    for xi in centres:
-        ax.plot(
-            [xi - half_span, xi + half_span],
-            [0, 0],
-            color=BASELINE_RULE,
-            linewidth=0.7,
-            zorder=2,
-            solid_capstyle="butt",
-        )
+        for xi, row in zip(centres, chunk):
+            _draw_group(ax, xi, row, bar_width, gap)
 
-    # Model labels
-    ax.set_xticks(centres)
-    ax.set_xticklabels([row["label"] for row in rows], fontsize=8.8, color="#4A453F", fontweight="medium")
-    ax.tick_params(axis="x", length=0, pad=8)
+        half_span = model_span / 2 + 0.14
+        for xi in centres:
+            ax.plot(
+                [xi - half_span, xi + half_span],
+                [0, 0],
+                color=BASELINE_RULE,
+                linewidth=0.7,
+                zorder=2,
+                solid_capstyle="butt",
+            )
 
-    # Strip y-axis chrome — Fig 3 has no y ticks, no grid, no spines.
-    ax.set_yticks([])
-    for side in ("top", "right", "left", "bottom"):
-        ax.spines[side].set_visible(False)
+        ax.set_xticks(centres)
+        ax.set_xticklabels([row["label"] for row in chunk], fontsize=9.2, color="#4A453F", fontweight="medium")
+        ax.tick_params(axis="x", length=0, pad=5)
+        ax.set_yticks([0, 50, 100])
+        ax.set_yticklabels(["0", "50", "100"], fontsize=8.6, color="#7A736C")
+        ax.yaxis.grid(True, color="#EEEAE4", linewidth=0.7, zorder=0)
+        ax.tick_params(axis="y", length=0, pad=4)
+        for side in ("top", "right", "bottom"):
+            ax.spines[side].set_visible(False)
+        ax.spines["left"].set_color("#D8D1C8")
+        ax.spines["left"].set_linewidth(0.7)
+
+    fig.text(
+        0.035,
+        0.48,
+        "% of baseline-correct answers",
+        rotation=90,
+        va="center",
+        ha="center",
+        fontsize=9.4,
+        color=INK_SOFT,
+    )
 
     # Inline legend, top-right, no frame.
     handles = [
         plt.Rectangle((0, 0), 1, 1, facecolor=BAR_N0,  edgecolor="none"),
         plt.Rectangle((0, 0), 1, 1, facecolor=BAR_W1,  edgecolor="none"),
-        plt.Rectangle((0, 0), 1, 1, facecolor=BAR_FLIP, edgecolor="none"),
+        plt.Line2D([0], [0], color=ARROW_FLIP, marker=r"$\downarrow$", markersize=8, linewidth=1.2),
     ]
     labels = [
-        "Baseline accuracy (N0)",
-        "Accuracy under wrong endorsement (W1)",
-        "Right-to-wrong flip rate",
+        "Baseline-correct = 100",
+        "Still correct under wrong cue",
+        "Flip to wrong answer",
     ]
     leg = fig.legend(
         handles,
         labels,
         loc="upper center",
-        bbox_to_anchor=(0.5, 0.93),
+        bbox_to_anchor=(0.5, 0.955),
         ncol=3,
         frameon=False,
-        fontsize=7.9,
-        handlelength=0.95,
-        handleheight=0.75,
-        handletextpad=0.45,
-        labelspacing=0.22,
-        columnspacing=1.55,
+        fontsize=8.8,
+        handlelength=1.05,
+        handleheight=0.8,
+        handletextpad=0.48,
+        labelspacing=0.35,
+        columnspacing=1.15,
         borderpad=0.0,
     )
     for txt in leg.get_texts():
         txt.set_color(INK_SOFT)
 
-    save_fig(fig, "hero_behavioral_override", OUTPUT_DIR)
+    paths = save_fig(fig, "hero_behavioral_override", OUTPUT_DIR)
+    for path in paths:
+        if path.suffix == ".svg":
+            path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
     print("Saved hero_behavioral_override.*")
 
 

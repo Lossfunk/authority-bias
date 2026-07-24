@@ -1,0 +1,80 @@
+[
+  {
+    "config_id": "cfg001_L18_Pnote_end_Cblock_output_Mproject_out_direction",
+    "alpha": 0.0,
+    "condition": "C1_note",
+    "total": 512,
+    "parsed": 512,
+    "parse_rate": 1.0,
+    "accuracy": 0.978515625,
+    "wrong_rate": 0.021484375,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L18_Pnote_end_Cblock_output_Mproject_out_direction",
+    "alpha": 0.0,
+    "condition": "N0_note",
+    "total": 512,
+    "parsed": 509,
+    "parse_rate": 0.994140625,
+    "accuracy": 0.888015717092338,
+    "wrong_rate": 0.11198428290766209,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L18_Pnote_end_Cblock_output_Mproject_out_direction",
+    "alpha": 0.0,
+    "condition": "W1_note",
+    "total": 512,
+    "parsed": 512,
+    "parse_rate": 1.0,
+    "accuracy": 0.4296875,
+    "wrong_rate": 0.5703125,
+    "flip_rate": 0.5703125,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L18_Pnote_end_Cblock_output_Mproject_out_direction",
+    "alpha": 1.0,
+    "condition": "C1_note",
+    "total": 512,
+    "parsed": 512,
+    "parse_rate": 1.0,
+    "accuracy": 0.978515625,
+    "wrong_rate": 0.021484375,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L18_Pnote_end_Cblock_output_Mproject_out_direction",
+    "alpha": 1.0,
+    "condition": "N0_note",
+    "total": 512,
+    "parsed": 511,
+    "parse_rate": 0.998046875,
+    "accuracy": 0.8845401174168297,
+    "wrong_rate": 0.11545988258317025,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L18_Pnote_end_Cblock_output_Mproject_out_direction",
+    "alpha": 1.0,
+    "condition": "W1_note",
+    "total": 512,
+    "parsed": 511,
+    "parse_rate": 0.998046875,
+    "accuracy": 0.436399217221135,
+    "wrong_rate": 0.5636007827788649,
+    "flip_rate": 0.5636007827788649,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  }
+]

@@ -1,0 +1,13 @@
+import os, subprocess
+print("== olmo31 log tail ==")
+print(subprocess.run(["bash","-lc","tail -n 80 persona-vectors/logs/exp19_ab_project_out_allcond_olmo31.log"], capture_output=True, text=True).stdout)
+print("\n== search assistant_axis*.pt anywhere ==")
+print(subprocess.run(["bash","-lc","find persona-vectors -maxdepth 6 -name 'assistant_axis*.pt' -type f 2>/dev/null"], capture_output=True, text=True).stdout)
+print("\n== search primary_direction.pt or directions.pt ==")
+print(subprocess.run(["bash","-lc","find persona-vectors -maxdepth 6 -name 'primary_direction.pt' -o -name 'directions.pt' 2>/dev/null"], capture_output=True, text=True).stdout)
+print("\n== search gpt_oss/gemma4 mechanism deeper ==")
+print(subprocess.run(["bash","-lc","find persona-vectors/neurips-results/gpt-oss persona-vectors/neurips-results/gemma4 -maxdepth 5 -name '*.pt' -type f 2>/dev/null | head -50"], capture_output=True, text=True).stdout)
+print("\n== external/assistant-axis ==")
+print(subprocess.run(["bash","-lc","ls -la persona-vectors/external/assistant-axis 2>/dev/null && find persona-vectors/external -maxdepth 5 -name '*.pt' 2>/dev/null"], capture_output=True, text=True).stdout)
+print("\n== check gpt_oss/gemma authority_activations for activations.pt + metadata.jsonl ==")
+print(subprocess.run(["bash","-lc","ls -la persona-vectors/neurips-results/gpt-oss/mechanism/gpt_oss_authority_activations persona-vectors/neurips-results/gemma4/mechanism/gemma4_authority_activations_no_thinking persona-vectors/neurips-results/gemma4/mechanism/gemma4_authority_activations 2>/dev/null"], capture_output=True, text=True).stdout)

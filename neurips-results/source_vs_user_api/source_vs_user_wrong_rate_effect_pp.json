@@ -1,0 +1,80 @@
+[
+  {
+    "model": "gpt54",
+    "condition": "source_verified",
+    "n0_wrong_rate": 0.08127802690582964,
+    "w1_wrong_rate": 0.4263897373243739,
+    "effect_wrong_rate_pp": 34.511171041854425,
+    "n0_accuracy": 0.9187219730941704,
+    "w1_accuracy": 0.5736102626756261,
+    "c1_accuracy": 0.9993887530562348,
+    "parsed_all3": 1626,
+    "n0_parsed": 1784,
+    "w1_parsed": 1637
+  },
+  {
+    "model": "gpt54",
+    "condition": "user_domain_expert",
+    "n0_wrong_rate": 0.08244531688166012,
+    "w1_wrong_rate": 0.0518973214285714,
+    "effect_wrong_rate_pp": -3.0547995453088728,
+    "n0_accuracy": 0.9175546831183399,
+    "w1_accuracy": 0.9481026785714286,
+    "c1_accuracy": 0.9137254901960784,
+    "parsed_all3": 1773,
+    "n0_parsed": 1783,
+    "w1_parsed": 1792
+  },
+  {
+    "model": "grok420",
+    "condition": "source_verified",
+    "n0_wrong_rate": 0.09345794392523366,
+    "w1_wrong_rate": 0.889218009478673,
+    "effect_wrong_rate_pp": 79.57600655534394,
+    "n0_accuracy": 0.9065420560747663,
+    "w1_accuracy": 0.11078199052132702,
+    "c1_accuracy": 0.988351776354106,
+    "parsed_all3": 1608,
+    "n0_parsed": 1712,
+    "w1_parsed": 1688
+  },
+  {
+    "model": "grok420",
+    "condition": "user_domain_expert",
+    "n0_wrong_rate": 0.09709302325581393,
+    "w1_wrong_rate": 0.10494931425163978,
+    "effect_wrong_rate_pp": 0.7856290995825854,
+    "n0_accuracy": 0.9029069767441861,
+    "w1_accuracy": 0.8950506857483602,
+    "c1_accuracy": 0.934319526627219,
+    "parsed_all3": 1638,
+    "n0_parsed": 1720,
+    "w1_parsed": 1677
+  },
+  {
+    "model": "gemini31pro",
+    "condition": "source_verified",
+    "n0_wrong_rate": 0.01804123711340211,
+    "w1_wrong_rate": 0.01721170395869187,
+    "effect_wrong_rate_pp": -0.0829533154710238,
+    "n0_accuracy": 0.9819587628865979,
+    "w1_accuracy": 0.9827882960413081,
+    "c1_accuracy": 0.9844425237683665,
+    "parsed_all3": 1154,
+    "n0_parsed": 1164,
+    "w1_parsed": 1162
+  },
+  {
+    "model": "gemini31pro",
+    "condition": "user_domain_expert",
+    "n0_wrong_rate": 0.032596685082872945,
+    "w1_wrong_rate": 0.018784530386740328,
+    "effect_wrong_rate_pp": -1.3812154696132617,
+    "n0_accuracy": 0.967403314917127,
+    "w1_accuracy": 0.9812154696132597,
+    "c1_accuracy": 0.96843853820598,
+    "parsed_all3": 1803,
+    "n0_parsed": 1810,
+    "w1_parsed": 1810
+  }
+]

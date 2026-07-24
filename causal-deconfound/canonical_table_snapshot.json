@@ -1,0 +1,105 @@
+{
+  "title": "Canonical causal-deconfound table snapshot",
+  "note": "Values transcribed from the accepted five-model assistant-axis causal deconfound table; raw source folders retained below.",
+  "sources": {
+    "qwen35": "causal-deconfound/qwen35_ab_project_out_allcond/qwen35",
+    "gpt_oss": "causal-deconfound/principled_correction_w1/gpt_oss",
+    "gemma4": "causal-deconfound/principled_correction_w1/gemma4",
+    "olmo2": "causal-deconfound/principled_correction_w1/olmo2",
+    "olmo31": "causal-deconfound/principled_correction_w1/olmo31"
+  },
+  "factual_qa": [
+    {
+      "rank": 1,
+      "model": "Qwen3.5",
+      "baseline_w1_wrong": 0.394,
+      "remove_authority_delta_pp": -33.1,
+      "remove_authority_wrong": 0.063,
+      "remove_assistant_delta_pp": 1.0,
+      "remove_residualized_authority_delta_pp": -33.6
+    },
+    {
+      "rank": 2,
+      "model": "OLMo-2",
+      "baseline_w1_wrong": 0.839,
+      "remove_authority_delta_pp": -20.8,
+      "remove_authority_wrong": 0.631,
+      "remove_assistant_delta_pp": 1.1,
+      "remove_residualized_authority_delta_pp": -21.1
+    },
+    {
+      "rank": 3,
+      "model": "OLMo-3.1",
+      "baseline_w1_wrong": 0.816,
+      "remove_authority_delta_pp": -19.8,
+      "remove_authority_wrong": 0.618,
+      "remove_assistant_delta_pp": 0.1,
+      "remove_residualized_authority_delta_pp": -20.1
+    },
+    {
+      "rank": 4,
+      "model": "GPT-OSS",
+      "baseline_w1_wrong": 0.569,
+      "remove_authority_delta_pp": -16.7,
+      "remove_authority_wrong": 0.402,
+      "remove_assistant_delta_pp": 0.5,
+      "remove_residualized_authority_delta_pp": -16.4
+    },
+    {
+      "rank": 5,
+      "model": "Gemma-4",
+      "baseline_w1_wrong": 0.578,
+      "remove_authority_delta_pp": -2.7,
+      "remove_authority_wrong": 0.551,
+      "remove_assistant_delta_pp": -2.9,
+      "remove_residualized_authority_delta_pp": -3.4
+    }
+  ],
+  "piqa": [
+    {
+      "rank": 1,
+      "model": "Qwen3.5",
+      "baseline_w1_wrong": 0.587,
+      "remove_authority_delta_pp": -53.3,
+      "remove_authority_wrong": 0.053,
+      "remove_assistant_delta_pp": 0.4,
+      "remove_residualized_authority_delta_pp": -54.2
+    },
+    {
+      "rank": 2,
+      "model": "OLMo-2",
+      "baseline_w1_wrong": 0.89,
+      "remove_authority_delta_pp": -20.1,
+      "remove_authority_wrong": 0.689,
+      "remove_assistant_delta_pp": 0.0,
+      "remove_residualized_authority_delta_pp": -20.2
+    },
+    {
+      "rank": 3,
+      "model": "OLMo-3.1",
+      "baseline_w1_wrong": 0.961,
+      "remove_authority_delta_pp": -18.7,
+      "remove_authority_wrong": 0.774,
+      "remove_assistant_delta_pp": 1.4,
+      "remove_residualized_authority_delta_pp": -19.5
+    },
+    {
+      "rank": 4,
+      "model": "GPT-OSS",
+      "baseline_w1_wrong": 0.865,
+      "remove_authority_delta_pp": -14.8,
+      "remove_authority_wrong": 0.717,
+      "remove_assistant_delta_pp": 0.3,
+      "remove_residualized_authority_delta_pp": -14.6
+    },
+    {
+      "rank": 5,
+      "model": "Gemma-4",
+      "baseline_w1_wrong": 0.971,
+      "remove_authority_delta_pp": 0.0,
+      "remove_authority_wrong": 0.971,
+      "remove_assistant_delta_pp": 0.6,
+      "remove_residualized_authority_delta_pp": 0.0
+    }
+  ]
+}

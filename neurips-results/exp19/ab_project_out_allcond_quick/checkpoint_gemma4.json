@@ -1,0 +1,197 @@
+{
+  "models": {
+    "gemma4": {
+      "derived_directions": {
+        "authority": "neurips-results/exp19/ab_project_out_allcond_quick/gemma4/directions/authority.pt",
+        "assistant": "neurips-results/exp19/ab_project_out_allcond_quick/gemma4/directions/assistant_axis.pt",
+        "residualized": "neurips-results/exp19/ab_project_out_allcond_quick/gemma4/directions/authority_residualized.pt"
+      },
+      "runs": [
+        {
+          "task": "trivia",
+          "variant": "authority",
+          "module": "src.exp16.run_steering_test",
+          "args": [
+            "--model",
+            "google/gemma-4-26B-A4B-it",
+            "--direction-path",
+            "neurips-results/exp19/ab_project_out_allcond_quick/gemma4/directions/authority.pt",
+            "--direction-key",
+            "vector",
+            "--dataset-path",
+            "data/exp7_mc_dataset.jsonl",
+            "--masks-path",
+            "/home/persona-vectors/neurips-results/gemma4/mechanism/gemma4_authority_activations_no_thinking/label_masks.json",
+            "--uids-subset",
+            "w1",
+            "--conditions",
+            "N0_note,W1_note,C1_note",
+            "--target-layers",
+            "22",
+            "--position-modes",
+            "endorsement_span",
+            "--components",
+            "block_output",
+            "--intervention-mode",
+            "project_out_direction",
+            "--norm-scaling",
+            "none",
+            "--alphas",
+            "0,1.0",
+            "--max-new-tokens",
+            "256",
+            "--batch-size",
+            "4",
+            "--answer-suffix",
+            "Answer the question in one short sentence using the full answer text, not option letters.",
+            "--output-dir",
+            "neurips-results/exp19/ab_project_out_allcond_quick/gemma4/trivia_authority",
+            "--max-items",
+            "200",
+            "--no-compile"
+          ],
+          "returncode": 0
+        },
+        {
+          "task": "trivia",
+          "variant": "assistant",
+          "module": "src.exp16.run_steering_test",
+          "args": [
+            "--model",
+            "google/gemma-4-26B-A4B-it",
+            "--direction-path",
+            "neurips-results/exp19/ab_project_out_allcond_quick/gemma4/directions/assistant_axis.pt",
+            "--direction-key",
+            "vector",
+            "--dataset-path",
+            "data/exp7_mc_dataset.jsonl",
+            "--masks-path",
+            "/home/persona-vectors/neurips-results/gemma4/mechanism/gemma4_authority_activations_no_thinking/label_masks.json",
+            "--uids-subset",
+            "w1",
+            "--conditions",
+            "N0_note,W1_note,C1_note",
+            "--target-layers",
+            "22",
+            "--position-modes",
+            "endorsement_span",
+            "--components",
+            "block_output",
+            "--intervention-mode",
+            "project_out_direction",
+            "--norm-scaling",
+            "none",
+            "--alphas",
+            "1",
+            "--max-new-tokens",
+            "256",
+            "--batch-size",
+            "4",
+            "--answer-suffix",
+            "Answer the question in one short sentence using the full answer text, not option letters.",
+            "--output-dir",
+            "neurips-results/exp19/ab_project_out_allcond_quick/gemma4/trivia_assistant",
+            "--max-items",
+            "200",
+            "--no-compile"
+          ],
+          "returncode": 0
+        },
+        {
+          "task": "trivia",
+          "variant": "residualized",
+          "module": "src.exp16.run_steering_test",
+          "args": [
+            "--model",
+            "google/gemma-4-26B-A4B-it",
+            "--direction-path",
+            "neurips-results/exp19/ab_project_out_allcond_quick/gemma4/directions/authority_residualized.pt",
+            "--direction-key",
+            "vector",
+            "--dataset-path",
+            "data/exp7_mc_dataset.jsonl",
+            "--masks-path",
+            "/home/persona-vectors/neurips-results/gemma4/mechanism/gemma4_authority_activations_no_thinking/label_masks.json",
+            "--uids-subset",
+            "w1",
+            "--conditions",
+            "N0_note,W1_note,C1_note",
+            "--target-layers",
+            "22",
+            "--position-modes",
+            "endorsement_span",
+            "--components",
+            "block_output",
+            "--intervention-mode",
+            "project_out_direction",
+            "--norm-scaling",
+            "none",
+            "--alphas",
+            "1",
+            "--max-new-tokens",
+            "256",
+            "--batch-size",
+            "4",
+            "--answer-suffix",
+            "Answer the question in one short sentence using the full answer text, not option letters.",
+            "--output-dir",
+            "neurips-results/exp19/ab_project_out_allcond_quick/gemma4/trivia_residualized",
+            "--max-items",
+            "200",
+            "--no-compile"
+          ],
+          "returncode": 0
+        }
+      ],
+      "frozen_settings": {
+        "trivia": {
+          "alpha": 1.0,
+          "layer": 22,
+          "condition": "N0_note",
+          "score": 0.07062600321027288,
+          "config_id": "cfg002_L22_Pendorsement_span_Cblock_output_Minterpolate_mean",
+          "source_summary_path": "/home/persona-vectors/neurips-results/gemma4/mechanism/forward_patch_test_256_no_thinking/steering_summary.json",
+          "source": "reference_summary"
+        }
+      },
+      "comparison": {
+        "trivia": {
+          "authority": {
+            "condition": "N0_note",
+            "alpha": 1.0,
+            "layer": 22,
+            "matched_flip_rate": null,
+            "wrong_rate": 0.005050505050505051,
+            "accuracy": 0.9949494949494949,
+            "config_id": "cfg001_L22_Pendorsement_span_Cblock_output_Mproject_out_direction"
+          },
+          "assistant": {
+            "condition": "N0_note",
+            "alpha": 1.0,
+            "layer": 22,
+            "matched_flip_rate": null,
+            "wrong_rate": 0.005025125628140704,
+            "accuracy": 0.9949748743718593,
+            "config_id": "cfg001_L22_Pendorsement_span_Cblock_output_Mproject_out_direction"
+          },
+          "residualized": {
+            "condition": "N0_note",
+            "alpha": 1.0,
+            "layer": 22,
+            "matched_flip_rate": null,
+            "wrong_rate": 0.0,
+            "accuracy": 1.0,
+            "config_id": "cfg001_L22_Pendorsement_span_Cblock_output_Mproject_out_direction"
+          }
+        }
+      },
+      "resolved": {
+        "authority_layer": 22,
+        "authority_position": "endorsement_mean",
+        "trivia_position_mode": "endorsement_span",
+        "piqa_position_mode": "endorsement_span"
+      }
+    }
+  },
+  "execute": true
+}

@@ -1,0 +1,18 @@
+{
+  "source": "nrimsky/CAA datasets/generate/sycophancy/generate_dataset.json",
+  "model": "allenai/OLMo-2-0325-32B-Instruct",
+  "layers": [
+    10,
+    16,
+    22
+  ],
+  "pairs": 300,
+  "batch_size": 16,
+  "max_batch_tokens": 32768,
+  "construction": "mean(pos activation - neg activation) at final token of rendered answer",
+  "raw_norms": {
+    "10": 0.02531551942229271,
+    "16": 0.05377216637134552,
+    "22": 0.12951742112636566
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "n_w1_uids": 56,
+  "n_c1_uids": 88,
+  "disagreements_meta_vs_live": 0,
+  "disagreements_parser_vs_eyeball": 0,
+  "null_parse_counts": {},
+  "w1_cohort_stats": {
+    "n0_correct_true": 56,
+    "w1_flip_true": 47
+  },
+  "c1_cohort_stats": {
+    "n0_correct_true": 0,
+    "c1_correction_true": 78
+  }
+}

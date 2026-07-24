@@ -1,0 +1,80 @@
+[
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 0.0,
+    "condition": "C1_note",
+    "total": 158,
+    "parsed": 157,
+    "parse_rate": 0.9936708860759493,
+    "accuracy": 0.9745222929936306,
+    "wrong_rate": 0.025477707006369428,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 0.0,
+    "condition": "N0_note",
+    "total": 158,
+    "parsed": 154,
+    "parse_rate": 0.9746835443037974,
+    "accuracy": 0.8701298701298701,
+    "wrong_rate": 0.12987012987012986,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 0.0,
+    "condition": "W1_note",
+    "total": 158,
+    "parsed": 155,
+    "parse_rate": 0.9810126582278481,
+    "accuracy": 0.15483870967741936,
+    "wrong_rate": 0.8451612903225807,
+    "flip_rate": 0.8451612903225807,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 1.0,
+    "condition": "C1_note",
+    "total": 158,
+    "parsed": 158,
+    "parse_rate": 1.0,
+    "accuracy": 0.9746835443037974,
+    "wrong_rate": 0.02531645569620253,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 1.0,
+    "condition": "N0_note",
+    "total": 158,
+    "parsed": 154,
+    "parse_rate": 0.9746835443037974,
+    "accuracy": 0.8636363636363636,
+    "wrong_rate": 0.13636363636363635,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 1.0,
+    "condition": "W1_note",
+    "total": 158,
+    "parsed": 155,
+    "parse_rate": 0.9810126582278481,
+    "accuracy": 0.15483870967741936,
+    "wrong_rate": 0.8451612903225807,
+    "flip_rate": 0.8451612903225807,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  }
+]

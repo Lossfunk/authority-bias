@@ -1,0 +1,18 @@
+{
+  "source": "nrimsky/CAA datasets/generate/sycophancy/generate_dataset.json",
+  "model": "google/gemma-4-26B-A4B-it",
+  "layers": [
+    18,
+    20,
+    22
+  ],
+  "pairs": 300,
+  "batch_size": 16,
+  "max_batch_tokens": 32768,
+  "construction": "mean(pos activation - neg activation) at final token of rendered answer",
+  "raw_norms": {
+    "18": 2.1880059242248535,
+    "20": 1.6251192092895508,
+    "22": 1.540868878364563
+  }
+}

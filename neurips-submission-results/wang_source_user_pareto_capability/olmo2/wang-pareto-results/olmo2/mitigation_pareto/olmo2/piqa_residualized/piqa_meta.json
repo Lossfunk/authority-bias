@@ -1,0 +1,40 @@
+{
+  "model": "allenai/OLMo-2-0325-32B-Instruct",
+  "mc_dataset_path": "data/piqa_mc_validation.jsonl",
+  "n_examples_loaded": 1838,
+  "n_eval_uids": 200,
+  "conditions": [
+    "W1_note"
+  ],
+  "n_jobs": 200,
+  "n_batches": 3,
+  "n_configs": 15,
+  "target_layers": [
+    10,
+    16,
+    22
+  ],
+  "single_layer_sweep": true,
+  "components": [
+    "block_output"
+  ],
+  "position_mode": "endorsement_span",
+  "apply_phase": "prompt",
+  "direction_path": "neurips-results/exp20/mitigation_pareto/olmo2/directions/residualized.pt",
+  "direction_key": "vector_by_layer",
+  "direction_position": "endorsement_end",
+  "extraction_dir": "neurips-results/exp20/mitigation_pareto/olmo2/piqa_residualized/__no_extract__",
+  "patch_source_position": "endorsement_end",
+  "patch_source_style": "authoritative_verified",
+  "patch_source_condition": "N0_note",
+  "batch_size": 96,
+  "max_batch_tokens": 98304,
+  "max_new_tokens": 256,
+  "temperature": 0.0,
+  "top_p": 1.0,
+  "top_k": 50,
+  "use_cache": true,
+  "elapsed_seconds": 800.57,
+  "rows_path": "neurips-results/exp20/mitigation_pareto/olmo2/piqa_residualized/piqa_rows.jsonl",
+  "summary_path": "neurips-results/exp20/mitigation_pareto/olmo2/piqa_residualized/piqa_summary.json"
+}

@@ -1,0 +1,40 @@
+{
+  "model": "Qwen/Qwen3.5-27B",
+  "mc_dataset_path": "data/piqa_mc_validation.jsonl",
+  "n_examples_loaded": 1838,
+  "n_eval_uids": 200,
+  "conditions": [
+    "N0_note",
+    "W1_note",
+    "C1_note"
+  ],
+  "n_jobs": 600,
+  "n_batches": 25,
+  "n_configs": 1,
+  "target_layers": [
+    5
+  ],
+  "single_layer_sweep": false,
+  "components": [
+    "block_output"
+  ],
+  "position_mode": "endorsement_span",
+  "apply_phase": "prompt",
+  "direction_path": "neurips-results/exp19/qwen35_ab_project_out_allcond/qwen35/directions/authority_residualized.pt",
+  "direction_key": "vector",
+  "direction_position": "endorsement_end",
+  "extraction_dir": "neurips-results/exp19/qwen35_ab_project_out_allcond/qwen35/piqa_residualized/__no_extract__",
+  "patch_source_position": "endorsement_end",
+  "patch_source_style": "authoritative_verified",
+  "patch_source_condition": "N0_note",
+  "batch_size": 24,
+  "max_batch_tokens": 32768,
+  "max_new_tokens": 256,
+  "temperature": 0.0,
+  "top_p": 1.0,
+  "top_k": 50,
+  "use_cache": true,
+  "elapsed_seconds": 93.93,
+  "rows_path": "neurips-results/exp19/qwen35_ab_project_out_allcond/qwen35/piqa_residualized/piqa_rows.jsonl",
+  "summary_path": "neurips-results/exp19/qwen35_ab_project_out_allcond/qwen35/piqa_residualized/piqa_summary.json"
+}

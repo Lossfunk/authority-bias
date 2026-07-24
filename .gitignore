@@ -68,8 +68,6 @@ AWS-Setup.md
 .cursor/
 experiments/*
 !experiments/
-!experiments/setup_jarvislabs.sh
-!experiments/resume_jarvislabs.sh
 
 # Credentials / secrets
 *.csv
@@ -124,6 +122,26 @@ papers/
 *.zip
 NRC-VAD-Lexicon-v2.1.zip
 .tmp_NRC-VAD-Lexicon-v2.1.zip
+
+# ---------- Generated experiment artifacts ----------
+# Keep compact JSON/Markdown summaries and source code in Git. Regenerate these
+# bulky/raw artifacts locally or on the experiment machines instead.
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.h5
+*.parquet
+*.arrow
+*.jsonl
+*.log
+*.pid
+*.out
 
 # ---------- Local markdown notes ----------
 The Invisible Gulf Red thread.md

@@ -1,0 +1,11 @@
+{
+  "headline_comparison": "For each model/task/config, compare original in-sample headline cell to exp22 held-out eval cell.",
+  "primary_report": [
+    "best in-sample config and effect",
+    "same slot under train-fit/eval-only",
+    "ratio heldout/headline",
+    "median ratio across swept slots",
+    "bootstrap CI over eval UIDs plus across-slot IQR"
+  ],
+  "acceptance_rule_of_thumb": "Headline survives if held-out effect remains within roughly 10-15 percent of original and rank order is stable."
+}

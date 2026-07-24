@@ -1,0 +1,59 @@
+{
+  "execute": true,
+  "alphas": "0,0.25,0.5,0.75,1",
+  "models": {
+    "qwen35": {
+      "layers": [
+        5
+      ],
+      "runs": [
+        {
+          "task": "trivia",
+          "variant": "residualized",
+          "mode": "project_out_direction",
+          "conditions": "N0_note",
+          "returncode": 0
+        },
+        {
+          "task": "piqa",
+          "variant": "residualized",
+          "mode": "project_out_direction",
+          "conditions": "N0_note",
+          "returncode": 0
+        },
+        {
+          "task": "trivia",
+          "variant": "assistant",
+          "mode": "project_out_direction",
+          "conditions": "N0_note",
+          "returncode": 0
+        },
+        {
+          "task": "piqa",
+          "variant": "assistant",
+          "mode": "project_out_direction",
+          "conditions": "N0_note",
+          "returncode": 0
+        },
+        {
+          "task": "trivia",
+          "variant": "caa",
+          "mode": "subtract",
+          "conditions": "N0_note",
+          "returncode": 0
+        },
+        {
+          "task": "piqa",
+          "variant": "caa",
+          "mode": "subtract",
+          "conditions": "N0_note",
+          "returncode": 0
+        }
+      ]
+    }
+  },
+  "notes": {
+    "pareto_axis": "Compare methods at matched W1 reduction, not matched alpha.",
+    "caa": "CAA vector is sycophancy-positive; suppression uses subtract mode."
+  }
+}

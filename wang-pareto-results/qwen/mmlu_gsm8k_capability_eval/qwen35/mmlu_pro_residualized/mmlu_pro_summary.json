@@ -1,0 +1,41 @@
+{
+  "summary": [
+    {
+      "config_id": "mmlu_pro_project_out_direction_L5_answer_position",
+      "alpha": 0.0,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 300,
+      "parse_rate": 1.0,
+      "accuracy": 0.6066666666666667
+    },
+    {
+      "config_id": "mmlu_pro_project_out_direction_L5_answer_position",
+      "alpha": 0.75,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 300,
+      "parse_rate": 1.0,
+      "accuracy": 0.6
+    },
+    {
+      "config_id": "mmlu_pro_project_out_direction_L5_answer_position",
+      "alpha": 1.0,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 297,
+      "parse_rate": 0.99,
+      "accuracy": 0.5959595959595959
+    }
+  ],
+  "model": "Qwen/Qwen3.5-27B",
+  "layers": [
+    5
+  ],
+  "task": "mmlu_pro",
+  "answer_suffix": "Do not explain. Do not show reasoning. Output exactly one option letter and nothing else.",
+  "max_new_tokens": 256,
+  "batch_size": 16,
+  "max_batch_tokens": 65536,
+  "elapsed_seconds": 137.79
+}

@@ -1,0 +1,11 @@
+{
+  "rows": [
+    {
+      "layer": 5,
+      "cos_source_user": 0.9133356809616089,
+      "cos_source_assistant": 0.0038898407947272062,
+      "cos_user_assistant": -0.003606474958360195,
+      "cos_source_resid_user_resid": 0.9133626818656921
+    }
+  ]
+}

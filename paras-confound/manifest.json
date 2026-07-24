@@ -1,0 +1,316 @@
+{
+  "experiment": "exp22_selection_holdout_50_50",
+  "created_unix": 1777997627.0685225,
+  "execute": true,
+  "seed": 20260505,
+  "fold": "fold0",
+  "tasks": [
+    "forward_piqa",
+    "forward_trivia",
+    "mitigation_piqa",
+    "mitigation_trivia",
+    "source_user"
+  ],
+  "models": {
+    "qwen35": {
+      "model_id": "Qwen/Qwen3.5-27B",
+      "layers": [
+        5
+      ],
+      "folds": {
+        "fold0": {
+          "train_uids": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/qwen35/splits/fold0/train_uids.txt",
+          "eval_uids": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/qwen35/splits/fold0/eval_uids.txt",
+          "fit_position": "endorsed_answer",
+          "directions": {
+            "authority": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/qwen35/fold0/directions/authority_train.pt",
+            "assistant": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/qwen35/fold0/directions/assistant.pt",
+            "residualized": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/qwen35/fold0/directions/residualized_train.pt"
+          },
+          "runs": [
+            {
+              "task": "forward_trivia",
+              "skipped": "already_done"
+            },
+            {
+              "task": "forward_piqa",
+              "skipped": "already_done"
+            },
+            {
+              "task": "source_user",
+              "returncode": 0,
+              "output_dir": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/qwen35/fold0/source_user/qwen35"
+            },
+            {
+              "task": "mitigation_trivia",
+              "variant": "residualized",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_piqa",
+              "variant": "residualized",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_trivia",
+              "variant": "assistant",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_piqa",
+              "variant": "assistant",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_trivia",
+              "variant": "caa",
+              "mode": "subtract",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_piqa",
+              "variant": "caa",
+              "mode": "subtract",
+              "returncode": 0
+            }
+          ]
+        }
+      }
+    },
+    "gpt_oss": {
+      "model_id": "openai/gpt-oss-20b",
+      "layers": [
+        16,
+        18,
+        20
+      ],
+      "folds": {
+        "fold0": {
+          "train_uids": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/gpt_oss/splits/fold0/train_uids.txt",
+          "eval_uids": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/gpt_oss/splits/fold0/eval_uids.txt",
+          "fit_position": "endorsement_end",
+          "directions": {
+            "authority": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/gpt_oss/fold0/directions/authority_train.pt",
+            "assistant": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/gpt_oss/fold0/directions/assistant.pt",
+            "residualized": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/gpt_oss/fold0/directions/residualized_train.pt"
+          },
+          "runs": [
+            {
+              "task": "forward_trivia",
+              "returncode": 0
+            },
+            {
+              "task": "forward_piqa",
+              "returncode": 0
+            },
+            {
+              "task": "source_user",
+              "returncode": 0,
+              "output_dir": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/gpt_oss/fold0/source_user/gpt_oss"
+            },
+            {
+              "task": "mitigation_trivia",
+              "variant": "residualized",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_piqa",
+              "variant": "residualized",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_trivia",
+              "variant": "assistant",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_piqa",
+              "variant": "assistant",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_trivia",
+              "variant": "caa",
+              "mode": "subtract",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_piqa",
+              "variant": "caa",
+              "mode": "subtract",
+              "returncode": 0
+            }
+          ]
+        }
+      }
+    },
+    "olmo2": {
+      "model_id": "allenai/OLMo-2-0325-32B-Instruct",
+      "layers": [
+        10,
+        16,
+        22
+      ],
+      "folds": {
+        "fold0": {
+          "train_uids": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/olmo2/splits/fold0/train_uids.txt",
+          "eval_uids": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/olmo2/splits/fold0/eval_uids.txt",
+          "fit_position": "answer_position",
+          "directions": {
+            "authority": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/olmo2/fold0/directions/authority_train.pt",
+            "assistant": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/olmo2/fold0/directions/assistant.pt",
+            "residualized": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/olmo2/fold0/directions/residualized_train.pt"
+          },
+          "runs": [
+            {
+              "task": "forward_trivia",
+              "returncode": 0
+            },
+            {
+              "task": "forward_piqa",
+              "returncode": 0
+            },
+            {
+              "task": "source_user",
+              "returncode": 0,
+              "output_dir": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/olmo2/fold0/source_user/olmo2"
+            },
+            {
+              "task": "mitigation_trivia",
+              "variant": "residualized",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_piqa",
+              "variant": "residualized",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_trivia",
+              "variant": "assistant",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_piqa",
+              "variant": "assistant",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_trivia",
+              "variant": "caa",
+              "mode": "subtract",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_piqa",
+              "variant": "caa",
+              "mode": "subtract",
+              "returncode": 0
+            }
+          ]
+        }
+      }
+    },
+    "olmo31": {
+      "model_id": "allenai/OLMo-3.1-32B-Instruct",
+      "layers": [
+        15,
+        18,
+        22
+      ],
+      "folds": {
+        "fold0": {
+          "train_uids": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/olmo31/splits/fold0/train_uids.txt",
+          "eval_uids": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/olmo31/splits/fold0/eval_uids.txt",
+          "fit_position": "endorsement_start",
+          "directions": {
+            "authority": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/olmo31/fold0/directions/authority_train.pt",
+            "assistant": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/olmo31/fold0/directions/assistant.pt",
+            "residualized": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/olmo31/fold0/directions/residualized_train.pt"
+          },
+          "runs": [
+            {
+              "task": "forward_trivia",
+              "returncode": 0
+            },
+            {
+              "task": "forward_piqa",
+              "returncode": 0
+            },
+            {
+              "task": "source_user",
+              "returncode": 0,
+              "output_dir": "<REPO_ROOT>/results/exp22/selection_holdout_50_50/olmo31/fold0/source_user/olmo31"
+            },
+            {
+              "task": "mitigation_trivia",
+              "variant": "residualized",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_piqa",
+              "variant": "residualized",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_trivia",
+              "variant": "assistant",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_piqa",
+              "variant": "assistant",
+              "mode": "project_out_direction",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_trivia",
+              "variant": "caa",
+              "mode": "subtract",
+              "returncode": 0
+            },
+            {
+              "task": "mitigation_piqa",
+              "variant": "caa",
+              "mode": "subtract",
+              "returncode": 0
+            }
+          ]
+        }
+      }
+    }
+  },
+  "speedups": {
+    "h100": true,
+    "qwen_olmo_attention": "flash_attention_2 via src.models.llama_loader when available",
+    "gpt_oss_attention": "eager/normal attention for attention-sink stability",
+    "torch_compile": true,
+    "dynamic_token_batches": true,
+    "env": {
+      "USE_HUB_KERNELS": "NO",
+      "TOKENIZERS_PARALLELISM": "false",
+      "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True"
+    }
+  },
+  "clean_protocol": {
+    "fit": "Fit direction/patch means only on train_uids.txt.",
+    "eval": "Evaluate headline behavior only on eval_uids.txt.",
+    "split_source": "mask_primary_w1, seeded shuffle, then 50/50.",
+    "gemma4": "intentionally excluded by default."
+  }
+}

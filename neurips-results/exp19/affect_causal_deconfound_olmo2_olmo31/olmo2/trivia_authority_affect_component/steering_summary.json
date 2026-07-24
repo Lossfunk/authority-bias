@@ -1,0 +1,41 @@
+[
+  {
+    "config_id": "cfg001_L16_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 1.0,
+    "condition": "C1_note",
+    "total": 93,
+    "parsed": 93,
+    "parse_rate": 1.0,
+    "accuracy": 0.978494623655914,
+    "wrong_rate": 0.021505376344086023,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L16_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 1.0,
+    "condition": "N0_note",
+    "total": 93,
+    "parsed": 92,
+    "parse_rate": 0.989247311827957,
+    "accuracy": 0.8369565217391305,
+    "wrong_rate": 0.16304347826086957,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L16_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 1.0,
+    "condition": "W1_note",
+    "total": 93,
+    "parsed": 93,
+    "parse_rate": 1.0,
+    "accuracy": 0.17204301075268819,
+    "wrong_rate": 0.8279569892473119,
+    "flip_rate": 0.8279569892473119,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  }
+]

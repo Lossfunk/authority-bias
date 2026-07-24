@@ -29,7 +29,27 @@ dependencies = [
 gpu = [
     "kernels>=0.12.3 ; sys_platform == 'linux'",
     "triton>=3.4 ; sys_platform == 'linux'",
+    # Build-time deps needed by the source-built CUDA accelerators below.
+    # Must live in the target env because we disable build isolation for those packages.
+    "ninja>=1.11 ; sys_platform == 'linux'",
+    "packaging>=24.0 ; sys_platform == 'linux'",
+    "psutil>=6.0 ; sys_platform == 'linux'",
+    "wheel>=0.43 ; sys_platform == 'linux'",
+    "setuptools>=75 ; sys_platform == 'linux'",
+    # Inference accelerators required to avoid the slow PyTorch attention fallback.
+    # These build CUDA kernels from source. Install via:
+    #   uv sync --extra gpu
+    # The [tool.uv] block below disables build isolation for just these three packages,
+    # so they can see the already-installed torch instead of trying to pull their own.
+    # Tune compile parallelism with MAX_JOBS=<N> and TORCH_CUDA_ARCH_LIST='8.0' (A100).
+    "flash-attn==2.8.3 ; sys_platform == 'linux'",
+    "flash-linear-attention==0.5.0 ; sys_platform == 'linux'",
+    "causal-conv1d==1.6.1 ; sys_platform == 'linux'",
 ]
+
+[tool.uv]
+# These three build from source and need torch already installed to compile against.
+no-build-isolation-package = ["flash-attn", "flash-linear-attention", "causal-conv1d"]
 
 [tool.uv.sources]
 transformers = { git = "https://github.com/huggingface/transformers.git" }

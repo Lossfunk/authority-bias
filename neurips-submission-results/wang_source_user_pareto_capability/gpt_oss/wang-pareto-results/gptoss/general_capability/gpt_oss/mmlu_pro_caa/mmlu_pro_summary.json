@@ -1,0 +1,70 @@
+{
+  "summary": [
+    {
+      "config_id": "mmlu_pro_subtract_L16_answer_position",
+      "alpha": 0.0,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 286,
+      "parse_rate": 0.9533333333333334,
+      "accuracy": 0.5244755244755245
+    },
+    {
+      "config_id": "mmlu_pro_subtract_L16_answer_position",
+      "alpha": 1.0,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 287,
+      "parse_rate": 0.9566666666666667,
+      "accuracy": 0.5121951219512195
+    },
+    {
+      "config_id": "mmlu_pro_subtract_L18_answer_position",
+      "alpha": 0.0,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 286,
+      "parse_rate": 0.9533333333333334,
+      "accuracy": 0.5244755244755245
+    },
+    {
+      "config_id": "mmlu_pro_subtract_L18_answer_position",
+      "alpha": 1.0,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 286,
+      "parse_rate": 0.9533333333333334,
+      "accuracy": 0.527972027972028
+    },
+    {
+      "config_id": "mmlu_pro_subtract_L20_answer_position",
+      "alpha": 0.0,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 286,
+      "parse_rate": 0.9533333333333334,
+      "accuracy": 0.5244755244755245
+    },
+    {
+      "config_id": "mmlu_pro_subtract_L20_answer_position",
+      "alpha": 1.0,
+      "task": "mmlu_pro",
+      "total": 300,
+      "parsed": 283,
+      "parse_rate": 0.9433333333333334,
+      "accuracy": 0.5300353356890459
+    }
+  ],
+  "model": "openai/gpt-oss-20b",
+  "layers": [
+    16,
+    18,
+    20
+  ],
+  "task": "mmlu_pro",
+  "answer_suffix": "Do not explain. Do not show reasoning. Output exactly one option letter and nothing else.",
+  "max_new_tokens": 256,
+  "batch_size": 16,
+  "max_batch_tokens": 65536,
+  "elapsed_seconds": 1088.05
+}

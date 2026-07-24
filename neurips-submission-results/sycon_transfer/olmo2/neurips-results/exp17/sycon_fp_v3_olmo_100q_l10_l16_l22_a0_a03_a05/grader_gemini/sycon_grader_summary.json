@@ -1,0 +1,370 @@
+{
+  "n_rounds": 5,
+  "configs": [
+    "interpolate_mean_shared_within_label_k0_a0.3_L10",
+    "interpolate_mean_shared_within_label_k0_a0.3_L16",
+    "interpolate_mean_shared_within_label_k0_a0.3_L22",
+    "interpolate_mean_shared_within_label_k0_a0.5_L10",
+    "interpolate_mean_shared_within_label_k0_a0.5_L16",
+    "interpolate_mean_shared_within_label_k0_a0.5_L22",
+    "interpolate_mean_shared_within_label_k0_a0_L10",
+    "interpolate_mean_shared_within_label_k0_a0_L16",
+    "interpolate_mean_shared_within_label_k0_a0_L22"
+  ],
+  "prompt_types": [
+    "presupposition"
+  ],
+  "per_config": {
+    "interpolate_mean_shared_within_label_k0_a0.3_L10": {
+      "alpha": 0.3,
+      "target_layers": [
+        10
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "presupposition": {
+          "n_trajectories": 100,
+          "mean_traj_score": 2.91,
+          "round_stats": {
+            "1": {
+              "n": 100,
+              "reject_rate": 0.81
+            },
+            "2": {
+              "n": 100,
+              "reject_rate": 0.7
+            },
+            "3": {
+              "n": 100,
+              "reject_rate": 0.63
+            },
+            "4": {
+              "n": 100,
+              "reject_rate": 0.57
+            },
+            "5": {
+              "n": 100,
+              "reject_rate": 0.62
+            }
+          },
+          "eligible_round1": 81,
+          "steadfast_rate": 0.5432098765432098,
+          "flip_rate": 0.4567901234567901
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.3_L16": {
+      "alpha": 0.3,
+      "target_layers": [
+        16
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "presupposition": {
+          "n_trajectories": 100,
+          "mean_traj_score": 2.64,
+          "round_stats": {
+            "1": {
+              "n": 100,
+              "reject_rate": 0.76
+            },
+            "2": {
+              "n": 100,
+              "reject_rate": 0.66
+            },
+            "3": {
+              "n": 100,
+              "reject_rate": 0.66
+            },
+            "4": {
+              "n": 100,
+              "reject_rate": 0.51
+            },
+            "5": {
+              "n": 100,
+              "reject_rate": 0.64
+            }
+          },
+          "eligible_round1": 76,
+          "steadfast_rate": 0.5,
+          "flip_rate": 0.5
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.3_L22": {
+      "alpha": 0.3,
+      "target_layers": [
+        22
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "presupposition": {
+          "n_trajectories": 100,
+          "mean_traj_score": 2.9,
+          "round_stats": {
+            "1": {
+              "n": 100,
+              "reject_rate": 0.81
+            },
+            "2": {
+              "n": 100,
+              "reject_rate": 0.7
+            },
+            "3": {
+              "n": 100,
+              "reject_rate": 0.68
+            },
+            "4": {
+              "n": 100,
+              "reject_rate": 0.57
+            },
+            "5": {
+              "n": 100,
+              "reject_rate": 0.6
+            }
+          },
+          "eligible_round1": 81,
+          "steadfast_rate": 0.5308641975308642,
+          "flip_rate": 0.4691358024691358
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.5_L10": {
+      "alpha": 0.5,
+      "target_layers": [
+        10
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "presupposition": {
+          "n_trajectories": 100,
+          "mean_traj_score": 2.41,
+          "round_stats": {
+            "1": {
+              "n": 100,
+              "reject_rate": 0.67
+            },
+            "2": {
+              "n": 100,
+              "reject_rate": 0.65
+            },
+            "3": {
+              "n": 100,
+              "reject_rate": 0.62
+            },
+            "4": {
+              "n": 100,
+              "reject_rate": 0.58
+            },
+            "5": {
+              "n": 100,
+              "reject_rate": 0.55
+            }
+          },
+          "eligible_round1": 67,
+          "steadfast_rate": 0.5074626865671642,
+          "flip_rate": 0.4925373134328358
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.5_L16": {
+      "alpha": 0.5,
+      "target_layers": [
+        16
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "presupposition": {
+          "n_trajectories": 100,
+          "mean_traj_score": 2.35,
+          "round_stats": {
+            "1": {
+              "n": 100,
+              "reject_rate": 0.67
+            },
+            "2": {
+              "n": 100,
+              "reject_rate": 0.6
+            },
+            "3": {
+              "n": 100,
+              "reject_rate": 0.58
+            },
+            "4": {
+              "n": 100,
+              "reject_rate": 0.53
+            },
+            "5": {
+              "n": 100,
+              "reject_rate": 0.56
+            }
+          },
+          "eligible_round1": 67,
+          "steadfast_rate": 0.5074626865671642,
+          "flip_rate": 0.4925373134328358
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0.5_L22": {
+      "alpha": 0.5,
+      "target_layers": [
+        22
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "presupposition": {
+          "n_trajectories": 100,
+          "mean_traj_score": 2.44,
+          "round_stats": {
+            "1": {
+              "n": 100,
+              "reject_rate": 0.73
+            },
+            "2": {
+              "n": 100,
+              "reject_rate": 0.6
+            },
+            "3": {
+              "n": 100,
+              "reject_rate": 0.66
+            },
+            "4": {
+              "n": 100,
+              "reject_rate": 0.53
+            },
+            "5": {
+              "n": 100,
+              "reject_rate": 0.6
+            }
+          },
+          "eligible_round1": 73,
+          "steadfast_rate": 0.4657534246575342,
+          "flip_rate": 0.5342465753424658
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0_L10": {
+      "alpha": 0.0,
+      "target_layers": [
+        10
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "presupposition": {
+          "n_trajectories": 100,
+          "mean_traj_score": 2.79,
+          "round_stats": {
+            "1": {
+              "n": 100,
+              "reject_rate": 0.77
+            },
+            "2": {
+              "n": 100,
+              "reject_rate": 0.69
+            },
+            "3": {
+              "n": 100,
+              "reject_rate": 0.64
+            },
+            "4": {
+              "n": 100,
+              "reject_rate": 0.54
+            },
+            "5": {
+              "n": 100,
+              "reject_rate": 0.61
+            }
+          },
+          "eligible_round1": 77,
+          "steadfast_rate": 0.5194805194805194,
+          "flip_rate": 0.4805194805194805
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0_L16": {
+      "alpha": 0.0,
+      "target_layers": [
+        16
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "presupposition": {
+          "n_trajectories": 100,
+          "mean_traj_score": 2.83,
+          "round_stats": {
+            "1": {
+              "n": 100,
+              "reject_rate": 0.77
+            },
+            "2": {
+              "n": 100,
+              "reject_rate": 0.69
+            },
+            "3": {
+              "n": 100,
+              "reject_rate": 0.65
+            },
+            "4": {
+              "n": 100,
+              "reject_rate": 0.53
+            },
+            "5": {
+              "n": 100,
+              "reject_rate": 0.61
+            }
+          },
+          "eligible_round1": 77,
+          "steadfast_rate": 0.5324675324675324,
+          "flip_rate": 0.4675324675324675
+        }
+      }
+    },
+    "interpolate_mean_shared_within_label_k0_a0_L22": {
+      "alpha": 0.0,
+      "target_layers": [
+        22
+      ],
+      "intervention_mode": "interpolate_mean",
+      "direction_kind": null,
+      "per_prompt": {
+        "presupposition": {
+          "n_trajectories": 100,
+          "mean_traj_score": 2.82,
+          "round_stats": {
+            "1": {
+              "n": 100,
+              "reject_rate": 0.76
+            },
+            "2": {
+              "n": 100,
+              "reject_rate": 0.69
+            },
+            "3": {
+              "n": 100,
+              "reject_rate": 0.65
+            },
+            "4": {
+              "n": 100,
+              "reject_rate": 0.53
+            },
+            "5": {
+              "n": 100,
+              "reject_rate": 0.61
+            }
+          },
+          "eligible_round1": 76,
+          "steadfast_rate": 0.5394736842105263,
+          "flip_rate": 0.4605263157894737
+        }
+      }
+    }
+  }
+}

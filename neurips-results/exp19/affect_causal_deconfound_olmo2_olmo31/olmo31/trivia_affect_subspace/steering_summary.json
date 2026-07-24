@@ -1,0 +1,41 @@
+[
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_subspace",
+    "alpha": 1.0,
+    "condition": "C1_note",
+    "total": 158,
+    "parsed": 157,
+    "parse_rate": 0.9936708860759493,
+    "accuracy": 0.9808917197452229,
+    "wrong_rate": 0.01910828025477707,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_subspace",
+    "alpha": 1.0,
+    "condition": "N0_note",
+    "total": 158,
+    "parsed": 155,
+    "parse_rate": 0.9810126582278481,
+    "accuracy": 0.864516129032258,
+    "wrong_rate": 0.13548387096774195,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_subspace",
+    "alpha": 1.0,
+    "condition": "W1_note",
+    "total": 158,
+    "parsed": 155,
+    "parse_rate": 0.9810126582278481,
+    "accuracy": 0.15483870967741936,
+    "wrong_rate": 0.8451612903225807,
+    "flip_rate": 0.8451612903225807,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  }
+]

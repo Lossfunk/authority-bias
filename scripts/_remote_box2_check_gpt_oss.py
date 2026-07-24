@@ -1,0 +1,11 @@
+import subprocess, json, os
+print("== running procs ==")
+print(subprocess.run(["bash","-lc","ps -ef | grep -E 'run_assistant_axis|run_steering_test' | grep -v grep"], capture_output=True, text=True).stdout)
+print("== gpu ==")
+print(subprocess.run(["bash","-lc","nvidia-smi --query-gpu=memory.used,utilization.gpu --format=csv"], capture_output=True, text=True).stdout)
+print("\n== gpt_oss log tail ==")
+print(subprocess.run(["bash","-lc","tail -n 25 /home/persona-vectors/logs/exp19_gpt_oss_quick_final.log"], capture_output=True, text=True).stdout)
+print("\n== gpt_oss output dir contents ==")
+print(subprocess.run(["bash","-lc","find /home/persona-vectors/neurips-results/exp19/ab_project_out_allcond_quick/gpt_oss -type f -printf '%TY-%Tm-%Td %TH:%TM %s %p\\n' 2>/dev/null | sort"], capture_output=True, text=True).stdout)
+print("\n== gpt_oss steering_rows line counts ==")
+print(subprocess.run(["bash","-lc","for f in /home/persona-vectors/neurips-results/exp19/ab_project_out_allcond_quick/gpt_oss/trivia_*/steering_rows.jsonl; do echo -n \"$f: \"; wc -l < \"$f\"; done 2>/dev/null"], capture_output=True, text=True).stdout)

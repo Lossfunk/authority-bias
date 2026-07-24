@@ -1,0 +1,434 @@
+{
+  "gpt54/source_verified": {
+    "rows_path": "neurips-results/gpt54/native_pool_staged/openai__gpt-5.4_dissociation_rows.jsonl",
+    "tag": "note",
+    "model": "openai/gpt-5.4",
+    "n_rows_input": 5101,
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so"
+    ],
+    "parsed_all3": 1626,
+    "n0_correct": 1626,
+    "w1_flips": 693,
+    "flip_rate_n0_correct_to_w1_wrong": 0.4261992619926199,
+    "c1_correct_given_n0_wrong_rate": null,
+    "conditions": {
+      "N0_note": {
+        "n": 1813,
+        "parsed": 1784,
+        "parse_rate": 0.9840044125758411,
+        "accuracy_parsed": 0.9187219730941704,
+        "methods": [
+          [
+            "consensus",
+            1784
+          ],
+          [
+            "none",
+            29
+          ]
+        ]
+      },
+      "W1_note": {
+        "n": 1644,
+        "parsed": 1637,
+        "parse_rate": 0.995742092457421,
+        "accuracy_parsed": 0.5736102626756261,
+        "methods": [
+          [
+            "consensus",
+            1637
+          ],
+          [
+            "none",
+            7
+          ]
+        ]
+      },
+      "C1_note": {
+        "n": 1644,
+        "parsed": 1636,
+        "parse_rate": 0.9951338199513382,
+        "accuracy_parsed": 0.9993887530562348,
+        "methods": [
+          [
+            "consensus",
+            1636
+          ],
+          [
+            "none",
+            8
+          ]
+        ]
+      }
+    }
+  },
+  "gpt54/user_domain_expert": {
+    "rows_path": "neurips-results/gpt54/user_specialist_freegen/openai__gpt-5.4_dissociation_rows.jsonl",
+    "tag": "user",
+    "model": "openai/gpt-5.4",
+    "n_rows_input": 5439,
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so"
+    ],
+    "parsed_all3": 1773,
+    "n0_correct": 1627,
+    "w1_flips": 19,
+    "flip_rate_n0_correct_to_w1_wrong": 0.011677934849416103,
+    "c1_correct_given_n0_wrong_rate": 0.3356164383561644,
+    "conditions": {
+      "N0_user": {
+        "n": 1813,
+        "parsed": 1783,
+        "parse_rate": 0.9834528405956977,
+        "accuracy_parsed": 0.9175546831183399,
+        "methods": [
+          [
+            "consensus",
+            1783
+          ],
+          [
+            "none",
+            30
+          ]
+        ]
+      },
+      "W1_user": {
+        "n": 1813,
+        "parsed": 1792,
+        "parse_rate": 0.9884169884169884,
+        "accuracy_parsed": 0.9481026785714286,
+        "methods": [
+          [
+            "consensus",
+            1792
+          ],
+          [
+            "none",
+            21
+          ]
+        ]
+      },
+      "C1_user": {
+        "n": 1813,
+        "parsed": 1785,
+        "parse_rate": 0.9845559845559846,
+        "accuracy_parsed": 0.9137254901960784,
+        "methods": [
+          [
+            "consensus",
+            1785
+          ],
+          [
+            "none",
+            28
+          ]
+        ]
+      }
+    }
+  },
+  "grok420/source_verified": {
+    "rows_path": "neurips-results/grok/grok420_dissociation_freegen/x-ai__grok-4.20_dissociation_rows.jsonl",
+    "tag": "note",
+    "model": "x-ai/grok-4.20",
+    "n_rows_input": 5439,
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so"
+    ],
+    "parsed_all3": 1608,
+    "n0_correct": 1462,
+    "w1_flips": 1279,
+    "flip_rate_n0_correct_to_w1_wrong": 0.874829001367989,
+    "c1_correct_given_n0_wrong_rate": 0.8972602739726028,
+    "conditions": {
+      "N0_note": {
+        "n": 1813,
+        "parsed": 1712,
+        "parse_rate": 0.9442912300055157,
+        "accuracy_parsed": 0.9065420560747663,
+        "methods": [
+          [
+            "consensus",
+            1712
+          ],
+          [
+            "none",
+            101
+          ]
+        ]
+      },
+      "W1_note": {
+        "n": 1813,
+        "parsed": 1688,
+        "parse_rate": 0.9310535024820739,
+        "accuracy_parsed": 0.11078199052132702,
+        "methods": [
+          [
+            "consensus",
+            1688
+          ],
+          [
+            "none",
+            125
+          ]
+        ]
+      },
+      "C1_note": {
+        "n": 1813,
+        "parsed": 1717,
+        "parse_rate": 0.9470490899062327,
+        "accuracy_parsed": 0.988351776354106,
+        "methods": [
+          [
+            "consensus",
+            1717
+          ],
+          [
+            "none",
+            96
+          ]
+        ]
+      }
+    }
+  },
+  "grok420/user_domain_expert": {
+    "rows_path": "neurips-results/grok/grok420_user_specialist_freegen/x-ai__grok-4.20_dissociation_rows.jsonl",
+    "tag": "user",
+    "model": "x-ai/grok-4.20",
+    "n_rows_input": 5439,
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so"
+    ],
+    "parsed_all3": 1638,
+    "n0_correct": 1492,
+    "w1_flips": 61,
+    "flip_rate_n0_correct_to_w1_wrong": 0.04088471849865952,
+    "c1_correct_given_n0_wrong_rate": 0.4383561643835616,
+    "conditions": {
+      "N0_user": {
+        "n": 1813,
+        "parsed": 1720,
+        "parse_rate": 0.948703805846663,
+        "accuracy_parsed": 0.9029069767441861,
+        "methods": [
+          [
+            "consensus",
+            1720
+          ],
+          [
+            "none",
+            93
+          ]
+        ]
+      },
+      "W1_user": {
+        "n": 1813,
+        "parsed": 1677,
+        "parse_rate": 0.9249862107004965,
+        "accuracy_parsed": 0.8950506857483602,
+        "methods": [
+          [
+            "consensus",
+            1677
+          ],
+          [
+            "none",
+            136
+          ]
+        ]
+      },
+      "C1_user": {
+        "n": 1813,
+        "parsed": 1690,
+        "parse_rate": 0.9321566464423607,
+        "accuracy_parsed": 0.934319526627219,
+        "methods": [
+          [
+            "consensus",
+            1690
+          ],
+          [
+            "none",
+            123
+          ]
+        ]
+      }
+    }
+  },
+  "gemini31pro/source_verified": {
+    "rows_path": "neurips-results/gemini31pro/dissociation_freegen/google__gemini-3.1-pro-preview_dissociation_rows.jsonl",
+    "tag": "note",
+    "model": "google/gemini-3.1-pro-preview",
+    "n_rows_input": 5439,
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so"
+    ],
+    "parsed_all3": 1154,
+    "n0_correct": 1134,
+    "w1_flips": 7,
+    "flip_rate_n0_correct_to_w1_wrong": 0.006172839506172839,
+    "c1_correct_given_n0_wrong_rate": 0.4,
+    "conditions": {
+      "N0_note": {
+        "n": 1813,
+        "parsed": 1164,
+        "parse_rate": 0.6420297848869277,
+        "accuracy_parsed": 0.9819587628865979,
+        "methods": [
+          [
+            "consensus",
+            1164
+          ],
+          [
+            "none",
+            649
+          ]
+        ]
+      },
+      "W1_note": {
+        "n": 1813,
+        "parsed": 1162,
+        "parse_rate": 0.640926640926641,
+        "accuracy_parsed": 0.9827882960413081,
+        "methods": [
+          [
+            "consensus",
+            1162
+          ],
+          [
+            "none",
+            651
+          ]
+        ]
+      },
+      "C1_note": {
+        "n": 1813,
+        "parsed": 1157,
+        "parse_rate": 0.6381687810259239,
+        "accuracy_parsed": 0.9844425237683665,
+        "methods": [
+          [
+            "consensus",
+            1157
+          ],
+          [
+            "none",
+            656
+          ]
+        ]
+      }
+    }
+  },
+  "gemini31pro/user_domain_expert": {
+    "rows_path": "neurips-results/gemini31pro/user_specialist_freegen/google__gemini-3.1-pro-preview_dissociation_rows.jsonl",
+    "tag": "user",
+    "model": "google/gemini-3.1-pro-preview",
+    "n_rows_input": 5439,
+    "markers": [
+      "assistantfinal",
+      "answer",
+      "final",
+      "therefore",
+      "thus",
+      "hence",
+      "response",
+      "<|assistant|>",
+      "so"
+    ],
+    "parsed_all3": 1803,
+    "n0_correct": 1745,
+    "w1_flips": 6,
+    "flip_rate_n0_correct_to_w1_wrong": 0.0034383954154727794,
+    "c1_correct_given_n0_wrong_rate": 0.27586206896551724,
+    "conditions": {
+      "N0_user": {
+        "n": 1813,
+        "parsed": 1810,
+        "parse_rate": 0.9983452840595698,
+        "accuracy_parsed": 0.967403314917127,
+        "methods": [
+          [
+            "consensus",
+            1810
+          ],
+          [
+            "none",
+            3
+          ]
+        ]
+      },
+      "W1_user": {
+        "n": 1813,
+        "parsed": 1810,
+        "parse_rate": 0.9983452840595698,
+        "accuracy_parsed": 0.9812154696132597,
+        "methods": [
+          [
+            "consensus",
+            1810
+          ],
+          [
+            "none",
+            3
+          ]
+        ]
+      },
+      "C1_user": {
+        "n": 1813,
+        "parsed": 1806,
+        "parse_rate": 0.9961389961389961,
+        "accuracy_parsed": 0.96843853820598,
+        "methods": [
+          [
+            "consensus",
+            1806
+          ],
+          [
+            "none",
+            7
+          ]
+        ]
+      }
+    }
+  }
+}

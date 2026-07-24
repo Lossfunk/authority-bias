@@ -32,6 +32,7 @@ class ModelSpec:
     name: str
     summary_path: Path
     layers: List[int]
+    rows_path: Path | None = None
 
 
 SPECS: List[ModelSpec] = [
@@ -51,9 +52,15 @@ SPECS: List[ModelSpec] = [
         layers=[20, 22, 24],
     ),
     ModelSpec(
-        name="OLMo",
+        name="OLMo-2",
         summary_path=ROOT / "neurips-results" / "olmo2" / "mechanism" / "piqa_forward_patch_200_freegen" / "piqa_summary.json",
         layers=[10, 16, 22],
+    ),
+    ModelSpec(
+        name="OLMo-3.1",
+        summary_path=ROOT / "neurips-results" / "exp16" / "olmo31_piqa_n0_matched_flip_interpolate_l15_l18_l22" / "piqa_summary.json",
+        rows_path=ROOT / "neurips-results" / "exp16" / "olmo31_piqa_n0_matched_flip_interpolate_l15_l18_l22" / "piqa_rows.jsonl",
+        layers=[15, 18, 22],
     ),
 ]
 
@@ -66,8 +73,41 @@ def _load_summary(path: Path) -> List[dict]:
     return json.loads(path.read_text())
 
 
+def _load_jsonl(path: Path) -> list[dict]:
+    rows = []
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                rows.append(json.loads(line))
+    return rows
+
+
 def _layer_from_row(row: dict) -> int:
     return int(row["target_layers"][0])
+
+
+def _matched_flip_from_rows(spec: ModelSpec, layer: int, alpha: float) -> float:
+    if spec.rows_path is None:
+        return 0.0
+    rows = [
+        row
+        for row in _load_jsonl(spec.rows_path)
+        if row.get("condition_code") == "N0_note" and _layer_from_row(row) == layer
+    ]
+    baseline_correct = {
+        row["uid"]
+        for row in rows
+        if float(row["alpha"]) == 0.0 and row.get("is_correct") is True
+    }
+    if not baseline_correct:
+        return 0.0
+    current = [
+        row
+        for row in rows
+        if float(row["alpha"]) == alpha and row["uid"] in baseline_correct
+    ]
+    flips = sum(1 for row in current if row.get("chose_wrong") is True)
+    return flips / len(baseline_correct)
 
 
 def _series_for_layer(spec: ModelSpec, layer: int) -> tuple[np.ndarray, np.ndarray]:
@@ -78,7 +118,18 @@ def _series_for_layer(spec: ModelSpec, layer: int) -> tuple[np.ndarray, np.ndarr
     ]
     rows.sort(key=lambda r: float(r["alpha"]))
     xs = np.array([float(r["alpha"]) for r in rows], dtype=float)
-    ys = np.array([100.0 * float(r["matched_flip_rate"] or 0.0) for r in rows], dtype=float)
+    ys = np.array(
+        [
+            100.0
+            * (
+                float(row["matched_flip_rate"])
+                if row.get("matched_flip_rate") is not None
+                else _matched_flip_from_rows(spec, layer, float(row["alpha"]))
+            )
+            for row in rows
+        ],
+        dtype=float,
+    )
     return xs, ys
 
 
@@ -109,7 +160,7 @@ def main() -> None:
         }
     )
 
-    fig, axes = plt.subplots(1, 4, figsize=(13.6, 3.1), sharey=True)
+    fig, axes = plt.subplots(1, len(SPECS), figsize=(16.8, 3.1), sharey=True)
     fig.patch.set_facecolor("white")
 
     plotted = []

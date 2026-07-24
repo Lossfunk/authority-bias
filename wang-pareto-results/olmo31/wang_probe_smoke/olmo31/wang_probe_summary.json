@@ -1,0 +1,38 @@
+{
+  "summary": [
+    {
+      "condition": "no_cue",
+      "total": 16,
+      "parsed": 15,
+      "parse_rate": 0.9375,
+      "wrong_rate": 0.06666666666666667
+    },
+    {
+      "condition": "source_authority",
+      "total": 8,
+      "parsed": 6,
+      "parse_rate": 0.75,
+      "wrong_rate": 1.0
+    },
+    {
+      "condition": "user_expertise",
+      "total": 8,
+      "parsed": 6,
+      "parse_rate": 0.75,
+      "wrong_rate": 0.6666666666666666
+    },
+    {
+      "condition": "decision_ratio",
+      "source_effect": 0.9333333333333333,
+      "user_expertise_effect": 0.6,
+      "ratio_user_over_source": 0.6428571428571428,
+      "decision": "<0.5 clear; 0.5-0.8 ambiguous; >0.8 Wang alternative live"
+    }
+  ],
+  "n_items": 8,
+  "max_new_tokens": 256,
+  "answer_suffix": "Answer the question in one short sentence using the full answer text, not option letters.",
+  "no_cue_repeats": 2,
+  "batch_size": 8,
+  "max_batch_tokens": 32768
+}

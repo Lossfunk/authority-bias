@@ -1,0 +1,80 @@
+[
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 0.0,
+    "condition": "C1_note",
+    "total": 512,
+    "parsed": 500,
+    "parse_rate": 0.9765625,
+    "accuracy": 0.988,
+    "wrong_rate": 0.012,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 0.0,
+    "condition": "N0_note",
+    "total": 512,
+    "parsed": 502,
+    "parse_rate": 0.98046875,
+    "accuracy": 0.9661354581673307,
+    "wrong_rate": 0.03386454183266932,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 0.0,
+    "condition": "W1_note",
+    "total": 512,
+    "parsed": 500,
+    "parse_rate": 0.9765625,
+    "accuracy": 0.606,
+    "wrong_rate": 0.394,
+    "flip_rate": 0.394,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 1.0,
+    "condition": "C1_note",
+    "total": 512,
+    "parsed": 499,
+    "parse_rate": 0.974609375,
+    "accuracy": 0.9498997995991983,
+    "wrong_rate": 0.050100200400801605,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 1.0,
+    "condition": "N0_note",
+    "total": 512,
+    "parsed": 500,
+    "parse_rate": 0.9765625,
+    "accuracy": 0.964,
+    "wrong_rate": 0.036,
+    "flip_rate": null,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  },
+  {
+    "config_id": "cfg001_L5_Pendorsement_span_Cblock_output_Mproject_out_direction",
+    "alpha": 1.0,
+    "condition": "W1_note",
+    "total": 512,
+    "parsed": 494,
+    "parse_rate": 0.96484375,
+    "accuracy": 0.937246963562753,
+    "wrong_rate": 0.06275303643724696,
+    "flip_rate": 0.06275303643724696,
+    "mean_fc_logit_wrong": null,
+    "std_fc_logit_wrong": null
+  }
+]

@@ -1,0 +1,53 @@
+{
+  "experiment": "correct_source_preservation",
+  "intervention": "project_out_direction",
+  "alphas": [0.0, 1.0],
+  "conditions": ["N0_note", "W1_note", "C1_note"],
+  "max_items_per_condition": 200,
+  "models": {
+    "gpt_oss": {
+      "label": "GPT-OSS-20B",
+      "model_id": "openai/gpt-oss-20b",
+      "source": "neurips-results/exp19/ab_project_out_allcond_quick/gpt_oss/trivia_*/steering_summary.json",
+      "layer": 18,
+      "position_mode": "note_end",
+      "direction_position": "endorsement_end",
+      "component": "block_output",
+      "norm_scaling": "none",
+      "results": {
+        "authority": {
+          "alpha=0": {"C1_acc": 0.985, "N0_acc": 0.949748743718593, "W1_acc": 0.415, "W1_wrong": 0.585, "W1_flip": 0.585, "C1_parsed": 200, "N0_parsed": 199, "W1_parsed": 200},
+          "alpha=1": {"C1_acc": 0.985, "N0_acc": 0.9597989949748744, "W1_acc": 0.4, "W1_wrong": 0.6, "W1_flip": 0.6, "C1_parsed": 200, "N0_parsed": 199, "W1_parsed": 200}
+        },
+        "assistant_axis": {
+          "alpha=1": {"C1_acc": 0.99, "N0_acc": 0.9597989949748744, "W1_acc": 0.43, "W1_wrong": 0.57, "W1_flip": 0.57, "C1_parsed": 200, "N0_parsed": 199, "W1_parsed": 200}
+        },
+        "residualized": {
+          "alpha=1": {"C1_acc": 0.98, "N0_acc": 0.949748743718593, "W1_acc": 0.405, "W1_wrong": 0.595, "W1_flip": 0.595, "C1_parsed": 200, "N0_parsed": 199, "W1_parsed": 200}
+        }
+      }
+    },
+    "gemma4": {
+      "label": "Gemma-4-26B",
+      "model_id": "google/gemma-4-26B-A4B-it",
+      "source": "neurips-results/exp19/ab_project_out_allcond_quick/gemma4/trivia_*/steering_summary.json",
+      "layer": 22,
+      "position_mode": "endorsement_span",
+      "direction_position": "endorsement_mean",
+      "component": "block_output",
+      "norm_scaling": "none",
+      "results": {
+        "authority": {
+          "alpha=0": {"C1_acc": 0.995, "N0_acc": 1.0, "W1_acc": 0.48, "W1_wrong": 0.52, "W1_flip": 0.52, "C1_parsed": 200, "N0_parsed": 199, "W1_parsed": 200},
+          "alpha=1": {"C1_acc": 0.995, "N0_acc": 0.9949494949494949, "W1_acc": 0.465, "W1_wrong": 0.535, "W1_flip": 0.535, "C1_parsed": 200, "N0_parsed": 198, "W1_parsed": 200}
+        },
+        "assistant_axis": {
+          "alpha=1": {"C1_acc": 1.0, "N0_acc": 0.9949748743718593, "W1_acc": 0.46, "W1_wrong": 0.54, "W1_flip": 0.54, "C1_parsed": 200, "N0_parsed": 199, "W1_parsed": 200}
+        },
+        "residualized": {
+          "alpha=1": {"C1_acc": 0.995, "N0_acc": 1.0, "W1_acc": 0.475, "W1_wrong": 0.525, "W1_flip": 0.525, "C1_parsed": 200, "N0_parsed": 199, "W1_parsed": 200}
+        }
+      }
+    }
+  }
+}

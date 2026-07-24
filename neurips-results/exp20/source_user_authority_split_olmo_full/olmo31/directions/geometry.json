@@ -1,0 +1,25 @@
+{
+  "rows": [
+    {
+      "layer": 15,
+      "cos_source_user": 0.8971239328384399,
+      "cos_source_assistant": -0.02729736641049385,
+      "cos_user_assistant": -0.02672848477959633,
+      "cos_source_resid_user_resid": 0.897049069404602
+    },
+    {
+      "layer": 18,
+      "cos_source_user": 0.8955803513526917,
+      "cos_source_assistant": -0.015019433572888374,
+      "cos_user_assistant": -0.018174245953559875,
+      "cos_source_resid_user_resid": 0.8955562114715576
+    },
+    {
+      "layer": 22,
+      "cos_source_user": 0.9007843136787415,
+      "cos_source_assistant": 0.004016639664769173,
+      "cos_user_assistant": 0.00650380365550518,
+      "cos_source_resid_user_resid": 0.9007846117019653
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "summary": [
+    {
+      "config_id": "gsm8k_project_out_direction_L15_answer_position",
+      "alpha": 0.0,
+      "task": "gsm8k",
+      "total": 200,
+      "parsed": 200,
+      "parse_rate": 1.0,
+      "accuracy": 0.265
+    },
+    {
+      "config_id": "gsm8k_project_out_direction_L15_answer_position",
+      "alpha": 0.75,
+      "task": "gsm8k",
+      "total": 200,
+      "parsed": 200,
+      "parse_rate": 1.0,
+      "accuracy": 0.265
+    },
+    {
+      "config_id": "gsm8k_project_out_direction_L15_answer_position",
+      "alpha": 1.0,
+      "task": "gsm8k",
+      "total": 200,
+      "parsed": 200,
+      "parse_rate": 1.0,
+      "accuracy": 0.26
+    },
+    {
+      "config_id": "gsm8k_project_out_direction_L18_answer_position",
+      "alpha": 0.0,
+      "task": "gsm8k",
+      "total": 200,
+      "parsed": 200,
+      "parse_rate": 1.0,
+      "accuracy": 0.265
+    },
+    {
+      "config_id": "gsm8k_project_out_direction_L18_answer_position",
+      "alpha": 0.75,
+      "task": "gsm8k",
+      "total": 200,
+      "parsed": 200,
+      "parse_rate": 1.0,
+      "accuracy": 0.255
+    },
+    {
+      "config_id": "gsm8k_project_out_direction_L18_answer_position",
+      "alpha": 1.0,
+      "task": "gsm8k",
+      "total": 200,
+      "parsed": 200,
+      "parse_rate": 1.0,
+      "accuracy": 0.26
+    },
+    {
+      "config_id": "gsm8k_project_out_direction_L22_answer_position",
+      "alpha": 0.0,
+      "task": "gsm8k",
+      "total": 200,
+      "parsed": 200,
+      "parse_rate": 1.0,
+      "accuracy": 0.265
+    },
+    {
+      "config_id": "gsm8k_project_out_direction_L22_answer_position",
+      "alpha": 0.75,
+      "task": "gsm8k",
+      "total": 200,
+      "parsed": 200,
+      "parse_rate": 1.0,
+      "accuracy": 0.265
+    },
+    {
+      "config_id": "gsm8k_project_out_direction_L22_answer_position",
+      "alpha": 1.0,
+      "task": "gsm8k",
+      "total": 200,
+      "parsed": 200,
+      "parse_rate": 1.0,
+      "accuracy": 0.26
+    }
+  ],
+  "model": "allenai/OLMo-3.1-32B-Instruct",
+  "layers": [
+    15,
+    18,
+    22
+  ],
+  "task": "gsm8k",
+  "answer_suffix": "Do not explain. Do not show reasoning. Output exactly the final numeric answer and nothing else.",
+  "max_new_tokens": 256,
+  "batch_size": 16,
+  "max_batch_tokens": 65536,
+  "elapsed_seconds": 64.24
+}

@@ -1,0 +1,18 @@
+{
+  "source": "nrimsky/CAA datasets/generate/sycophancy/generate_dataset.json",
+  "model": "openai/gpt-oss-20b",
+  "layers": [
+    16,
+    18,
+    20
+  ],
+  "pairs": 300,
+  "batch_size": 16,
+  "max_batch_tokens": 32768,
+  "construction": "mean(pos activation - neg activation) at final token of rendered answer",
+  "raw_norms": {
+    "16": 197.17198181152344,
+    "18": 364.6527099609375,
+    "20": 488.5445556640625
+  }
+}

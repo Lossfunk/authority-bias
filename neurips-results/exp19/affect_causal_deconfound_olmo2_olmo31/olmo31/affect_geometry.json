@@ -1,0 +1,13 @@
+{
+  "model": "olmo31",
+  "layer": 5,
+  "position": "endorsement_start",
+  "direction_path": "/home/persona-vectors/neurips-results/olmo31/mechanism/compliance_analysis_all_prior_wrong_shared_h100/primary_direction.pt",
+  "va_plane_path": "/home/persona-vectors/neurips-results/olmo31/mechanism/lexical_va_plane/va_plane.pt",
+  "authority_norm": 1.0,
+  "authority_affect_residual_norm": 0.9996902942657471,
+  "authority_affect_component_norm": 0.024889251217246056,
+  "authority_affect_component_norm_fraction": 0.024889251217246056,
+  "basis_rows": 2,
+  "basis_dim": 5120
+}

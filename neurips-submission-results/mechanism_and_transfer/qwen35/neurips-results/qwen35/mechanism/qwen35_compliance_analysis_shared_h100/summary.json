@@ -1,0 +1,29 @@
+{
+  "extraction_dir": "neurips-results/qwen35/mechanism/qwen35_authority_activations_shared_h100",
+  "output_dir": "neurips-results/qwen35/mechanism/qwen35_compliance_analysis_shared_h100",
+  "n_metadata_rows": 21756,
+  "mask_counts": {
+    "selected_uids": 1813,
+    "mask_primary": 1808,
+    "mask_primary_w1": 1355,
+    "mask_primary_c1": 453,
+    "mask_cross": 1806,
+    "mask_cross_w1": 1353,
+    "mask_cross_c1": 453,
+    "mask_think": 0
+  },
+  "primary_pair": {
+    "position": "endorsed_answer",
+    "layer": 5
+  },
+  "files": {
+    "directions": "neurips-results/qwen35/mechanism/qwen35_compliance_analysis_shared_h100/directions.pt",
+    "primary_direction": "neurips-results/qwen35/mechanism/qwen35_compliance_analysis_shared_h100/primary_direction.pt",
+    "cosine_similarities": "neurips-results/qwen35/mechanism/qwen35_compliance_analysis_shared_h100/cosine_similarities.json",
+    "layer_position_sweep": "neurips-results/qwen35/mechanism/qwen35_compliance_analysis_shared_h100/layer_position_sweep.json",
+    "probe_results": "neurips-results/qwen35/mechanism/qwen35_compliance_analysis_shared_h100/probe_results.json",
+    "projection_analysis": "neurips-results/qwen35/mechanism/qwen35_compliance_analysis_shared_h100/projection_analysis.json",
+    "trajectory_analysis": "neurips-results/qwen35/mechanism/qwen35_compliance_analysis_shared_h100/trajectory_analysis.json",
+    "null_controls": "neurips-results/qwen35/mechanism/qwen35_compliance_analysis_shared_h100/null_controls.json"
+  }
+}

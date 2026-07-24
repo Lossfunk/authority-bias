@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -35,6 +35,16 @@ OUTPUT_DIR = Path("figures/neurips/v2/final")
 FONT_DIR = Path("/Users/majortimberwolf/Library/Fonts")
 
 
+def _wilson_ci_pct(k: int, n: int, z: float = 1.959963984540054) -> Tuple[float, float]:
+    if n <= 0:
+        return (0.0, 0.0)
+    phat = k / n
+    denom = 1.0 + z * z / n
+    centre = (phat + z * z / (2.0 * n)) / denom
+    half = z * np.sqrt((phat * (1.0 - phat) + z * z / (4.0 * n)) / n) / denom
+    return 100.0 * max(0.0, centre - half), 100.0 * min(1.0, centre + half)
+
+
 def _register_inter() -> None:
     for font_path in (
         FONT_DIR / "Inter-Regular.otf",
@@ -46,13 +56,12 @@ def _register_inter() -> None:
             font_manager.fontManager.addfont(str(font_path))
 
 
-LEVELS = ["none", "uncertain", "assertive", "weak", "authoritative"]
+LEVELS = ["none", "uncertain", "assertive", "authoritative"]
 LEVEL_LABELS = [
-    "None\n(baseline)",
-    "Uncertain\n\u201cone source\nsuggests\u201d",
-    "Assertive\n\u201cstrongly\nsuggested\u201d",
-    "Weak\n\u201cthe answer\nis X\u201d",
-    "Authoritative\n\u201cverified\nsource\u201d",
+    "No endorsement\n(baseline)",
+    "Low authority\n\u201cone source\nsuggests X\u201d",
+    "Assertive claim\n\u201cstrongly\nsuggested X\u201d",
+    "Verified authority\n\u201cverified source\nsays X\u201d",
 ]
 
 
@@ -97,6 +106,26 @@ MODEL_KEYS: Dict[str, Dict[str, str]] = {
             "authoritative": "neurips-results/qwen35/authoritative_verified_shared_h100/dynamic_parser_recomputed_summary.json",
         },
     },
+    # OLMo-3.1: gradient {weak,uncertain,assertive} have dynamic_parser_recomputed
+    # summaries; the authoritative_verified run does not, so we provide the
+    # parsed-all-3 flip rate inline (recomputed locally from
+    # `authoritative_verified_all_prior_wrong_shared_h100/..._dissociation_rows.jsonl`:
+    # 121 W1 flips / 146 N0-correct UIDs = 82.88%).
+    "OLMo-3.1-32B": {
+        "color": "#B57FB1",
+        "marker": "X",
+        "summary_paths": {
+            "uncertain": "neurips-results/olmo31/gradient_uncertain_all_prior_wrong_shared_h100/dynamic_parser_recomputed_summary.json",
+            "assertive": "neurips-results/olmo31/gradient_assertive_all_prior_wrong_shared_h100/dynamic_parser_recomputed_summary.json",
+            "weak": "neurips-results/olmo31/gradient_weak_all_prior_wrong_shared_h100/dynamic_parser_recomputed_summary.json",
+        },
+        "inline_flip": {
+            "authoritative": 82.88,
+        },
+        "inline_counts": {
+            "authoritative": {"w1_flips": 121, "n0_correct": 146},
+        },
+    },
 }
 
 
@@ -113,18 +142,65 @@ def _flip_from_summary_path(path_str: str) -> Optional[float]:
     return fr * 100.0 if fr is not None else None
 
 
+def _flip_ci_from_summary_path(path_str: str) -> Optional[Tuple[float, float]]:
+    path = Path(path_str)
+    if not path.exists():
+        return None
+    obj = json.loads(path.read_text())
+    n = int(obj.get("parsed_all3_n0_correct") or obj.get("n0_correct") or 0)
+    k = int(obj.get("w1_flips") or round(float(obj.get("flip_rate") or 0.0) * n))
+    return _wilson_ci_pct(k, n) if n > 0 else None
+
+
 def _extract_flip(runs: Dict[str, dict]) -> Dict[str, Dict[str, List]]:
     out: Dict[str, Dict[str, List]] = {}
     for name, cfg in MODEL_KEYS.items():
         flips: List[float | None] = [0.0]
+        ci_los: List[float | None] = [None]
+        ci_his: List[float | None] = [None]
+        inline = cfg.get("inline_flip", {}) or {}
+        inline_counts = cfg.get("inline_counts", {}) or {}
         for level in LEVELS[1:]:
-            if "summary_paths" in cfg:
-                flips.append(_flip_from_summary_path(cfg["summary_paths"].get(level, "")))
-            else:
-                run = runs.get(cfg["keys"].get(level, "")) or {}
+            if level in inline:
+                flips.append(float(inline[level]))
+                counts = inline_counts.get(level, {})
+                if counts:
+                    lo, hi = _wilson_ci_pct(int(counts["w1_flips"]), int(counts["n0_correct"]))
+                    ci_los.append(lo)
+                    ci_his.append(hi)
+                else:
+                    ci_los.append(None)
+                    ci_his.append(None)
+                continue
+            if "summary_paths" in cfg and level in cfg["summary_paths"]:
+                flips.append(_flip_from_summary_path(cfg["summary_paths"][level]))
+                ci = _flip_ci_from_summary_path(cfg["summary_paths"][level])
+                ci_los.append(ci[0] if ci else None)
+                ci_his.append(ci[1] if ci else None)
+            elif "keys" in cfg and level in cfg["keys"]:
+                run = runs.get(cfg["keys"][level]) or {}
                 fr = run.get("flip_rate")
                 flips.append(fr * 100.0 if fr is not None else None)
-        out[name] = {"flip": flips, "color": cfg["color"], "marker": cfg["marker"]}
+                n = int(run.get("n0_correct") or 0)
+                k = int(run.get("w1_flips") or round(float(fr or 0.0) * n))
+                if n > 0 and fr is not None:
+                    lo, hi = _wilson_ci_pct(k, n)
+                    ci_los.append(lo)
+                    ci_his.append(hi)
+                else:
+                    ci_los.append(None)
+                    ci_his.append(None)
+            else:
+                flips.append(None)
+                ci_los.append(None)
+                ci_his.append(None)
+        out[name] = {
+            "flip": flips,
+            "ci_low": ci_los,
+            "ci_high": ci_his,
+            "color": cfg["color"],
+            "marker": cfg["marker"],
+        }
     return out
 
 
@@ -148,6 +224,8 @@ def main() -> None:
         ys = row["flip"]
         xs_valid = [i for i, v in enumerate(ys) if v is not None]
         ys_valid = [ys[i] for i in xs_valid]
+        ci_los = [row["ci_low"][i] for i in xs_valid]
+        ci_his = [row["ci_high"][i] for i in xs_valid]
         line_with_markers(
             ax,
             xs_valid, ys_valid,
@@ -158,8 +236,34 @@ def main() -> None:
             markersize=7.5,
             zorder=3,
         )
+        yerr_lo = [
+            (y - lo) if lo is not None else 0.0
+            for y, lo in zip(ys_valid, ci_los)
+        ]
+        yerr_hi = [
+            (hi - y) if hi is not None else 0.0
+            for y, hi in zip(ys_valid, ci_his)
+        ]
+        ax.errorbar(
+            xs_valid,
+            ys_valid,
+            yerr=[yerr_lo, yerr_hi],
+            fmt="none",
+            ecolor=row["color"],
+            elinewidth=0.8,
+            capsize=2.2,
+            capthick=0.8,
+            alpha=0.75,
+            zorder=2.8,
+        )
         if xs_valid and ys_valid[-1] is not None:
-            y_offsets = {"GPT-oss-20B": -2, "Gemma-4-26B": -12, "OLMo-2-32B": 12, "Qwen-3.5-27B": 6}
+            y_offsets = {
+                "GPT-oss-20B": -2,
+                "Gemma-4-26B": -12,
+                "OLMo-2-32B": 16,
+                "Qwen-3.5-27B": 8,
+                "OLMo-3.1-32B": -16,
+            }
             annotate_endpoint(
                 ax,
                 xs_valid[-1], ys_valid[-1],
@@ -173,6 +277,7 @@ def main() -> None:
     ax.axhline(0, color=AXIS.rule, linewidth=0.7, zorder=1)
     ax.set_xticks(x)
     ax.set_xticklabels(LEVEL_LABELS, fontsize=8.3, color=AXIS.ink)
+    ax.set_xlabel("Endorsement wording in prompt", fontsize=9.2, color=AXIS.ink_soft, labelpad=10)
     ax.set_ylabel("W1 flip rate (%)", fontsize=9.6, color=AXIS.ink_soft)
     ax.set_yticks([0, 20, 40, 60, 80, 100])
     y_grid(ax, alpha=0.55)
@@ -195,17 +300,14 @@ def main() -> None:
     fig.legend(
         handles, list(data.keys()),
         loc="center", bbox_to_anchor=(0.5, 0.90),
-        ncol=4, frameon=False,
+        ncol=5, frameon=False,
         fontsize=9.1, handlelength=1.8, columnspacing=1.8,
     )
 
-    fig.text(
-        0.10, 0.945,
-        "Stronger endorsements produce stronger overrides",
-        fontsize=13.0, fontweight="bold", color=AXIS.ink, ha="left", va="bottom",
-    )
-
-    save_fig(fig, "authority_gradient_v2", OUTPUT_DIR)
+    paths = save_fig(fig, "authority_gradient_v2", OUTPUT_DIR)
+    for path in paths:
+        if path.suffix == ".svg":
+            path.write_text("\n".join(line.rstrip() for line in path.read_text().splitlines()) + "\n")
     print("Saved authority_gradient_v2.*")
 
 

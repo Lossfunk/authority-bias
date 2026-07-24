@@ -1,0 +1,22 @@
+{
+  "seed": 20260506,
+  "max_items": 512,
+  "source_mask": "mask_primary_w1",
+  "n_total": 512,
+  "n_train": 256,
+  "n_eval": 256,
+  "train_preview": [
+    "trivia_qa::0",
+    "trivia_qa::1020",
+    "trivia_qa::1084",
+    "trivia_qa::1124",
+    "trivia_qa::1132"
+  ],
+  "eval_preview": [
+    "trivia_qa::1004",
+    "trivia_qa::1016",
+    "trivia_qa::1036",
+    "trivia_qa::104",
+    "trivia_qa::1092"
+  ]
+}

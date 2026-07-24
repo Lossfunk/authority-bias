@@ -1,0 +1,152 @@
+{
+  "olmo2": {
+    "model": "olmo2",
+    "label": "OLMo-2-32B-Instruct",
+    "compliance_dir": "neurips-results/olmo2/mechanism/olmo2_compliance_analysis",
+    "real": {
+      "w1_primary_auroc": 0.6996753246753246,
+      "c1_primary_auroc": 0.7041916167664671,
+      "w1_nested_auroc": 0.4204545454545454,
+      "c1_nested_auroc": 0.5856287425149701,
+      "w1_primary_ci95": {
+        "low": 0.5499972283813748,
+        "high": 0.8337028824833702
+      },
+      "c1_primary_ci95": {
+        "low": 0.5953907496012758,
+        "high": 0.8152193407303041
+      }
+    },
+    "controls": {
+      "random_direction_w1": {
+        "n_samples": 100,
+        "auroc_mean": 0.49248376623376616,
+        "auroc_std": 0.10624169800788158,
+        "auroc_p97_5": null,
+        "real_auroc": 0.6996753246753246,
+        "empirical_pvalue_two_sided": 0.0594059405940594,
+        "zscore": 1.9501905779610917
+      },
+      "random_direction_c1": {
+        "n_samples": 100,
+        "auroc_mean": 0.5095768463073853,
+        "auroc_std": 0.11826525674728895,
+        "auroc_p97_5": null,
+        "real_auroc": 0.7041916167664671,
+        "empirical_pvalue_two_sided": 0.0594059405940594,
+        "zscore": 1.6455785563036303
+      },
+      "random_raw_projection_w1": {
+        "n_samples": 100,
+        "auroc_mean": 0.5752922077922078,
+        "auroc_std": 0.052114703264434147,
+        "auroc_p97_5": 0.7025974025974024,
+        "real_auroc": 0.6996753246753246,
+        "empirical_pvalue_two_sided": 0.039603960396039604,
+        "zscore": 2.386718317323749
+      },
+      "random_raw_projection_c1": {
+        "n_samples": 100,
+        "auroc_mean": 0.5848383233532934,
+        "auroc_std": 0.06668485487008535,
+        "auroc_p97_5": 0.7287524950099796,
+        "real_auroc": 0.7041916167664671,
+        "empirical_pvalue_two_sided": 0.06930693069306931,
+        "zscore": 1.789811099472232
+      },
+      "shuffled_label_w1": {
+        "n_samples": 100,
+        "auroc_mean": 0.49282467532467533,
+        "auroc_std": 0.10344792997309973,
+        "auroc_p97_5": 0.6644683441558441,
+        "real_auroc": 0.6996753246753246,
+        "empirical_pvalue_two_sided": 0.04950495049504951,
+        "zscore": 1.9995629627817404
+      },
+      "shuffled_label_c1": {
+        "n_samples": 100,
+        "auroc_mean": 0.4821397205588822,
+        "auroc_std": 0.09531687163719295,
+        "auroc_p97_5": 0.6536427145708581,
+        "real_auroc": 0.7041916167664671,
+        "empirical_pvalue_two_sided": 0.039603960396039604,
+        "zscore": 2.3296179615796313
+      }
+    }
+  },
+  "olmo31": {
+    "model": "olmo31",
+    "label": "OLMo-3.1-32B-Instruct",
+    "compliance_dir": "neurips-results/olmo31/mechanism/compliance_analysis_all_prior_wrong_shared_h100",
+    "real": {
+      "w1_primary_auroc": 0.6492916332531409,
+      "c1_primary_auroc": 0.5027758501040944,
+      "w1_nested_auroc": 0.5396952686447474,
+      "c1_nested_auroc": 0.710617626648161,
+      "w1_primary_ci95": {
+        "low": 0.5375045174613711,
+        "high": 0.7545336665791211
+      },
+      "c1_primary_ci95": {
+        "low": 0.38209573019147364,
+        "high": 0.5999574222657528
+      }
+    },
+    "controls": {
+      "random_direction_w1": {
+        "n_samples": 100,
+        "auroc_mean": 0.4964207431168137,
+        "auroc_std": 0.0811800974616022,
+        "auroc_p97_5": null,
+        "real_auroc": 0.6492916332531409,
+        "empirical_pvalue_two_sided": 0.039603960396039604,
+        "zscore": 1.8831079897216725
+      },
+      "random_direction_c1": {
+        "n_samples": 100,
+        "auroc_mean": 0.5338861901457321,
+        "auroc_std": 0.09343547916330065,
+        "auroc_p97_5": null,
+        "real_auroc": 0.5027758501040944,
+        "empirical_pvalue_two_sided": 1.0,
+        "zscore": -0.33296067318566447
+      },
+      "random_raw_projection_w1": {
+        "n_samples": 100,
+        "auroc_mean": 0.5594065757818764,
+        "auroc_std": 0.03851629503118594,
+        "auroc_p97_5": 0.6297914995990377,
+        "real_auroc": 0.6492916332531409,
+        "empirical_pvalue_two_sided": 0.019801980198019802,
+        "zscore": 2.3336890892149964
+      },
+      "random_raw_projection_c1": {
+        "n_samples": 100,
+        "auroc_mean": 0.5825364330326162,
+        "auroc_std": 0.0532198828497231,
+        "auroc_p97_5": 0.6888098542678696,
+        "real_auroc": 0.5027758501040944,
+        "empirical_pvalue_two_sided": 0.9702970297029703,
+        "zscore": -1.4986989571875171
+      },
+      "shuffled_label_w1": {
+        "n_samples": 100,
+        "auroc_mean": 0.4785752472600908,
+        "auroc_std": 0.08053777009627887,
+        "auroc_p97_5": 0.6220462443197006,
+        "real_auroc": 0.6492916332531409,
+        "empirical_pvalue_two_sided": 0.07920792079207921,
+        "zscore": 2.1197058943768505
+      },
+      "shuffled_label_c1": {
+        "n_samples": 100,
+        "auroc_mean": 0.48293199167244977,
+        "auroc_std": 0.0833079206940445,
+        "auroc_p97_5": 0.6066013185287993,
+        "real_auroc": 0.5027758501040944,
+        "empirical_pvalue_two_sided": 1.0,
+        "zscore": 0.2381989403447361
+      }
+    }
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "model": "qwen35",
+  "layers": "5",
+  "position_mode": "answer_position",
+  "tasks": {
+    "mmlu_pro": [
+      {
+        "variant": "residualized",
+        "alpha": 0.0,
+        "accuracy": 0.6066666666666667,
+        "parsed": 300,
+        "total": 300,
+        "parse_rate": 1.0,
+        "config_id": "mmlu_pro_project_out_direction_L5_answer_position"
+      },
+      {
+        "variant": "residualized",
+        "alpha": 0.75,
+        "accuracy": 0.6,
+        "parsed": 300,
+        "total": 300,
+        "parse_rate": 1.0,
+        "config_id": "mmlu_pro_project_out_direction_L5_answer_position"
+      },
+      {
+        "variant": "residualized",
+        "alpha": 1.0,
+        "accuracy": 0.5959595959595959,
+        "parsed": 297,
+        "total": 300,
+        "parse_rate": 0.99,
+        "config_id": "mmlu_pro_project_out_direction_L5_answer_position"
+      },
+      {
+        "variant": "assistant",
+        "alpha": 0.0,
+        "accuracy": 0.6066666666666667,
+        "parsed": 300,
+        "total": 300,
+        "parse_rate": 1.0,
+        "config_id": "mmlu_pro_project_out_direction_L5_answer_position"
+      },
+      {
+        "variant": "assistant",
+        "alpha": 1.0,
+        "accuracy": 0.6066666666666667,
+        "parsed": 300,
+        "total": 300,
+        "parse_rate": 1.0,
+        "config_id": "mmlu_pro_project_out_direction_L5_answer_position"
+      },
+      {
+        "variant": "caa",
+        "alpha": 0.0,
+        "accuracy": 0.6066666666666667,
+        "parsed": 300,
+        "total": 300,
+        "parse_rate": 1.0,
+        "config_id": "mmlu_pro_subtract_L5_answer_position"
+      },
+      {
+        "variant": "caa",
+        "alpha": 1.0,
+        "accuracy": 0.6066666666666667,
+        "parsed": 300,
+        "total": 300,
+        "parse_rate": 1.0,
+        "config_id": "mmlu_pro_subtract_L5_answer_position"
+      }
+    ],
+    "gsm8k": [
+      {
+        "variant": "residualized",
+        "alpha": 0.0,
+        "accuracy": 0.465,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0,
+        "config_id": "gsm8k_project_out_direction_L5_answer_position"
+      },
+      {
+        "variant": "residualized",
+        "alpha": 0.75,
+        "accuracy": 0.425,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0,
+        "config_id": "gsm8k_project_out_direction_L5_answer_position"
+      },
+      {
+        "variant": "residualized",
+        "alpha": 1.0,
+        "accuracy": 0.425,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0,
+        "config_id": "gsm8k_project_out_direction_L5_answer_position"
+      },
+      {
+        "variant": "assistant",
+        "alpha": 0.0,
+        "accuracy": 0.465,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0,
+        "config_id": "gsm8k_project_out_direction_L5_answer_position"
+      },
+      {
+        "variant": "assistant",
+        "alpha": 1.0,
+        "accuracy": 0.465,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0,
+        "config_id": "gsm8k_project_out_direction_L5_answer_position"
+      },
+      {
+        "variant": "caa",
+        "alpha": 0.0,
+        "accuracy": 0.465,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0,
+        "config_id": "gsm8k_subtract_L5_answer_position"
+      },
+      {
+        "variant": "caa",
+        "alpha": 1.0,
+        "accuracy": 0.465,
+        "parsed": 200,
+        "total": 200,
+        "parse_rate": 1.0,
+        "config_id": "gsm8k_subtract_L5_answer_position"
+      }
+    ]
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "experiment": "correct_source_preservation",
+  "intervention": "project_out_direction",
+  "alphas": [0.0, 1.0],
+  "conditions": ["N0_note", "W1_note", "C1_note"],
+  "models": {
+    "qwen35": {
+      "label": "Qwen3.5-27B",
+      "source": "causal-deconfound/qwen35_ab_project_out_allcond/qwen35/trivia_*/steering_summary.json",
+      "layer": 5,
+      "position_mode": "endorsement_span",
+      "results": {
+        "authority": {
+          "alpha=0": {"C1_acc": 0.988, "N0_acc": 0.966, "W1_acc": 0.606, "W1_wrong": 0.394},
+          "alpha=1": {"C1_acc": 0.950, "N0_acc": 0.964, "W1_acc": 0.937, "W1_wrong": 0.063}
+        },
+        "assistant_axis": {
+          "alpha=1": {"C1_acc": 0.984, "N0_acc": 0.970, "W1_acc": 0.596, "W1_wrong": 0.404}
+        },
+        "residualized": {
+          "alpha=1": {"C1_acc": 0.958, "N0_acc": 0.966, "W1_acc": 0.942, "W1_wrong": 0.058}
+        }
+      }
+    },
+    "olmo2": {
+      "label": "OLMo-2-32B-Instruct",
+      "source": "neurips-results/exp19/ab_project_out_allcond/olmo2/trivia_*/steering_summary.json",
+      "layer": 16,
+      "position_mode": "answer_position",
+      "results": {
+        "authority": {
+          "alpha=0": {"C1_acc": 0.968, "N0_acc": 0.783, "W1_acc": 0.165, "W1_wrong": 0.835},
+          "alpha=1": {"C1_acc": 0.902, "N0_acc": 0.761, "W1_acc": 0.612, "W1_wrong": 0.388}
+        },
+        "assistant_axis": {
+          "alpha=1": {"C1_acc": 0.967, "N0_acc": 0.783, "W1_acc": 0.172, "W1_wrong": 0.828}
+        },
+        "residualized": {
+          "alpha=1": {"C1_acc": 0.912, "N0_acc": 0.774, "W1_acc": 0.641, "W1_wrong": 0.359}
+        }
+      }
+    },
+    "olmo31": {
+      "label": "OLMo-3.1-32B-Instruct",
+      "source": "neurips-results/exp19/ab_project_out_allcond/olmo31/trivia_*/steering_summary.json",
+      "layer": 5,
+      "position_mode": "note_start",
+      "results": {
+        "authority": {
+          "alpha=0": {"C1_acc": 0.968, "N0_acc": 0.870, "W1_acc": 0.173, "W1_wrong": 0.827},
+          "alpha=1": {"C1_acc": 0.928, "N0_acc": 0.851, "W1_acc": 0.715, "W1_wrong": 0.285}
+        },
+        "assistant_axis": {
+          "alpha=1": {"C1_acc": 0.962, "N0_acc": 0.869, "W1_acc": 0.172, "W1_wrong": 0.828}
+        },
+        "residualized": {
+          "alpha=1": {"C1_acc": 0.935, "N0_acc": 0.863, "W1_acc": 0.752, "W1_wrong": 0.248}
+        }
+      }
+    }
+  }
+}

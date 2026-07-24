@@ -46,6 +46,11 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--extraction-dir", type=Path, default=DEFAULT_EXTRACTION_DIR)
     p.add_argument("--masks-path", type=Path, default=None)
     p.add_argument("--analysis-dir", type=Path, default=DEFAULT_ANALYSIS_DIR)
+    p.add_argument(
+        "--skip-compliance-overlap",
+        action="store_true",
+        help="Fit and save the lexical VA plane without loading authority activations to measure overlap.",
+    )
     p.add_argument("--compliance-position", type=str, default="auto")
     p.add_argument(
         "--compliance-kind",
@@ -260,10 +265,14 @@ def main() -> None:
 
     extraction_dir = args.extraction_dir
     masks_path = args.masks_path or (extraction_dir / "label_masks.json")
-    store = _load_extraction_store(extraction_dir)
-    masks = _load_masks(masks_path)
-    compliance_uids = _load_subset_uids(masks, args.compliance_uids_subset)
+    store = None
+    masks = None
+    compliance_uids: List[str] = []
     compliance_position = _resolve_compliance_position(args)
+    if not args.skip_compliance_overlap:
+        store = _load_extraction_store(extraction_dir)
+        masks = _load_masks(masks_path)
+        compliance_uids = _load_subset_uids(masks, args.compliance_uids_subset)
 
     summary_layers: Dict[str, object] = {}
     basis_by_layer: Dict[int, torch.Tensor] = {}
@@ -284,21 +293,16 @@ def main() -> None:
         valence_by_layer[layer] = torch.tensor(fit["valence_vector"], dtype=torch.float32)
         arousal_by_layer[layer] = torch.tensor(fit["arousal_vector"], dtype=torch.float32)
 
-        compliance_vec = _direction_from_store(
-            store,
-            uids=compliance_uids,
-            position=compliance_position,
-            layer_value=layer,
-        )[args.compliance_kind].float().numpy()
-        coords = projection_coords_np(compliance_vec, basis)
-        summary_layers[str(layer)] = {
-            "valence_corr": fit["valence_corr"],
-            "arousal_corr": fit["arousal_corr"],
-            "valence_r2_pc": fit["valence_r2_pc"],
-            "arousal_r2_pc": fit["arousal_r2_pc"],
-            "pre_orthogonal_cosine": fit["pre_orthogonal_cosine"],
-            "explained_variance_ratio": fit["explained_variance_ratio"],
-            "compliance_overlap": {
+        compliance_overlap = None
+        if store is not None:
+            compliance_vec = _direction_from_store(
+                store,
+                uids=compliance_uids,
+                position=compliance_position,
+                layer_value=layer,
+            )[args.compliance_kind].float().numpy()
+            coords = projection_coords_np(compliance_vec, basis)
+            compliance_overlap = {
                 "position": compliance_position,
                 "direction_kind": args.compliance_kind,
                 "uids_subset": args.compliance_uids_subset,
@@ -306,7 +310,15 @@ def main() -> None:
                 "cosine_arousal": cosine_np(compliance_vec, fit["arousal_vector"]),
                 "plane_norm_fraction": fraction_of_norm_in_basis(compliance_vec, basis),
                 "plane_coords": coords.tolist(),
-            },
+            }
+        summary_layers[str(layer)] = {
+            "valence_corr": fit["valence_corr"],
+            "arousal_corr": fit["arousal_corr"],
+            "valence_r2_pc": fit["valence_r2_pc"],
+            "arousal_r2_pc": fit["arousal_r2_pc"],
+            "pre_orthogonal_cosine": fit["pre_orthogonal_cosine"],
+            "explained_variance_ratio": fit["explained_variance_ratio"],
+            "compliance_overlap": compliance_overlap,
         }
 
     payload = {

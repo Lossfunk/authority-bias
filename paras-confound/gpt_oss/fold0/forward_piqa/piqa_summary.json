@@ -1,0 +1,347 @@
+[
+  {
+    "config_id": "interpolate_mean_a0_L16",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 142,
+    "parse_rate": 0.71,
+    "accuracy_parsed": 0.7323943661971831,
+    "wrong_rate_parsed": 0.2676056338028169,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a0.3_L16",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 134,
+    "parse_rate": 0.67,
+    "accuracy_parsed": 0.6791044776119403,
+    "wrong_rate_parsed": 0.3208955223880597,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.3,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a0.5_L16",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 152,
+    "parse_rate": 0.76,
+    "accuracy_parsed": 0.6842105263157895,
+    "wrong_rate_parsed": 0.3157894736842105,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.5,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a0.7_L16",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 173,
+    "parse_rate": 0.865,
+    "accuracy_parsed": 0.6647398843930635,
+    "wrong_rate_parsed": 0.3352601156069364,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.7,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a1_L16",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 173,
+    "parse_rate": 0.865,
+    "accuracy_parsed": 0.6184971098265896,
+    "wrong_rate_parsed": 0.3815028901734104,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 1.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      16
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a0_L18",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 142,
+    "parse_rate": 0.71,
+    "accuracy_parsed": 0.7323943661971831,
+    "wrong_rate_parsed": 0.2676056338028169,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a0.3_L18",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 156,
+    "parse_rate": 0.78,
+    "accuracy_parsed": 0.7051282051282052,
+    "wrong_rate_parsed": 0.2948717948717949,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.3,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a0.5_L18",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 176,
+    "parse_rate": 0.88,
+    "accuracy_parsed": 0.6704545454545454,
+    "wrong_rate_parsed": 0.32954545454545453,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.5,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a0.7_L18",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 175,
+    "parse_rate": 0.875,
+    "accuracy_parsed": 0.6514285714285715,
+    "wrong_rate_parsed": 0.3485714285714286,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.7,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a1_L18",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 175,
+    "parse_rate": 0.875,
+    "accuracy_parsed": 0.6342857142857142,
+    "wrong_rate_parsed": 0.3657142857142857,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 1.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      18
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a0_L20",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 142,
+    "parse_rate": 0.71,
+    "accuracy_parsed": 0.7323943661971831,
+    "wrong_rate_parsed": 0.2676056338028169,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a0.3_L20",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 147,
+    "parse_rate": 0.735,
+    "accuracy_parsed": 0.7142857142857143,
+    "wrong_rate_parsed": 0.2857142857142857,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.3,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a0.5_L20",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 148,
+    "parse_rate": 0.74,
+    "accuracy_parsed": 0.668918918918919,
+    "wrong_rate_parsed": 0.3310810810810811,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.5,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a0.7_L20",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 150,
+    "parse_rate": 0.75,
+    "accuracy_parsed": 0.6866666666666666,
+    "wrong_rate_parsed": 0.31333333333333335,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 0.7,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  },
+  {
+    "config_id": "interpolate_mean_a1_L20",
+    "condition_code": "N0_note",
+    "n": 200,
+    "parsed": 165,
+    "parse_rate": 0.825,
+    "accuracy_parsed": 0.7151515151515152,
+    "wrong_rate_parsed": 0.28484848484848485,
+    "flip_rate_parsed": null,
+    "mode": "interpolate_mean",
+    "alpha": 1.0,
+    "direction_kind": null,
+    "sparse_topk": 0,
+    "target_layers": [
+      20
+    ],
+    "components": [
+      "block_output"
+    ],
+    "position_mode": "endorsement_span",
+    "apply_phase": "prompt",
+    "norm_scaling": "none"
+  }
+]
