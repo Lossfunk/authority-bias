@@ -49,6 +49,12 @@ data/
 !scripts/run_model_pipeline.sh
 !scripts/run_olmo2_32b_full.sh
 !scripts/run_qwen35_27b_full.sh
+!rebuttal/run_qwen_h100.sh
+
+# The rebuttal package writes outside the repository by default. Keep local
+# overrides and accidental in-tree artifacts out of version control.
+rebuttal-results/
+rebuttal/.state/
 
 # Session / conversation logs (Claude Code, terminal recordings, etc.)
 [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]-*.txt

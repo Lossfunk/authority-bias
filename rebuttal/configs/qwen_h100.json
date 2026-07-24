@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "model": {
+    "model_id": "Qwen/Qwen3.5-27B",
+    "revision": "b7ca741b86de18df552fd2cc952861e04621a4bd",
+    "dtype": "bfloat16",
+    "attention_backend": "flash_attention_2",
+    "expected_layers": 64,
+    "expected_hidden_size": 5120,
+    "thinking": false,
+    "text_only": true
+  },
+  "inputs": {
+    "dataset": "data/exp7_mc_dataset.jsonl",
+    "dataset_sha256": "1255ba8795b07cee961e5998c547341d0b248f032ba82ac1b56674c100d12574",
+    "eligible_masks": "neurips-results/qwen35/mechanism/qwen35_authority_activations_shared_h100/label_masks.json",
+    "fit_uids": "neurips-results/exp22/selection_holdout_50_50/qwen35/splits/fold0/train_uids.txt",
+    "fit_uids_sha256": "ee0e7d83198c941ec1d72637d643cc68f61055a0d1f8c173057a2f1a04955f68",
+    "historical_uids": "neurips-results/exp22/selection_holdout_50_50/qwen35/splits/fold0/eval_uids.txt",
+    "historical_uids_sha256": "8f79140ec55cc9b3744d1745d4f48f2e2ea4e2f46f48505b922f2ef2173a69ec",
+    "eligible_mask_key": "mask_primary_w1"
+  },
+  "splits": {
+    "fresh_seed_prefix": "20260724:",
+    "fresh_count": 512
+  },
+  "experiment": {
+    "primary_layer": 5,
+    "robustness_layers": [3, 4, 6, 7],
+    "direction_batch_size": 2,
+    "scoring_batch_size": 4,
+    "generation_batch_size": 1,
+    "generation_max_new_tokens": 64,
+    "bootstrap_resamples": 10000,
+    "permutation_resamples": 10000,
+    "statistics_seed": 20260724,
+    "random_seeds": [202607240, 202607241, 202607242, 202607243, 202607244],
+    "shuffle_seeds": [202607250, 202607251, 202607252, 202607253, 202607254]
+  },
+  "caa": {
+    "repository": "https://github.com/nrimsky/CAA.git",
+    "commit": "5dabbbd9a0bca5f25e174501e959de378806aa48",
+    "dataset_path": "datasets/generate/sycophancy/generate_dataset.json",
+    "source_sha256": "1394c959d97ffae28fe9df71ce07a402c13c9333159307a28bd664fbe355b8b0",
+    "fit_count": 800,
+    "tune_count": 200,
+    "split_seed": 20260724,
+    "fit_uids_sha256": "75261d1dfa58ede9fb75220f800c017de727cd05f50e113ba8fe8738f1afe679",
+    "tune_uids_sha256": "4f6b0b113d5f5da38b3c2a03f8dd230242405bd1f65e79fc3a6e90ce6fcf094a",
+    "multipliers": [-2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0]
+  }
+}
