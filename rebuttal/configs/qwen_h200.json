@@ -27,8 +27,8 @@
   "experiment": {
     "primary_layer": 5,
     "robustness_layers": [3, 4, 6, 7],
-    "direction_batch_size": 2,
-    "scoring_batch_size": 4,
+    "direction_batch_size": 8,
+    "scoring_batch_size": 16,
     "generation_batch_size": 1,
     "generation_max_new_tokens": 256,
     "bootstrap_resamples": 10000,

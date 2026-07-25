@@ -789,6 +789,86 @@ def _score_reviewer_catalog(
         )
 
 
+def _assert_reviewer_noop_scoring(
+    *,
+    adapter: QwenAdapter,
+    config: PipelineConfig,
+    manifest: RunManifest,
+    paths: RunPaths,
+    prompts: list[PromptExample],
+    fitted: LayerDirections,
+) -> None:
+    """Catch shared-UID score collisions and non-zero no-op interventions."""
+    smoke_prompts = prompts[:16]
+    catalog = {
+        intervention.intervention_id: (intervention, cues)
+        for intervention, cues in _reviewer_core_catalog(fitted)
+    }
+    baseline, _ = catalog[f"baseline_l{fitted.layer}"]
+    baseline_rows = score_margins(
+        adapter=adapter,
+        prompts=smoke_prompts,
+        intervention=baseline,
+        run_id=manifest.run_id,
+        split="smoke",
+        batch_size=config.experiment.scoring_batch_size,
+    )
+    baseline_by_key = {
+        (row.uid, row.cue_family): float(row.compliance_margin)
+        for row in baseline_rows
+    }
+    checks: dict[str, dict[str, float | int]] = {}
+    for cue, intervention_id in (
+        ("source", f"source_to_source_noop_l{fitted.layer}"),
+        ("user", f"user_to_user_noop_l{fitted.layer}"),
+    ):
+        intervention, _ = catalog[intervention_id]
+        selected = [prompt for prompt in smoke_prompts if prompt.cue_family == cue]
+        cue_baseline_rows = score_margins(
+            adapter=adapter,
+            prompts=selected,
+            intervention=baseline,
+            run_id=manifest.run_id,
+            split="smoke",
+            batch_size=config.experiment.scoring_batch_size,
+        )
+        cue_baseline = {
+            (row.uid, row.cue_family): float(row.compliance_margin)
+            for row in cue_baseline_rows
+        }
+        mixed_batch_differences = [
+            abs(value - baseline_by_key[key]) for key, value in cue_baseline.items()
+        ]
+        no_op_rows = score_margins(
+            adapter=adapter,
+            prompts=selected,
+            intervention=intervention,
+            run_id=manifest.run_id,
+            split="smoke",
+            batch_size=config.experiment.scoring_batch_size,
+        )
+        no_op_differences = [
+            abs(float(row.compliance_margin) - cue_baseline[(row.uid, row.cue_family)])
+            for row in no_op_rows
+        ]
+        mixed_maximum = max(mixed_batch_differences, default=0.0)
+        no_op_maximum = max(no_op_differences, default=0.0)
+        checks[cue] = {
+            "n": len(no_op_differences),
+            "max_abs_mixed_vs_single_cue_difference": mixed_maximum,
+            "max_abs_noop_difference": no_op_maximum,
+        }
+        if mixed_maximum > 0.05:
+            raise RuntimeError(
+                f"{cue} mixed-UID batching changed a smoke margin by {mixed_maximum}"
+            )
+        if no_op_maximum != 0:
+            raise RuntimeError(
+                f"{cue} zero-strength no-op changed a smoke margin by {no_op_maximum}"
+            )
+    atomic_write_json(paths.analysis / "reviewer_noop_scoring_smoke.json", checks)
+
+
 def run_reviewer_margin_experiments(
     *,
     adapter: QwenAdapter,
@@ -822,6 +902,14 @@ def run_reviewer_margin_experiments(
     _write_prompt_manifest(
         paths.manifests / "reviewer_evaluation_prompts.jsonl",
         {"historical:primary:after_options:wrong": primary},
+    )
+    _assert_reviewer_noop_scoring(
+        adapter=adapter,
+        config=config,
+        manifest=manifest,
+        paths=paths,
+        prompts=primary,
+        fitted=fitted[primary_layer],
     )
 
     # Primary causal result: swaps, no-ops, and all shuffled/random controls.

@@ -92,23 +92,25 @@ def score_margins(
     records: list[RawResultRow] = []
     for batch_start in range(0, len(prompts), batch_size):
         prompt_batch = prompts[batch_start : batch_start + batch_size]
-        flattened: list[tuple[PromptExample, str, list[int], list[int]]] = []
-        for prompt in prompt_batch:
+        flattened: list[tuple[int, PromptExample, str, list[int], list[int]]] = []
+        for prompt_index, prompt in enumerate(prompt_batch):
             prompt_ids = tokenizer.encode(prompt.rendered_text, add_special_tokens=False)
             for label, candidate_text in (
                 ("A", prompt.candidate_a),
                 ("B", prompt.candidate_b),
             ):
                 candidate = _candidate_ids(tokenizer, candidate_text)
-                flattened.append((prompt, label, prompt_ids, prompt_ids + candidate))
-        max_length = max(len(item[3]) for item in flattened)
+                flattened.append(
+                    (prompt_index, prompt, label, prompt_ids, prompt_ids + candidate)
+                )
+        max_length = max(len(item[4]) for item in flattened)
         pad_id = tokenizer.pad_token_id
         if pad_id is None:
             raise RuntimeError("Tokenizer has no padding token")
         ids: list[list[int]] = []
         masks: list[list[int]] = []
         hook_positions: list[int | list[int]] = []
-        for prompt, _label, prompt_ids, sequence in flattened:
+        for _prompt_index, prompt, _label, prompt_ids, sequence in flattened:
             padding = max_length - len(sequence)
             ids.append([pad_id] * padding + sequence)
             masks.append([0] * padding + [1] * len(sequence))
@@ -126,7 +128,7 @@ def score_margins(
         attention_mask = torch.tensor(masks, device=adapter.device)
         maximum_candidate_length = max(
             len(sequence) - len(prompt_ids)
-            for _prompt, _label, prompt_ids, sequence in flattened
+            for _prompt_index, _prompt, _label, prompt_ids, sequence in flattened
         )
         logits_to_keep = maximum_candidate_length + 1
         hook: ResidualHook | None = None
@@ -155,8 +157,10 @@ def score_margins(
                 if hook is not None:
                     hook.__exit__(None, None, None)
         log_probs = F.log_softmax(logits, dim=-1)
-        scores: dict[tuple[str, str], float] = {}
-        for row, (prompt, label, prompt_ids, sequence) in enumerate(flattened):
+        scores: dict[tuple[int, str], float] = {}
+        for row, (prompt_index, _prompt, label, prompt_ids, sequence) in enumerate(
+            flattened
+        ):
             padding = max_length - len(sequence)
             candidate_length = len(sequence) - len(prompt_ids)
             first_target = padding + len(prompt_ids)
@@ -167,8 +171,8 @@ def score_margins(
             )
             targets = input_ids[row, first_target : first_target + candidate_length]
             score = log_probs[row, positions, targets].sum().item()
-            scores[(prompt.uid, label)] = score
-        for prompt in prompt_batch:
+            scores[(prompt_index, label)] = score
+        for prompt_index, prompt in enumerate(prompt_batch):
             endorsed = prompt.endorsed_label
             other = "B" if endorsed == "A" else "A"
             payload = {
@@ -185,8 +189,8 @@ def score_margins(
                 "direction_id": intervention.direction_id,
                 "seed": intervention.seed,
             }
-            logp_endorsed = scores[(prompt.uid, endorsed)]
-            logp_other = scores[(prompt.uid, other)]
+            logp_endorsed = scores[(prompt_index, endorsed)]
+            logp_other = scores[(prompt_index, other)]
             records.append(
                 RawResultRow(
                     row_key=_row_key(payload),
