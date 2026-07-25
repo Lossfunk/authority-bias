@@ -11,7 +11,7 @@ from .pipeline import (
     bundle_run,
     fit_and_tune_caa,
     fit_source_user_directions,
-    h100_smoke,
+    h200_smoke,
     preflight,
     prepare_run,
     run_caa_fresh_margins,
@@ -30,7 +30,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--config",
         type=Path,
-        default=Path("rebuttal/configs/qwen_h100.json"),
+        default=Path("rebuttal/configs/qwen_h200.json"),
     )
     parser.add_argument(
         "--output-root",
@@ -85,7 +85,7 @@ def main() -> None:
         return
     adapter = QwenAdapter.load(config.model, token)
     if args.command in {"smoke", "all"}:
-        h100_smoke(
+        h200_smoke(
             adapter=adapter,
             config=config,
             splits=splits,

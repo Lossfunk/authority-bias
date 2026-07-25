@@ -5,14 +5,14 @@ experiments. It deliberately does not import anything from the repository's
 legacy `src/` tree. Historical code and results are read only as declared input
 data.
 
-## Run on one H100
+## Run on one H200
 
-Requirements: Linux, one visible H100 80GB, CUDA 12.8-compatible driver,
+Requirements: Linux, one visible H200, CUDA 12.8-compatible driver,
 `git`, `uv`, at least 180 GiB free under the output root, and access to the
 pinned Qwen checkpoint.
 
 ```bash
-HF_TOKEN=... bash rebuttal/run_qwen_h100.sh
+HF_TOKEN=... bash rebuttal/run_qwen_h200.sh
 ```
 
 Override the result location with `REBUTTAL_OUTPUT_ROOT`. The default is
@@ -20,7 +20,7 @@ Override the result location with `REBUTTAL_OUTPUT_ROOT`. The default is
 never written into Git.
 
 The script uses physical GPU 0 by default. Set `CUDA_VISIBLE_DEVICES` explicitly
-before the command to select a different H100.
+before the command to select a different H200.
 
 The runner fails rather than silently changing a model revision, dependency,
 attention backend, dtype, device, tokenizer behavior, or prompt span. A run is

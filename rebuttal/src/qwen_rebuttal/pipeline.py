@@ -874,7 +874,7 @@ def run_generation_experiments(
                 append_jsonl_atomic(path, rows)
 
 
-def h100_smoke(
+def h200_smoke(
     *,
     adapter: QwenAdapter,
     config: PipelineConfig,

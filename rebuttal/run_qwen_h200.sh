@@ -14,7 +14,7 @@ if ! command -v uv >/dev/null 2>&1; then
   exit 2
 fi
 if ! command -v nvidia-smi >/dev/null 2>&1; then
-  echo "nvidia-smi is required; this command must run on the H100 host." >&2
+  echo "nvidia-smi is required; this command must run on the H200 host." >&2
   exit 2
 fi
 
@@ -41,5 +41,5 @@ uv run --project "${SCRIPT_DIR}" --extra gpu --extra test --frozen \
 uv run --project "${SCRIPT_DIR}" --extra gpu --extra test --frozen \
   qwen-rebuttal all \
   --repo-root "${REPO_ROOT}" \
-  --config "${SCRIPT_DIR}/configs/qwen_h100.json" \
+  --config "${SCRIPT_DIR}/configs/qwen_h200.json" \
   --output-root "${OUTPUT_ROOT}"

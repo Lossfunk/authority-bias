@@ -54,6 +54,11 @@ def dependency_manifest() -> dict[str, str]:
     return versions
 
 
+def assert_h200_name(name: str) -> None:
+    if "H200" not in name.upper():
+        raise RuntimeError(f"An H200 is required, found {name}")
+
+
 def hardware_manifest(output_root: Path, minimum_free_gib: int = 180) -> dict[str, Any]:
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA is required; no CPU fallback is permitted")
@@ -63,8 +68,7 @@ def hardware_manifest(output_root: Path, minimum_free_gib: int = 180) -> dict[st
         )
     properties = torch.cuda.get_device_properties(0)
     name = properties.name
-    if "H100" not in name.upper():
-        raise RuntimeError(f"An H100 is required, found {name}")
+    assert_h200_name(name)
     free, total = torch.cuda.mem_get_info(0)
     disk = shutil.disk_usage(output_root.parent if not output_root.exists() else output_root)
     free_gib = disk.free / 2**30

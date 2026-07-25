@@ -11,7 +11,7 @@ from qwen_rebuttal.prompts import (
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-CONFIG = load_config(REPO_ROOT / "rebuttal/configs/qwen_h100.json")
+CONFIG = load_config(REPO_ROOT / "rebuttal/configs/qwen_h200.json")
 
 
 class CharacterTokenizer:
