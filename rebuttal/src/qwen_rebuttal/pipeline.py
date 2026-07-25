@@ -973,11 +973,15 @@ def h200_smoke(
                 "ranking_agrees": (opt >= 0) == (ref >= 0),
             }
         )
+    atomic_write_json(paths.analysis / "attention_parity_smoke.json", comparisons)
     if any(not item["ranking_agrees"] for item in comparisons):
         raise RuntimeError("Optimized and reference attention disagree on answer ranking")
-    if any(float(item["absolute_difference"]) > 0.05 for item in comparisons):
-        raise RuntimeError("Attention backend compliance-margin difference exceeds 0.05")
-    atomic_write_json(paths.analysis / "attention_parity_smoke.json", comparisons)
+    maximum_difference = max(float(item["absolute_difference"]) for item in comparisons)
+    if maximum_difference > 0.05:
+        raise RuntimeError(
+            "Attention backend compliance-margin difference exceeds 0.05 "
+            f"(maximum={maximum_difference:.6f}); see attention_parity_smoke.json"
+        )
     reference_adapter.layers.clear()
     del reference_adapter.model
     torch.cuda.empty_cache()
