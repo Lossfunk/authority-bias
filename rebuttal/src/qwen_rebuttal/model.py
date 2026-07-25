@@ -111,9 +111,16 @@ class QwenAdapter:
     tokenizer: Any
     layers: list[Any]
     spec: ModelSpec
+    reference_linear_attention: bool = False
 
     @classmethod
-    def load(cls, spec: ModelSpec, token: str | None) -> QwenAdapter:
+    def load(
+        cls,
+        spec: ModelSpec,
+        token: str | None,
+        *,
+        reference_linear_attention: bool = False,
+    ) -> QwenAdapter:
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
         if spec.dtype != "bfloat16":
@@ -140,8 +147,14 @@ class QwenAdapter:
         )
         model.eval()
         layers = cls._resolve_layers(model)
-        adapter = cls(model=model, tokenizer=tokenizer, layers=layers, spec=spec)
-        if spec.attention_backend == "eager":
+        adapter = cls(
+            model=model,
+            tokenizer=tokenizer,
+            layers=layers,
+            spec=spec,
+            reference_linear_attention=reference_linear_attention,
+        )
+        if reference_linear_attention:
             adapter._force_reference_linear_attention()
         adapter.assert_architecture()
         return adapter
@@ -200,13 +213,14 @@ class QwenAdapter:
         chunk_modules = {
             module.chunk_gated_delta_rule.__module__ for module in linear_modules
         }
-        if self.spec.attention_backend == "flash_attention_2":
+        if self.reference_linear_attention:
+            if any(name.startswith("fla.") for name in chunk_modules):
+                raise RuntimeError("Reference run still has optimized linear-attention kernels")
+        else:
             if not all(name.startswith("fla.") for name in chunk_modules):
                 raise RuntimeError(
                     f"Optimized run did not bind flash-linear-attention: {chunk_modules}"
                 )
-        elif any(name.startswith("fla.") for name in chunk_modules):
-            raise RuntimeError("Reference run still has optimized linear-attention kernels")
 
     def _force_reference_linear_attention(self) -> None:
         from transformers.models.qwen3_5.modeling_qwen3_5 import (
