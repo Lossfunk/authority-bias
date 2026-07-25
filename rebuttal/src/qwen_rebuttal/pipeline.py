@@ -932,9 +932,7 @@ def h200_smoke(
     )
     optimized = {row.uid: float(row.compliance_margin) for row in optimized_rows}
     del reference_logits, no_op_logits
-    adapter.layers.clear()
-    del adapter.model
-    torch.cuda.empty_cache()
+    adapter.release()
     reference_spec = replace(config.model, attention_backend="eager")
     reference_adapter = QwenAdapter.load(reference_spec, token)
     reference_prompts = _tokenize_prompts(
@@ -982,9 +980,7 @@ def h200_smoke(
             "Attention backend compliance-margin difference exceeds 0.05 "
             f"(maximum={maximum_difference:.6f}); see attention_parity_smoke.json"
         )
-    reference_adapter.layers.clear()
-    del reference_adapter.model
-    torch.cuda.empty_cache()
+    reference_adapter.release()
 
 
 def _generation_agreement(rows: list[RawResultRow], layer: int) -> bool:

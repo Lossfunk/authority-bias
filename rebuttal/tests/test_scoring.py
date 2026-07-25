@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from types import SimpleNamespace
-
 import pytest
 import torch
 
@@ -21,20 +19,17 @@ class TinyTokenizer:
         return [4, 4]
 
 
-class UniformModel:
-    def __call__(self, *, input_ids, logits_to_keep, **kwargs):
-        return SimpleNamespace(
-            logits=torch.zeros(input_ids.shape[0], logits_to_keep, 5)
-        )
+class TinyAdapter:
+    tokenizer = TinyTokenizer()
+    device = torch.device("cpu")
+    layers = []
+
+    def scoring_logits(self, *, input_ids, logits_to_keep, **kwargs):
+        return torch.zeros(input_ids.shape[0], logits_to_keep, 5)
 
 
 def test_exact_margin_sums_complete_multi_token_candidate():
-    adapter = SimpleNamespace(
-        tokenizer=TinyTokenizer(),
-        model=UniformModel(),
-        device=torch.device("cpu"),
-        layers=[],
-    )
+    adapter = TinyAdapter()
     prompt = PromptExample(
         uid="u",
         template_id="test",

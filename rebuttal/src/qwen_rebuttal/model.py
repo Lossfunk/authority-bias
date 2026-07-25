@@ -5,11 +5,12 @@ import json
 import os
 import shutil
 import subprocess
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 import torch
+import torch.nn.functional as F
 from packaging.version import Version
 
 from .types import ModelSpec
@@ -112,6 +113,9 @@ class QwenAdapter:
     layers: list[Any]
     spec: ModelSpec
     reference_linear_attention: bool = False
+    _scoring_head_weight: torch.Tensor | None = field(
+        default=None, init=False, repr=False
+    )
 
     @classmethod
     def load(
@@ -242,6 +246,37 @@ class QwenAdapter:
             add_generation_prompt=True,
             enable_thinking=False,
         )
+
+    def scoring_logits(
+        self,
+        *,
+        input_ids: torch.Tensor,
+        attention_mask: torch.Tensor,
+        logits_to_keep: int,
+    ) -> torch.Tensor:
+        if logits_to_keep <= 0:
+            raise ValueError("Scoring requires a positive logits_to_keep")
+        base_model = getattr(self.model, "model", None)
+        output_head = self.model.get_output_embeddings()
+        if base_model is None or output_head is None:
+            raise RuntimeError("Qwen scoring modules could not be resolved")
+        if output_head.bias is not None:
+            raise RuntimeError("Qwen output head unexpectedly has a bias")
+        outputs = base_model(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            use_cache=False,
+        )
+        hidden_states = outputs.last_hidden_state[:, -logits_to_keep:, :]
+        if self._scoring_head_weight is None:
+            self._scoring_head_weight = output_head.weight.detach().to(torch.float32)
+        return F.linear(hidden_states.float(), self._scoring_head_weight)
+
+    def release(self) -> None:
+        self.layers.clear()
+        self._scoring_head_weight = None
+        del self.model
+        torch.cuda.empty_cache()
 
     @property
     def device(self) -> torch.device:

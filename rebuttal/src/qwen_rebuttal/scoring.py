@@ -146,16 +146,15 @@ def score_margins(
             if hook is not None:
                 hook.__enter__()
             try:
-                output = adapter.model(
+                logits = adapter.scoring_logits(
                     input_ids=input_ids,
                     attention_mask=attention_mask,
-                    use_cache=False,
                     logits_to_keep=logits_to_keep,
                 )
             finally:
                 if hook is not None:
                     hook.__exit__(None, None, None)
-        log_probs = F.log_softmax(output.logits.float(), dim=-1)
+        log_probs = F.log_softmax(logits, dim=-1)
         scores: dict[tuple[str, str], float] = {}
         for row, (prompt, label, prompt_ids, sequence) in enumerate(flattened):
             padding = max_length - len(sequence)
