@@ -190,7 +190,7 @@ def ensure_matching_manifest(path: Path, manifest: RunManifest) -> None:
         atomic_write_json(path, manifest)
         return
     current = json.loads(path.read_text())
-    expected = asdict(manifest)
+    expected = json.loads(canonical_json(manifest))
     current_created = current.pop("created_utc", None)
     expected.pop("created_utc", None)
     if current != expected:
