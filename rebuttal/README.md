@@ -5,6 +5,14 @@ experiments. It deliberately does not import anything from the repository's
 legacy `src/` tree. Historical code and results are read only as declared input
 data.
 
+The H200 runner is intentionally scoped to new rebuttal evidence: bidirectional
+source/user identity patching, no-op and shuffled/random controls, nearby-layer
+and prompt-position/template robustness, and an independently tuned native CAA
+baseline. It does not rerun or replace the paper's existing removal,
+correct-endorsement, capability, or transfer results. Paper-comparable free
+generation is limited to the primary baseline and the two directional identity
+swaps and retains the submitted `max_new_tokens=256` setting.
+
 ## Run on one H200
 
 Requirements: Linux, one visible H200, CUDA 12.8-compatible driver,
@@ -39,6 +47,5 @@ uv run --project rebuttal ruff check rebuttal
 uv run --project rebuttal qwen-rebuttal prepare --repo-root .
 ```
 
-The final bundle contains immutable manifests, split files, direction geometry,
-raw rows and checksums, statistics, plots, a parser audit, a reviewer-oriented
-plain-English summary, and a neutral claim decision table.
+The reviewer run produces immutable manifests, split files, direction geometry,
+raw exact-margin rows, and the small paper-comparable free-generation check.

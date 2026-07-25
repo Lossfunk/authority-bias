@@ -722,6 +722,166 @@ def run_margin_experiments(
         )
 
 
+def _reviewer_core_catalog(
+    fitted: LayerDirections,
+) -> list[tuple[RuntimeIntervention, tuple[str, ...]]]:
+    """Independent identity-patching conditions requested by the reviewers."""
+    prefixes = (
+        f"baseline_l{fitted.layer}",
+        f"source_to_user_l{fitted.layer}",
+        f"user_to_source_l{fitted.layer}",
+        f"source_to_source_noop_l{fitted.layer}",
+        f"user_to_user_noop_l{fitted.layer}",
+    )
+    catalog = _runtime_catalog(fitted, {}, {})
+    return [
+        (intervention, cues)
+        for intervention, cues in catalog
+        if intervention.intervention_id in prefixes
+    ]
+
+
+def _reviewer_control_catalog(
+    fitted: LayerDirections,
+    shuffled: dict[int, torch.Tensor],
+    random: dict[int, torch.Tensor],
+) -> list[tuple[RuntimeIntervention, tuple[str, ...]]]:
+    """Primary causal conditions plus every preregistered identity control."""
+    core = _reviewer_core_catalog(fitted)
+    controls = [
+        (intervention, cues)
+        for intervention, cues in _runtime_catalog(fitted, shuffled, random)
+        if intervention.intervention_id.startswith(("shuffled_", "random_"))
+    ]
+    return [*core, *controls]
+
+
+def _score_reviewer_catalog(
+    *,
+    adapter: QwenAdapter,
+    config: PipelineConfig,
+    manifest: RunManifest,
+    paths: RunPaths,
+    prompts: list[PromptExample],
+    catalog: list[tuple[RuntimeIntervention, tuple[str, ...]]],
+    template: str,
+    position: str,
+) -> None:
+    for intervention, cues in catalog:
+        subset = [prompt for prompt in prompts if prompt.cue_family in cues]
+        path = _condition_file(
+            paths,
+            measurement="margin",
+            split="historical",
+            template=template,
+            position=position,
+            intervention_id=intervention.intervention_id,
+            endorsement="wrong",
+        )
+        _score_condition(
+            adapter=adapter,
+            prompts=subset,
+            intervention=intervention,
+            run_id=manifest.run_id,
+            split="historical",
+            batch_size=config.experiment.scoring_batch_size,
+            path=path,
+        )
+
+
+def run_reviewer_margin_experiments(
+    *,
+    adapter: QwenAdapter,
+    config: PipelineConfig,
+    splits: FrozenSplits,
+    manifest: RunManifest,
+    paths: RunPaths,
+    repo_root: Path,
+    fitted: dict[int, LayerDirections],
+    shuffled: dict[int, dict[int, torch.Tensor]],
+    random: dict[int, dict[int, torch.Tensor]],
+) -> None:
+    """Run only the new evidence explicitly requested in the three reviews.
+
+    The recorded holdout evaluation UID partition is retained for direct
+    comparability. Correct-endorsement preservation, removal experiments, and
+    legacy span-wide projections are already present in the submitted results
+    and are intentionally not recomputed here.
+    """
+    dataset = load_dataset(_resolve(repo_root, config.inputs.dataset))
+    primary_layer = config.experiment.primary_layer
+
+    primary = _evaluation_prompts(
+        adapter,
+        dataset,
+        splits.historical,
+        template_id="primary",
+        position="after_options",
+        endorsements=("wrong",),
+    )
+    _write_prompt_manifest(
+        paths.manifests / "reviewer_evaluation_prompts.jsonl",
+        {"historical:primary:after_options:wrong": primary},
+    )
+
+    # Primary causal result: swaps, no-ops, and all shuffled/random controls.
+    _score_reviewer_catalog(
+        adapter=adapter,
+        config=config,
+        manifest=manifest,
+        paths=paths,
+        prompts=primary,
+        catalog=_reviewer_control_catalog(
+            fitted[primary_layer], shuffled[primary_layer], random[primary_layer]
+        ),
+        template="primary",
+        position="after_options",
+    )
+
+    # Nearby-layer robustness: no post-hoc layer selection and no control sweep.
+    for layer in config.experiment.robustness_layers:
+        _score_reviewer_catalog(
+            adapter=adapter,
+            config=config,
+            manifest=manifest,
+            paths=paths,
+            prompts=primary,
+            catalog=_reviewer_core_catalog(fitted[layer]),
+            template="primary",
+            position="after_options",
+        )
+
+    # Prompt wording and position checks at the frozen primary layer.
+    prompt_conditions = (
+        ("primary", "before_question"),
+        ("submitted", "after_options"),
+        ("structured_paraphrase", "after_options"),
+    )
+    for template, position in prompt_conditions:
+        prompts = _evaluation_prompts(
+            adapter,
+            dataset,
+            splits.historical,
+            template_id=template,
+            position=position,
+            endorsements=("wrong",),
+        )
+        _write_prompt_manifest(
+            paths.manifests / "reviewer_evaluation_prompts.jsonl",
+            {f"historical:{template}:{position}:wrong": prompts},
+        )
+        _score_reviewer_catalog(
+            adapter=adapter,
+            config=config,
+            manifest=manifest,
+            paths=paths,
+            prompts=prompts,
+            catalog=_reviewer_core_catalog(fitted[primary_layer]),
+            template=template,
+            position=position,
+        )
+
+
 def fit_and_tune_caa(
     *,
     adapter: QwenAdapter,
@@ -833,6 +993,102 @@ def run_caa_fresh_margins(
                 batch_size=config.experiment.scoring_batch_size,
                 path=path,
             )
+
+
+def run_caa_reviewer_margins(
+    *,
+    adapter: QwenAdapter,
+    config: PipelineConfig,
+    splits: FrozenSplits,
+    manifest: RunManifest,
+    paths: RunPaths,
+    repo_root: Path,
+    selection: CAASelection,
+    direction: torch.Tensor,
+) -> None:
+    """Evaluate the independently tuned native CAA baseline on paper eval IDs."""
+    dataset = load_dataset(_resolve(repo_root, config.inputs.dataset))
+    intervention = _caa_runtime(selection, direction)
+    prompts = _evaluation_prompts(
+        adapter,
+        dataset,
+        splits.historical,
+        template_id="primary",
+        position="after_options",
+        endorsements=("wrong",),
+    )
+    path = _condition_file(
+        paths,
+        measurement="margin",
+        split="historical",
+        template="primary",
+        position="after_options",
+        intervention_id=intervention.intervention_id,
+        endorsement="wrong",
+    )
+    _score_condition(
+        adapter=adapter,
+        prompts=prompts,
+        intervention=intervention,
+        run_id=manifest.run_id,
+        split="historical",
+        batch_size=config.experiment.scoring_batch_size,
+        path=path,
+    )
+
+
+def run_reviewer_generation_experiments(
+    *,
+    adapter: QwenAdapter,
+    config: PipelineConfig,
+    splits: FrozenSplits,
+    manifest: RunManifest,
+    paths: RunPaths,
+    repo_root: Path,
+    fitted: LayerDirections,
+) -> None:
+    """Paper-comparable free generation for only the primary causal conditions."""
+    dataset = load_dataset(_resolve(repo_root, config.inputs.dataset))
+    prompts = _evaluation_prompts(
+        adapter,
+        dataset,
+        splits.historical,
+        template_id="primary",
+        position="after_options",
+        endorsements=("wrong",),
+    )
+    chosen = [
+        (intervention, cues)
+        for intervention, cues in _reviewer_core_catalog(fitted)
+        if intervention.intervention_id
+        in {
+            f"baseline_l{fitted.layer}",
+            f"source_to_user_l{fitted.layer}",
+            f"user_to_source_l{fitted.layer}",
+        }
+    ]
+    for intervention, cues in chosen:
+        subset = [prompt for prompt in prompts if prompt.cue_family in cues]
+        path = _condition_file(
+            paths,
+            measurement="generation",
+            split="historical",
+            template="primary",
+            position="after_options",
+            intervention_id=intervention.intervention_id,
+            endorsement="wrong",
+        )
+        if _validate_existing_rows(path, manifest.run_id, len(subset)):
+            continue
+        rows = generate_answers(
+            adapter=adapter,
+            prompts=subset,
+            intervention=intervention,
+            run_id=manifest.run_id,
+            split="historical",
+            max_new_tokens=config.experiment.generation_max_new_tokens,
+        )
+        append_jsonl_atomic(path, rows)
 
 
 def run_generation_experiments(

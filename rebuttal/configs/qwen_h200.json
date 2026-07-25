@@ -30,7 +30,7 @@
     "direction_batch_size": 2,
     "scoring_batch_size": 4,
     "generation_batch_size": 1,
-    "generation_max_new_tokens": 64,
+    "generation_max_new_tokens": 256,
     "bootstrap_resamples": 10000,
     "permutation_resamples": 10000,
     "statistics_seed": 20260724,

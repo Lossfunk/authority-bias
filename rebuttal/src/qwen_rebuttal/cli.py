@@ -15,8 +15,11 @@ from .pipeline import (
     preflight,
     prepare_run,
     run_caa_fresh_margins,
+    run_caa_reviewer_margins,
     run_generation_experiments,
     run_margin_experiments,
+    run_reviewer_generation_experiments,
+    run_reviewer_margin_experiments,
 )
 
 
@@ -24,7 +27,16 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Clean Qwen rebuttal pipeline")
     parser.add_argument(
         "command",
-        choices=["prepare", "preflight", "smoke", "run", "analyze", "bundle", "all"],
+        choices=[
+            "prepare",
+            "preflight",
+            "smoke",
+            "reviewer-run",
+            "run",
+            "analyze",
+            "bundle",
+            "all",
+        ],
     )
     parser.add_argument("--repo-root", type=Path, default=Path.cwd())
     parser.add_argument(
@@ -78,7 +90,7 @@ def main() -> None:
     token = os.environ.get("HF_TOKEN")
     if not token:
         raise RuntimeError("HF_TOKEN is required; anonymous model fallback is not permitted")
-    if args.command in {"preflight", "smoke", "run", "all"}:
+    if args.command in {"preflight", "smoke", "reviewer-run", "run", "all"}:
         preflight(config=config, output_root=output_root, token=token, paths=paths)
     if args.command == "preflight":
         print(paths.run_dir)
@@ -105,6 +117,45 @@ def main() -> None:
         repo_root=repo_root,
         paths=paths,
     )
+    if args.command == "reviewer-run":
+        run_reviewer_margin_experiments(
+            adapter=adapter,
+            config=config,
+            splits=splits,
+            manifest=manifest,
+            paths=paths,
+            repo_root=repo_root,
+            fitted=fitted,
+            shuffled=shuffled,
+            random=random,
+        )
+        caa_selection, caa_direction = fit_and_tune_caa(
+            adapter=adapter,
+            config=config,
+            manifest=manifest,
+            paths=paths,
+        )
+        run_caa_reviewer_margins(
+            adapter=adapter,
+            config=config,
+            splits=splits,
+            manifest=manifest,
+            paths=paths,
+            repo_root=repo_root,
+            selection=caa_selection,
+            direction=caa_direction,
+        )
+        run_reviewer_generation_experiments(
+            adapter=adapter,
+            config=config,
+            splits=splits,
+            manifest=manifest,
+            paths=paths,
+            repo_root=repo_root,
+            fitted=fitted[config.experiment.primary_layer],
+        )
+        print(paths.run_dir)
+        return
     run_margin_experiments(
         adapter=adapter,
         config=config,

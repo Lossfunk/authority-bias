@@ -41,7 +41,7 @@ uv run --project "${SCRIPT_DIR}" --extra gpu --extra test --frozen \
   pytest "${SCRIPT_DIR}/tests"
 
 uv run --project "${SCRIPT_DIR}" --extra gpu --extra test --frozen \
-  qwen-rebuttal all \
+  qwen-rebuttal reviewer-run \
   --repo-root "${REPO_ROOT}" \
   --config "${SCRIPT_DIR}/configs/qwen_h200.json" \
   --output-root "${OUTPUT_ROOT}"
