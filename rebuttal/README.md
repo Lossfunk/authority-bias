@@ -22,6 +22,9 @@ never written into Git.
 The script uses physical GPU 0 by default. Set `CUDA_VISIBLE_DEVICES` explicitly
 before the command to select a different H200.
 
+For persistent JarvisLabs storage, dependency and model caches default to
+`/home/.cache/uv` and `/home/.cache/huggingface`.
+
 The runner fails rather than silently changing a model revision, dependency,
 attention backend, dtype, device, tokenizer behavior, or prompt span. A run is
 resumed only when its complete content-addressed manifest matches. Any relevant

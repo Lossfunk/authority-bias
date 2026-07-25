@@ -19,6 +19,8 @@ if ! command -v nvidia-smi >/dev/null 2>&1; then
 fi
 
 export UV_PROJECT_ENVIRONMENT="${SCRIPT_DIR}/.venv"
+export UV_CACHE_DIR="${UV_CACHE_DIR:-/home/.cache/uv}"
+export HF_HOME="${HF_HOME:-/home/.cache/huggingface}"
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
 export TORCH_CUDA_ARCH_LIST="9.0"
 export MAX_JOBS="${MAX_JOBS:-16}"
