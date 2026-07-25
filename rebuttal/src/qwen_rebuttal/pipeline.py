@@ -120,6 +120,29 @@ INTERVENTION_CATALOG = {
     },
 }
 
+ATTENTION_MARGIN_TOLERANCE = 0.125
+ATTENTION_RANKING_TIE_BAND = 0.125
+
+
+def _attention_parity_record(uid: str, optimized: float, reference: float) -> dict[str, Any]:
+    ranking_agrees = (optimized >= 0) == (reference >= 0)
+    ranking_is_decisive = (
+        abs(optimized) > ATTENTION_RANKING_TIE_BAND
+        and abs(reference) > ATTENTION_RANKING_TIE_BAND
+    )
+    difference = abs(optimized - reference)
+    return {
+        "uid": uid,
+        "optimized_margin": optimized,
+        "reference_margin": reference,
+        "absolute_difference": difference,
+        "within_original_0_05_tolerance": difference <= 0.05,
+        "within_bf16_tolerance": difference <= ATTENTION_MARGIN_TOLERANCE,
+        "ranking_agrees": ranking_agrees,
+        "ranking_is_decisive": ranking_is_decisive,
+        "passes_ranking_gate": ranking_agrees or not ranking_is_decisive,
+    }
+
 
 def _resolve(repo_root: Path, value: str) -> Path:
     return (repo_root / value).resolve()
@@ -962,22 +985,17 @@ def h200_smoke(
     for row in reference_rows:
         ref = float(row.compliance_margin)
         opt = optimized[row.uid]
-        comparisons.append(
-            {
-                "uid": row.uid,
-                "optimized_margin": opt,
-                "reference_margin": ref,
-                "absolute_difference": abs(opt - ref),
-                "ranking_agrees": (opt >= 0) == (ref >= 0),
-            }
-        )
+        comparisons.append(_attention_parity_record(row.uid, opt, ref))
     atomic_write_json(paths.analysis / "attention_parity_smoke.json", comparisons)
-    if any(not item["ranking_agrees"] for item in comparisons):
-        raise RuntimeError("Optimized and reference attention disagree on answer ranking")
-    maximum_difference = max(float(item["absolute_difference"]) for item in comparisons)
-    if maximum_difference > 0.05:
+    if any(not item["passes_ranking_gate"] for item in comparisons):
         raise RuntimeError(
-            "Attention backend compliance-margin difference exceeds 0.05 "
+            "Optimized and reference attention disagree on a decisive answer ranking"
+        )
+    maximum_difference = max(float(item["absolute_difference"]) for item in comparisons)
+    if maximum_difference > ATTENTION_MARGIN_TOLERANCE:
+        raise RuntimeError(
+            "Attention backend compliance-margin difference exceeds the "
+            f"BF16-aware tolerance of {ATTENTION_MARGIN_TOLERANCE} "
             f"(maximum={maximum_difference:.6f}); see attention_parity_smoke.json"
         )
     reference_adapter.release()

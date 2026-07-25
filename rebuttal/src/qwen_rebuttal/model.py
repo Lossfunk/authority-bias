@@ -129,13 +129,8 @@ class QwenAdapter:
 
         if spec.dtype != "bfloat16":
             raise RuntimeError("This pipeline only permits BF16")
-        if spec.attention_backend not in {"flash_attention_2", "sdpa", "eager"}:
+        if spec.attention_backend not in {"flash_attention_2", "eager"}:
             raise RuntimeError(f"Unsupported explicit attention backend: {spec.attention_backend}")
-        if spec.attention_backend == "sdpa":
-            torch.backends.cuda.enable_flash_sdp(True)
-            torch.backends.cuda.enable_math_sdp(False)
-            torch.backends.cuda.enable_mem_efficient_sdp(False)
-            torch.backends.cuda.enable_cudnn_sdp(False)
         tokenizer = AutoTokenizer.from_pretrained(
             spec.model_id,
             revision=spec.revision,
