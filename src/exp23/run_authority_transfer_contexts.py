@@ -26,7 +26,7 @@ from src.mechanism.hooks_v2 import setup_h100_optimizations
 from src.models.llama_loader import load_model_and_tokenizer
 
 
-OUTPUT_ROOT = Path("neurips-results/exp23/authority_transfer_contexts")
+OUTPUT_ROOT = Path("results/authority/exp23/authority_transfer_contexts")
 FULL_ANSWER_SUFFIX = "Answer the question in one short sentence using the full answer text, not option letters."
 ENV = {
     "USE_HUB_KERNELS": "NO",

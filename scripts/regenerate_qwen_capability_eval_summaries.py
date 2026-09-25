@@ -1,7 +1,7 @@
 """Recompute Qwen capability-eval summaries (trivia + PIQA, N0_note) from raw_text.
 
 For each *_capability variant directory under
-wang-pareto-results/qwen/capability_eval/qwen35, this script:
+results/baselines/qwen/capability_eval/qwen35, this script:
   1. Reads the *_rows.jsonl
   2. Runs dynamic_parser.discover_model_markers + dynamic_parse_row on raw_text
   3. Updates parsed_label / is_correct / chose_wrong on each row
@@ -24,10 +24,10 @@ sys.path.insert(0, str(ROOT))
 
 from src.exp16.dynamic_parser import discover_model_markers, dynamic_parse_row  # noqa: E402
 
-CAP_DIR = ROOT / "wang-pareto-results" / "qwen" / "capability_eval" / "qwen35"
+CAP_DIR = ROOT / "results/baselines" / "qwen" / "capability_eval" / "qwen35"
 W1_TABLE_PATH = (
     ROOT
-    / "wang-pareto-results"
+    / "results/baselines"
     / "qwen"
     / "mitigation_pareto"
     / "qwen35"

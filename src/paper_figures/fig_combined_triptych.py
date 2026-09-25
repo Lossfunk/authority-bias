@@ -37,7 +37,7 @@ from src.paper_figures.axis_theme import (
 )
 
 
-RUNS_JSON = Path("neurips-results/_shared/dynamic_parser_all_runs.json")
+RUNS_JSON = Path("results/authority/_shared/dynamic_parser_all_runs.json")
 OUTPUT_DIR = Path("figures/neurips/v2")
 
 
@@ -52,26 +52,26 @@ HERO_MODELS = [
 
 
 MECH_LAYERS = (16, 18, 20)
-MECH_PATH = Path("neurips-results/gpt-oss/mechanism/forward_patch_test_256/steering_rows.jsonl")
+MECH_PATH = Path("results/authority/gpt-oss/mechanism/forward_patch_test_256/steering_rows.jsonl")
 
 TRANSFER_MODELS: List[Dict] = [
     {
         "name": "GPT-oss-20B",
-        "path": Path("neurips-results/gpt-oss/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json"),
+        "path": Path("results/authority/gpt-oss/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json"),
         "layer": 16,
         "accent": "#C36662",
         "marker": "s",
     },
     {
         "name": "Gemma-4-26B",
-        "path": Path("neurips-results/gemma4/mechanism/piqa_forward_patch_200_freegen_no_thinking/piqa_summary.json"),
+        "path": Path("results/authority/gemma4/mechanism/piqa_forward_patch_200_freegen_no_thinking/piqa_summary.json"),
         "layer": 20,
         "accent": "#6F9C79",
         "marker": "D",
     },
     {
         "name": "OLMo-2-32B",
-        "path": Path("neurips-results/olmo2/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json"),
+        "path": Path("results/authority/olmo2/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json"),
         "layer": 16,
         "accent": "#D5A048",
         "marker": "^",

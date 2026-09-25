@@ -6,25 +6,25 @@ Uses already-computed `null_controls.json` and `probe_results.json` artifacts to
 - Report empirical p-values and z-scores.
 
 Output:
-- paper/local_shuffled_random_control.md  (human-readable)
-- paper/local_shuffled_random_control.json (structured for tables)
+- results/controls/local_shuffled_random_control.md  (human-readable)
+- results/controls/local_shuffled_random_control.json (structured for tables)
 """
 from __future__ import annotations
 import json, math, statistics
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-PAPER = ROOT / "paper"
+PAPER = ROOT / "results/controls"
 PAPER.mkdir(exist_ok=True)
 
 CASES = {
     "olmo2": {
         "label": "OLMo-2-32B-Instruct",
-        "compliance_dir": ROOT / "neurips-results/olmo2/mechanism/olmo2_compliance_analysis",
+        "compliance_dir": ROOT / "results/authority/olmo2/mechanism/olmo2_compliance_analysis",
     },
     "olmo31": {
         "label": "OLMo-3.1-32B-Instruct",
-        "compliance_dir": ROOT / "neurips-results/olmo31/mechanism/compliance_analysis_all_prior_wrong_shared_h100",
+        "compliance_dir": ROOT / "results/authority/olmo31/mechanism/compliance_analysis_all_prior_wrong_shared_h100",
     },
 }
 

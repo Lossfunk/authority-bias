@@ -41,33 +41,33 @@ SPECS: List[ModelSpec] = [
     ModelSpec(
         name="Qwen",
         layers=[2, 5, 10],
-        summary_path=ROOT / "neurips-results" / "qwen35" / "mechanism" / "forward_patch_expanded_512_w1source" / "steering_summary.json",
+        summary_path=ROOT / "results/authority" / "qwen35" / "mechanism" / "forward_patch_expanded_512_w1source" / "steering_summary.json",
     ),
     ModelSpec(
         name="GPT-OSS",
         layers=[16, 18, 20],
-        summary_path=ROOT / "neurips-results" / "gpt-oss" / "mechanism" / "forward_patch_test_256" / "steering_summary.json",
+        summary_path=ROOT / "results/authority" / "gpt-oss" / "mechanism" / "forward_patch_test_256" / "steering_summary.json",
     ),
     ModelSpec(
         name="Gemma",
         layers=[15, 18, 20],
         layer_paths={
-            15: ROOT / "neurips-results" / "gemma4" / "mechanism" / "forward_patch_test_256_no_thinking_l15_l18_clean_freegen" / "steering_summary.json",
-            18: ROOT / "neurips-results" / "gemma4" / "mechanism" / "forward_patch_test_256_no_thinking_l15_l18_clean_freegen" / "steering_summary.json",
-            20: ROOT / "neurips-results" / "gemma4" / "mechanism" / "forward_patch_test_256_no_thinking" / "steering_summary.json",
+            15: ROOT / "results/authority" / "gemma4" / "mechanism" / "forward_patch_test_256_no_thinking_l15_l18_clean_freegen" / "steering_summary.json",
+            18: ROOT / "results/authority" / "gemma4" / "mechanism" / "forward_patch_test_256_no_thinking_l15_l18_clean_freegen" / "steering_summary.json",
+            20: ROOT / "results/authority" / "gemma4" / "mechanism" / "forward_patch_test_256_no_thinking" / "steering_summary.json",
         },
     ),
     ModelSpec(
         name="OLMo-2",
         layers=[10, 16, 22],
-        summary_path=ROOT / "neurips-results" / "olmo2" / "mechanism" / "forward_patch_test_256" / "steering_summary.json",
+        summary_path=ROOT / "results/authority" / "olmo2" / "mechanism" / "forward_patch_test_256" / "steering_summary.json",
     ),
     ModelSpec(
         name="OLMo-3.1",
         layers=[15, 18, 22],
-        summary_path=ROOT / "neurips-results" / "exp16" / "olmo31_steering_interpolate_mean_l15_l18_l22_apw" / "steering_summary.json",
-        rows_path=ROOT / "neurips-results" / "exp16" / "olmo31_steering_interpolate_mean_l15_l18_l22_apw" / "steering_rows.jsonl",
-        replace_rows_path=ROOT / "neurips-results" / "exp16" / "olmo31_steering_replace_mean_l15_l18_l22_apw" / "steering_rows.jsonl",
+        summary_path=ROOT / "results/authority" / "exp16" / "olmo31_steering_interpolate_mean_l15_l18_l22_apw" / "steering_summary.json",
+        rows_path=ROOT / "results/authority" / "exp16" / "olmo31_steering_interpolate_mean_l15_l18_l22_apw" / "steering_rows.jsonl",
+        replace_rows_path=ROOT / "results/authority" / "exp16" / "olmo31_steering_replace_mean_l15_l18_l22_apw" / "steering_rows.jsonl",
     ),
 ]
 

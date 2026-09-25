@@ -8,10 +8,10 @@ leaks, and optionally dump a few representative rows per mismatch bucket.
 Usage:
 
     uv run python -m src.exp16.audit_semantic_vs_legacy \
-        --legacy-rows  neurips-results/exp16/safety_matched_qwen_harmbench80/safety_matched_rows.jsonl \
-        --semantic-rows neurips-results/exp16/safety_matched_qwen_harmbench80/safety_matched_rows_semantic.jsonl \
-        --output-json neurips-results/exp16/safety_matched_qwen_harmbench80/semantic_vs_legacy_audit.json \
-        --samples-md  neurips-results/exp16/safety_matched_qwen_harmbench80/semantic_vs_legacy_mismatches.md \
+        --legacy-rows  results/authority/exp16/safety_matched_qwen_harmbench80/safety_matched_rows.jsonl \
+        --semantic-rows results/authority/exp16/safety_matched_qwen_harmbench80/safety_matched_rows_semantic.jsonl \
+        --output-json results/authority/exp16/safety_matched_qwen_harmbench80/semantic_vs_legacy_audit.json \
+        --samples-md  results/authority/exp16/safety_matched_qwen_harmbench80/semantic_vs_legacy_mismatches.md \
         --samples-per-bucket 5
 
 The script only reads; it never writes into either row file.

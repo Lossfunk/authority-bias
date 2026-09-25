@@ -1,93 +1,81 @@
 # Authority Bias in Language Models
 
-Research code for **Authority Bias in Language Models: Source Deference and User Agreement Are Not Interchangeable**, by Abhinav Rajeev Kumar and Paras Chopra, Lossfunk.
+### Source Deference and User Agreement Are Not Interchangeable
 
-Language models can abandon a correct answer when a prompt attributes a conflicting claim to a "verified" source. We study whether this source deference differs from agreement with a user, and whether activation interventions can change it. The experiments combine matched prompt comparisons, direction removal, attribution patching, and transfer to other tasks.
+[Abhinav Rajeev Kumar](mailto:abhinav.kumar@lossfunk.com) and [Paras Chopra](mailto:paras@lossfunk.com) | Lossfunk
 
-The source and user directions can overlap strongly while having different behavioral effects. These effects vary by model; the code includes the assistant-direction controls and the Gemma failure analysis, not just the successful interventions.
+[Reproduction guide](docs/reproduction.md) | [Attribution patching and CAA](rebuttal/README.md) | [Citation](#citation)
 
-## Getting started
+![Figure 1. Verified-source and user cues have different effects on wrong-answer rates.](assets/figure-1.png)
 
-Clone the repository with its pinned evaluation dependencies. Use Python 3.12 and [uv](https://docs.astral.sh/uv/).
+**Figure 1.** Verified-source cues induce more wrong answers than user cues in the models shown. Panel A shows how often a wrong-source cue overturns an initially correct answer. Panel B compares source and user cues on the same items, relative to the no-cue baseline.
+
+## Overview
+
+Language models can abandon a correct answer when a prompt says a "verified" source disagrees. We study whether this source deference differs from agreement with a user, and whether an activation direction can control it.
+
+The experiments compare the same claims under source and user attribution, then test their effects through direction removal and attribution patching. Transfer evaluations cover PIQA, multi-turn SYCON dialogues, and retrieved-document prompts. Assistant-direction controls and model-specific failure analyses test the limits of the intervention.
+
+## Installation
+
+Use Python 3.12 and [uv](https://docs.astral.sh/uv/). Clone with the pinned evaluation dependencies:
 
 ```bash
 git clone --recurse-submodules https://github.com/Lossfunk/persona-vectors.git
 cd persona-vectors
 ```
 
-There are two Python environments. The root project contains the original experiments; `rebuttal/` contains the later attribution-patching and CAA comparisons with a separate lockfile. Install the environment for the experiment you intend to run.
-
-For the rebuttal pipeline and CPU tests:
+The original experiments and the attribution-patching pipeline have separate environments. Install the one needed for your experiment:
 
 ```bash
-uv sync --project rebuttal --extra test --frozen
-uv run --project rebuttal --extra test --frozen pytest rebuttal/tests
-uv run --project rebuttal --extra test --frozen ruff check rebuttal
-```
-
-For the original experiments:
-
-```bash
+# Original behavioral, steering, and transfer experiments
 uv sync --frozen
-uv run python -m src.exp16.run_steering_test --help
+
+# Attribution patching, optimized CAA, and CPU tests
+uv sync --project rebuttal --extra test --frozen
 ```
 
-Model experiments require a suitable NVIDIA GPU and model access. The rebuttal runner targets a single H200 with a CUDA 12.8-compatible driver. CPU tests do not download model weights or reproduce the paper's numerical results.
+Model runs require an NVIDIA GPU and access to the relevant model weights. The attribution-patching runner targets a single H200 with a CUDA 12.8-compatible driver.
 
-## Data and reproducibility
+## Reproducing experiments
 
-Prepare the fixed multiple-choice dataset before running experiments:
+Prepare the fixed multiple-choice data from a checksum-verified SycophancyEval revision:
 
 ```bash
 python3 scripts/prepare_trivia_data.py --download
 ```
 
-This downloads a pinned version of the public [SycophancyEval](https://github.com/meg-tong/sycophancy-eval) answer dataset and rebuilds `data/exp7_mc_dataset.jsonl` with the original label-randomization seed. Both files are checksum-verified. To use an existing download instead:
-
-```bash
-python3 scripts/prepare_trivia_data.py --raw-path /path/to/answer.jsonl
-```
-
-The repository includes compact result summaries, recorded split IDs, configurations, and the small assistant vectors required by the rebuttal configs. Activation dumps, model weights, raw generation logs, and local credentials are excluded. Upstream datasets and models remain subject to their own terms.
-
-See the [experiment guide](docs/reproduction.md) for the code-to-experiment map, required artifacts, and the distinction between probability-margin and generated-answer evaluations. Older result folders record different runs and should not be treated as interchangeable estimates.
-
-## Attribution patching and CAA
-
-After preparing the data, validate the Qwen configuration without loading a model:
+Validate the Qwen configuration and input files without loading a model:
 
 ```bash
 uv run --project rebuttal --frozen qwen-rebuttal prepare \
-  --repo-root . --output-root /tmp/persona-vectors-prepare
+  --repo-root . --output-root /tmp/authority-bias-prepare
 ```
 
-On the GPU host, export `HF_TOKEN` through your shell or secret manager, then run:
+For GPU experiments, see the [pipeline commands](rebuttal/README.md) and the [experiment guide](docs/reproduction.md). Configurations cover Qwen3.5, GPT-OSS, and OLMo-3.1. The guide also maps the original experiments to their entry points and explains which artifacts must be regenerated.
+
+Run the CPU test suite with:
 
 ```bash
-REBUTTAL_OUTPUT_ROOT=/path/outside/the/repo/results \
-  bash rebuttal/run_qwen_h200.sh
+uv run --project rebuttal --extra test --frozen pytest rebuttal/tests
 ```
 
-The runner executes tests before the experiments. Its default `reviewer-run` command covers attribution patching, controls, robustness checks, CAA tuning, and a generated-answer check. The separate `head-to-head` command compares authority removal with tuned CAA on matched generated-answer evaluations. Configurations for Qwen3.5, GPT-OSS, and OLMo-3.1 are under `rebuttal/configs/`; commands and hardware requirements are documented in the [pipeline README](rebuttal/README.md).
+These tests check the implementation and input handling; they do not reproduce GPU results. The repository includes compact result summaries, split IDs, and required small control vectors. Large activation files, model weights, raw generation logs, and credentials are excluded.
 
-## Repository layout
+## Repository structure
 
-| Path | Contents |
+| Directory | Contents |
 | --- | --- |
-| `src/` | Original behavioral, intervention, transfer, and analysis code |
-| `rebuttal/` | Later experiments, pinned model configs, and unit tests |
-| `scripts/` | Data preparation, run scripts, and analysis helpers |
-| `config/` | Original model and experiment configurations |
-| `neurips-results/`, `causal-deconfound/`, `wang-pareto-results/` | Archived compact results and run metadata |
-| `external/` | Third-party evaluation code, including the SYCON and SycophancyEval submodules |
-| `docs/` | Reproduction guide and historical research notes |
-| `paper/`, `neurips_2026.tex` | Historical manuscript sources, not the current preprint |
+| [`src/`](src/) | Behavioral evaluations, activation interventions, transfer, and analysis |
+| [`rebuttal/`](rebuttal/) | Attribution patching and CAA pipeline, model configs, and tests |
+| [`scripts/`](scripts/) | Dataset preparation, experiment launchers, and scoring helpers |
+| [`config/`](config/) | Original experiment configurations |
+| [`results/`](results/) | Saved summaries, split IDs, and run metadata |
+| [`external/`](external/) | Third-party evaluation code and pinned submodules |
+| [`docs/`](docs/) | Reproduction guide |
+| [`assets/`](assets/) | README figure |
 
-The numbered `src/exp*` directories retain their original names because scripts and saved manifests refer to them. The experiment guide identifies the relevant modules without changing those paths.
-
-## Citation and contact
-
-Until the preprint has a public identifier, this entry cites the repository:
+## Citation
 
 ```bibtex
 @misc{kumar2026authoritybiascode,
@@ -99,4 +87,6 @@ Until the preprint has a public identifier, this entry cites the repository:
 }
 ```
 
-For questions about the experiments, open an issue or contact [Abhinav Rajeev Kumar](mailto:abhinav.kumar@lossfunk.com). The repository uses evaluation resources from SycophancyEval, SYCON-Bench, CAA, and other upstream projects; their references and notices are retained in the corresponding code and directories.
+## Acknowledgments
+
+The experiments use [SycophancyEval](https://github.com/meg-tong/sycophancy-eval), [SYCON-Bench](https://github.com/JiseungHong/SYCON-Bench), and other upstream resources documented with the code. Their licenses and notices remain in the corresponding directories. For questions, open an issue or contact [Abhinav](mailto:abhinav.kumar@lossfunk.com).

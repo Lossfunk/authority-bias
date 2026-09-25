@@ -1,6 +1,6 @@
 """Summarize exp23 authority-transfer results across models / contexts.
 
-Reads neurips-results/exp23/authority_transfer_contexts/{model}/fold0/authority_transfer_summary.json
+Reads results/authority/exp23/authority_transfer_contexts/{model}/fold0/authority_transfer_summary.json
 and prints:
   - per-model best layer per (variant, condition): wrong-rate at alpha=0 vs alpha=1, delta
   - aggregated transfer table: rows = condition (note/system/rag x source/user W1)
@@ -19,7 +19,7 @@ import json
 from pathlib import Path
 from collections import defaultdict
 
-ROOT = Path(__file__).resolve().parents[1] / "neurips-results" / "exp23" / "authority_transfer_contexts"
+ROOT = Path(__file__).resolve().parents[1] / "results/authority" / "exp23" / "authority_transfer_contexts"
 MODELS = ["qwen35", "gpt_oss", "olmo2", "olmo31"]
 CONDITIONS = [
     "note_source_W1",

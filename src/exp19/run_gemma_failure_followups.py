@@ -13,7 +13,7 @@ from src.exp19.common import parse_csv, run_module, write_json
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Run Gemma failure-analysis follow-up experiments (E1-E7).")
     p.add_argument("--repo-root", type=Path, default=Path.cwd())
-    p.add_argument("--output-root", type=Path, default=Path("neurips-results/exp19/gemma_failure_followups"))
+    p.add_argument("--output-root", type=Path, default=Path("results/authority/exp19/gemma_failure_followups"))
     p.add_argument("--steps", type=str, default="e1,e2,e3,e4,e5,e6,e7")
     p.add_argument("--layers-main", type=str, default="15,18,20,22")
     p.add_argument("--layers-shallow", type=str, default="2,5,8,10")
@@ -40,9 +40,9 @@ def parse_args() -> argparse.Namespace:
 def _gemma_paths(root: Path) -> Dict[str, Path]:
     return {
         "model_id": Path("google/gemma-4-26B-A4B-it"),
-        "direction": root / "neurips-results/gemma4/mechanism/gemma4_compliance_analysis/primary_direction.pt",
-        "masks": root / "neurips-results/gemma4/mechanism/gemma4_authority_activations_no_thinking/label_masks.json",
-        "extract": root / "neurips-results/gemma4/mechanism/gemma4_authority_activations_no_thinking",
+        "direction": root / "results/authority/gemma4/mechanism/gemma4_compliance_analysis/primary_direction.pt",
+        "masks": root / "results/authority/gemma4/mechanism/gemma4_authority_activations_no_thinking/label_masks.json",
+        "extract": root / "results/authority/gemma4/mechanism/gemma4_authority_activations_no_thinking",
         "trivia_dataset": root / "data/exp7_mc_dataset.jsonl",
         "piqa_dataset": root / "data/piqa_mc_validation.jsonl",
     }

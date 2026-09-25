@@ -17,7 +17,7 @@ from src.models.llama_loader import load_model_and_tokenizer
 
 
 DEFAULT_MODEL = "openai/gpt-oss-20b"
-DEFAULT_OUTPUT_DIR = Path("neurips-results/mechanism/harmbench_transfer")
+DEFAULT_OUTPUT_DIR = Path("results/authority/mechanism/harmbench_transfer")
 DEFAULT_DATASET_NAME = "walledai/HarmBench"
 
 REFUSAL_PATTERNS = (

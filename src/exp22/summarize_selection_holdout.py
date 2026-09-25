@@ -304,8 +304,8 @@ def _add_comparison(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def main() -> None:
     p = argparse.ArgumentParser()
-    p.add_argument("--root", type=Path, default=Path("neurips-results/exp22/selection_holdout_50_50"))
-    p.add_argument("--out-dir", type=Path, default=Path("neurips-results/exp22/selection_holdout_50_50/analysis"))
+    p.add_argument("--root", type=Path, default=Path("results/authority/exp22/selection_holdout_50_50"))
+    p.add_argument("--out-dir", type=Path, default=Path("results/authority/exp22/selection_holdout_50_50/analysis"))
     args = p.parse_args()
 
     split_rows = []

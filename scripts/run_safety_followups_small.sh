@@ -5,7 +5,7 @@ set -euo pipefail
 #   scripts/run_safety_followups_small.sh <PROMPTS_JSONL> <OUTPUT_DIR>
 #
 # Example:
-#   scripts/run_safety_followups_small.sh data/redbench_sampled_prompts.jsonl neurips-results/mechanism/redbench_followups
+#   scripts/run_safety_followups_small.sh data/redbench_sampled_prompts.jsonl results/authority/mechanism/redbench_followups
 
 PROMPTS_JSONL="${1:-}"
 OUTPUT_DIR="${2:-}"

@@ -2,12 +2,12 @@
 """Rerun dynamic parser over dissociation rows and refresh saved artefacts.
 
 This script operates on ``*_dissociation_rows.jsonl`` files under
-``neurips-results/``. It can:
+``results/authority/``. It can:
 
 1. Recompute run-level dynamic parser metrics and write
    ``dynamic_parser_recomputed_summary.{json,md}``.
-2. Refresh ``neurips-results/_shared/dynamic_parser_all_runs.json`` and
-   ``neurips-results/_shared/dynamic_parser_summary_index.md``.
+2. Refresh ``results/authority/_shared/dynamic_parser_all_runs.json`` and
+   ``results/authority/_shared/dynamic_parser_summary_index.md``.
 3. Optionally rewrite row-level parsed fields in the source JSONLs so that
    saved ``parsed.final_answer_*`` fields match dynamic parser outputs.
 4. Optionally refresh each sibling ``*_dissociation_summary.json`` group's
@@ -29,7 +29,7 @@ from src.exp16.dynamic_parser import discover_model_markers, dynamic_parse_row, 
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-RESULTS_ROOT = REPO_ROOT / "neurips-results"
+RESULTS_ROOT = REPO_ROOT / "results/authority"
 SHARED_DIR = RESULTS_ROOT / "_shared"
 
 CUE_WORDS: tuple[str, ...] = (
@@ -124,7 +124,7 @@ def parse_args() -> argparse.Namespace:
         "--families",
         type=str,
         default=",".join(DEFAULT_FAMILIES),
-        help="Comma-separated top-level family dirs under neurips-results.",
+        help="Comma-separated top-level family dirs under results/authority.",
     )
     parser.add_argument(
         "--arm",

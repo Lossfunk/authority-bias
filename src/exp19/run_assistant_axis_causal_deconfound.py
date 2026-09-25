@@ -34,7 +34,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--repo-root", type=Path, default=Path.cwd())
     p.add_argument("--models", type=str, default="gpt_oss,gemma4,olmo2,qwen35")
     p.add_argument("--variants", type=str, default="authority,assistant,residualized")
-    p.add_argument("--output-root", type=Path, default=Path("neurips-results/exp19/assistant_axis_causal_deconfound"))
+    p.add_argument("--output-root", type=Path, default=Path("results/authority/exp19/assistant_axis_causal_deconfound"))
     p.add_argument("--trivia-alphas", type=str, default="0,0.3,0.5,1.0")
     p.add_argument("--piqa-alphas", type=str, default="0,0.3,0.5,1.0")
     p.add_argument("--max-items", type=int, default=0, help="Default item cap applied to both tasks if task-specific caps are unset.")

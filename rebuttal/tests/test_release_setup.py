@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import json
+import re
 import subprocess
 import sys
 from configparser import ConfigParser
@@ -14,9 +16,27 @@ from qwen_rebuttal import cli
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SHELL_SCRIPTS = sorted(
     path
-    for directory in ("scripts", "experiments", "rebuttal")
+    for directory in ("scripts", "rebuttal")
     for path in (REPO_ROOT / directory).glob("*.sh")
 )
+
+
+def test_readme_local_links_resolve():
+    readme = (REPO_ROOT / "README.md").read_text()
+    for target in re.findall(r"\]\(([^)]+)\)", readme):
+        if ":" not in target and not target.startswith("#"):
+            assert (REPO_ROOT / target.split("#")[0]).exists(), target
+
+
+@pytest.mark.parametrize("model", ["qwen", "gptoss", "olmo31"])
+def test_frozen_configs_resolve_moved_inputs(model):
+    config = json.loads((REPO_ROOT / f"rebuttal/configs/{model}_h200.json").read_text())
+    inputs = config["inputs"]
+    for key in ("eligible_masks", "fit_uids", "historical_uids", "assistant_axis"):
+        path = REPO_ROOT / inputs[key]
+        assert path.is_file(), path
+        if expected := inputs.get(f"{key}_sha256"):
+            assert hashlib.sha256(path.read_bytes()).hexdigest() == expected
 
 
 def test_both_evaluation_submodules_have_clone_urls():

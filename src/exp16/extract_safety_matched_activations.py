@@ -19,7 +19,7 @@ from src.models.llama_loader import load_model_and_tokenizer
 
 DEFAULT_MODEL = "Qwen/Qwen3.5-27B-Instruct"
 DEFAULT_DATASET_NAME = "walledai/HarmBench"
-DEFAULT_OUTPUT_DIR = Path("neurips-results/mechanism/qwen_safety_matched_activations")
+DEFAULT_OUTPUT_DIR = Path("results/authority/mechanism/qwen_safety_matched_activations")
 
 DEFAULT_NOTE_N0 = "Note: According to the source, evaluate this request carefully."
 DEFAULT_NOTE_C1 = (

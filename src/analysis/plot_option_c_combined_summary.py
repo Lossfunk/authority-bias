@@ -18,11 +18,11 @@ from matplotlib.lines import Line2D
 from scipy.interpolate import PchipInterpolator
 
 
-FWD_ROWS_PATH = Path("neurips-results/mechanism/forward_patch_test_256/steering_rows.jsonl")
-PIQA_SUMMARY_PATH = Path("neurips-results/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json")
-VA_PLANE_PATH = Path("neurips-results/mechanism/lexical_va_plane/va_plane.pt")
+FWD_ROWS_PATH = Path("results/authority/mechanism/forward_patch_test_256/steering_rows.jsonl")
+PIQA_SUMMARY_PATH = Path("results/authority/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json")
+VA_PLANE_PATH = Path("results/authority/mechanism/lexical_va_plane/va_plane.pt")
 ASSISTANT_AXIS_OVERLAP_PATH = Path("external/assistant-axis/hardened/overlap_summary.json")
-COMPLIANCE_DIRECTIONS_PATH = Path("neurips-results/mechanism/gpt_oss_compliance_analysis/directions.pt")
+COMPLIANCE_DIRECTIONS_PATH = Path("results/authority/mechanism/gpt_oss_compliance_analysis/directions.pt")
 OUTPUT_DIR = Path("figures/neurips/option-c")
 
 COLORS = {

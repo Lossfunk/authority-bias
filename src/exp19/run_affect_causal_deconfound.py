@@ -19,8 +19,8 @@ from src.exp19.common import (
 
 
 MODEL_TO_VA_PLANE = {
-    "qwen35": Path("neurips-results/qwen35/mechanism/lexical_va_plane/va_plane.pt"),
-    "gpt_oss": Path("neurips-results/gpt-oss/mechanism/lexical_va_plane/va_plane.pt"),
+    "qwen35": Path("results/authority/qwen35/mechanism/lexical_va_plane/va_plane.pt"),
+    "gpt_oss": Path("results/authority/gpt-oss/mechanism/lexical_va_plane/va_plane.pt"),
 }
 
 
@@ -39,7 +39,7 @@ def parse_args() -> argparse.Namespace:
         type=str,
         default="authority,affect_subspace,authority_affect_component,authority_affect_residualized",
     )
-    p.add_argument("--output-root", type=Path, default=Path("neurips-results/exp19/affect_causal_deconfound"))
+    p.add_argument("--output-root", type=Path, default=Path("results/authority/exp19/affect_causal_deconfound"))
     p.add_argument("--conditions", type=str, default="N0_note,W1_note,C1_note")
     p.add_argument("--alphas", type=str, default="0,1", help="Alphas for the authority positive control.")
     p.add_argument("--control-alpha", type=float, default=1.0, help="Alpha for non-baseline control variants.")

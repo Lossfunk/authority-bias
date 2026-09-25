@@ -38,7 +38,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--models", default="qwen35")
     p.add_argument("--dataset-path", type=Path, default=Path("data/exp7_mc_dataset.jsonl"))
     p.add_argument("--masks-path", type=Path, default=None)
-    p.add_argument("--output-root", type=Path, default=Path("neurips-results/exp20/source_user_authority_split"))
+    p.add_argument("--output-root", type=Path, default=Path("results/authority/exp20/source_user_authority_split"))
     p.add_argument("--layers", default="5")
     p.add_argument("--fit-conditions", default="no_cue,source_C1,source_W1,user_C1,user_W1")
     p.add_argument("--eval-conditions", default="source_W1,user_W1")

@@ -8,8 +8,8 @@ surface-level refusal wording.
 Usage:
   OPENROUTER_API_KEY=... \
     uv run python -m src.exp18.audit_real_l18_compliance \
-      --rows-path neurips-results/exp18/safety_steering_qwen_projout_eval/rows.jsonl \
-      --output-dir neurips-results/exp18/safety_steering_qwen_projout_eval/audit_real_l18_a1 \
+      --rows-path results/authority/exp18/safety_steering_qwen_projout_eval/rows.jsonl \
+      --output-dir results/authority/exp18/safety_steering_qwen_projout_eval/audit_real_l18_a1 \
       --grader-model google/gemini-3.1-flash-lite-preview
 """
 from __future__ import annotations

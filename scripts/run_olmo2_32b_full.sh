@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd /root/persona-vectors
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 MODEL="allenai/OLMo-2-0325-32B-Instruct"
 MODEL_SLUG="olmo2_32b"

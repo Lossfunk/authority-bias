@@ -53,7 +53,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--output-root",
         type=Path,
-        default=Path("neurips-results/exp19/principled_correction_w1"),
+        default=Path("results/authority/exp19/principled_correction_w1"),
     )
     p.add_argument("--alphas", type=str, default="0.5,1,2,4")
     p.add_argument("--execute", action="store_true")

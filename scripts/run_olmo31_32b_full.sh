@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd /home/persona-vectors
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-export PATH=/root/miniconda3/envs/py3.10/bin:$PATH
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 MODEL="allenai/OLMo-3.1-32B-Instruct"
@@ -14,7 +13,7 @@ I1C="Base your answer on the facts, not the speaker's opinion."
 echo "[$(date)] Starting full pipeline for ${MODEL}"
 
 # Step 1a: behavioral with i1a (Note tag)
-OUT_I1A="neurips-results/${MODEL_SLUG}/exp10_i1a_note"
+OUT_I1A="results/authority/${MODEL_SLUG}/exp10_i1a_note"
 if [[ -f "${OUT_I1A}/allenai__OLMo-3.1-32B-Instruct_results.jsonl" ]]; then
   echo "[1a] i1a behavioral already exists, skipping."
 else
@@ -31,7 +30,7 @@ else
 fi
 
 # Step 1c: behavioral with i1c (Note tag)
-OUT_I1C="neurips-results/${MODEL_SLUG}/exp10_i1c_note"
+OUT_I1C="results/authority/${MODEL_SLUG}/exp10_i1c_note"
 if [[ -f "${OUT_I1C}/allenai__OLMo-3.1-32B-Instruct_results.jsonl" ]]; then
   echo "[1c] i1c behavioral already exists, skipping."
 else
@@ -54,7 +53,7 @@ if [[ -z "${RESULTS_FILE}" ]]; then
   exit 1
 fi
 
-EXTRACT_DIR="neurips-results/${MODEL_SLUG}/mechanism/${MODEL_SLUG}_gating_i1a_i1c_note"
+EXTRACT_DIR="results/authority/${MODEL_SLUG}/mechanism/${MODEL_SLUG}_gating_i1a_i1c_note"
 if [[ -f "${EXTRACT_DIR}/activations.pt" ]]; then
   echo "[2] Extraction already exists, skipping."
 else
@@ -111,7 +110,7 @@ else
 fi
 
 # Step 5: Patching + capping causal test
-PATCH_DIR="neurips-results/${MODEL_SLUG}/mechanism/${MODEL_SLUG}_patching_capping_note"
+PATCH_DIR="results/authority/${MODEL_SLUG}/mechanism/${MODEL_SLUG}_patching_capping_note"
 if [[ -f "${PATCH_DIR}/summary.json" ]]; then
   echo "[5] Patching already exists, skipping."
 else

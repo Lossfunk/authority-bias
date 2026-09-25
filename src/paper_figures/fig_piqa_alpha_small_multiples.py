@@ -38,28 +38,28 @@ class ModelSpec:
 SPECS: List[ModelSpec] = [
     ModelSpec(
         name="Qwen",
-        summary_path=ROOT / "neurips-results" / "qwen35" / "mechanism" / "piqa_forward_patch_200_freegen" / "piqa_summary.json",
+        summary_path=ROOT / "results/authority" / "qwen35" / "mechanism" / "piqa_forward_patch_200_freegen" / "piqa_summary.json",
         layers=[2, 5, 10],
     ),
     ModelSpec(
         name="GPT-OSS",
-        summary_path=ROOT / "neurips-results" / "gpt-oss" / "mechanism" / "piqa_forward_patch_200_freegen" / "piqa_summary.json",
+        summary_path=ROOT / "results/authority" / "gpt-oss" / "mechanism" / "piqa_forward_patch_200_freegen" / "piqa_summary.json",
         layers=[16, 18, 20],
     ),
     ModelSpec(
         name="Gemma",
-        summary_path=ROOT / "neurips-results" / "gemma4" / "mechanism" / "piqa_forward_patch_200_freegen_no_thinking" / "piqa_summary.json",
+        summary_path=ROOT / "results/authority" / "gemma4" / "mechanism" / "piqa_forward_patch_200_freegen_no_thinking" / "piqa_summary.json",
         layers=[20, 22, 24],
     ),
     ModelSpec(
         name="OLMo-2",
-        summary_path=ROOT / "neurips-results" / "olmo2" / "mechanism" / "piqa_forward_patch_200_freegen" / "piqa_summary.json",
+        summary_path=ROOT / "results/authority" / "olmo2" / "mechanism" / "piqa_forward_patch_200_freegen" / "piqa_summary.json",
         layers=[10, 16, 22],
     ),
     ModelSpec(
         name="OLMo-3.1",
-        summary_path=ROOT / "neurips-results" / "exp16" / "olmo31_piqa_n0_matched_flip_interpolate_l15_l18_l22" / "piqa_summary.json",
-        rows_path=ROOT / "neurips-results" / "exp16" / "olmo31_piqa_n0_matched_flip_interpolate_l15_l18_l22" / "piqa_rows.jsonl",
+        summary_path=ROOT / "results/authority" / "exp16" / "olmo31_piqa_n0_matched_flip_interpolate_l15_l18_l22" / "piqa_summary.json",
+        rows_path=ROOT / "results/authority" / "exp16" / "olmo31_piqa_n0_matched_flip_interpolate_l15_l18_l22" / "piqa_rows.jsonl",
         layers=[15, 18, 22],
     ),
 ]

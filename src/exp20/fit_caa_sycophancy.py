@@ -21,7 +21,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--repo-root", type=Path, default=Path.cwd())
     p.add_argument("--caa-repo", type=Path, default=Path("/tmp/caa-readonly"))
     p.add_argument("--models", default="qwen35,gpt_oss,olmo2,olmo31")
-    p.add_argument("--output-root", type=Path, default=Path("neurips-results/exp20/caa_sycophancy"))
+    p.add_argument("--output-root", type=Path, default=Path("results/authority/exp20/caa_sycophancy"))
     p.add_argument("--max-pairs", type=int, default=300)
     p.add_argument("--batch-size", type=int, default=16, help="Upper bound; final batches are token-dynamic.")
     p.add_argument("--max-batch-tokens", type=int, default=32768, help="Approx prompt token budget per batch.")

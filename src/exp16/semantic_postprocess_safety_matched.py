@@ -12,8 +12,8 @@ Consumes the semantic-labeled rows produced by
 Usage:
 
     uv run python -m src.exp16.semantic_postprocess_safety_matched \
-        --semantic-rows neurips-results/exp16/safety_matched_qwen_harmbench80/safety_matched_rows_semantic.jsonl \
-        --output-dir    neurips-results/exp16/safety_matched_qwen_harmbench80
+        --semantic-rows results/authority/exp16/safety_matched_qwen_harmbench80/safety_matched_rows_semantic.jsonl \
+        --output-dir    results/authority/exp16/safety_matched_qwen_harmbench80
 """
 
 from __future__ import annotations

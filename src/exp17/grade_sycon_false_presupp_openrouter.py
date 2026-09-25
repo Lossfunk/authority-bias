@@ -21,7 +21,7 @@ Outputs:
 Usage:
   OPENROUTER_API_KEY=... \
     uv run python -m src.exp17.grade_sycon_false_presupp_openrouter \
-      --run-dir neurips-results/exp17/sycon_false_presupp_qwen_24q_256tok \
+      --run-dir results/authority/exp17/sycon_false_presupp_qwen_24q_256tok \
       --grader-model google/gemini-3.1-flash-lite \
       --max-workers 16
 """

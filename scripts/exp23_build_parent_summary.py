@@ -1,7 +1,7 @@
 """Build a parent summary JSON for exp23 across all 4 models.
 
 Aggregates per-model `authority_transfer_summary.json` into:
-  neurips-results/exp23/authority_transfer_contexts/exp23_summary.json
+  results/authority/exp23/authority_transfer_contexts/exp23_summary.json
 
 Includes:
   - per-model best-layer wrong-rate at alpha={0,1} per (variant, condition)
@@ -16,7 +16,7 @@ from pathlib import Path
 from collections import defaultdict
 from datetime import datetime, timezone
 
-ROOT = Path(__file__).resolve().parents[1] / "neurips-results" / "exp23" / "authority_transfer_contexts"
+ROOT = Path(__file__).resolve().parents[1] / "results/authority" / "exp23" / "authority_transfer_contexts"
 OUT = ROOT / "exp23_summary.json"
 MODELS = ["qwen35", "gpt_oss", "olmo2", "olmo31"]
 CONDITIONS = [

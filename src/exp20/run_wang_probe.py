@@ -30,7 +30,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--models", default="qwen35,gpt_oss,gemma4,olmo2,olmo31")
     p.add_argument("--dataset-path", type=Path, default=Path("data/exp7_mc_dataset.jsonl"))
     p.add_argument("--masks-path", type=Path, default=None, help="Defaults to each model's mask path.")
-    p.add_argument("--output-root", type=Path, default=Path("neurips-results/exp20/wang_probe"))
+    p.add_argument("--output-root", type=Path, default=Path("results/authority/exp20/wang_probe"))
     p.add_argument("--conditions", default="no_cue,source_authority,user_expertise")
     p.add_argument("--max-items", type=int, default=512)
     p.add_argument("--no-cue-repeats", type=int, default=1)

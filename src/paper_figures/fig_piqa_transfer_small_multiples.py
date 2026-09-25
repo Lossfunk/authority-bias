@@ -27,17 +27,17 @@ DEPTH_COLORS = ["#5B2A86", "#2F9C95", "#D7A13B"]
 MODELS: List[Dict] = [
     {
         "name": "GPT-oss-20B",
-        "path": Path("neurips-results/gpt-oss/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json"),
+        "path": Path("results/authority/gpt-oss/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json"),
         "layers": (16, 18, 20),
     },
     {
         "name": "Gemma-4-26B",
-        "path": Path("neurips-results/gemma4/mechanism/piqa_forward_patch_200_freegen_no_thinking/piqa_summary.json"),
+        "path": Path("results/authority/gemma4/mechanism/piqa_forward_patch_200_freegen_no_thinking/piqa_summary.json"),
         "layers": (20, 22, 24),
     },
     {
         "name": "OLMo-2-32B",
-        "path": Path("neurips-results/olmo2/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json"),
+        "path": Path("results/authority/olmo2/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json"),
         "layers": (10, 16, 22),
     },
 ]

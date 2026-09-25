@@ -28,19 +28,19 @@ DEPTH_COLORS = ["#5B2A86", "#2F9C95", "#D7A13B"]
 MODELS: List[Dict] = [
     {
         "name": "GPT-oss-20B",
-        "path": Path("neurips-results/gpt-oss/mechanism/forward_patch_test_256/steering_rows.jsonl"),
+        "path": Path("results/authority/gpt-oss/mechanism/forward_patch_test_256/steering_rows.jsonl"),
         "layers": (16, 18, 20),
     },
     {
         "name": "Gemma-4-26B",
         "path": Path(
-            "neurips-results/gemma4/mechanism/forward_patch_test_256_no_thinking_l15_l18_clean_freegen/steering_rows.jsonl"
+            "results/authority/gemma4/mechanism/forward_patch_test_256_no_thinking_l15_l18_clean_freegen/steering_rows.jsonl"
         ),
         "layers": (15, 18),
     },
     {
         "name": "OLMo-2-32B",
-        "path": Path("neurips-results/olmo2/mechanism/forward_patch_test_256/steering_rows.jsonl"),
+        "path": Path("results/authority/olmo2/mechanism/forward_patch_test_256/steering_rows.jsonl"),
         "layers": (10, 16, 22),
     },
 ]

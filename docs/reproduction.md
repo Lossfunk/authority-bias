@@ -43,7 +43,17 @@ The original pipelines commonly read activations, extracted directions, and per-
 
 PIQA preparation is supported by `scripts/build_commonsense_mc_dataset.py` and by the explicit rebuild options in `src.exp16.run_piqa_interventions`. For a historical run, preserve its recorded item IDs and option assignments instead of assuming a newly downloaded split has the same ordering.
 
-The `scripts/run_*` and `experiments/run_*` files record experiment launches. Some older scripts contain machine-specific working directories or environment paths. Read and adapt those paths before using them on a new host; the later `rebuttal/run_qwen_h200.sh` resolves its repository root automatically.
+The `scripts/run_*` files record experiment launches. Check their GPU assignments and input artifact paths before using them on a new host. The later `rebuttal/run_qwen_h200.sh` performs preflight checks before loading the model.
+
+## Saved results
+
+| Directory | Contents |
+| --- | --- |
+| `results/authority/` | Behavioral, mechanism, transfer, and held-out analyses; recorded masks and split IDs |
+| `results/controls/` | Assistant-direction and residualized-direction control runs |
+| `results/baselines/` | CAA, supervised-probe, mitigation, and capability comparisons |
+
+These directories replace `neurips-results/`, `causal-deconfound/`, and `wang-pareto-results/`, respectively. Runtime defaults and configs use the new paths. Saved result files are unchanged, so paths inside their historical metadata still describe the original run locations. Experiment module names such as `src.exp16` are retained because other modules import them.
 
 ## Reading results
 

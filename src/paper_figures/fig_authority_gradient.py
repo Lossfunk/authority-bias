@@ -175,7 +175,7 @@ def make_figure(data: dict, output_dir: Path) -> None:
 
 
 if __name__ == "__main__":
-    results_dir = Path("neurips-results")
+    results_dir = Path("results/authority")
     output_dir = Path("figures/neurips")
     data = load_data(results_dir)
     make_figure(data, output_dir)

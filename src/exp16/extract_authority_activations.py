@@ -21,12 +21,12 @@ from src.models.llama_loader import load_model_and_tokenizer
 
 DEFAULT_MODEL = "openai/gpt-oss-20b"
 DEFAULT_MC_DATASET = Path("data/exp7_mc_dataset.jsonl")
-DEFAULT_V2_RESULTS = Path("neurips-results/v2_gpt_oss_freegen/openai__gpt-oss-20b_dissociation_rows.jsonl")
-DEFAULT_WEAK_RESULTS = Path("neurips-results/gradient_gpt_oss_weak/openai__gpt-oss-20b_dissociation_rows.jsonl")
-DEFAULT_UNCERTAIN_RESULTS = Path("neurips-results/gradient_gpt_oss_uncertain/openai__gpt-oss-20b_dissociation_rows.jsonl")
-DEFAULT_ASSERTIVE_RESULTS = Path("neurips-results/gradient_gpt_oss_assertive/openai__gpt-oss-20b_dissociation_rows.jsonl")
-DEFAULT_THINK_RESULTS = Path("neurips-results/gpt_oss_freegen_scaled/openai__gpt-oss-20b_dissociation_rows.jsonl")
-DEFAULT_OUTPUT_DIR = Path("neurips-results/mechanism/gpt_oss_authority_activations")
+DEFAULT_V2_RESULTS = Path("results/authority/v2_gpt_oss_freegen/openai__gpt-oss-20b_dissociation_rows.jsonl")
+DEFAULT_WEAK_RESULTS = Path("results/authority/gradient_gpt_oss_weak/openai__gpt-oss-20b_dissociation_rows.jsonl")
+DEFAULT_UNCERTAIN_RESULTS = Path("results/authority/gradient_gpt_oss_uncertain/openai__gpt-oss-20b_dissociation_rows.jsonl")
+DEFAULT_ASSERTIVE_RESULTS = Path("results/authority/gradient_gpt_oss_assertive/openai__gpt-oss-20b_dissociation_rows.jsonl")
+DEFAULT_THINK_RESULTS = Path("results/authority/gpt_oss_freegen_scaled/openai__gpt-oss-20b_dissociation_rows.jsonl")
+DEFAULT_OUTPUT_DIR = Path("results/authority/mechanism/gpt_oss_authority_activations")
 
 STYLE_ORDER = (
     "authoritative_verified",

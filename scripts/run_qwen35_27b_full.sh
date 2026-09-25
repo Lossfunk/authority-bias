@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd /root/persona-vectors
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 MODEL="Qwen/Qwen3.5-27B"
 MODEL_SLUG="qwen3_5_27b"

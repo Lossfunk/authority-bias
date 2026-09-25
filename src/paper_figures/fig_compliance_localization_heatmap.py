@@ -28,20 +28,20 @@ MODELS: List[Dict] = [
     {
         "name": "GPT-oss-20B",
         "slug": "gpt-oss",
-        "sweep_path": Path("neurips-results/gpt-oss/mechanism/gpt_oss_compliance_analysis/layer_position_sweep.json"),
-        "probe_path": Path("neurips-results/gpt-oss/mechanism/gpt_oss_compliance_analysis/probe_results.json"),
+        "sweep_path": Path("results/authority/gpt-oss/mechanism/gpt_oss_compliance_analysis/layer_position_sweep.json"),
+        "probe_path": Path("results/authority/gpt-oss/mechanism/gpt_oss_compliance_analysis/probe_results.json"),
     },
     {
         "name": "OLMo-2-32B",
         "slug": "olmo2",
-        "sweep_path": Path("neurips-results/olmo2/mechanism/olmo2_compliance_analysis/layer_position_sweep.json"),
-        "probe_path": Path("neurips-results/olmo2/mechanism/olmo2_compliance_analysis/probe_results.json"),
+        "sweep_path": Path("results/authority/olmo2/mechanism/olmo2_compliance_analysis/layer_position_sweep.json"),
+        "probe_path": Path("results/authority/olmo2/mechanism/olmo2_compliance_analysis/probe_results.json"),
     },
     {
         "name": "Gemma-4-26B",
         "slug": "gemma4",
-        "sweep_path": Path("neurips-results/gemma4/mechanism/gemma4_compliance_analysis_no_thinking/layer_position_sweep.json"),
-        "probe_path": Path("neurips-results/gemma4/mechanism/gemma4_compliance_analysis_no_thinking/probe_results.json"),
+        "sweep_path": Path("results/authority/gemma4/mechanism/gemma4_compliance_analysis_no_thinking/layer_position_sweep.json"),
+        "probe_path": Path("results/authority/gemma4/mechanism/gemma4_compliance_analysis_no_thinking/probe_results.json"),
     },
 ]
 

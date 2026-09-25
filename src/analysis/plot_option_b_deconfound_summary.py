@@ -15,9 +15,9 @@ import numpy as np
 import torch
 
 
-VA_PLANE_PATH = Path("neurips-results/mechanism/lexical_va_plane/va_plane.pt")
+VA_PLANE_PATH = Path("results/authority/mechanism/lexical_va_plane/va_plane.pt")
 ASSISTANT_AXIS_OVERLAP_PATH = Path("external/assistant-axis/hardened/overlap_summary.json")
-COMPLIANCE_DIRECTIONS_PATH = Path("neurips-results/mechanism/gpt_oss_compliance_analysis/directions.pt")
+COMPLIANCE_DIRECTIONS_PATH = Path("results/authority/mechanism/gpt_oss_compliance_analysis/directions.pt")
 OUTPUT_DIR = Path("figures/neurips/option-b")
 
 COLORS = {

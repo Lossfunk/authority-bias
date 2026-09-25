@@ -38,8 +38,8 @@ from src.models.llama_loader import load_model_and_tokenizer
 
 DEFAULT_MODEL = "openai/gpt-oss-20b"
 DEFAULT_PIQA_DATASET = Path("data/piqa_mc_validation.jsonl")
-DEFAULT_OUTPUT_DIR = Path("neurips-results/mechanism/piqa_interventions")
-DEFAULT_EXTRACT_DIR = Path("neurips-results/mechanism/gpt_oss_authority_activations")
+DEFAULT_OUTPUT_DIR = Path("results/authority/mechanism/piqa_interventions")
+DEFAULT_EXTRACT_DIR = Path("results/authority/mechanism/gpt_oss_authority_activations")
 
 
 @dataclass(frozen=True)

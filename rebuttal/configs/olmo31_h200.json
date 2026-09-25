@@ -14,10 +14,10 @@
   "inputs": {
     "dataset": "data/exp7_mc_dataset.jsonl",
     "dataset_sha256": "1255ba8795b07cee961e5998c547341d0b248f032ba82ac1b56674c100d12574",
-    "eligible_masks": "neurips-results/qwen35/mechanism/qwen35_authority_activations_shared_h100/label_masks.json",
-    "fit_uids": "neurips-results/exp22/selection_holdout_50_50/qwen35/splits/fold0/train_uids.txt",
+    "eligible_masks": "results/authority/qwen35/mechanism/qwen35_authority_activations_shared_h100/label_masks.json",
+    "fit_uids": "results/authority/exp22/selection_holdout_50_50/qwen35/splits/fold0/train_uids.txt",
     "fit_uids_sha256": "ee0e7d83198c941ec1d72637d643cc68f61055a0d1f8c173057a2f1a04955f68",
-    "historical_uids": "neurips-results/exp22/selection_holdout_50_50/qwen35/splits/fold0/eval_uids.txt",
+    "historical_uids": "results/authority/exp22/selection_holdout_50_50/qwen35/splits/fold0/eval_uids.txt",
     "historical_uids_sha256": "8f79140ec55cc9b3744d1745d4f48f2e2ea4e2f46f48505b922f2ef2173a69ec",
     "eligible_mask_key": "mask_primary_w1",
     "assistant_axis": "rebuttal/configs/assistant_axis/olmo31_l5.pt",

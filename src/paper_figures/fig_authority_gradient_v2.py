@@ -30,7 +30,7 @@ from src.paper_figures.axis_theme import (
 )
 
 
-RESULTS_JSON = Path("neurips-results/_shared/dynamic_parser_all_runs.json")
+RESULTS_JSON = Path("results/authority/_shared/dynamic_parser_all_runs.json")
 OUTPUT_DIR = Path("figures/neurips/v2/final")
 FONT_DIR = Path("/Users/majortimberwolf/Library/Fonts")
 
@@ -100,10 +100,10 @@ MODEL_KEYS: Dict[str, Dict[str, str]] = {
         "color": "#5B84B5",
         "marker": "P",
         "summary_paths": {
-            "uncertain": "neurips-results/qwen35/gradient_uncertain_shared_h100/dynamic_parser_recomputed_summary.json",
-            "assertive": "neurips-results/qwen35/gradient_assertive_shared_h100/dynamic_parser_recomputed_summary.json",
-            "weak": "neurips-results/qwen35/gradient_weak_shared_h100/dynamic_parser_recomputed_summary.json",
-            "authoritative": "neurips-results/qwen35/authoritative_verified_shared_h100/dynamic_parser_recomputed_summary.json",
+            "uncertain": "results/authority/qwen35/gradient_uncertain_shared_h100/dynamic_parser_recomputed_summary.json",
+            "assertive": "results/authority/qwen35/gradient_assertive_shared_h100/dynamic_parser_recomputed_summary.json",
+            "weak": "results/authority/qwen35/gradient_weak_shared_h100/dynamic_parser_recomputed_summary.json",
+            "authoritative": "results/authority/qwen35/authoritative_verified_shared_h100/dynamic_parser_recomputed_summary.json",
         },
     },
     # OLMo-3.1: gradient {weak,uncertain,assertive} have dynamic_parser_recomputed
@@ -115,9 +115,9 @@ MODEL_KEYS: Dict[str, Dict[str, str]] = {
         "color": "#B57FB1",
         "marker": "X",
         "summary_paths": {
-            "uncertain": "neurips-results/olmo31/gradient_uncertain_all_prior_wrong_shared_h100/dynamic_parser_recomputed_summary.json",
-            "assertive": "neurips-results/olmo31/gradient_assertive_all_prior_wrong_shared_h100/dynamic_parser_recomputed_summary.json",
-            "weak": "neurips-results/olmo31/gradient_weak_all_prior_wrong_shared_h100/dynamic_parser_recomputed_summary.json",
+            "uncertain": "results/authority/olmo31/gradient_uncertain_all_prior_wrong_shared_h100/dynamic_parser_recomputed_summary.json",
+            "assertive": "results/authority/olmo31/gradient_assertive_all_prior_wrong_shared_h100/dynamic_parser_recomputed_summary.json",
+            "weak": "results/authority/olmo31/gradient_weak_all_prior_wrong_shared_h100/dynamic_parser_recomputed_summary.json",
         },
         "inline_flip": {
             "authoritative": 82.88,

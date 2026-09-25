@@ -16,7 +16,7 @@ import numpy as np
 from scipy.interpolate import PchipInterpolator
 
 
-ROWS_PATH = Path("neurips-results/mechanism/forward_patch_test_256/steering_rows.jsonl")
+ROWS_PATH = Path("results/authority/mechanism/forward_patch_test_256/steering_rows.jsonl")
 OUTPUT_DIR = Path("figures/neurips")
 
 COLORS = {

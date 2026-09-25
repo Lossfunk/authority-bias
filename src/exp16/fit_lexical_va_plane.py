@@ -25,9 +25,9 @@ from src.models.llama_loader import load_model_and_tokenizer
 
 
 DEFAULT_MODEL = "openai/gpt-oss-20b"
-DEFAULT_EXTRACTION_DIR = Path("neurips-results/mechanism/gpt_oss_authority_activations")
-DEFAULT_ANALYSIS_DIR = Path("neurips-results/mechanism/gpt_oss_compliance_analysis")
-DEFAULT_OUTPUT_DIR = Path("neurips-results/mechanism/lexical_va_plane")
+DEFAULT_EXTRACTION_DIR = Path("results/authority/mechanism/gpt_oss_authority_activations")
+DEFAULT_ANALYSIS_DIR = Path("results/authority/mechanism/gpt_oss_compliance_analysis")
+DEFAULT_OUTPUT_DIR = Path("results/authority/mechanism/lexical_va_plane")
 
 
 def parse_args() -> argparse.Namespace:

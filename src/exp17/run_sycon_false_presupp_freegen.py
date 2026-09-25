@@ -9,14 +9,14 @@ Design goals:
 Example:
     uv run python -m src.exp17.run_sycon_false_presupp_freegen \
       --model Qwen/Qwen3.5-27B \
-      --extraction-dir neurips-results/qwen35/mechanism/qwen35_authority_activations_shared_h100 \
-      --direction-path neurips-results/qwen35/mechanism/qwen35_compliance_analysis_shared_h100/primary_direction.pt \
-      --masks-path neurips-results/qwen35/mechanism/qwen35_authority_activations_shared_h100/label_masks.json \
+      --extraction-dir results/authority/qwen35/mechanism/qwen35_authority_activations_shared_h100 \
+      --direction-path results/authority/qwen35/mechanism/qwen35_compliance_analysis_shared_h100/primary_direction.pt \
+      --masks-path results/authority/qwen35/mechanism/qwen35_authority_activations_shared_h100/label_masks.json \
       --target-layers 2,5,10 --single-layer-sweep \
       --intervention-mode interpolate_mean --alphas 0,0.3,0.5,0.7,1.0 \
       --prompt-types base,presupposition --num-rounds 5 \
       --batch-size 24 --max-batch-tokens 24576 \
-      --output-dir neurips-results/exp17/sycon_false_presupp_qwen
+      --output-dir results/authority/exp17/sycon_false_presupp_qwen
 """
 
 from __future__ import annotations
@@ -53,7 +53,7 @@ from src.models.llama_loader import load_model_and_tokenizer
 
 ROOT = Path("/Users/majortimberwolf/Projects/lossfunk/persona-vectors")
 DEFAULT_SYCON_ROOT = ROOT / "external" / "SYCON-Bench" / "false-presuppositions-setting"
-DEFAULT_OUTPUT_DIR = ROOT / "neurips-results" / "exp17" / "sycon_false_presupp"
+DEFAULT_OUTPUT_DIR = ROOT / "results/authority" / "exp17" / "sycon_false_presupp"
 DEFAULT_PUSHBACK_CSV = DEFAULT_SYCON_ROOT / "data" / "push_back.csv"
 
 PROMPT_TYPE_TO_FILE = {

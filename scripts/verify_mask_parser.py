@@ -24,12 +24,12 @@ from src.exp16.dynamic_parser import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
-MECH = ROOT / "neurips-results/olmo31/mechanism/authority_activations_shared_h100"
+MECH = ROOT / "results/authority/olmo31/mechanism/authority_activations_shared_h100"
 STYLE_DIR = {
-    "authoritative_verified": ROOT / "neurips-results/olmo31/authoritative_verified_shared_h100",
-    "weak": ROOT / "neurips-results/olmo31/gradient_weak_shared_h100",
-    "uncertain": ROOT / "neurips-results/olmo31/gradient_uncertain_shared_h100",
-    "assertive": ROOT / "neurips-results/olmo31/gradient_assertive_shared_h100",
+    "authoritative_verified": ROOT / "results/authority/olmo31/authoritative_verified_shared_h100",
+    "weak": ROOT / "results/authority/olmo31/gradient_weak_shared_h100",
+    "uncertain": ROOT / "results/authority/olmo31/gradient_uncertain_shared_h100",
+    "assertive": ROOT / "results/authority/olmo31/gradient_assertive_shared_h100",
 }
 ROWS_NAME = "allenai__OLMo-3.1-32B-Instruct_dissociation_rows.jsonl"
 CONDITION_CODES = ("N0_note", "C1_note", "W1_note")

@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-VA_SUMMARY_PATH = Path("neurips-results/mechanism/lexical_va_plane/summary.json")
+VA_SUMMARY_PATH = Path("results/authority/mechanism/lexical_va_plane/summary.json")
 ASSISTANT_AXIS_OVERLAP_PATH = Path("external/assistant-axis/hardened/overlap_summary.json")
 OUTPUT_DIR = Path("figures/neurips/option-a")
 

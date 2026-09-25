@@ -1,6 +1,6 @@
 """Recompute Qwen Wang Pareto summaries (trivia + PIQA) from raw_text.
 
-For each variant directory under wang-pareto-results/qwen/mitigation_pareto/qwen35,
+For each variant directory under results/baselines/qwen/mitigation_pareto/qwen35,
 this script:
   1. Reads the *_rows.jsonl
   2. Runs dynamic_parser.discover_model_markers + dynamic_parse_row on raw_text
@@ -23,7 +23,7 @@ sys.path.insert(0, str(ROOT))
 
 from src.exp16.dynamic_parser import discover_model_markers, dynamic_parse_row  # noqa: E402
 
-QWEN_DIR = ROOT / "wang-pareto-results" / "qwen" / "mitigation_pareto" / "qwen35"
+QWEN_DIR = ROOT / "results/baselines" / "qwen" / "mitigation_pareto" / "qwen35"
 
 TRIVIA_VARIANTS = ["residualized", "assistant", "caa"]
 PIQA_VARIANTS = ["residualized", "assistant", "caa"]

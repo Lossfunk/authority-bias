@@ -37,25 +37,25 @@ OUTPUT_DIR = Path("figures/neurips/v2/final/appendix")
 MODELS: List[Dict] = [
     {
         "name": "Qwen-3.5-27B",
-        "path": Path("neurips-results/qwen35/mechanism/forward_patch_expanded_512_w1source/steering_rows.jsonl"),
+        "path": Path("results/authority/qwen35/mechanism/forward_patch_expanded_512_w1source/steering_rows.jsonl"),
         "layers": (2, 5, 10),
         "accent": "#5B84B5",
     },
     {
         "name": "GPT-oss-20B",
-        "path": Path("neurips-results/gpt-oss/mechanism/forward_patch_test_256/steering_rows.jsonl"),
+        "path": Path("results/authority/gpt-oss/mechanism/forward_patch_test_256/steering_rows.jsonl"),
         "layers": (16, 18, 20),
         "accent": "#C36662",
     },
     {
         "name": "Gemma-4-26B",
-        "path": Path("neurips-results/gemma4/mechanism/forward_patch_test_256_no_thinking/steering_rows.jsonl"),
+        "path": Path("results/authority/gemma4/mechanism/forward_patch_test_256_no_thinking/steering_rows.jsonl"),
         "layers": (20, 22, 24),
         "accent": "#6F9C79",
     },
     {
         "name": "OLMo-2-32B",
-        "path": Path("neurips-results/olmo2/mechanism/forward_patch_test_256/steering_rows.jsonl"),
+        "path": Path("results/authority/olmo2/mechanism/forward_patch_test_256/steering_rows.jsonl"),
         "layers": (10, 16, 22),
         "accent": "#D5A048",
     },

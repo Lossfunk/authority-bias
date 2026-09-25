@@ -15,7 +15,7 @@ from src.exp19.common import ModelSpec, load_axis_vector, load_direction_payload
 from src.exp20.common import DEFAULT_ALPHAS, Exp20Sweep, csv, parse_csv, specs_and_sweeps
 
 
-OUTPUT_ROOT = Path("neurips-results/exp22/selection_holdout_50_50")
+OUTPUT_ROOT = Path("results/authority/exp22/selection_holdout_50_50")
 FULL_ANSWER_SUFFIX = "Answer the question in one short sentence using the full answer text, not option letters."
 INTERVENTION_POSITION = "endorsement_span"
 ENV = {
@@ -46,7 +46,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--mitigation-alphas", default=DEFAULT_ALPHAS)
     p.add_argument("--source-user-alphas", default="0,1")
     p.add_argument("--mitigation-variants", default="residualized,assistant,caa")
-    p.add_argument("--caa-root", type=Path, default=Path("neurips-results/exp20/caa_sycophancy"))
+    p.add_argument("--caa-root", type=Path, default=Path("results/authority/exp20/caa_sycophancy"))
     p.add_argument("--forward-mode", choices=("interpolate_mean", "replace_mean", "add", "subtract"), default="interpolate_mean")
     p.add_argument("--forward-conditions", default="N0_note")
     p.add_argument("--mitigation-conditions", default="W1_note")

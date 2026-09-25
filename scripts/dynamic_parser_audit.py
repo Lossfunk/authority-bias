@@ -24,7 +24,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--input-glob",
         type=str,
-        default="../persona-vectors/neurips-results/*_freegen_scaled/*_dissociation_rows.jsonl",
+        default="../persona-vectors/results/authority/*_freegen_scaled/*_dissociation_rows.jsonl",
         help="Glob for rows JSONL files.",
     )
     parser.add_argument(

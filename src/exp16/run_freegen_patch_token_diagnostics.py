@@ -29,9 +29,9 @@ from src.models.llama_loader import load_model_and_tokenizer
 
 DEFAULT_MODEL = "openai/gpt-oss-20b"
 DEFAULT_DATASET = Path("data/exp7_mc_dataset.jsonl")
-DEFAULT_EXTRACT_DIR = Path("neurips-results/mechanism/gpt_oss_authority_activations")
-DEFAULT_MASKS = Path("neurips-results/mechanism/gpt_oss_authority_activations/label_masks.json")
-DEFAULT_OUTPUT_DIR = Path("neurips-results/mechanism/freegen_patch_token_diagnostics")
+DEFAULT_EXTRACT_DIR = Path("results/authority/mechanism/gpt_oss_authority_activations")
+DEFAULT_MASKS = Path("results/authority/mechanism/gpt_oss_authority_activations/label_masks.json")
+DEFAULT_OUTPUT_DIR = Path("results/authority/mechanism/freegen_patch_token_diagnostics")
 
 
 class FullLayerCapture:

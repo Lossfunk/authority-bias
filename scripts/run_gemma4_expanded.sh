@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd /root/persona-vectors
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 export HF_HOME=/opt/hf_home
 

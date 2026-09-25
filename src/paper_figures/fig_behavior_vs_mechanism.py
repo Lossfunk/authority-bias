@@ -40,7 +40,7 @@ from src.paper_figures.axis_theme import (
 )
 
 
-RUNS_JSON = Path("neurips-results/_shared/dynamic_parser_all_runs.json")
+RUNS_JSON = Path("results/authority/_shared/dynamic_parser_all_runs.json")
 OUTPUT_DIR = Path("figures/neurips/v2/candidates")
 
 
@@ -48,8 +48,8 @@ OPEN_WEIGHTS: List[Dict] = [
     {
         "name": "GPT-oss-20B",
         "runs_key": "openai/gpt-oss-20b::v2_gpt_oss_freegen",
-        "patch_path": Path("neurips-results/gpt-oss/mechanism/forward_patch_test_256/steering_rows.jsonl"),
-        "piqa_path": Path("neurips-results/gpt-oss/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json"),
+        "patch_path": Path("results/authority/gpt-oss/mechanism/forward_patch_test_256/steering_rows.jsonl"),
+        "piqa_path": Path("results/authority/gpt-oss/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json"),
         "color": "#C36662",
         "marker": "s",
         "label_offset": (14, 8),
@@ -57,8 +57,8 @@ OPEN_WEIGHTS: List[Dict] = [
     {
         "name": "Gemma-4-26B",
         "runs_key": "google/gemma-4-26B-A4B-it::gemma4__no_thinking_freegen_merged_authoritative",
-        "patch_path": Path("neurips-results/gemma4/mechanism/forward_patch_test_256_no_thinking/steering_rows.jsonl"),
-        "piqa_path": Path("neurips-results/gemma4/mechanism/piqa_forward_patch_200_freegen_no_thinking/piqa_summary.json"),
+        "patch_path": Path("results/authority/gemma4/mechanism/forward_patch_test_256_no_thinking/steering_rows.jsonl"),
+        "piqa_path": Path("results/authority/gemma4/mechanism/piqa_forward_patch_200_freegen_no_thinking/piqa_summary.json"),
         "color": "#6F9C79",
         "marker": "D",
         "label_offset": (14, -10),
@@ -66,8 +66,8 @@ OPEN_WEIGHTS: List[Dict] = [
     {
         "name": "OLMo-2-32B",
         "runs_key": "allenai/OLMo-2-0325-32B-Instruct::v2_olmo2_freegen",
-        "patch_path": Path("neurips-results/olmo2/mechanism/forward_patch_test_256/steering_rows.jsonl"),
-        "piqa_path": Path("neurips-results/olmo2/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json"),
+        "patch_path": Path("results/authority/olmo2/mechanism/forward_patch_test_256/steering_rows.jsonl"),
+        "piqa_path": Path("results/authority/olmo2/mechanism/piqa_forward_patch_200_freegen/piqa_summary.json"),
         "color": "#D5A048",
         "marker": "^",
         "label_offset": (-14, 10),

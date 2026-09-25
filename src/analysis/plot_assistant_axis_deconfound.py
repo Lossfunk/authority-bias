@@ -47,7 +47,7 @@ MODELS: List[ModelSpec] = [
         key="gemma4",
         display="Gemma-4",
         overlap_path=Path(
-            "neurips-results/gemma4/mechanism/assistant_axis_hardened/overlap_summary.json"
+            "results/authority/gemma4/mechanism/assistant_axis_hardened/overlap_summary.json"
         ),
         marker="D",
         marker_color="#E67E22",
@@ -57,7 +57,7 @@ MODELS: List[ModelSpec] = [
         key="olmo2",
         display="OLMo-2",
         overlap_path=Path(
-            "neurips-results/olmo2/mechanism/assistant_axis_hardened/overlap_summary.json"
+            "results/authority/olmo2/mechanism/assistant_axis_hardened/overlap_summary.json"
         ),
         marker="^",
         marker_color="#2E9E5E",

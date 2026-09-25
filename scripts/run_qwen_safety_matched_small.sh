@@ -13,7 +13,7 @@ set -euo pipefail
 
 MODEL="${MODEL:-Qwen/Qwen3.5-27B-Instruct}"
 BACKEND="${BACKEND:-api}"
-OUTPUT_DIR="${OUTPUT_DIR:-neurips-results/exp16/safety_matched_qwen_small}"
+OUTPUT_DIR="${OUTPUT_DIR:-results/authority/exp16/safety_matched_qwen_small}"
 MAX_SAMPLES="${MAX_SAMPLES:-80}"
 BATCH_SIZE="${BATCH_SIZE:-8}"
 MAX_NEW_TOKENS="${MAX_NEW_TOKENS:-128}"

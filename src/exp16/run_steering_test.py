@@ -35,10 +35,10 @@ from src.models.llama_loader import load_model_and_tokenizer
 
 
 DEFAULT_MODEL = "openai/gpt-oss-20b"
-DEFAULT_DIRECTION = Path("neurips-results/mechanism/gpt_oss_compliance_analysis/primary_direction.pt")
-DEFAULT_MASKS = Path("neurips-results/mechanism/gpt_oss_authority_activations/label_masks.json")
+DEFAULT_DIRECTION = Path("results/authority/mechanism/gpt_oss_compliance_analysis/primary_direction.pt")
+DEFAULT_MASKS = Path("results/authority/mechanism/gpt_oss_authority_activations/label_masks.json")
 DEFAULT_DATASET = Path("data/exp7_mc_dataset.jsonl")
-DEFAULT_OUTPUT_DIR = Path("neurips-results/mechanism/steering")
+DEFAULT_OUTPUT_DIR = Path("results/authority/mechanism/steering")
 
 ALPHAS_DEFAULT = "-15,-10,-5,-3,-1,0,1,3,5,10,15"
 CONDITIONS_DEFAULT = "N0_note,W1_note"
