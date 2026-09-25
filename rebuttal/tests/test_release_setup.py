@@ -4,6 +4,7 @@ import hashlib
 import importlib.util
 import subprocess
 import sys
+from configparser import ConfigParser
 from pathlib import Path
 
 import pytest
@@ -16,6 +17,17 @@ SHELL_SCRIPTS = sorted(
     for directory in ("scripts", "experiments", "rebuttal")
     for path in (REPO_ROOT / directory).glob("*.sh")
 )
+
+
+def test_both_evaluation_submodules_have_clone_urls():
+    config = ConfigParser()
+    config.read(REPO_ROOT / ".gitmodules")
+    expected = {
+        "external/SYCON-Bench": "https://github.com/JiseungHong/SYCON-Bench.git",
+        "external/sycophancy-eval": "https://github.com/meg-tong/sycophancy-eval.git",
+    }
+    actual = {config[s]["path"]: config[s]["url"] for s in config.sections()}
+    assert actual == expected
 
 
 @pytest.mark.parametrize("script", SHELL_SCRIPTS, ids=lambda path: str(path.relative_to(REPO_ROOT)))

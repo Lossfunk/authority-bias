@@ -8,7 +8,7 @@ The source and user directions can overlap strongly while having different behav
 
 ## Getting started
 
-Clone the repository with its pinned SYCON dependency. Use Python 3.12 and [uv](https://docs.astral.sh/uv/).
+Clone the repository with its pinned evaluation dependencies. Use Python 3.12 and [uv](https://docs.astral.sh/uv/).
 
 ```bash
 git clone --recurse-submodules https://github.com/Lossfunk/persona-vectors.git
@@ -79,7 +79,7 @@ The runner executes tests before the experiments. Its default `reviewer-run` com
 | `scripts/` | Data preparation, run scripts, and analysis helpers |
 | `config/` | Original model and experiment configurations |
 | `neurips-results/`, `causal-deconfound/`, `wang-pareto-results/` | Archived compact results and run metadata |
-| `external/` | Third-party evaluation code and the SYCON submodule |
+| `external/` | Third-party evaluation code, including the SYCON and SycophancyEval submodules |
 | `docs/` | Reproduction guide and historical research notes |
 | `paper/`, `neurips_2026.tex` | Historical manuscript sources, not the current preprint |
 
