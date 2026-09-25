@@ -18,7 +18,7 @@ if [[ -f "${OUT_I1A}/allenai__OLMo-3.1-32B-Instruct_results.jsonl" ]]; then
   echo "[1a] i1a behavioral already exists, skipping."
 else
   echo "[1a] Running Exp10 i1a behavioral..."
-  uv run python -m src.exp10.run_correct_endorse \
+  uv run python -m src.endorsement.run_correct_endorse \
     --models "${MODEL}" \
     --mc-dataset-path "${MC_DATASET}" \
     --output-dir "${OUT_I1A}" \
@@ -35,7 +35,7 @@ if [[ -f "${OUT_I1C}/allenai__OLMo-3.1-32B-Instruct_results.jsonl" ]]; then
   echo "[1c] i1c behavioral already exists, skipping."
 else
   echo "[1c] Running Exp10 i1c behavioral..."
-  uv run python -m src.exp10.run_correct_endorse \
+  uv run python -m src.endorsement.run_correct_endorse \
     --models "${MODEL}" \
     --mc-dataset-path "${MC_DATASET}" \
     --output-dir "${OUT_I1C}" \

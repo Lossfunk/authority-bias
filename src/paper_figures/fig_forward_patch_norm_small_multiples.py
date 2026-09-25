@@ -8,7 +8,7 @@ from typing import Dict, List
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src.exp16.run_steering_test import _load_extraction_store, _load_masks
+from src.authority_steering.run_steering_test import _load_extraction_store, _load_masks
 
 
 ROOT = Path("/Users/majortimberwolf/Projects/lossfunk/persona-vectors")

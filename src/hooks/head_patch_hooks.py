@@ -81,7 +81,7 @@ class HeadPatchRegistry:
         self.mlp_ablation_layers: Set[int] = set()
         self.mlp_ablation_mode: str = "zero"  # "zero" | "mean"
         self.mlp_mean_cache: Dict[int, torch.Tensor] = {}
-        # Debug logging path can be set via env HEAD_PATCH_DEBUG_LOG; defaults fall back to RESULTS_DIR/exp2 or results/exp2 locally.
+        # Debug logging path can be set via env HEAD_PATCH_DEBUG_LOG; defaults fall back to RESULTS_DIR/head_patching or results/head_patching locally.
         self.debug_log_path = self._resolve_debug_path()
 
     @staticmethod
@@ -93,7 +93,7 @@ class HeadPatchRegistry:
         if os.environ.get("HEAD_PATCH_DEBUG_LOG"):
             return Path(os.environ["HEAD_PATCH_DEBUG_LOG"])
         if os.environ.get("RESULTS_DIR"):
-            return Path(os.environ["RESULTS_DIR"]) / "exp2" / "patch_debug.log"
+            return Path(os.environ["RESULTS_DIR"]) / "head_patching" / "patch_debug.log"
         # Default: no debug log
         return None
 

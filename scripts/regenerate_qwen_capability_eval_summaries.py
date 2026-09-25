@@ -22,7 +22,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from src.exp16.dynamic_parser import discover_model_markers, dynamic_parse_row  # noqa: E402
+from src.authority_steering.dynamic_parser import discover_model_markers, dynamic_parse_row  # noqa: E402
 
 CAP_DIR = ROOT / "results/baselines" / "qwen" / "capability_eval" / "qwen35"
 W1_TABLE_PATH = (

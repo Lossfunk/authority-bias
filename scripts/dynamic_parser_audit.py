@@ -16,7 +16,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
-from src.exp16.dynamic_parser import discover_model_markers, dynamic_parse_row, norm
+from src.authority_steering.dynamic_parser import discover_model_markers, dynamic_parse_row, norm
 
 
 def parse_args() -> argparse.Namespace:
@@ -24,7 +24,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--input-glob",
         type=str,
-        default="../persona-vectors/results/authority/*_freegen_scaled/*_dissociation_rows.jsonl",
+        default="results/authority/*_freegen_scaled/*_dissociation_rows.jsonl",
         help="Glob for rows JSONL files.",
     )
     parser.add_argument(

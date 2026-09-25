@@ -30,7 +30,7 @@ import numpy as np
 from src.paper_figures.axis_theme import AXIS, apply_axis_theme, save_fig, soften_spines
 
 
-RUNS_JSON = Path("results/authority/_shared/dynamic_parser_all_runs.json")
+RUNS_JSON = Path("results/authority/shared_analysis/dynamic_parser_all_runs.json")
 OUTPUT_DIR = Path("figures/neurips/v2/candidates")
 
 MODELS: List[Dict] = [

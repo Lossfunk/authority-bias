@@ -30,7 +30,7 @@ from src.paper_figures.axis_theme import (
 )
 
 
-RESULTS_JSON = Path("results/authority/_shared/dynamic_parser_all_runs.json")
+RESULTS_JSON = Path("results/authority/shared_analysis/dynamic_parser_all_runs.json")
 OUTPUT_DIR = Path("figures/neurips/v2/final")
 FONT_DIR = Path("/Users/majortimberwolf/Library/Fonts")
 

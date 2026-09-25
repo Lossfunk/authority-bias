@@ -1,8 +1,9 @@
 [project]
-name = "persona-vectors"
+name = "authority-bias"
 version = "0.1.0"
 description = "Activation steering and mechanistic interpretability experiments on sycophancy"
 readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "accelerate>=1.12.0",

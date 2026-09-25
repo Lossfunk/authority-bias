@@ -6,8 +6,8 @@ This script operates on ``*_dissociation_rows.jsonl`` files under
 
 1. Recompute run-level dynamic parser metrics and write
    ``dynamic_parser_recomputed_summary.{json,md}``.
-2. Refresh ``results/authority/_shared/dynamic_parser_all_runs.json`` and
-   ``results/authority/_shared/dynamic_parser_summary_index.md``.
+2. Refresh ``results/authority/shared_analysis/dynamic_parser_all_runs.json`` and
+   ``results/authority/shared_analysis/dynamic_parser_summary_index.md``.
 3. Optionally rewrite row-level parsed fields in the source JSONLs so that
    saved ``parsed.final_answer_*`` fields match dynamic parser outputs.
 4. Optionally refresh each sibling ``*_dissociation_summary.json`` group's
@@ -25,7 +25,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any, Iterable
 
-from src.exp16.dynamic_parser import discover_model_markers, dynamic_parse_row, norm
+from src.authority_steering.dynamic_parser import discover_model_markers, dynamic_parse_row, norm
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]

@@ -11,7 +11,7 @@ UIDS_FILE="${UIDS_FILE:-new-phase-results/piqa/piqa_prior_wrong_uids.txt}"
 OUTPUT_DIR="${OUTPUT_DIR:-new-phase-results/diagnostic-instructions/piqa_note_priorwrong_${INSTRUCTION_SET}}"
 BATCH_SIZE="${BATCH_SIZE:-64}"
 
-uv run python -m src.exp15.run_instruction_diagnostics \
+uv run python -m src.instruction_diagnostics.run_instruction_diagnostics \
   --models "${MODEL}" \
   --mc-dataset-path "${MC_DATASET_PATH}" \
   --uids-file "${UIDS_FILE}" \

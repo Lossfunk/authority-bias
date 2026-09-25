@@ -2,7 +2,7 @@
 # Install GPU accelerators (flash-attn, flash-linear-attention, causal-conv1d) via uv.
 #
 # Usage on a fresh box:
-#   cd /path/to/persona-vectors
+#   cd /path/to/authority-bias
 #   bash scripts/install_gpu_deps.sh
 #
 # Why two uv sync passes:

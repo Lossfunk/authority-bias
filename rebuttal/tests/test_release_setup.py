@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import hashlib
 import importlib.util
 import json
@@ -26,6 +27,41 @@ def test_readme_local_links_resolve():
     for target in re.findall(r"\]\(([^)]+)\)", readme):
         if ":" not in target and not target.startswith("#"):
             assert (REPO_ROOT / target.split("#")[0]).exists(), target
+
+
+def test_numbered_experiment_directories_are_replaced():
+    for parent in (REPO_ROOT / "src", REPO_ROOT / "results/authority"):
+        assert not any(re.fullmatch(r"exp\d+", path.name) for path in parent.iterdir())
+
+
+def test_first_party_import_targets_exist():
+    # Resolve internal imports without importing GPU-only dependencies.
+    for directory in ("src", "scripts", "rebuttal"):
+        for path in (REPO_ROOT / directory).rglob("*.py"):
+            if ".venv" in path.parts:
+                continue
+            for node in ast.walk(ast.parse(path.read_text())):
+                modules = []
+                if isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+                    modules = [node.module]
+                elif isinstance(node, ast.Import):
+                    modules = [alias.name for alias in node.names]
+                for module in modules:
+                    if module.startswith("src."):
+                        target = REPO_ROOT.joinpath(*module.split("."))
+                        assert target.is_dir() or target.with_suffix(".py").is_file(), (
+                            path, module
+                        )
+
+
+def test_head_to_head_parser_loads_from_renamed_source():
+    path = REPO_ROOT / "rebuttal/score_head_to_head.py"
+    spec = importlib.util.spec_from_file_location("score_head_to_head", path)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    parser = module.load_paper_parser(REPO_ROOT / "src")
+    assert parser is not None
 
 
 @pytest.mark.parametrize("model", ["qwen", "gptoss", "olmo31"])

@@ -24,9 +24,9 @@ the second is a causal test of cue-family separability. Reporting one against
 CAA while calling it the other is the confusion this module exists to prevent.
 
 Source of the arithmetic, all in the submission tree:
-  * `src/exp16/run_steering_test.py::_direction_from_store` -> `shared_within_label`
-  * `src/exp20/run_source_user_authority_split.py::_fit_directions`
-  * `src/exp20/common.py::derive_deconfound_payloads` (the residualization)
+  * `src/authority_steering/run_steering_test.py::_direction_from_store` -> `shared_within_label`
+  * `src/mitigation/run_source_user_authority_split.py::_fit_directions`
+  * `src/mitigation/common.py::derive_deconfound_payloads` (the residualization)
 
 The assistant axis is *not* refitted. It is loaded from the submission's own
 saved tensor so that `v_auth_resid` is the vector the submitted table was

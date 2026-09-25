@@ -20,7 +20,7 @@ case "$MODEL" in
 esac
 
 ALPHAS="0.5,1,2,4"
-OUT_ROOT="results/authority/exp19/${MODEL}_sweep_w1"
+OUT_ROOT="results/authority/direction_controls/${MODEL}_sweep_w1"
 LOGS_DIR="results/controls/logs"
 mkdir -p "$LOGS_DIR"
 
@@ -62,7 +62,7 @@ LOG="$LOGS_DIR/exp19_${MODEL}_sweep_w1_gpu${GPU_ID}_${TASK}.log"
 CKPT="$OUT_ROOT/manifest_gpu${GPU_ID}_${TASK}.json"
 
 echo "[$MODEL sweep] GPU$GPU_ID ($TASK) -> $LOG"
-CUDA_VISIBLE_DEVICES="$GPU_ID" USE_HUB_KERNELS=NO nohup uv run python -m src.exp19.run_assistant_axis_causal_deconfound \
+CUDA_VISIBLE_DEVICES="$GPU_ID" USE_HUB_KERNELS=NO nohup uv run python -m src.direction_controls.run_assistant_axis_causal_deconfound \
     "${COMMON_ARGS[@]}" \
     "$RUN_FLAG" \
     --checkpoint-path "$CKPT" \

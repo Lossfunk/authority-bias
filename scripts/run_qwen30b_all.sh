@@ -12,7 +12,7 @@ OUTBASE="new-phase-results/qwen3-30b-a3b-results"
 echo "============================================"
 echo "Stage 0a: i1a smoke (Expert+Note, 100 examples)"
 echo "============================================"
-uv run python -m src.exp10.run_correct_endorse \
+uv run python -m src.endorsement.run_correct_endorse \
   --models "$MODEL" \
   --mc-dataset-path "$DATASET" \
   --output-dir "$OUTBASE/exp10_i1a_smoke" \
@@ -23,7 +23,7 @@ uv run python -m src.exp10.run_correct_endorse \
 echo "============================================"
 echo "Stage 0b: i1c smoke (Expert+Note, 100 examples)"
 echo "============================================"
-uv run python -m src.exp10.run_correct_endorse \
+uv run python -m src.endorsement.run_correct_endorse \
   --models "$MODEL" \
   --mc-dataset-path "$DATASET" \
   --output-dir "$OUTBASE/exp10_i1c_smoke" \
@@ -34,7 +34,7 @@ uv run python -m src.exp10.run_correct_endorse \
 echo "============================================"
 echo "Stage 1a: i1a fulltags (all 4 tags, full dataset)"
 echo "============================================"
-uv run python -m src.exp10.run_correct_endorse \
+uv run python -m src.endorsement.run_correct_endorse \
   --models "$MODEL" \
   --mc-dataset-path "$DATASET" \
   --output-dir "$OUTBASE/exp10_i1a_fulltags" \
@@ -44,7 +44,7 @@ uv run python -m src.exp10.run_correct_endorse \
 echo "============================================"
 echo "Stage 1b: i1c fulltags (all 4 tags, full dataset)"
 echo "============================================"
-uv run python -m src.exp10.run_correct_endorse \
+uv run python -m src.endorsement.run_correct_endorse \
   --models "$MODEL" \
   --mc-dataset-path "$DATASET" \
   --output-dir "$OUTBASE/exp10_i1c_fulltags" \
@@ -54,7 +54,7 @@ uv run python -m src.exp10.run_correct_endorse \
 echo "============================================"
 echo "Stage 2: i1d fulltags (all 4 tags, full dataset)"
 echo "============================================"
-uv run python -m src.exp10.run_correct_endorse \
+uv run python -m src.endorsement.run_correct_endorse \
   --models "$MODEL" \
   --mc-dataset-path "$DATASET" \
   --output-dir "$OUTBASE/exp10_i1d_fulltags" \

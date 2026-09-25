@@ -39,8 +39,8 @@ import torch
 from torch import nn
 from tqdm import tqdm
 
-from src.exp7.dataset_mc import MCExample, load_mc_dataset
-from src.exp7.scoring import _tokenize_for_scoring, get_ab_token_ids
+from src.lexical_controls.dataset_mc import MCExample, load_mc_dataset
+from src.lexical_controls.scoring import _tokenize_for_scoring, get_ab_token_ids
 from src.mechanism.hooks import get_transformer_layers
 from src.models.llama_loader import load_model_and_tokenizer
 

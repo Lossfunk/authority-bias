@@ -18,8 +18,8 @@ from typing import Dict, List, Optional, Sequence, Tuple
 import torch
 from tqdm import tqdm
 
-from src.exp7.dataset_mc import load_mc_dataset
-from src.exp7.scoring import _tokenize_for_scoring, get_ab_token_ids
+from src.lexical_controls.dataset_mc import load_mc_dataset
+from src.lexical_controls.scoring import _tokenize_for_scoring, get_ab_token_ids
 from src.mechanism.extract_correction_gating_activations import _resolve_positions
 from src.mechanism.hooks import get_transformer_layers
 from src.mechanism.run_correction_gating_patching import (

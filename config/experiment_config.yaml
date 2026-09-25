@@ -9,6 +9,6 @@ model:
   device: auto
   dtype: auto
 exp0:
-  output_dir: updated-results/exp0
+  output_dir: updated-results/baseline
   histogram_bins: 40
   max_examples: 100

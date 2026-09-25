@@ -1,0 +1,20 @@
+seed: 42
+dataset:
+  raw_path: data/answer.jsonl
+  split_a_path: data/split_A_user_wrong.jsonl
+  split_b_path: data/split_B_user_wrong.jsonl
+  split_c_path: data/split_C_user_wrong.jsonl
+model:
+  name: meta-llama/Llama-3.1-8B-Instruct
+  device: auto
+  dtype: auto
+exp1:
+  min_per_class: 80            # target at least 80 per class
+  max_per_class: 200           # cap to keep runs light
+  subsample_majority: true
+  margin_start_percentile: 0.7 # start lower to avoid overly high margins
+  margin_step: 0.05
+  dev_subset_size: 128
+  alpha_grid: [2.0, 4.0, 8.0, 16.0]  # extended range to find stronger steering
+  output_dir: llama-results/caa_vectors
+  head_summary_path: llama-results/head_patching/head_summary.json

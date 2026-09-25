@@ -13,7 +13,7 @@ set -euo pipefail
 
 MODEL="${MODEL:-Qwen/Qwen3.5-27B-Instruct}"
 BACKEND="${BACKEND:-api}"
-OUTPUT_DIR="${OUTPUT_DIR:-results/authority/exp16/safety_matched_qwen_small}"
+OUTPUT_DIR="${OUTPUT_DIR:-results/authority/authority_steering/safety_matched_qwen_small}"
 MAX_SAMPLES="${MAX_SAMPLES:-80}"
 BATCH_SIZE="${BATCH_SIZE:-8}"
 MAX_NEW_TOKENS="${MAX_NEW_TOKENS:-128}"
@@ -22,7 +22,7 @@ TOP_P="${TOP_P:-1.0}"
 TOP_K="${TOP_K:-50}"
 SEED="${SEED:-42}"
 
-python3 -m src.exp16.run_safety_matched_conditions \
+python3 -m src.authority_steering.run_safety_matched_conditions \
   --model "${MODEL}" \
   --backend "${BACKEND}" \
   --max-samples "${MAX_SAMPLES}" \

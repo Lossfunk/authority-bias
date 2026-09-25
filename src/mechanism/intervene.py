@@ -8,7 +8,7 @@ from typing import Dict, List, Mapping, Sequence, Tuple
 import pandas as pd
 import torch
 
-from src.exp7.scoring import _tokenize_for_scoring, get_ab_token_ids, score_prompt_forced_choice
+from src.lexical_controls.scoring import _tokenize_for_scoring, get_ab_token_ids, score_prompt_forced_choice
 from src.mechanism.collect import extract_token_positions
 from src.mechanism.common import InterventionResult, PanelRow, read_panel_parquet
 from src.mechanism.hooks import InterventionSpec, ModelHookRunner

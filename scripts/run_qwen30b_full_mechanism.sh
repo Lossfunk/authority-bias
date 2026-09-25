@@ -37,7 +37,7 @@ if [[ -f "${EXP10_RESULTS_PATH}" ]]; then
   echo "[1/6] Existing Exp10 results found at ${EXP10_RESULTS_PATH}, skipping re-run."
 else
   echo "[1/6] Running Exp10 Note-only for Qwen3-30B..."
-  uv run python -m src.exp10.run_correct_endorse \
+  uv run python -m src.endorsement.run_correct_endorse \
     --models "${MODEL}" \
     --mc-dataset-path "${MC_DATASET_PATH}" \
     --output-dir "${EXP10_OUTPUT_DIR}" \

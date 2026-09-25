@@ -65,9 +65,9 @@ SPECS: List[ModelSpec] = [
     ModelSpec(
         name="OLMo-3.1",
         layers=[15, 18, 22],
-        summary_path=ROOT / "results/authority" / "exp16" / "olmo31_steering_interpolate_mean_l15_l18_l22_apw" / "steering_summary.json",
-        rows_path=ROOT / "results/authority" / "exp16" / "olmo31_steering_interpolate_mean_l15_l18_l22_apw" / "steering_rows.jsonl",
-        replace_rows_path=ROOT / "results/authority" / "exp16" / "olmo31_steering_replace_mean_l15_l18_l22_apw" / "steering_rows.jsonl",
+        summary_path=ROOT / "results/authority" / "authority_steering" / "olmo31_steering_interpolate_mean_l15_l18_l22_apw" / "steering_summary.json",
+        rows_path=ROOT / "results/authority" / "authority_steering" / "olmo31_steering_interpolate_mean_l15_l18_l22_apw" / "steering_rows.jsonl",
+        replace_rows_path=ROOT / "results/authority" / "authority_steering" / "olmo31_steering_replace_mean_l15_l18_l22_apw" / "steering_rows.jsonl",
     ),
 ]
 

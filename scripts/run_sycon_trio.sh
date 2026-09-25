@@ -8,7 +8,7 @@ set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-OUT_ROOT="results/authority/exp17"
+OUT_ROOT="results/authority/sycon_transfer"
 mkdir -p "$OUT_ROOT"
 
 COMMON_ARGS=(
@@ -29,7 +29,7 @@ run_one() {
   local out_dir="$OUT_ROOT/sycon_false_presupp_${tag}_24q_256tok"
   mkdir -p "$out_dir"
   echo "[$(date -u +%FT%TZ)] START $tag -> $out_dir"
-  uv run python -m src.exp17.run_sycon_false_presupp_freegen \
+  uv run python -m src.sycon_transfer.run_sycon_false_presupp_freegen \
     "$@" \
     --output-dir "$out_dir" \
     > "$out_dir/run.log" 2>&1 < /dev/null

@@ -16,7 +16,7 @@ if [[ -d "${OUT_I1A}" ]]; then
   echo "[1a] i1a behavioral already exists, skipping."
 else
   echo "[1a] Running Exp10 i1a behavioral..."
-  uv run python -m src.exp10.run_correct_endorse \
+  uv run python -m src.endorsement.run_correct_endorse \
     --models "${MODEL}" \
     --mc-dataset-path "${MC_DATASET}" \
     --output-dir "${OUT_I1A}" \
@@ -33,7 +33,7 @@ if [[ -d "${OUT_I1C}" ]]; then
   echo "[1c] i1c behavioral already exists, skipping."
 else
   echo "[1c] Running Exp10 i1c behavioral..."
-  uv run python -m src.exp10.run_correct_endorse \
+  uv run python -m src.endorsement.run_correct_endorse \
     --models "${MODEL}" \
     --mc-dataset-path "${MC_DATASET}" \
     --output-dir "${OUT_I1C}" \

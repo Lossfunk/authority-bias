@@ -14,7 +14,7 @@ SOURCE_RESULTS="new-phase-results/piqa/qwen_i1a_exp10/Qwen__Qwen3-4B-Instruct-25
 echo "============================================"
 echo "PIQA Reasoning Traces: i1a instruction"
 echo "============================================"
-uv run python -m src.exp10.run_reasoning_traces \
+uv run python -m src.endorsement.run_reasoning_traces \
   --model "$MODEL" \
   --backend hf \
   --batch-size 8 \
@@ -29,7 +29,7 @@ uv run python -m src.exp10.run_reasoning_traces \
 echo "============================================"
 echo "PIQA Reasoning Traces: i1c instruction"
 echo "============================================"
-uv run python -m src.exp10.run_reasoning_traces \
+uv run python -m src.endorsement.run_reasoning_traces \
   --model "$MODEL" \
   --backend hf \
   --batch-size 8 \

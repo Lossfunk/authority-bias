@@ -6,7 +6,7 @@ Supported datasets:
 - PIQA
 
 This writes the same JSONL schema as `data/exp7_mc_dataset.jsonl`, so the
-existing exp10/exp11 pipeline can be reused by pointing `--mc-dataset-path`
+existing exp10/prior_analysis pipeline can be reused by pointing `--mc-dataset-path`
 at the generated file.
 """
 
@@ -25,7 +25,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from src.exp7.dataset_mc import MCExample, save_mc_dataset, verify_mc_dataset
+from src.lexical_controls.dataset_mc import MCExample, save_mc_dataset, verify_mc_dataset
 
 
 def parse_args() -> argparse.Namespace:

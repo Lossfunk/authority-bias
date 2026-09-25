@@ -35,9 +35,9 @@ from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 import torch
 from tqdm import tqdm
 
-from src.exp10.conditions import Exp10Condition, format_prompt
-from src.exp7.dataset_mc import MCExample, load_mc_dataset
-from src.exp7.scoring import _tokenize_for_scoring, get_ab_token_ids
+from src.endorsement.conditions import Exp10Condition, format_prompt
+from src.lexical_controls.dataset_mc import MCExample, load_mc_dataset
+from src.lexical_controls.scoring import _tokenize_for_scoring, get_ab_token_ids
 from src.mechanism.extract_correction_gating_activations import (
     POSITION_NAMES,
     _collect_hidden_states_batch,

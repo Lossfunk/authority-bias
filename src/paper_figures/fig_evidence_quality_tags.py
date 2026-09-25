@@ -195,7 +195,7 @@ def _resolve_model_data(
         plus_online_path = (
             results_root
             / model_dir
-            / "exp14"
+            / "evidence_quality"
             / "assertive"
             / "plus_online"
             / "analysis"
@@ -213,7 +213,7 @@ def _resolve_model_data(
         user_only_path = (
             results_root
             / model_dir
-            / "exp14"
+            / "evidence_quality"
             / "assertive"
             / "user_only"
             / "analysis"

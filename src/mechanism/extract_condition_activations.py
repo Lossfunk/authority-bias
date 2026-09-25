@@ -17,7 +17,7 @@ from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 import torch
 from tqdm import tqdm
 
-from src.exp7.scoring import _tokenize_for_scoring
+from src.lexical_controls.scoring import _tokenize_for_scoring
 from src.mechanism.extract_correction_gating_activations import _resolve_positions
 from src.models.llama_loader import load_model_and_tokenizer
 

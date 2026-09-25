@@ -297,7 +297,7 @@ def main() -> None:
     parser.add_argument(
         "--analysis-path",
         type=Path,
-        default=Path("new-phase-results/llama-3.1-8b-results/exp14/shared/analysis/combined_analysis.json"),
+        default=Path("new-phase-results/llama-3.1-8b-results/evidence_quality/shared/analysis/combined_analysis.json"),
     )
     parser.add_argument("--slice-name", default="prior_wrong")
     parser.add_argument("--instruction-key", default="I0", choices=["I0", "I1"])

@@ -7,9 +7,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 
-from src.exp14.conditions import Exp14Condition, format_prompt as format_exp14_prompt
-from src.exp14.reasons_dataset import ReasonEntry, load_reasons_dataset
-from src.exp7.dataset_mc import MCExample
+from src.evidence_quality.conditions import Exp14Condition, format_prompt as format_exp14_prompt
+from src.evidence_quality.reasons_dataset import ReasonEntry, load_reasons_dataset
+from src.lexical_controls.dataset_mc import MCExample
 from src.mechanism.common import (
     CORE_EVIDENCE_LEVELS,
     CORE_INSTRUCTION_KEYS,
@@ -50,7 +50,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--results-path",
         type=Path,
-        default=Path("new-phase-results/qwen3-4b-results/exp14/Qwen__Qwen3-4B-Instruct-2507_results.jsonl"),
+        default=Path("new-phase-results/qwen3-4b-results/evidence_quality/Qwen__Qwen3-4B-Instruct-2507_results.jsonl"),
     )
     parser.add_argument("--reasons-path", type=Path, default=Path("data/exp14_reasons.jsonl"))
     parser.add_argument(

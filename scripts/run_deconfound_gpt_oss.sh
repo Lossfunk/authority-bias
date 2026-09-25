@@ -7,7 +7,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-OUT_ROOT="results/authority/exp19/gpt_oss_ab_project_out_allcond"
+OUT_ROOT="results/authority/direction_controls/gpt_oss_ab_project_out_allcond"
 LOGS_DIR="results/controls/logs"
 mkdir -p "$LOGS_DIR"
 
@@ -49,7 +49,7 @@ GPU1_LOG="$LOGS_DIR/exp19_gpt_oss_ab_gpu1_assistant_residualized.log"
 export USE_HUB_KERNELS=NO
 
 echo "[gpt_oss] Launching authority on GPU0 -> $GPU0_LOG"
-CUDA_VISIBLE_DEVICES=0 USE_HUB_KERNELS=NO nohup uv run python -m src.exp19.run_assistant_axis_causal_deconfound \
+CUDA_VISIBLE_DEVICES=0 USE_HUB_KERNELS=NO nohup uv run python -m src.direction_controls.run_assistant_axis_causal_deconfound \
     "${COMMON_ARGS[@]}" \
     --variants authority \
     --checkpoint-path "$OUT_ROOT/manifest_gpu0.json" \
@@ -58,7 +58,7 @@ GPU0_PID=$!
 echo "[gpt_oss] GPU0 pid=$GPU0_PID"
 
 echo "[gpt_oss] Launching assistant+residualized on GPU1 -> $GPU1_LOG"
-CUDA_VISIBLE_DEVICES=1 USE_HUB_KERNELS=NO nohup uv run python -m src.exp19.run_assistant_axis_causal_deconfound \
+CUDA_VISIBLE_DEVICES=1 USE_HUB_KERNELS=NO nohup uv run python -m src.direction_controls.run_assistant_axis_causal_deconfound \
     "${COMMON_ARGS[@]}" \
     --variants assistant,residualized \
     --checkpoint-path "$OUT_ROOT/manifest_gpu1.json" \

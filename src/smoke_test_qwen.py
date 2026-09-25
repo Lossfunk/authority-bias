@@ -16,8 +16,8 @@ import sys
 import torch
 from torch.nn import functional as F
 
-from src.exp7.dataset_mc import MCExample, format_baseline_prompt
-from src.exp7.scoring import _prepare_model_inputs, get_ab_token_ids, score_prompt_forced_choice
+from src.lexical_controls.dataset_mc import MCExample, format_baseline_prompt
+from src.lexical_controls.scoring import _prepare_model_inputs, get_ab_token_ids, score_prompt_forced_choice
 from src.models.llama_loader import load_model_and_tokenizer
 
 DEFAULT_MODEL = "Qwen/Qwen3-4B"

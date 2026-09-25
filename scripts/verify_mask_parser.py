@@ -15,7 +15,7 @@ import re
 from collections import Counter
 from pathlib import Path
 
-from src.exp16.dynamic_parser import (
+from src.authority_steering.dynamic_parser import (
     discover_model_markers,
     dynamic_parse_row,
     norm,

@@ -518,9 +518,9 @@ def main():
     out_dir.mkdir(exist_ok=True)
     
     # Data paths
-    path_baseline_records = base_dir / "exp0" / "baseline_records.jsonl"
-    path_baseline_metrics = base_dir / "exp0" / "baseline_metrics.json"
-    path_mediation = base_dir / "exp3" / "mediation_results.jsonl"
+    path_baseline_records = base_dir / "baseline" / "baseline_records.jsonl"
+    path_baseline_metrics = base_dir / "baseline" / "baseline_metrics.json"
+    path_mediation = base_dir / "causal_mediation" / "mediation_results.jsonl"
     
     # Validation paths
     validation_dir = base_dir / "validation"

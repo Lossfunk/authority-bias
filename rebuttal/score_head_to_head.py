@@ -40,7 +40,7 @@ CAA_ARM = "caa_tuned"
 
 def load_paper_parser(paper_src: Path):
     """Import the paper's dynamic parser without running its CLI."""
-    path = paper_src / "exp16" / "dynamic_parser.py"
+    path = paper_src / "authority_steering" / "dynamic_parser.py"
     if not path.exists():
         raise SystemExit(f"paper parser not found at {path}")
     spec = importlib.util.spec_from_file_location("paper_dynamic_parser", path)

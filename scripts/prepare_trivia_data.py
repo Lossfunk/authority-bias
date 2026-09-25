@@ -14,7 +14,7 @@ from urllib.request import Request, urlopen
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
-from src.exp7.dataset_mc import create_mc_examples, save_mc_dataset  # noqa: E402
+from src.lexical_controls.dataset_mc import create_mc_examples, save_mc_dataset  # noqa: E402
 
 # SycophancyEval datasets/answer.jsonl at commit
 # 9a1694221e3639887138f61deae344335eca6752. Fetch the immutable Git blob.
@@ -41,7 +41,7 @@ def prepare(raw_path: Path, output_path: Path, *, download: bool = False) -> Non
     if not raw_path.exists():
         if not download:
             raise FileNotFoundError(f"{raw_path} is missing; supply --raw-path or --download")
-        request = Request(SOURCE_URL, headers={"User-Agent": "Lossfunk-persona-vectors"})
+        request = Request(SOURCE_URL, headers={"User-Agent": "Lossfunk-authority-bias"})
         with urlopen(request, timeout=120) as response:
             blob = json.load(response)
         if blob.get("encoding") != "base64":

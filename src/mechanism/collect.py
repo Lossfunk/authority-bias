@@ -10,7 +10,7 @@ from typing import Dict, Iterable, List, Mapping, Sequence, Tuple
 import pandas as pd
 import torch
 
-from src.exp7.scoring import _tokenize_for_scoring
+from src.lexical_controls.scoring import _tokenize_for_scoring
 from src.mechanism.common import (
     ActivationManifestRow,
     PanelRow,

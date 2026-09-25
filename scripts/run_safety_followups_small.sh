@@ -15,7 +15,7 @@ if [[ -z "${PROMPTS_JSONL}" || -z "${OUTPUT_DIR}" ]]; then
   exit 1
 fi
 
-uv run python -m src.exp16.run_harmbench_interventions \
+uv run python -m src.authority_steering.run_harmbench_interventions \
   --model openai/gpt-oss-20b \
   --prompts-jsonl "${PROMPTS_JSONL}" \
   --target-layers 16,18,20 \
@@ -28,7 +28,7 @@ uv run python -m src.exp16.run_harmbench_interventions \
   --batch-size 8 --max-new-tokens 128 --temperature 0.0 \
   --output-dir "${OUTPUT_DIR}/multilayer"
 
-uv run python -m src.exp16.run_harmbench_interventions \
+uv run python -m src.authority_steering.run_harmbench_interventions \
   --model openai/gpt-oss-20b \
   --prompts-jsonl "${PROMPTS_JSONL}" \
   --target-layers 16,18,20 --single-layer-sweep \
@@ -42,7 +42,7 @@ uv run python -m src.exp16.run_harmbench_interventions \
   --batch-size 8 --max-new-tokens 128 --temperature 0.0 \
   --output-dir "${OUTPUT_DIR}/decode"
 
-uv run python -m src.exp16.run_harmbench_interventions \
+uv run python -m src.authority_steering.run_harmbench_interventions \
   --model openai/gpt-oss-20b \
   --prompts-jsonl "${PROMPTS_JSONL}" \
   --target-layers 16,18,20 --single-layer-sweep \

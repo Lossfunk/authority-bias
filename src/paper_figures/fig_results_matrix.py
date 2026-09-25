@@ -34,7 +34,7 @@ from src.paper_figures.axis_theme import (
 )
 
 
-RUNS_JSON = Path("results/authority/_shared/dynamic_parser_all_runs.json")
+RUNS_JSON = Path("results/authority/shared_analysis/dynamic_parser_all_runs.json")
 OUTPUT_DIR = Path("figures/neurips/v2/candidates")
 
 

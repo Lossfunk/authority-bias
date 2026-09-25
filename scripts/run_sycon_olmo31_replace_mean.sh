@@ -2,7 +2,7 @@
 # SYCON false-presupposition rerun for OLMo-3.1 with REPLACE_MEAN (vs the original
 # interpolate_mean run) to match the stronger forward-patch recipe that produced
 # the 58.8% matched-flip headline on trivia. Keeps every other knob identical to
-# results/authority/exp17/sycon_fp_v3_olmo31_100q_l15_l18_l22_a0_a03_a05_apw so the
+# results/authority/sycon_transfer/sycon_fp_v3_olmo31_100q_l15_l18_l22_a0_a03_a05_apw so the
 # two runs are directly comparable.
 #
 # Hardware: H100 (80GB), FA2 enabled via the updated llama_loader (prefer_flash_attention
@@ -14,10 +14,10 @@ set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-OUT_DIR="results/authority/exp17/sycon_fp_v3_olmo31_100q_l15_l18_l22_replace_mean_apw_h100"
+OUT_DIR="results/authority/sycon_transfer/sycon_fp_v3_olmo31_100q_l15_l18_l22_replace_mean_apw_h100"
 mkdir -p "$OUT_DIR" logs
 
-uv run python -m src.exp17.run_sycon_false_presupp_freegen \
+uv run python -m src.sycon_transfer.run_sycon_false_presupp_freegen \
   --model allenai/OLMo-3.1-32B-Instruct \
   --sycon-root external/SYCON-Bench/false-presuppositions-setting \
   --pushback-csv external/SYCON-Bench/false-presuppositions-setting/data/push_back.csv \

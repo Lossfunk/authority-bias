@@ -1,0 +1,20 @@
+seed: 42
+
+model:
+  name: meta-llama/Llama-3.1-8B-Instruct
+  device: auto
+  dtype: auto
+
+dataset:
+  test_path: data/split_C_user_wrong.jsonl
+
+steering_vector:
+  vectors_path: llama-results/caa_vectors/layer_vectors.pt
+  # Test late layers as suggested by "Small Vectors, Big Effects" paper
+  layer_sweep: [29, 30, 31]  # Last 3 layers (penultimate, last-1, last)
+  alpha_sweep: [8.0, 16.0, 32.0, 64.0]  # Higher alphas for late-layer injection
+
+exp4:
+  max_examples: 200  # Limit for faster iteration; increase for final run
+  mlp_ablation_layers: [8, 16, 24]  # Middle/late layers to test
+  output_dir: llama-results/distributed_steering

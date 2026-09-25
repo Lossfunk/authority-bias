@@ -21,7 +21,7 @@ case "$MODEL" in
 esac
 
 ALPHAS="0.5,1,2,4"
-OUT_ROOT="results/authority/exp19/${MODEL}_sweep_w1"
+OUT_ROOT="results/authority/direction_controls/${MODEL}_sweep_w1"
 LOGS_DIR="results/controls/logs"
 mkdir -p "$LOGS_DIR"
 
@@ -57,7 +57,7 @@ GPU0_LOG="$LOGS_DIR/exp19_${MODEL}_sweep_w1_gpu0_trivia.log"
 GPU1_LOG="$LOGS_DIR/exp19_${MODEL}_sweep_w1_gpu1_piqa.log"
 
 echo "[$MODEL sweep] GPU0 (trivia, all variants) -> $GPU0_LOG"
-CUDA_VISIBLE_DEVICES=0 USE_HUB_KERNELS=NO nohup uv run python -m src.exp19.run_assistant_axis_causal_deconfound \
+CUDA_VISIBLE_DEVICES=0 USE_HUB_KERNELS=NO nohup uv run python -m src.direction_controls.run_assistant_axis_causal_deconfound \
     "${COMMON_ARGS[@]}" \
     --run-trivia \
     --checkpoint-path "$OUT_ROOT/manifest_gpu0_trivia.json" \
@@ -65,7 +65,7 @@ CUDA_VISIBLE_DEVICES=0 USE_HUB_KERNELS=NO nohup uv run python -m src.exp19.run_a
 GPU0_PID=$!
 
 echo "[$MODEL sweep] GPU1 (PIQA, all variants) -> $GPU1_LOG"
-CUDA_VISIBLE_DEVICES=1 USE_HUB_KERNELS=NO nohup uv run python -m src.exp19.run_assistant_axis_causal_deconfound \
+CUDA_VISIBLE_DEVICES=1 USE_HUB_KERNELS=NO nohup uv run python -m src.direction_controls.run_assistant_axis_causal_deconfound \
     "${COMMON_ARGS[@]}" \
     --run-piqa \
     --checkpoint-path "$OUT_ROOT/manifest_gpu1_piqa.json" \

@@ -35,7 +35,7 @@ You can validate inputs and write the run manifest without loading a model:
 uv run --project rebuttal --frozen qwen-rebuttal prepare \
   --repo-root . \
   --config rebuttal/configs/qwen_h200.json \
-  --output-root /tmp/persona-vectors-prepare
+  --output-root /tmp/authority-bias-prepare
 ```
 
 Outputs must be outside the repository. Commands other than `prepare` require a clean code checkout so the manifest identifies the code used.

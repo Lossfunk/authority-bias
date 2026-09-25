@@ -3,7 +3,7 @@
 # replace_mean interventions. Matches the trivia forward-patch config
 # exactly except for intervention mode and eval task.
 #
-# Reference config (from results/authority/exp16/olmo31_steering_replace_mean_l15_l18_l22_apw/steering_meta.json):
+# Reference config (from results/authority/authority_steering/olmo31_steering_replace_mean_l15_l18_l22_apw/steering_meta.json):
 #   - direction_path: primary_direction.pt (shared_within_label, w1, endorsed_answer @ L15)
 #   - extraction_dir / masks_path: all_prior_wrong_shared_h100
 #   - direction-position: endorsed_answer
@@ -28,8 +28,8 @@ set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-OUT_DIR_INTERP="results/authority/exp16/olmo31_piqa_interpolate_l15_l18_l22_w1_h100"
-OUT_DIR_REPLACE="results/authority/exp16/olmo31_piqa_replace_l15_l18_l22_w1_h100"
+OUT_DIR_INTERP="results/authority/authority_steering/olmo31_piqa_interpolate_l15_l18_l22_w1_h100"
+OUT_DIR_REPLACE="results/authority/authority_steering/olmo31_piqa_replace_l15_l18_l22_w1_h100"
 mkdir -p "$OUT_DIR_INTERP" "$OUT_DIR_REPLACE" logs
 
 COMMON_ARGS=(
@@ -69,7 +69,7 @@ COMMON_ARGS=(
 )
 
 echo "[$(date -u +%FT%TZ)] STAGE 1/2: interpolate_mean (alpha=0/0.5/1.0)"
-uv run python -m src.exp16.run_piqa_interventions \
+uv run python -m src.authority_steering.run_piqa_interventions \
   "${COMMON_ARGS[@]}" \
   --patch-modes interpolate_mean \
   --patch-alphas 0,0.5,1.0 \
@@ -77,7 +77,7 @@ uv run python -m src.exp16.run_piqa_interventions \
   2>&1 | tee "$OUT_DIR_INTERP/run.log"
 
 echo "[$(date -u +%FT%TZ)] STAGE 2/2: replace_mean (alpha=1.0)"
-uv run python -m src.exp16.run_piqa_interventions \
+uv run python -m src.authority_steering.run_piqa_interventions \
   "${COMMON_ARGS[@]}" \
   --patch-modes replace_mean \
   --patch-alphas 1.0 \

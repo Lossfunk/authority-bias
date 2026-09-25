@@ -23,8 +23,8 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-from src.exp7.dataset_mc import load_mc_dataset
-from src.exp7.scoring import _tokenize_for_scoring, get_ab_token_ids
+from src.lexical_controls.dataset_mc import load_mc_dataset
+from src.lexical_controls.scoring import _tokenize_for_scoring, get_ab_token_ids
 from src.models.llama_loader import load_model_and_tokenizer
 
 

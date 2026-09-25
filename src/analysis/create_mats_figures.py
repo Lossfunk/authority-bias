@@ -108,7 +108,7 @@ def add_fancy_frame(ax, facecolor='white', edgecolor='#CCCCCC', linewidth=1.5, p
 def create_figure1_caa_effects(results_dir: Path, output_dir: Path):
     """Bar chart showing CAA steering effects across alpha values."""
     
-    data = load_json(results_dir / "exp4/exp4/alpha_sweep_results.json")
+    data = load_json(results_dir / "exp4/distributed_steering/alpha_sweep_results.json")
     
     alphas = []
     baseline_effects = []
@@ -182,7 +182,7 @@ def create_figure1_caa_effects(results_dir: Path, output_dir: Path):
 def create_figure2_layer_alpha_heatmap(results_dir: Path, output_dir: Path):
     """Heatmap showing effects across layers and alpha values."""
     
-    data = load_json(results_dir / "exp4/exp4/layer_alpha_sweep_results.json")
+    data = load_json(results_dir / "exp4/distributed_steering/layer_alpha_sweep_results.json")
     
     layers = sorted(data["layer_sweep"])
     alphas = sorted(data["alpha_sweep"])
@@ -337,12 +337,12 @@ def create_figure4_method_comparison(results_dir: Path, output_dir: Path):
         add_method(label, rec["mean_effect"], rec["std_effect"], rec["n"], hatch=hatch)
     
     # CAA (exp4)
-    caa_data = load_json(results_dir / "exp4/exp4/alpha_sweep_results.json")
+    caa_data = load_json(results_dir / "exp4/distributed_steering/alpha_sweep_results.json")
     best_caa = caa_data["per_alpha_results"]["16.0"]["results"]["baseline"]
     add_method("CAA\n(α=16)", best_caa["mean_effect"], best_caa["std_effect"], best_caa["n"])
     
     # CAA late-layer (exp4b)
-    late_data = load_json(results_dir / "exp4/exp4/layer_alpha_sweep_results.json")
+    late_data = load_json(results_dir / "exp4/distributed_steering/layer_alpha_sweep_results.json")
     best_late = late_data["per_config_results"]["L29_a16.0"]["results"]["baseline"]
     add_method("CAA Late\n(L29, α=16)", best_late["mean_effect"], best_late["std_effect"], best_late["n"])
     
@@ -421,7 +421,7 @@ def create_figure4_method_comparison(results_dir: Path, output_dir: Path):
 def create_figure5_alpha_sweep_detail(results_dir: Path, output_dir: Path):
     """Detailed alpha sweep showing all three conditions."""
     
-    data = load_json(results_dir / "exp4/exp4/alpha_sweep_results.json")
+    data = load_json(results_dir / "exp4/distributed_steering/alpha_sweep_results.json")
     
     alphas = []
     baseline = []
@@ -476,10 +476,10 @@ def create_figure5_summary_infographic(results_dir: Path, output_dir: Path):
     """Narrative infographic summarizing failures + Base comparison."""
 
     # Key numbers
-    caa_data = load_json(results_dir / "exp4/exp4/alpha_sweep_results.json")
+    caa_data = load_json(results_dir / "exp4/distributed_steering/alpha_sweep_results.json")
     caa_effect = caa_data["per_alpha_results"]["16.0"]["results"]["baseline"]["mean_effect"]
 
-    late_data = load_json(results_dir / "exp4/exp4/layer_alpha_sweep_results.json")
+    late_data = load_json(results_dir / "exp4/distributed_steering/layer_alpha_sweep_results.json")
     late_effect = late_data["per_config_results"]["L29_a16.0"]["results"]["baseline"]["mean_effect"]
 
     head_effects = load_json(results_dir / "exp5/head_effects.json")
@@ -877,7 +877,7 @@ def create_figure8_effect_distributions(results_dir: Path, output_dir: Path):
 def create_figure9_base_vs_instruct_patching(results_dir: Path, output_dir: Path):
     """Grouped bars comparing Base vs Instruct for replace-mode patching."""
 
-    instruct_dir = results_dir / "exp5"
+    instruct_dir = results_dir / "contrastive_mediation"
     base_dir = results_dir / "exp5_llama31_base"
 
     def load_point(eval_path: Path, alpha_key: str = "1.0"):
