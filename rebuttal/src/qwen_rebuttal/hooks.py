@@ -71,12 +71,21 @@ class ResidualHook(AbstractContextManager["ResidualHook"]):
         if self.mode == "collect":
             if self.token_positions is None:
                 raise RuntimeError("Collection requires one token position per batch row")
-            if any(not isinstance(position, int) for position in self.token_positions):
-                raise RuntimeError("Collection accepts exactly one position per row")
-            values = [
-                hidden[row, position].detach().float().cpu()
-                for row, position in enumerate(self.token_positions)
-            ]
+            if len(self.token_positions) != hidden.shape[0]:
+                raise RuntimeError("Hook batch selectors do not match the hidden-state batch")
+            values: list[torch.Tensor] = []
+            for row, row_positions in enumerate(self.token_positions):
+                # A list of positions collects their mean, which is how span-fitted
+                # directions are built; a bare int collects that one position.
+                if isinstance(row_positions, int):
+                    values.append(hidden[row, row_positions].detach().float().cpu())
+                    continue
+                if not row_positions:
+                    raise RuntimeError("Span collection needs at least one position per row")
+                span = torch.stack(
+                    [hidden[row, position] for position in row_positions]
+                )
+                values.append(span.detach().float().mean(dim=0).cpu())
             self.collected.extend(values)
             return output
         if self.vector is None:

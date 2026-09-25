@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "Please cite this repository if you use the code."
+type: software
+title: "Authority Bias in Language Models: Source Deference and User Agreement Are Not Interchangeable"
+authors:
+  - family-names: Kumar
+    given-names: Abhinav Rajeev
+    affiliation: Lossfunk
+  - family-names: Chopra
+    given-names: Paras
+    affiliation: Lossfunk
+repository-code: "https://github.com/Lossfunk/persona-vectors"

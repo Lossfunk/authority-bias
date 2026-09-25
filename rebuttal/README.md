@@ -1,51 +1,74 @@
-# Clean Qwen rebuttal pipeline
+# Attribution patching and CAA comparisons
 
-This package is an isolated implementation of the Qwen3.5 source/user
-experiments. It deliberately does not import anything from the repository's
-legacy `src/` tree. Historical code and results are read only as declared input
-data.
+This package contains the later source/user experiments for Qwen3.5, GPT-OSS, and OLMo-3.1. It has its own environment and does not import the original `src/` experiment modules. Historical datasets, splits, and saved assistant vectors are declared inputs.
 
-The H200 runner is intentionally scoped to new rebuttal evidence: bidirectional
-source/user identity patching, no-op and shuffled/random controls, nearby-layer
-and prompt-position/template robustness, and an independently tuned native CAA
-baseline. It does not rerun or replace the paper's existing removal,
-correct-endorsement, capability, or transfer results. Paper-comparable free
-generation is limited to the primary baseline and the two directional identity
-swaps and retains the submitted `max_new_tokens=256` setting.
+The package retains the `qwen_rebuttal` module and `qwen-rebuttal` command names for compatibility with recorded runs.
 
-## Run on one H200
+## Setup and tests
 
-Requirements: Linux, one visible H200, CUDA 12.8-compatible driver,
-`git`, `uv`, at least 180 GiB free under the output root, and access to the
-pinned Qwen checkpoint.
+Run these commands from the repository root:
 
 ```bash
-HF_TOKEN=... bash rebuttal/run_qwen_h200.sh
+uv sync --project rebuttal --extra test --frozen
+uv run --project rebuttal --extra test --frozen pytest rebuttal/tests
+uv run --project rebuttal --extra test --frozen ruff check rebuttal
+python3 scripts/prepare_trivia_data.py --download
 ```
 
-Override the result location with `REBUTTAL_OUTPUT_ROOT`. The default is
-`/home/rebuttal-results`. Result rows, tensors, generated text, and bundles are
-never written into Git.
+The CPU tests exercise prompt construction, direction arithmetic, hook placement, scoring, data partitions, and artifact contracts using small or mock inputs. They do not validate full-model results.
 
-The script uses physical GPU 0 by default. Set `CUDA_VISIBLE_DEVICES` explicitly
-before the command to select a different H200.
+## Configurations and inputs
 
-For persistent JarvisLabs storage, dependency and model caches default to
-`/home/.cache/uv` and `/home/.cache/huggingface`.
+| Config | Model |
+| --- | --- |
+| `configs/qwen_h200.json` | Qwen/Qwen3.5-27B |
+| `configs/gptoss_h200.json` | openai/gpt-oss-20b |
+| `configs/olmo31_h200.json` | allenai/OLMo-3.1-32B-Instruct |
 
-The runner fails rather than silently changing a model revision, dependency,
-attention backend, dtype, device, tokenizer behavior, or prompt span. A run is
-resumed only when its complete content-addressed manifest matches. Any relevant
-configuration change creates a different run ID.
+Each config pins the model revision, attention backend, dataset hash, split hashes, and CAA source revision. The assistant-vector files are under `configs/assistant_axis/` and are also checksum-verified. The three configs share the recorded Qwen eligibility mask and split lists; their paths do not imply model-specific baseline filtering.
 
-Useful development commands:
+The configs preserve the archived experimental settings. Check the selected command and the run manifest when comparing an output with a paper table; not every command reproduces every table.
+
+You can validate inputs and write the run manifest without loading a model:
 
 ```bash
-uv sync --project rebuttal --extra test
-uv run --project rebuttal pytest
-uv run --project rebuttal ruff check rebuttal
-uv run --project rebuttal qwen-rebuttal prepare --repo-root .
+uv run --project rebuttal --frozen qwen-rebuttal prepare \
+  --repo-root . \
+  --config rebuttal/configs/qwen_h200.json \
+  --output-root /tmp/persona-vectors-prepare
 ```
 
-The reviewer run produces immutable manifests, split files, direction geometry,
-raw exact-margin rows, and the small paper-comparable free-generation check.
+Outputs must be outside the repository. Commands other than `prepare` require a clean code checkout so the manifest identifies the code used.
+
+## GPU runs
+
+The runner expects Linux, one visible H200, a CUDA 12.8-compatible driver, `git`, `uv`, at least 180 GiB free under the output root, and access to the pinned checkpoint. Export `HF_TOKEN` before running; do not put it in a config or commit it.
+
+```bash
+REBUTTAL_OUTPUT_ROOT=/path/outside/the/repo/results \
+  bash rebuttal/run_qwen_h200.sh
+```
+
+This installs the GPU extras, runs tests, and executes `reviewer-run` with the Qwen config. To select another configuration or experiment:
+
+```bash
+REBUTTAL_CONFIG=rebuttal/configs/gptoss_h200.json \
+REBUTTAL_COMMAND=head-to-head \
+REBUTTAL_OUTPUT_ROOT=/path/outside/the/repo/gptoss-results \
+  bash rebuttal/run_qwen_h200.sh
+```
+
+The supported experiment commands are:
+
+| Command | Evaluation |
+| --- | --- |
+| `smoke` | Hardware, model, tokenizer, and intervention checks |
+| `reviewer-run` | Bidirectional attribution patching, controls, nearby-layer and prompt robustness, tuned CAA margins, and a generated-answer check |
+| `caa-only` | CAA fitting and tuning followed by probability-margin evaluation |
+| `head-to-head` | Authority removal versus tuned CAA on matched generated-answer items |
+| `analyze` | Summarize an existing run with a saved CAA selection |
+| `bundle` | Bundle an existing run and report its checksum |
+
+Probability margins and generated-answer compliance are different readouts. A CAA tuning score is not a behavioral mitigation percentage.
+
+Set `CUDA_VISIBLE_DEVICES` to choose the GPU. Caches default to `/home/.cache/uv` and `/home/.cache/huggingface`; override `UV_CACHE_DIR` and `HF_HOME` if needed. The runner checks model and input revisions rather than silently substituting them. Changed configurations create different run IDs, and resume checks require the saved manifest to match.

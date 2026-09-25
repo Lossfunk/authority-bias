@@ -1,12 +1,13 @@
 """Download OLMo-2 all-condition C1-preservation summaries from the remote notebook."""
 import json, base64
+import os
 from pathlib import Path
 from urllib.parse import quote, urlencode
 from urllib.request import urlopen, Request
 
 ROOT = Path(__file__).resolve().parents[1]
-SERVER = "https://b3e94b401415.notebooksn.jarvislabs.net"
-TOKEN = "7MTImCVeHaKSzsm53Wd_7etd1S9vyKqZ85ocn3AgjfAbCSSyxuMui9Ue3ej-kX6r"
+SERVER = os.environ["JUPYTER_SERVER_URL"]
+TOKEN = os.environ["JUPYTER_TOKEN"]
 
 REL = [
     "neurips-results/exp19/ab_project_out_allcond/assistant_axis_causal_deconfound_manifest.json",

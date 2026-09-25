@@ -54,6 +54,35 @@ def test_noop_hook_exactly_matches_no_hook():
     assert hook.audit.changed_calls == 0
 
 
+def test_collect_returns_single_position_activation():
+    block = IdentityBlock()
+    hidden = torch.arange(24, dtype=torch.float32).reshape(2, 3, 4)
+    hook = ResidualHook(
+        module=block, layer=5, mode="collect", phase="prefill", token_positions=[1, 2]
+    )
+    with hook:
+        block(hidden)
+    assert torch.equal(hook.collected[0], hidden[0, 1].float())
+    assert torch.equal(hook.collected[1], hidden[1, 2].float())
+
+
+def test_collect_averages_over_a_span_of_positions():
+    block = IdentityBlock()
+    hidden = torch.arange(24, dtype=torch.float32).reshape(2, 3, 4)
+    hook = ResidualHook(
+        module=block,
+        layer=5,
+        mode="collect",
+        phase="prefill",
+        token_positions=[[0, 1, 2], [1, 2]],
+    )
+    with hook:
+        block(hidden)
+    assert len(hook.collected) == 2
+    assert torch.allclose(hook.collected[0], hidden[0, 0:3].float().mean(dim=0))
+    assert torch.allclose(hook.collected[1], hidden[1, 1:3].float().mean(dim=0))
+
+
 def test_phase_gate_does_not_modify_decode_for_prefill_hook():
     block = IdentityBlock()
     hidden = torch.randn(1, 1, 4)

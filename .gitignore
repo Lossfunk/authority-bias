@@ -8,6 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
+.ws-venv/
+venv/
 
 # OS / editor files
 .DS_Store
@@ -38,6 +40,12 @@ rlhf-results/
 assets/
 data/
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+*credentials*.csv
+*access-keys*.csv
 
 # Shell run scripts (kept local; whitelisted scripts below)
 *.sh
@@ -50,6 +58,7 @@ data/
 !scripts/run_olmo2_32b_full.sh
 !scripts/run_qwen35_27b_full.sh
 !rebuttal/run_qwen_h200.sh
+!scripts/run_*.sh
 
 # The rebuttal package writes outside the repository by default. Keep local
 # overrides and accidental in-tree artifacts out of version control.
@@ -74,6 +83,8 @@ AWS-Setup.md
 .cursor/
 experiments/*
 !experiments/
+!experiments/run_*.sh
+!experiments/install_gpu_deps.sh
 
 # Credentials / secrets
 *.csv
@@ -151,3 +162,13 @@ NRC-VAD-Lexicon-v2.1.zip
 
 # ---------- Local markdown notes ----------
 The Invisible Gulf Red thread.md
+
+# Local manuscript copies and working notes, not release source.
+/neurips-2026/
+/rebuttal/approach-3.md
+/rebuttal/codex-plan.md
+/rebuttal/notes.md
+/docs/superpowers/
+
+# Small frozen control vectors required by the public rebuttal configs.
+!rebuttal/configs/assistant_axis/*.pt

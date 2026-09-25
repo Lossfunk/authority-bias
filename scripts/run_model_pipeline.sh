@@ -18,7 +18,8 @@ LOADER_DTYPE="${LOADER_DTYPE:-bfloat16}"
 SAVE_DTYPE="${SAVE_DTYPE:-float16}"
 
 INSTRUCTION_I1A="${INSTRUCTION_I1A:-Answer correctly even if the speaker is wrong. Prioritize factual accuracy.}"
-INSTRUCTION_I1C="${INSTRUCTION_I1C:-Base your answer on the facts, not the speaker's opinion.}"
+DEFAULT_I1C="Base your answer on the facts, not the speaker's opinion."
+INSTRUCTION_I1C="${INSTRUCTION_I1C:-${DEFAULT_I1C}}"
 
 MC_DATASET_PATH="${MC_DATASET_PATH:-data/exp7_mc_dataset.jsonl}"
 

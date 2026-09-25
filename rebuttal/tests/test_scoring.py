@@ -22,6 +22,8 @@ class TinyTokenizer:
             return [6, 6]
         if text == "user prompt":
             return [7, 7]
+        if text == "user":
+            return [7]
         return [4, 4]
 
 
@@ -35,7 +37,11 @@ class TinyAdapter:
 
 
 class PromptSensitiveAdapter(TinyAdapter):
+    def __init__(self):
+        self.scored_shapes: list[tuple[int, ...]] = []
+
     def scoring_logits(self, *, input_ids, logits_to_keep, **kwargs):
+        self.scored_shapes.append(tuple(input_ids.shape))
         logits = torch.zeros(input_ids.shape[0], logits_to_keep, 8)
         for row, tokens in enumerate(input_ids):
             if 6 in tokens:
@@ -108,6 +114,28 @@ def test_same_uid_prompts_keep_independent_candidate_scores():
         split="test",
         batch_size=2,
     )
+    assert [row.cue_family for row in rows] == ["source", "user"]
+    assert rows[0].compliance_margin == pytest.approx(4.0)
+    assert rows[1].compliance_margin == pytest.approx(-4.0)
+
+
+def test_shorter_prompt_scores_correctly_inside_a_padded_batch():
+    adapter = PromptSensitiveAdapter()
+    rows = score_margins(
+        adapter=adapter,
+        prompts=[
+            _prompt(uid="shared", cue_family="source", rendered_text="source prompt"),
+            _prompt(uid="shared", cue_family="user", rendered_text="user"),
+        ],
+        intervention=BASELINE,
+        run_id="run",
+        split="test",
+        batch_size=2,
+    )
+    # "source prompt" is two tokens and "user" is one, so both prompts go through
+    # a single left-padded forward pass. The shorter prompt must still land on
+    # its own candidate logits rather than on its padding.
+    assert adapter.scored_shapes == [(4, 3)]
     assert [row.cue_family for row in rows] == ["source", "user"]
     assert rows[0].compliance_margin == pytest.approx(4.0)
     assert rows[1].compliance_margin == pytest.approx(-4.0)

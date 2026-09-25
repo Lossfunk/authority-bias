@@ -226,17 +226,37 @@ def generate_answers(
     run_id: str,
     split: str,
     max_new_tokens: int,
+    batch_size: int = 1,
 ) -> list[RawResultRow]:
+    """Greedily generate answers, batching prompts to keep the GPU busy.
+
+    One prompt per call leaves decoding memory-bandwidth bound and wastes most
+    of the device. Batching left-pads, so each row's hook positions are offset
+    by that row's own padding, and new tokens are sliced from the shared padded
+    width rather than from each prompt's unpadded length.
+    """
     rows: list[RawResultRow] = []
     tokenizer = adapter.tokenizer
-    for prompt in prompts:
-        encoded = tokenizer(
-            prompt.rendered_text,
-            add_special_tokens=False,
-            return_tensors="pt",
-        )
-        input_ids = encoded["input_ids"].to(adapter.device)
-        attention_mask = encoded["attention_mask"].to(adapter.device)
+    pad_id = tokenizer.pad_token_id
+    if pad_id is None:
+        raise RuntimeError("Tokenizer has no padding token")
+    for batch_start in range(0, len(prompts), batch_size):
+        batch = prompts[batch_start : batch_start + batch_size]
+        encoded = [
+            tokenizer.encode(prompt.rendered_text, add_special_tokens=False)
+            for prompt in batch
+        ]
+        width = max(len(sequence) for sequence in encoded)
+        ids: list[list[int]] = []
+        masks: list[list[int]] = []
+        paddings: list[int] = []
+        for sequence in encoded:
+            padding = width - len(sequence)
+            paddings.append(padding)
+            ids.append([pad_id] * padding + sequence)
+            masks.append([0] * padding + [1] * len(sequence))
+        input_ids = torch.tensor(ids, device=adapter.device)
+        attention_mask = torch.tensor(masks, device=adapter.device)
         hook: ResidualHook | None = None
         if intervention.mode != "none":
             if intervention.layer is None or intervention.vector is None:
@@ -249,10 +269,11 @@ def generate_answers(
                     _positions_for_scope(
                         intervention,
                         prompt,
-                        left_padding=0,
-                        prompt_length=input_ids.shape[1],
-                        sequence_length=input_ids.shape[1],
+                        left_padding=padding,
+                        prompt_length=width,
+                        sequence_length=width,
                     )
+                    for prompt, padding in zip(batch, paddings, strict=True)
                 ]
             hook = ResidualHook(
                 module=adapter.layers[intervention.layer],
@@ -272,40 +293,41 @@ def generate_answers(
                     do_sample=False,
                     max_new_tokens=max_new_tokens,
                     use_cache=True,
-                    pad_token_id=tokenizer.pad_token_id,
+                    pad_token_id=pad_id,
                     eos_token_id=tokenizer.eos_token_id,
                 )
         finally:
             if hook is not None:
                 hook.__exit__(None, None, None)
-        new_tokens = generated[0, input_ids.shape[1] :]
-        text = tokenizer.decode(new_tokens, skip_special_tokens=True)
-        parsed, status = parse_generated_label(text)
-        endorsed = prompt.endorsed_label
-        other = "B" if endorsed == "A" else "A"
-        payload = {
-            "run_id": run_id,
-            "split": split,
-            "uid": prompt.uid,
-            "measurement": "generation",
-            "template_id": prompt.template_id,
-            "cue_family": prompt.cue_family,
-            "endorsement": prompt.endorsement,
-            "position": prompt.position,
-            "layer": intervention.layer,
-            "intervention_id": intervention.intervention_id,
-            "direction_id": intervention.direction_id,
-            "seed": intervention.seed,
-        }
-        rows.append(
-            RawResultRow(
-                row_key=_row_key(payload),
-                **payload,
-                endorsed_label=endorsed,
-                other_label=other,
-                generated_text=text,
-                parsed_label=parsed,
-                parse_status=status,
+        for row, prompt in enumerate(batch):
+            new_tokens = generated[row, width:]
+            text = tokenizer.decode(new_tokens, skip_special_tokens=True)
+            parsed, status = parse_generated_label(text)
+            endorsed = prompt.endorsed_label
+            other = "B" if endorsed == "A" else "A"
+            payload = {
+                "run_id": run_id,
+                "split": split,
+                "uid": prompt.uid,
+                "measurement": "generation",
+                "template_id": prompt.template_id,
+                "cue_family": prompt.cue_family,
+                "endorsement": prompt.endorsement,
+                "position": prompt.position,
+                "layer": intervention.layer,
+                "intervention_id": intervention.intervention_id,
+                "direction_id": intervention.direction_id,
+                "seed": intervention.seed,
+            }
+            rows.append(
+                RawResultRow(
+                    row_key=_row_key(payload),
+                    **payload,
+                    endorsed_label=endorsed,
+                    other_label=other,
+                    generated_text=text,
+                    parsed_label=parsed,
+                    parse_status=status,
+                )
             )
-        )
     return rows

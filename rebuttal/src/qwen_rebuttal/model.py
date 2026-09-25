@@ -212,8 +212,16 @@ class QwenAdapter:
         linear_modules = [
             layer.linear_attn for layer in self.layers if hasattr(layer, "linear_attn")
         ]
-        if len(linear_modules) != 48:
-            raise RuntimeError(f"Expected 48 linear-attention layers, found {len(linear_modules)}")
+        expected_linear = self.spec.expected_linear_attention_layers
+        if len(linear_modules) != expected_linear:
+            raise RuntimeError(
+                f"Expected {expected_linear} linear-attention layers, "
+                f"found {len(linear_modules)}"
+            )
+        if not linear_modules:
+            # Dense families have no hybrid blocks, so the kernel-binding checks
+            # below do not apply.
+            return
         chunk_modules = {
             module.chunk_gated_delta_rule.__module__ for module in linear_modules
         }

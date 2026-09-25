@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import os
 import tempfile
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -77,18 +78,23 @@ def decompose_directions(
     )
 
 
-def collect_endpoint_activations(
+def _collect_activations(
     adapter: QwenAdapter,
     prompts: list[PromptExample],
     layers: tuple[int, ...],
     batch_size: int,
+    positions_for: Callable[[PromptExample, int, int], int | list[int]],
 ) -> dict[int, torch.Tensor]:
+    """Collect activations at whichever positions `positions_for` selects.
+
+    The callback receives each prompt, that row's left-padding offset, and the
+    padded batch width, so endpoint, span and final-token collection differ only
+    in which indices they ask for.
+    """
     collected: dict[int, list[torch.Tensor]] = {layer: [] for layer in layers}
     tokenizer = adapter.tokenizer
     for start in range(0, len(prompts), batch_size):
         batch = prompts[start : start + batch_size]
-        if any(prompt.cue_token_end is None for prompt in batch):
-            raise RuntimeError("All direction-fitting prompts need verified cue endpoints")
         encoded = tokenizer(
             [prompt.rendered_text for prompt in batch],
             add_special_tokens=False,
@@ -99,7 +105,7 @@ def collect_endpoint_activations(
         attention_mask = encoded["attention_mask"].to(adapter.device)
         padded_length = input_ids.shape[1]
         positions = [
-            padded_length - int(mask.sum()) + int(prompt.cue_token_end)
+            positions_for(prompt, padded_length - int(mask.sum()), padded_length)
             for prompt, mask in zip(batch, attention_mask, strict=True)
         ]
         hooks = [
@@ -124,6 +130,66 @@ def collect_endpoint_activations(
                 raise RuntimeError(f"Layer {layer} collection returned the wrong batch size")
             collected[layer].extend(hook.collected)
     return {layer: torch.stack(rows) for layer, rows in collected.items()}
+
+
+def collect_endpoint_activations(
+    adapter: QwenAdapter,
+    prompts: list[PromptExample],
+    layers: tuple[int, ...],
+    batch_size: int,
+) -> dict[int, torch.Tensor]:
+    """Collect the activation at each prompt's final cue token."""
+
+    def positions_for(prompt: PromptExample, offset: int, _width: int) -> int:
+        if prompt.cue_token_end is None:
+            raise RuntimeError("All direction-fitting prompts need verified cue endpoints")
+        return offset + int(prompt.cue_token_end)
+
+    return _collect_activations(adapter, prompts, layers, batch_size, positions_for)
+
+
+def collect_span_activations(
+    adapter: QwenAdapter,
+    prompts: list[PromptExample],
+    layers: tuple[int, ...],
+    batch_size: int,
+) -> dict[int, torch.Tensor]:
+    """Collect the mean activation across each prompt's whole cue span.
+
+    Span-scope interventions act at every cue token, so a direction fitted only
+    at the cue endpoint is being applied at positions it was never fitted for.
+    Fitting across the span removes that mismatch.
+    """
+
+    def positions_for(prompt: PromptExample, offset: int, _width: int) -> list[int]:
+        if prompt.cue_token_start is None or prompt.cue_token_end is None:
+            raise RuntimeError("All span-fitting prompts need verified cue spans")
+        return list(
+            range(offset + int(prompt.cue_token_start), offset + int(prompt.cue_token_end) + 1)
+        )
+
+    return _collect_activations(adapter, prompts, layers, batch_size, positions_for)
+
+
+def collect_final_activations(
+    adapter: QwenAdapter,
+    prompts: list[PromptExample],
+    layers: tuple[int, ...],
+    batch_size: int,
+) -> dict[int, torch.Tensor]:
+    """Collect the activation at each prompt's final token.
+
+    No-cue prompts have no cue span to fit at, so they are collected at the
+    answer position, which is the last token of the rendered prompt. This
+    mirrors the submitted paper, whose fit-position logic falls back to
+    `answer_position` whenever a prompt has no endorsement span.
+    """
+
+    def positions_for(_prompt: PromptExample, _offset: int, width: int) -> int:
+        # Prompts are left padded, so the final real token is the last column.
+        return width - 1
+
+    return _collect_activations(adapter, prompts, layers, batch_size, positions_for)
 
 
 def fit_layer_directions(

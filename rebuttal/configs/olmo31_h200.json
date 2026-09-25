@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "model": {
-    "model_id": "Qwen/Qwen3.5-27B",
-    "revision": "b7ca741b86de18df552fd2cc952861e04621a4bd",
+    "model_id": "allenai/OLMo-3.1-32B-Instruct",
+    "revision": "ac0587e4a7744a551c059d8cd17ba220bc940dae",
     "dtype": "bfloat16",
     "attention_backend": "flash_attention_2",
     "expected_layers": 64,
     "expected_hidden_size": 5120,
     "thinking": false,
     "text_only": true,
-    "expected_linear_attention_layers": 48
+    "expected_linear_attention_layers": 0
   },
   "inputs": {
     "dataset": "data/exp7_mc_dataset.jsonl",
@@ -20,8 +20,8 @@
     "historical_uids": "neurips-results/exp22/selection_holdout_50_50/qwen35/splits/fold0/eval_uids.txt",
     "historical_uids_sha256": "8f79140ec55cc9b3744d1745d4f48f2e2ea4e2f46f48505b922f2ef2173a69ec",
     "eligible_mask_key": "mask_primary_w1",
-    "assistant_axis": "rebuttal/configs/assistant_axis/qwen35_l5.pt",
-    "assistant_axis_sha256": "2d4f8988c17711073af922741516104ca0e0fbb68e7bc84891bed6658e5b8309"
+    "assistant_axis": "rebuttal/configs/assistant_axis/olmo31_l5.pt",
+    "assistant_axis_sha256": "7af45130513cf8a04430d8d8300a4d5fb287215e62b5446873f567f52958f27e"
   },
   "splits": {
     "fresh_seed_prefix": "20260724:",
@@ -56,7 +56,7 @@
       202607253,
       202607254
     ],
-    "mitigation_layer": 5
+    "mitigation_layer": 22
   },
   "caa": {
     "repository": "https://github.com/nrimsky/CAA.git",

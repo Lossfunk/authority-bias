@@ -34,6 +34,8 @@ from .data import FrozenSplits, freeze_splits, load_dataset, write_splits
 from .directions import (
     LayerDirections,
     collect_endpoint_activations,
+    collect_final_activations,
+    collect_span_activations,
     fit_layer_directions,
     matched_random_controls,
     save_directions,
@@ -59,9 +61,16 @@ from .model import (
     dependency_manifest,
     hardware_manifest,
 )
+from .paper_vectors import (
+    PaperVectors,
+    build_paper_vectors,
+    load_paper_vectors,
+    save_paper_vectors,
+)
 from .prompts import (
     TEMPLATE_CATALOG,
     apply_chat_and_locate_cue,
+    build_paper_prompt,
     build_prompt,
     paired_identity_difference_is_declared,
     template_catalog_hash,
@@ -155,8 +164,16 @@ def _input_hashes(config: PipelineConfig, repo_root: Path) -> dict[str, str]:
         "fit_uids": _resolve(repo_root, config.inputs.fit_uids),
         "historical_uids": _resolve(repo_root, config.inputs.historical_uids),
     }
+    if config.inputs.assistant_axis:
+        paths["assistant_axis"] = _resolve(repo_root, config.inputs.assistant_axis)
     values = {name: sha256_file(path) for name, path in paths.items()}
     values["caa_dataset_at_pinned_commit"] = config.caa.source_sha256
+    if config.inputs.assistant_axis_sha256:
+        declared = config.inputs.assistant_axis_sha256
+        if values["assistant_axis"] != declared:
+            raise RuntimeError(
+                f"Assistant axis hashes to {values['assistant_axis']}, config declares {declared}"
+            )
     return values
 
 
@@ -343,6 +360,144 @@ def fit_source_user_directions(
     tensor_hash = save_directions(direction_path, fitted, shuffled, random)
     atomic_write_json(paths.directions / "source_user.checksum.json", {"sha256": tensor_hash})
     return fitted, shuffled, random
+
+
+def fit_span_directions(
+    *,
+    adapter: QwenAdapter,
+    config: PipelineConfig,
+    splits: FrozenSplits,
+    repo_root: Path,
+    paths: RunPaths,
+) -> dict[int, LayerDirections]:
+    """Fit directions from the mean activation across each prompt's cue span.
+
+    Span-scope interventions act at every cue token, so the endpoint-fitted
+    directions are being applied where they were never fitted. Fitting a second
+    set here lets both be run as separate conditions, which turns that mismatch
+    from an unresolvable doubt into a measured comparison.
+    """
+    direction_path = paths.directions / "source_user_span.pt"
+    checksum_path = paths.directions / "source_user_span.checksum.json"
+    if direction_path.exists():
+        if not checksum_path.exists():
+            raise RuntimeError("Span direction tensor exists without its checksum")
+        expected = json.loads(checksum_path.read_text())["sha256"]
+        actual = sha256_file(direction_path)
+        if actual != expected:
+            raise RuntimeError(f"Span direction checksum mismatch: {actual} != {expected}")
+        payload = torch.load(direction_path, map_location="cpu", weights_only=True)
+        geometry = json.loads(direction_path.with_suffix(".geometry.json").read_text())
+        return {
+            int(layer): LayerDirections(
+                layer=int(layer),
+                source=value["source"],
+                user=value["user"],
+                shared=value["shared"],
+                identity=value["identity"],
+                source_identity_coefficient=float(value["source_identity_coefficient"]),
+                user_identity_coefficient=float(value["user_identity_coefficient"]),
+                geometry=geometry[str(layer)],
+            )
+            for layer, value in payload["layers"].items()
+        }
+    dataset = load_dataset(_resolve(repo_root, config.inputs.dataset))
+    prompt_groups = _fit_prompts(adapter, dataset, splits.fit)
+    activations = {
+        group: collect_span_activations(
+            adapter,
+            prompts,
+            config.experiment.layers,
+            config.experiment.direction_batch_size,
+        )
+        for group, prompts in prompt_groups.items()
+    }
+    fitted = fit_layer_directions(activations, config.experiment.layers)
+    tensor_hash = save_directions(direction_path, fitted, {}, {})
+    atomic_write_json(checksum_path, {"sha256": tensor_hash})
+    return fitted
+
+
+def fit_paper_reference_directions(
+    *,
+    adapter: QwenAdapter,
+    config: PipelineConfig,
+    splits: FrozenSplits,
+    repo_root: Path,
+    paths: RunPaths,
+) -> dict[int, torch.Tensor]:
+    """Rebuild the submitted paper's source direction, as a working positive control.
+
+    The reviewer directions here are referenced against a *neutral* cue, which
+    still contains the endorsement, so they isolate speaker identity alone.
+    The paper references against *no cue at all*, so its direction carries the
+    whole endorsement signal as well as identity. Removing the identity-only
+    direction therefore barely moves compliance, while removing the paper's
+    collapses it, and the two are not interchangeable as controls.
+
+    Reproducing the paper's construction gives the run an intervention that is
+    known to work, so a null on the identity direction can be read as a result
+    rather than as a broken pipeline.
+    """
+    direction_path = paths.directions / "paper_source.pt"
+    checksum_path = paths.directions / "paper_source.checksum.json"
+    if direction_path.exists():
+        if not checksum_path.exists():
+            raise RuntimeError("Paper direction tensor exists without its checksum")
+        expected = json.loads(checksum_path.read_text())["sha256"]
+        actual = sha256_file(direction_path)
+        if actual != expected:
+            raise RuntimeError(f"Paper direction checksum mismatch: {actual} != {expected}")
+        loaded = torch.load(direction_path, map_location="cpu", weights_only=True)
+        return {int(layer): vector for layer, vector in loaded["layers"].items()}
+
+    dataset = load_dataset(_resolve(repo_root, config.inputs.dataset))
+    cue_prompts = _fit_prompts(adapter, dataset, splits.fit)["source"]
+    no_cue_prompts = _tokenize_prompts(
+        adapter,
+        [
+            build_prompt(
+                dataset[uid],
+                template_id="no_cue",
+                cue_family="none",
+                endorsement="none",
+                position="after_options",
+            )
+            for uid in splits.fit
+        ],
+    )
+    # Cue conditions are fitted across the cue span; the no-cue reference has no
+    # span and is fitted at its final token, exactly as the paper does.
+    cue_activations = collect_span_activations(
+        adapter, cue_prompts, config.experiment.layers, config.experiment.direction_batch_size
+    )
+    no_cue_activations = collect_final_activations(
+        adapter, no_cue_prompts, config.experiment.layers, config.experiment.direction_batch_size
+    )
+    directions: dict[int, torch.Tensor] = {}
+    for layer in config.experiment.layers:
+        difference = cue_activations[layer].mean(dim=0) - no_cue_activations[layer].mean(dim=0)
+        norm = torch.linalg.vector_norm(difference)
+        if norm <= 0:
+            raise RuntimeError(f"Paper source direction at layer {layer} has zero norm")
+        directions[layer] = difference / norm
+    atomic_torch_save(direction_path, {"layers": directions})
+    atomic_write_json(checksum_path, {"sha256": sha256_file(direction_path)})
+    atomic_write_json(
+        paths.directions / "paper_source.geometry.json",
+        {
+            str(layer): {
+                "norm_before_normalisation": float(
+                    torch.linalg.vector_norm(
+                        cue_activations[layer].mean(dim=0)
+                        - no_cue_activations[layer].mean(dim=0)
+                    )
+                )
+            }
+            for layer in config.experiment.layers
+        },
+    )
+    return directions
 
 
 def _evaluation_prompts(
@@ -536,6 +691,251 @@ def _runtime_catalog(
     return values
 
 
+def _span_scope_catalog(
+    fitted: LayerDirections,
+    span_fitted: LayerDirections,
+    shuffled: dict[int, torch.Tensor],
+    random: dict[int, torch.Tensor],
+    paper_source: torch.Tensor,
+) -> list[tuple[RuntimeIntervention, tuple[str, ...]]]:
+    """Cue-span interventions: the properly powered identity test.
+
+    The single-token variants in `_runtime_catalog` perturb the residual stream
+    by roughly 0.16 L2, and matched-norm random controls move the model by the
+    same negligible amount, so that test cannot detect an effect either way.
+    These act at every cue token, matching the scope of the submitted paper's
+    own span projection.
+
+    `spanfit` conditions use a direction fitted across span positions rather
+    than at the cue endpoint, so an ambiguous result cannot be blamed on
+    applying an endpoint-fitted direction where it was never fitted.
+    """
+    layer = fitted.layer
+    swap = fitted.user_identity_coefficient - fitted.source_identity_coefficient
+    span_swap = (
+        span_fitted.user_identity_coefficient - span_fitted.source_identity_coefficient
+    )
+    values: list[tuple[RuntimeIntervention, tuple[str, ...]]] = [
+        # Working positive control: the paper's own no-cue-referenced direction,
+        # which carries the whole endorsement signal rather than identity alone.
+        (
+            RuntimeIntervention(
+                f"paper_source_remove_l{layer}",
+                layer,
+                "project_out",
+                paper_source,
+                1,
+                "cue_span",
+                "prefill",
+                f"paper_source_l{layer}",
+            ),
+            ("source", "user"),
+        ),
+        (
+            RuntimeIntervention(
+                f"legacy_span_user_projection_l{layer}",
+                layer,
+                "project_out",
+                fitted.user,
+                1,
+                "cue_span",
+                "prefill",
+                f"user_l{layer}",
+            ),
+            ("source", "user"),
+        ),
+        (
+            RuntimeIntervention(
+                f"source_to_user_span_l{layer}",
+                layer,
+                "add",
+                fitted.identity,
+                swap,
+                "cue_span",
+                "prefill",
+                f"identity_l{layer}",
+            ),
+            ("source",),
+        ),
+        (
+            RuntimeIntervention(
+                f"user_to_source_span_l{layer}",
+                layer,
+                "add",
+                fitted.identity,
+                -swap,
+                "cue_span",
+                "prefill",
+                f"identity_l{layer}",
+            ),
+            ("user",),
+        ),
+        (
+            RuntimeIntervention(
+                f"source_to_user_spanfit_l{layer}",
+                layer,
+                "add",
+                span_fitted.identity,
+                span_swap,
+                "cue_span",
+                "prefill",
+                f"identity_spanfit_l{layer}",
+            ),
+            ("source",),
+        ),
+        (
+            RuntimeIntervention(
+                f"user_to_source_spanfit_l{layer}",
+                layer,
+                "add",
+                span_fitted.identity,
+                -span_swap,
+                "cue_span",
+                "prefill",
+                f"identity_spanfit_l{layer}",
+            ),
+            ("user",),
+        ),
+        # Diagnostic: the whole source-user difference, not only the orthogonal
+        # identity residual. If this moves behaviour while the residual does
+        # not, the split rides on the shared endorsement component.
+        (
+            RuntimeIntervention(
+                f"source_to_user_fulldiff_l{layer}",
+                layer,
+                "add",
+                fitted.user - fitted.source,
+                1.0,
+                "cue_span",
+                "prefill",
+                f"fulldiff_l{layer}",
+            ),
+            ("source",),
+        ),
+        (
+            RuntimeIntervention(
+                f"user_to_source_fulldiff_l{layer}",
+                layer,
+                "add",
+                fitted.source - fitted.user,
+                1.0,
+                "cue_span",
+                "prefill",
+                f"fulldiff_l{layer}",
+            ),
+            ("user",),
+        ),
+        (
+            RuntimeIntervention(
+                f"source_to_source_span_noop_l{layer}",
+                layer,
+                "add",
+                fitted.identity,
+                0,
+                "cue_span",
+                "prefill",
+                f"identity_l{layer}",
+            ),
+            ("source",),
+        ),
+        (
+            RuntimeIntervention(
+                f"user_to_user_span_noop_l{layer}",
+                layer,
+                "add",
+                fitted.identity,
+                0,
+                "cue_span",
+                "prefill",
+                f"identity_l{layer}",
+            ),
+            ("user",),
+        ),
+    ]
+    for prefix, vectors in (("shuffled_span", shuffled), ("random_span", random)):
+        for seed, vector in vectors.items():
+            for cue, coefficient, label in (
+                ("source", swap, "source_to_user"),
+                ("user", -swap, "user_to_source"),
+            ):
+                values.append(
+                    (
+                        RuntimeIntervention(
+                            f"{prefix}_{label}_s{seed}_l{layer}",
+                            layer,
+                            "add",
+                            vector,
+                            coefficient,
+                            "cue_span",
+                            "prefill",
+                            f"{prefix}_s{seed}_l{layer}",
+                            seed,
+                        ),
+                        (cue,),
+                    )
+                )
+    return values
+
+
+def _reviewer_span_core_catalog(
+    fitted: LayerDirections,
+    span_fitted: LayerDirections,
+) -> list[tuple[RuntimeIntervention, tuple[str, ...]]]:
+    """Five-condition core set used for the layer and prompt-template sweeps."""
+    layer = fitted.layer
+    wanted = {
+        f"source_to_user_span_l{layer}",
+        f"user_to_source_span_l{layer}",
+        f"source_to_source_span_noop_l{layer}",
+        f"user_to_user_span_noop_l{layer}",
+    }
+    core = [
+        (intervention, cues)
+        for intervention, cues in _span_scope_catalog(
+            fitted, span_fitted, {}, {}, fitted.source
+        )
+        if intervention.intervention_id in wanted
+    ]
+    baseline = [
+        (intervention, cues)
+        for intervention, cues in _runtime_catalog(fitted, {}, {})
+        if intervention.intervention_id == f"baseline_l{layer}"
+    ]
+    return [*baseline, *core]
+
+
+def _reviewer_span_catalog(
+    fitted: LayerDirections,
+    span_fitted: LayerDirections,
+    shuffled: dict[int, torch.Tensor],
+    random: dict[int, torch.Tensor],
+    paper_source: torch.Tensor,
+) -> list[tuple[RuntimeIntervention, tuple[str, ...]]]:
+    """Layer-5 primary set: positive controls plus every span-scope condition.
+
+    The positive controls are the submitted paper's own interventions. They gate
+    interpretation: if removing the source vector does not collapse source
+    compliance here, this pipeline cannot detect a known-real effect and the
+    swap conditions say nothing.
+    """
+    layer = fitted.layer
+    controls = {
+        f"baseline_l{layer}",
+        f"source_remove_l{layer}",
+        f"user_remove_l{layer}",
+        f"legacy_span_source_projection_l{layer}",
+    }
+    positive = [
+        (intervention, cues)
+        for intervention, cues in _runtime_catalog(fitted, {}, {})
+        if intervention.intervention_id in controls
+    ]
+    return [
+        *positive,
+        *_span_scope_catalog(fitted, span_fitted, shuffled, random, paper_source),
+    ]
+
+
 def _safe_name(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9_.-]+", "_", value)
 
@@ -722,40 +1122,6 @@ def run_margin_experiments(
         )
 
 
-def _reviewer_core_catalog(
-    fitted: LayerDirections,
-) -> list[tuple[RuntimeIntervention, tuple[str, ...]]]:
-    """Independent identity-patching conditions requested by the reviewers."""
-    prefixes = (
-        f"baseline_l{fitted.layer}",
-        f"source_to_user_l{fitted.layer}",
-        f"user_to_source_l{fitted.layer}",
-        f"source_to_source_noop_l{fitted.layer}",
-        f"user_to_user_noop_l{fitted.layer}",
-    )
-    catalog = _runtime_catalog(fitted, {}, {})
-    return [
-        (intervention, cues)
-        for intervention, cues in catalog
-        if intervention.intervention_id in prefixes
-    ]
-
-
-def _reviewer_control_catalog(
-    fitted: LayerDirections,
-    shuffled: dict[int, torch.Tensor],
-    random: dict[int, torch.Tensor],
-) -> list[tuple[RuntimeIntervention, tuple[str, ...]]]:
-    """Primary causal conditions plus every preregistered identity control."""
-    core = _reviewer_core_catalog(fitted)
-    controls = [
-        (intervention, cues)
-        for intervention, cues in _runtime_catalog(fitted, shuffled, random)
-        if intervention.intervention_id.startswith(("shuffled_", "random_"))
-    ]
-    return [*core, *controls]
-
-
 def _score_reviewer_catalog(
     *,
     adapter: QwenAdapter,
@@ -766,27 +1132,39 @@ def _score_reviewer_catalog(
     catalog: list[tuple[RuntimeIntervention, tuple[str, ...]]],
     template: str,
     position: str,
+    split: str,
 ) -> None:
+    """Score every condition over one identical prompt list.
+
+    Batch composition perturbs exact margins, so a condition scored over a cue
+    subset cannot be differenced against a baseline scored over the full list.
+    Every condition therefore sees the same prompts, in the same order, in the
+    same batches, and only the in-scope rows are written. Interventions act at
+    each prompt's own cue endpoint, so out-of-scope rows are simply discarded.
+    Holding composition fixed this way is what makes large batches safe.
+    """
     for intervention, cues in catalog:
-        subset = [prompt for prompt in prompts if prompt.cue_family in cues]
+        expected = sum(1 for prompt in prompts if prompt.cue_family in cues)
         path = _condition_file(
             paths,
             measurement="margin",
-            split="historical",
+            split=split,
             template=template,
             position=position,
             intervention_id=intervention.intervention_id,
             endorsement="wrong",
         )
-        _score_condition(
+        if _validate_existing_rows(path, manifest.run_id, expected):
+            continue
+        rows = score_margins(
             adapter=adapter,
-            prompts=subset,
+            prompts=prompts,
             intervention=intervention,
             run_id=manifest.run_id,
-            split="historical",
+            split=split,
             batch_size=config.experiment.scoring_batch_size,
-            path=path,
         )
+        append_jsonl_atomic(path, [row for row in rows if row.cue_family in cues])
 
 
 def _assert_reviewer_noop_scoring(
@@ -797,74 +1175,62 @@ def _assert_reviewer_noop_scoring(
     paths: RunPaths,
     prompts: list[PromptExample],
     fitted: LayerDirections,
+    span_fitted: LayerDirections,
 ) -> None:
-    """Catch shared-UID score collisions and non-zero no-op interventions."""
+    """Verify the fixed-composition invariant the reviewer margins depend on.
+
+    Conditions are differenced against one another, so what has to hold is that
+    one prompt list scored twice yields identical margins, and that a
+    zero-strength intervention over that same list reproduces the baseline
+    exactly. Both are checked bitwise. If either moves, a condition difference
+    would carry a batching artifact rather than a causal effect.
+    """
     smoke_prompts = prompts[:16]
     catalog = {
         intervention.intervention_id: (intervention, cues)
-        for intervention, cues in _reviewer_core_catalog(fitted)
+        for intervention, cues in _reviewer_span_core_catalog(fitted, span_fitted)
     }
     baseline, _ = catalog[f"baseline_l{fitted.layer}"]
-    baseline_rows = score_margins(
-        adapter=adapter,
-        prompts=smoke_prompts,
-        intervention=baseline,
-        run_id=manifest.run_id,
-        split="smoke",
-        batch_size=config.experiment.scoring_batch_size,
-    )
-    baseline_by_key = {
-        (row.uid, row.cue_family): float(row.compliance_margin)
-        for row in baseline_rows
-    }
-    checks: dict[str, dict[str, float | int]] = {}
-    for cue, intervention_id in (
-        ("source", f"source_to_source_noop_l{fitted.layer}"),
-        ("user", f"user_to_user_noop_l{fitted.layer}"),
-    ):
-        intervention, _ = catalog[intervention_id]
-        selected = [prompt for prompt in smoke_prompts if prompt.cue_family == cue]
-        cue_baseline_rows = score_margins(
+
+    def margins(intervention: RuntimeIntervention) -> dict[tuple[str, str], float]:
+        rows = score_margins(
             adapter=adapter,
-            prompts=selected,
-            intervention=baseline,
-            run_id=manifest.run_id,
-            split="smoke",
-            batch_size=config.experiment.scoring_batch_size,
-        )
-        cue_baseline = {
-            (row.uid, row.cue_family): float(row.compliance_margin)
-            for row in cue_baseline_rows
-        }
-        mixed_batch_differences = [
-            abs(value - baseline_by_key[key]) for key, value in cue_baseline.items()
-        ]
-        no_op_rows = score_margins(
-            adapter=adapter,
-            prompts=selected,
+            prompts=smoke_prompts,
             intervention=intervention,
             run_id=manifest.run_id,
             split="smoke",
             batch_size=config.experiment.scoring_batch_size,
         )
-        no_op_differences = [
-            abs(float(row.compliance_margin) - cue_baseline[(row.uid, row.cue_family)])
-            for row in no_op_rows
-        ]
-        mixed_maximum = max(mixed_batch_differences, default=0.0)
-        no_op_maximum = max(no_op_differences, default=0.0)
-        checks[cue] = {
-            "n": len(no_op_differences),
-            "max_abs_mixed_vs_single_cue_difference": mixed_maximum,
-            "max_abs_noop_difference": no_op_maximum,
-        }
-        if mixed_maximum > 0.05:
+        return {(row.uid, row.cue_family): float(row.compliance_margin) for row in rows}
+
+    baseline_by_key = margins(baseline)
+    checks: dict[str, dict[str, float | int]] = {}
+
+    repeat = margins(baseline)
+    repeat_maximum = max(
+        (abs(value - baseline_by_key[key]) for key, value in repeat.items()),
+        default=0.0,
+    )
+    checks["repeat_baseline"] = {"n": len(repeat), "max_abs_difference": repeat_maximum}
+    if repeat_maximum != 0:
+        raise RuntimeError(
+            f"Rescoring the same prompt list moved a smoke margin by {repeat_maximum}"
+        )
+
+    for cue, intervention_id in (
+        ("source", f"source_to_source_span_noop_l{fitted.layer}"),
+        ("user", f"user_to_user_span_noop_l{fitted.layer}"),
+    ):
+        intervention, _ = catalog[intervention_id]
+        no_op = margins(intervention)
+        maximum = max(
+            (abs(value - baseline_by_key[key]) for key, value in no_op.items()),
+            default=0.0,
+        )
+        checks[cue] = {"n": len(no_op), "max_abs_noop_difference": maximum}
+        if maximum != 0:
             raise RuntimeError(
-                f"{cue} mixed-UID batching changed a smoke margin by {mixed_maximum}"
-            )
-        if no_op_maximum != 0:
-            raise RuntimeError(
-                f"{cue} zero-strength no-op changed a smoke margin by {no_op_maximum}"
+                f"{cue} zero-strength no-op changed a smoke margin by {maximum}"
             )
     atomic_write_json(paths.analysis / "reviewer_noop_scoring_smoke.json", checks)
 
@@ -878,6 +1244,8 @@ def run_reviewer_margin_experiments(
     paths: RunPaths,
     repo_root: Path,
     fitted: dict[int, LayerDirections],
+    span_fitted: dict[int, LayerDirections],
+    paper_source: dict[int, torch.Tensor],
     shuffled: dict[int, dict[int, torch.Tensor]],
     random: dict[int, dict[int, torch.Tensor]],
 ) -> None:
@@ -891,83 +1259,100 @@ def run_reviewer_margin_experiments(
     dataset = load_dataset(_resolve(repo_root, config.inputs.dataset))
     primary_layer = config.experiment.primary_layer
 
-    primary = _evaluation_prompts(
-        adapter,
-        dataset,
-        splits.historical,
-        template_id="primary",
-        position="after_options",
-        endorsements=("wrong",),
-    )
-    _write_prompt_manifest(
-        paths.manifests / "reviewer_evaluation_prompts.jsonl",
-        {"historical:primary:after_options:wrong": primary},
-    )
-    _assert_reviewer_noop_scoring(
-        adapter=adapter,
-        config=config,
-        manifest=manifest,
-        paths=paths,
-        prompts=primary,
-        fitted=fitted[primary_layer],
-    )
+    # Reviewer 1474 called the Qwen3.5 confidence intervals excessively wide, so
+    # every margin condition also runs on the untouched fresh partition. The
+    # previously examined historical partition is retained so the new evidence
+    # stays directly comparable with the submitted results.
+    for split_name, uids in (("historical", splits.historical), ("fresh", splits.fresh)):
+        primary = _evaluation_prompts(
+            adapter,
+            dataset,
+            uids,
+            template_id="primary",
+            position="after_options",
+            endorsements=("wrong",),
+        )
+        _write_prompt_manifest(
+            paths.manifests / "reviewer_evaluation_prompts.jsonl",
+            {f"{split_name}:primary:after_options:wrong": primary},
+        )
+        if split_name == "historical":
+            _assert_reviewer_noop_scoring(
+                adapter=adapter,
+                config=config,
+                manifest=manifest,
+                paths=paths,
+                prompts=primary,
+                fitted=fitted[primary_layer],
+                span_fitted=span_fitted[primary_layer],
+            )
 
-    # Primary causal result: swaps, no-ops, and all shuffled/random controls.
-    _score_reviewer_catalog(
-        adapter=adapter,
-        config=config,
-        manifest=manifest,
-        paths=paths,
-        prompts=primary,
-        catalog=_reviewer_control_catalog(
-            fitted[primary_layer], shuffled[primary_layer], random[primary_layer]
-        ),
-        template="primary",
-        position="after_options",
-    )
-
-    # Nearby-layer robustness: no post-hoc layer selection and no control sweep.
-    for layer in config.experiment.robustness_layers:
+        # Primary causal result: positive controls, span-scope swaps in both
+        # fitted variants, the full-difference diagnostic, and every control.
         _score_reviewer_catalog(
             adapter=adapter,
             config=config,
             manifest=manifest,
             paths=paths,
             prompts=primary,
-            catalog=_reviewer_core_catalog(fitted[layer]),
+            catalog=_reviewer_span_catalog(
+                fitted[primary_layer],
+                span_fitted[primary_layer],
+                shuffled[primary_layer],
+                random[primary_layer],
+                paper_source[primary_layer],
+            ),
             template="primary",
             position="after_options",
+            split=split_name,
         )
 
-    # Prompt wording and position checks at the frozen primary layer.
-    prompt_conditions = (
-        ("primary", "before_question"),
-        ("submitted", "after_options"),
-        ("structured_paraphrase", "after_options"),
-    )
-    for template, position in prompt_conditions:
-        prompts = _evaluation_prompts(
-            adapter,
-            dataset,
-            splits.historical,
-            template_id=template,
-            position=position,
-            endorsements=("wrong",),
+        # Nearby-layer robustness: no post-hoc layer selection and no control sweep.
+        for layer in config.experiment.robustness_layers:
+            _score_reviewer_catalog(
+                adapter=adapter,
+                config=config,
+                manifest=manifest,
+                paths=paths,
+                prompts=primary,
+                catalog=_reviewer_span_core_catalog(fitted[layer], span_fitted[layer]),
+                template="primary",
+                position="after_options",
+                split=split_name,
+            )
+
+        # Prompt wording and position checks at the frozen primary layer.
+        prompt_conditions = (
+            ("primary", "before_question"),
+            ("submitted", "after_options"),
+            ("structured_paraphrase", "after_options"),
         )
-        _write_prompt_manifest(
-            paths.manifests / "reviewer_evaluation_prompts.jsonl",
-            {f"historical:{template}:{position}:wrong": prompts},
-        )
-        _score_reviewer_catalog(
-            adapter=adapter,
-            config=config,
-            manifest=manifest,
-            paths=paths,
-            prompts=prompts,
-            catalog=_reviewer_core_catalog(fitted[primary_layer]),
-            template=template,
-            position=position,
-        )
+        for template, position in prompt_conditions:
+            prompts = _evaluation_prompts(
+                adapter,
+                dataset,
+                uids,
+                template_id=template,
+                position=position,
+                endorsements=("wrong",),
+            )
+            _write_prompt_manifest(
+                paths.manifests / "reviewer_evaluation_prompts.jsonl",
+                {f"{split_name}:{template}:{position}:wrong": prompts},
+            )
+            _score_reviewer_catalog(
+                adapter=adapter,
+                config=config,
+                manifest=manifest,
+                paths=paths,
+                prompts=prompts,
+                catalog=_reviewer_span_core_catalog(
+                    fitted[primary_layer], span_fitted[primary_layer]
+                ),
+                template=template,
+                position=position,
+                split=split_name,
+            )
 
 
 def fit_and_tune_caa(
@@ -1094,35 +1479,393 @@ def run_caa_reviewer_margins(
     selection: CAASelection,
     direction: torch.Tensor,
 ) -> None:
-    """Evaluate the independently tuned native CAA baseline on paper eval IDs."""
+    """Evaluate the independently tuned native CAA baseline on both partitions."""
     dataset = load_dataset(_resolve(repo_root, config.inputs.dataset))
     intervention = _caa_runtime(selection, direction)
-    prompts = _evaluation_prompts(
+    for split_name, uids in (("historical", splits.historical), ("fresh", splits.fresh)):
+        prompts = _evaluation_prompts(
+            adapter,
+            dataset,
+            uids,
+            template_id="primary",
+            position="after_options",
+            endorsements=("wrong",),
+        )
+        path = _condition_file(
+            paths,
+            measurement="margin",
+            split=split_name,
+            template="primary",
+            position="after_options",
+            intervention_id=intervention.intervention_id,
+            endorsement="wrong",
+        )
+        _score_condition(
+            adapter=adapter,
+            prompts=prompts,
+            intervention=intervention,
+            run_id=manifest.run_id,
+            split=split_name,
+            batch_size=config.experiment.scoring_batch_size,
+            path=path,
+        )
+
+
+def fit_paper_mitigation_vectors(
+    *,
+    adapter: QwenAdapter,
+    config: PipelineConfig,
+    splits: FrozenSplits,
+    repo_root: Path,
+    paths: RunPaths,
+) -> PaperVectors:
+    """Rebuild the submitted paper's own vectors at its declared mitigation layer.
+
+    These are not the directions the rest of this pipeline fits. See
+    `paper_vectors` for why the two constructions differ and why answering
+    reviewer 1474 requires the paper's, not ours.
+    """
+    layer = config.experiment.mitigation_layer
+    if layer < 0:
+        raise RuntimeError("This config declares no mitigation_layer")
+    if not config.inputs.assistant_axis:
+        raise RuntimeError(
+            "The residualized mitigation vector needs the paper's assistant axis; "
+            "this config declares none"
+        )
+    tensor_path = paths.directions / "paper_mitigation.pt"
+    checksum_path = paths.directions / "paper_mitigation.checksum.json"
+    geometry_path = paths.directions / "paper_mitigation.geometry.json"
+    if tensor_path.exists():
+        if not checksum_path.exists():
+            raise RuntimeError("Paper mitigation vectors exist without their checksum")
+        expected = json.loads(checksum_path.read_text())["sha256"]
+        actual = sha256_file(tensor_path)
+        if actual != expected:
+            raise RuntimeError(f"Paper mitigation checksum mismatch: {actual} != {expected}")
+        vectors = load_paper_vectors(tensor_path, geometry_path)
+        if vectors.layer != layer:
+            raise RuntimeError(
+                f"Cached paper vectors are at layer {vectors.layer}, config asks for {layer}"
+            )
+        return vectors
+
+    dataset = load_dataset(_resolve(repo_root, config.inputs.dataset))
+
+    # Fitted in exp20's own prompt format, which is the format the head-to-head
+    # evaluates in. Fitting on the A/B-letter template instead produces a source
+    # vector dominated by "a note exists in *that* template", nearly orthogonal
+    # to the authority signal and inert when projected out of an exp20 prompt.
+    def cued(cue_family: str) -> list[PromptExample]:
+        return _tokenize_prompts(
+            adapter,
+            [
+                build_paper_prompt(dataset[uid], cue_family=cue_family, endorsement=endorsement)
+                for uid in splits.fit
+                for endorsement in ("correct", "wrong")
+            ],
+        )
+
+    no_cue = _tokenize_prompts(
         adapter,
-        dataset,
-        splits.historical,
-        template_id="primary",
-        position="after_options",
-        endorsements=("wrong",),
+        [
+            build_paper_prompt(dataset[uid], cue_family="none", endorsement="none")
+            for uid in splits.fit
+        ],
     )
-    path = _condition_file(
-        paths,
-        measurement="margin",
-        split="historical",
-        template="primary",
-        position="after_options",
-        intervention_id=intervention.intervention_id,
-        endorsement="wrong",
-    )
-    _score_condition(
+    vectors = build_paper_vectors(
         adapter=adapter,
-        prompts=prompts,
-        intervention=intervention,
-        run_id=manifest.run_id,
-        split="historical",
-        batch_size=config.experiment.scoring_batch_size,
-        path=path,
+        layer=layer,
+        source_prompts=cued("source"),
+        user_prompts=cued("user"),
+        neutral_prompts=cued("neutral"),
+        no_cue_prompts=no_cue,
+        assistant_axis_path=_resolve(repo_root, config.inputs.assistant_axis),
+        batch_size=config.experiment.direction_batch_size,
     )
+    save_paper_vectors(tensor_path, vectors)
+    atomic_write_json(checksum_path, {"sha256": sha256_file(tensor_path)})
+    atomic_write_json(geometry_path, vectors.geometry)
+    return vectors
+
+
+def _head_to_head_catalog(
+    vectors: PaperVectors,
+    selection: CAASelection,
+    caa_direction: torch.Tensor,
+) -> list[tuple[RuntimeIntervention, tuple[str, ...]]]:
+    """Every cell of the matched mitigation and causal-split comparison.
+
+    All of these are evaluated on one prompt list, one metric and one frozen
+    split, which is the whole point: reviewer 1474's objection is that the
+    submitted CAA baseline and the submitted mitigation were not compared on
+    equal terms, and the only answer to that is to compare them on equal terms.
+
+    The two arms of the fairness question:
+      * `auth_resid_remove` is the submitted Table 6 mitigation, at the layer
+        and alpha the submission declares. It gets no search here at all.
+      * `caa_tuned` is CAA at the layer and multiplier chosen by its own
+        independent search over every layer and nine multipliers, scored on
+        CAA's own held-out sycophancy data. It gets the entire search budget.
+    So the search asymmetry runs in CAA's favour, not ours.
+
+    `caa_paper` reproduces the submission's *own* CAA configuration -- unit
+    vector, alpha=1, subtracted over the cue span at the mitigation layer --
+    which is what `run_mitigation_pareto.py` runs under `--variants caa` with
+    `mode="subtract"` and `--norm-scaling none`. Reporting it next to
+    `caa_tuned` shows how much of the gap the extra search actually closes.
+
+    `src_remove` / `usr_remove` are the Table 4 causal split, which uses the
+    no-cue-referenced vectors rather than the mitigation vector.
+    """
+    layer = vectors.layer
+    both = ("source", "user")
+    unit_caa = caa_direction / torch.linalg.vector_norm(caa_direction)
+    return [
+        (
+            RuntimeIntervention(
+                f"h2h_baseline_l{layer}", layer, "none", None, 0, "none", "prefill"
+            ),
+            both,
+        ),
+        (
+            RuntimeIntervention(
+                f"h2h_auth_resid_remove_l{layer}",
+                layer,
+                "project_out",
+                vectors.authority_resid,
+                1,
+                "cue_span",
+                "prefill",
+                f"auth_resid_l{layer}",
+            ),
+            both,
+        ),
+        (
+            RuntimeIntervention(
+                f"h2h_auth_remove_l{layer}",
+                layer,
+                "project_out",
+                vectors.authority,
+                1,
+                "cue_span",
+                "prefill",
+                f"auth_l{layer}",
+            ),
+            both,
+        ),
+        (
+            RuntimeIntervention(
+                f"h2h_assistant_remove_l{layer}",
+                layer,
+                "project_out",
+                vectors.assistant,
+                1,
+                "cue_span",
+                "prefill",
+                f"assistant_l{layer}",
+            ),
+            both,
+        ),
+        (
+            RuntimeIntervention(
+                f"h2h_caa_paper_l{layer}_a1",
+                layer,
+                "add",
+                unit_caa,
+                -1.0,
+                "cue_span",
+                "prefill",
+                f"caa_unit_l{layer}",
+            ),
+            both,
+        ),
+        (
+            RuntimeIntervention(
+                f"h2h_caa_tuned_l{selection.layer}_m{selection.multiplier:g}",
+                selection.layer,
+                "add",
+                caa_direction,
+                selection.multiplier,
+                "answer_tokens",
+                "all",
+                f"caa_l{selection.layer}",
+            ),
+            both,
+        ),
+        (
+            RuntimeIntervention(
+                f"h2h_src_remove_l{layer}",
+                layer,
+                "project_out",
+                vectors.source,
+                1,
+                "cue_span",
+                "prefill",
+                f"src_l{layer}",
+            ),
+            both,
+        ),
+        (
+            RuntimeIntervention(
+                f"h2h_usr_remove_l{layer}",
+                layer,
+                "project_out",
+                vectors.user,
+                1,
+                "cue_span",
+                "prefill",
+                f"usr_l{layer}",
+            ),
+            both,
+        ),
+    ]
+
+
+def run_head_to_head_generation(
+    *,
+    adapter: QwenAdapter,
+    config: PipelineConfig,
+    manifest: RunManifest,
+    paths: RunPaths,
+    repo_root: Path,
+    vectors: PaperVectors,
+    selection: CAASelection,
+    caa_direction: torch.Tensor,
+    uids: tuple[str, ...],
+    split_name: str,
+) -> None:
+    """Generate free-text answers for every head-to-head cell on one frozen split.
+
+    The readout is the submitted paper's: its exp20 prompt, which forbids option
+    letters and asks for a written sentence, so what is scored is which answer
+    *text* the model produces. Only raw generations are written; parsing is done
+    offline with the paper's own parser so the rates cannot drift from the
+    submitted ones through a reimplementation.
+
+    Every condition generates over the identical full prompt list. Batch
+    composition shifts BF16 results by up to a tenth of a nat, so holding the
+    list fixed is what makes the between-condition differences attributable to
+    the intervention rather than to who shared a batch.
+    """
+    dataset = load_dataset(_resolve(repo_root, config.inputs.dataset))
+    prompts = _tokenize_prompts(
+        adapter,
+        [
+            build_paper_prompt(dataset[uid], cue_family=cue, endorsement="wrong")
+            for uid in uids
+            for cue in ("source", "user")
+        ],
+    )
+    _write_prompt_manifest(
+        paths.manifests / "head_to_head_prompts.jsonl",
+        {f"{split_name}:paper_exp20:after_options:wrong": prompts},
+    )
+    atomic_write_json(
+        paths.manifests / "head_to_head_conditions.json",
+        {
+            "mitigation_layer": vectors.layer,
+            "caa_selected_layer": selection.layer,
+            "caa_selected_multiplier": selection.multiplier,
+            "caa_tune_items": selection.n_tune,
+            "caa_raw_norm": float(torch.linalg.vector_norm(caa_direction)),
+            "geometry": vectors.geometry,
+            "conditions": [
+                {
+                    "intervention_id": intervention.intervention_id,
+                    "layer": intervention.layer,
+                    "mode": intervention.mode,
+                    "coefficient": intervention.coefficient,
+                    "token_scope": intervention.token_scope,
+                    "phase": intervention.phase,
+                }
+                for intervention, _cues in _head_to_head_catalog(
+                    vectors, selection, caa_direction
+                )
+            ],
+        },
+    )
+    for intervention, cues in _head_to_head_catalog(vectors, selection, caa_direction):
+        expected = sum(1 for prompt in prompts if prompt.cue_family in cues)
+        path = _condition_file(
+            paths,
+            measurement="generation",
+            split=split_name,
+            template="paper_exp20",
+            position="after_options",
+            intervention_id=intervention.intervention_id,
+            endorsement="wrong",
+        )
+        if _validate_existing_rows(path, manifest.run_id, expected):
+            continue
+        rows = generate_answers(
+            adapter=adapter,
+            prompts=prompts,
+            intervention=intervention,
+            run_id=manifest.run_id,
+            split=split_name,
+            max_new_tokens=config.experiment.generation_max_new_tokens,
+            batch_size=config.experiment.generation_batch_size,
+        )
+        append_jsonl_atomic(path, [row for row in rows if row.cue_family in cues])
+
+
+def run_caa_only_margins(
+    *,
+    adapter: QwenAdapter,
+    config: PipelineConfig,
+    splits: FrozenSplits,
+    manifest: RunManifest,
+    paths: RunPaths,
+    repo_root: Path,
+    selection: CAASelection,
+    direction: torch.Tensor,
+) -> None:
+    """Score the no-steering baseline and the tuned CAA vector on both partitions.
+
+    The baseline is scored here rather than reused from another run because a
+    CAA margin is only interpretable against the same model's own unsteered
+    behaviour, and this command is meant to stand alone for a new model.
+    """
+    dataset = load_dataset(_resolve(repo_root, config.inputs.dataset))
+    caa = _caa_runtime(selection, direction)
+    baseline = RuntimeIntervention(
+        f"baseline_l{selection.layer}",
+        selection.layer,
+        "none",
+        None,
+        0,
+        "none",
+        "prefill",
+    )
+    for split_name, uids in (("historical", splits.historical), ("fresh", splits.fresh)):
+        prompts = _evaluation_prompts(
+            adapter,
+            dataset,
+            uids,
+            template_id="primary",
+            position="after_options",
+            endorsements=("wrong",),
+        )
+        for intervention in (baseline, caa):
+            path = _condition_file(
+                paths,
+                measurement="margin",
+                split=split_name,
+                template="primary",
+                position="after_options",
+                intervention_id=intervention.intervention_id,
+                endorsement="wrong",
+            )
+            _score_condition(
+                adapter=adapter,
+                prompts=prompts,
+                intervention=intervention,
+                run_id=manifest.run_id,
+                split=split_name,
+                batch_size=config.experiment.scoring_batch_size,
+                path=path,
+            )
 
 
 def run_reviewer_generation_experiments(
@@ -1134,8 +1877,14 @@ def run_reviewer_generation_experiments(
     paths: RunPaths,
     repo_root: Path,
     fitted: LayerDirections,
+    span_fitted: LayerDirections,
 ) -> None:
-    """Paper-comparable free generation for only the primary causal conditions."""
+    """Paper-comparable free generation for only the primary causal conditions.
+
+    Like the margin conditions, every condition generates over the same full
+    prompt list and keeps only its in-scope rows, so left padding is identical
+    across conditions and cannot bias the comparison between them.
+    """
     dataset = load_dataset(_resolve(repo_root, config.inputs.dataset))
     prompts = _evaluation_prompts(
         adapter,
@@ -1147,16 +1896,16 @@ def run_reviewer_generation_experiments(
     )
     chosen = [
         (intervention, cues)
-        for intervention, cues in _reviewer_core_catalog(fitted)
+        for intervention, cues in _reviewer_span_core_catalog(fitted, span_fitted)
         if intervention.intervention_id
         in {
             f"baseline_l{fitted.layer}",
-            f"source_to_user_l{fitted.layer}",
-            f"user_to_source_l{fitted.layer}",
+            f"source_to_user_span_l{fitted.layer}",
+            f"user_to_source_span_l{fitted.layer}",
         }
     ]
     for intervention, cues in chosen:
-        subset = [prompt for prompt in prompts if prompt.cue_family in cues]
+        expected = sum(1 for prompt in prompts if prompt.cue_family in cues)
         path = _condition_file(
             paths,
             measurement="generation",
@@ -1166,17 +1915,18 @@ def run_reviewer_generation_experiments(
             intervention_id=intervention.intervention_id,
             endorsement="wrong",
         )
-        if _validate_existing_rows(path, manifest.run_id, len(subset)):
+        if _validate_existing_rows(path, manifest.run_id, expected):
             continue
         rows = generate_answers(
             adapter=adapter,
-            prompts=subset,
+            prompts=prompts,
             intervention=intervention,
             run_id=manifest.run_id,
             split="historical",
             max_new_tokens=config.experiment.generation_max_new_tokens,
+            batch_size=config.experiment.generation_batch_size,
         )
-        append_jsonl_atomic(path, rows)
+        append_jsonl_atomic(path, [row for row in rows if row.cue_family in cues])
 
 
 def run_generation_experiments(

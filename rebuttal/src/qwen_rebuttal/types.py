@@ -21,6 +21,11 @@ class ModelSpec:
     expected_hidden_size: int
     thinking: bool
     text_only: bool
+    # Qwen3.5 is a hybrid: 48 of its 64 blocks carry a linear-attention module,
+    # and the kernel those modules use has already caused one silent correctness
+    # problem, so the count is asserted at load. Dense families declare 0 and the
+    # check is skipped rather than deleted.
+    expected_linear_attention_layers: int = 0
 
 
 @dataclass(frozen=True)
@@ -33,6 +38,12 @@ class InputSpec:
     historical_uids: str
     historical_uids_sha256: str
     eligible_mask_key: str
+    # The submitted paper's own assistant axis, vendored so the residualized
+    # mitigation vector is the one the submitted table was produced with rather
+    # than a refit approximation of it. Absent for a model whose axis we do not
+    # have, in which case the residualized conditions are refused, not faked.
+    assistant_axis: str = ""
+    assistant_axis_sha256: str = ""
 
 
 @dataclass(frozen=True)
@@ -54,6 +65,11 @@ class ExperimentSpec:
     statistics_seed: int
     random_seeds: tuple[int, ...]
     shuffle_seeds: tuple[int, ...]
+    # The layer the submitted paper mitigates at for this family (Qwen3.5 L5,
+    # GPT-OSS L16, OLMo-3.1 L22). Declared separately from `primary_layer`
+    # because the head-to-head must run where the submitted table ran, not
+    # where this pipeline's own sweep happens to point.
+    mitigation_layer: int = -1
 
     @property
     def layers(self) -> tuple[int, ...]:

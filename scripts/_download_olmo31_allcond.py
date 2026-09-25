@@ -1,11 +1,12 @@
 import json, base64
+import os
 from pathlib import Path
 from urllib.parse import quote, urlencode
 from urllib.request import urlopen, Request
 
 ROOT = Path(__file__).resolve().parents[1]
-SERVER = "https://b3e94b401415.notebooksn.jarvislabs.net"
-TOKEN = "7MTImCVeHaKSzsm53Wd_7etd1S9vyKqZ85ocn3AgjfAbCSSyxuMui9Ue3ej-kX6r"
+SERVER = os.environ["JUPYTER_SERVER_URL"]
+TOKEN = os.environ["JUPYTER_TOKEN"]
 REL = []
 for variant in ["trivia_authority","trivia_assistant","trivia_residualized"]:
     for fn in ["steering_summary.json","steering_meta.json","steering_rows.jsonl"]:

@@ -1,199 +1,102 @@
-## Persona Vectors: Authority Bias and Endorsement Effects in LLMs
+# Authority Bias in Language Models
 
-This repository implements the experimental pipeline for studying **endorsement effects** and **authority-weighted bias** in language models. We ask: when someone endorses an answer, does the model track truth or merely defer? Do "be correct" instructions induce truth-tracking, or do they amplify prior-consistency?
+Research code for **Authority Bias in Language Models: Source Deference and User Agreement Are Not Interchangeable**, by Abhinav Rajeev Kumar and Paras Chopra, Lossfunk.
 
-**Core finding**: "Be correct" instructions do not induce truth-tracking. They induce confidence-conditioned prior-consistency control — the model trusts its own beliefs more, which can entrench errors when the model is confidently wrong. Evidence-quality sensitivity exists but is conditional on prior state, authority tag, and model family.
+Language models can abandon a correct answer when a prompt attributes a conflicting claim to a "verified" source. We study whether this source deference differs from agreement with a user, and whether activation interventions can change it. The experiments combine matched prompt comparisons, direction removal, attribution patching, and transfer to other tasks.
 
----
+The source and user directions can overlap strongly while having different behavioral effects. These effects vary by model; the code includes the assistant-direction controls and the Gemma failure analysis, not just the successful interventions.
 
-## 1. Provenance and How to Get the Scripts
+## Getting started
 
-- **Dataset**: TriviaQA + TruthfulQA (n = 1,813 items), prepared as multiple-choice prompts with correct/wrong answer pairs.
-- **Models**: Llama-3.1-8B (Base, Instruct), Qwen3-4B-Instruct-2507, Qwen3-4B-Thinking-2507.
-- **Sycophancy-eval reference**: We use conventions from `sycophancy-eval` (Tong et al.). A vendored copy lives in `external/sycophancy-eval/datasets/`.
-
-### How to recreate the codebase
+Clone the repository with its pinned SYCON dependency. Use Python 3.12 and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-git clone <this-repo-url>
+git clone --recurse-submodules https://github.com/Lossfunk/persona-vectors.git
 cd persona-vectors
 ```
 
----
+There are two Python environments. The root project contains the original experiments; `rebuttal/` contains the later attribution-patching and CAA comparisons with a separate lockfile. Install the environment for the experiment you intend to run.
 
-## 2. Directory & File Overview
-
-### 2.1 Data
-
-- **`data/exp7_mc_dataset.jsonl`**: Multi-choice dataset (1,813 items) used by Exp7 onward. Created by `src.exp7` from TriviaQA + TruthfulQA.
-- **`data/exp14_reasons.jsonl`** / **`data/exp14_reasons_assertive_v2.jsonl`**: Generated reasons for Exp14 evidence-quality experiments (bare → reason1 → reason2 → reason_data).
-- **`external/sycophancy-eval/`**: Vendored sycophancy-eval datasets and utils.
-
-### 2.2 Results
-
-- **`new-phase-results/`**: Outputs from the endorsement/authority pipeline (Exp6–Exp14).
-  - `new-phase-results/llama-3.1-8b-results/`, `new-phase-results/qwen3-4b-results/`, `new-phase-results/qwen/`: per-model experiment results.
-  - `new-phase-results/figures/`, `new-phase-results/figures/paper/`: figures.
-
-
-### 2.3 Source Code (`src/`)
-
-**Shared infrastructure**
-
-- **`src/models/llama_loader.py`**: Load Llama/Qwen models and tokenizers.
-- **`src/metrics/syc_metric.py`**: Sycophancy metric (\(D_{syc} = \log P_\text{wrong} - \log P_\text{right}\)).
-- **`src/hooks/`**: Attention and steering hooks (used by legacy exp0–exp3; kept for compatibility).
-
-**Experiment pipeline (Exp6–Exp14)**
-
-| Experiment | Purpose |
-|------------|---------|
-| **Exp6** | Phase 1/2 sycophancy gut check (prompt-induced shift, forced-choice). |
-| **Exp7** | Lexical-fixed endorsement measurement — endorsement survives when both options appear. |
-| **Exp8** | Order vs endorsement decomposition; **Exp8_Speakers**: authority hierarchy (Expert > Note > User > Online). |
-| **Exp9** | Instruction override test — "be correct" reduces endorsement effects. |
-| **Exp10** | Correct-endorsement test — Instruct shows apparent selectivity (truth-tracking vs gating). |
-| **Exp11** | Inverted-prior test — selectivity collapses (Expert) or inverts (Note) on confidently-wrong items → **prior-consistency**. |
-| **Exp12** | Temporal dynamics — context persistence, instruction timing (`t0` vs `t1`/`t2`), repeated pressure. |
-| **Exp13** | Signal strength — certainty phrasing and formatting effects. |
-| **Exp14** | Evidence-quality scaling — bare → reasons → data; prior-wrong vs all-items stratification. |
-| **Exp14D** | Authority × evidence factorial — crossover interaction in Qwen-Instruct (Expert vs Note). |
-
-**Key modules**
-
-- **`src/exp7/`**: `dataset_mc.py`, `run_lexical_fixed.py`, `scoring.py` — dataset creation and forced-choice scoring.
-- **`src/exp8/`**: `run_speaker_tags.py`, `speaker_conditions.py` — authority-tagged endorsement conditions.
-- **`src/exp9/`**: `run_instruction_override.py` — instruction vs no-instruction comparison.
-- **`src/exp10/`**: `run_correct_endorse.py` — neutral / wrong / correct endorsement conditions.
-- **`src/exp11/`**: `analyze_inverted_prior.py`, `logit_metrics.py` — inverted-prior test and selectivity metrics.
-- **`src/exp12/`**: `run_persistence_washout.py`, `run_repeated_endorsement.py` — temporal dynamics.
-- **`src/exp13/`**: `run_signal_strength.py` — certainty sweep and formatting variants.
-- **`src/exp14/`**: `run_evidence_quality.py`, `generate_reasons.py`, `analyze_evidence_quality.py` — evidence-quality scaling and prior stratification.
-
-**Paper figures**
-
-- **`src/paper_figures/`**: Publication-style figures (fig_endorsement, fig_authority, fig_selectivity, fig_evidence_quality, fig_signal_strength, etc.).
-
----
-
-## 3. Experimental Progression (Summary)
-
-The pipeline follows a confound-driven progression:
-
-```
-Exp6/7  → Endorsement effect survives lexical control
-Exp8    → Endorsement >> order; authority hierarchy (Expert top)
-Exp9    → Instructions reduce endorsement effects
-Exp10   → Instruct shows apparent selectivity (wrong > correct suppressed)
-Exp11   → On confidently-wrong items: Expert → non-selective; Note → prior-consistency (dr = -0.67)
-Exp12   → Temporal persistence; t0 > delayed correction; fresh restarts wash out
-Exp13   → Certainty phrasing = gain knob; formatting model-dependent
-Exp14   → Evidence quality: conditional truth-sensitivity; prior-wrong vs all-items sign reversal
-Exp14D  → Authority × evidence crossover in Qwen-Instruct
-```
-
-
----
-
-## 4. How to Reproduce
-
-### 4.1 Environment
+For the rebuttal pipeline and CPU tests:
 
 ```bash
-uv sync
+uv sync --project rebuttal --extra test --frozen
+uv run --project rebuttal --extra test --frozen pytest rebuttal/tests
+uv run --project rebuttal --extra test --frozen ruff check rebuttal
 ```
 
-Python 3.12, PyTorch, transformers, etc. are managed via `pyproject.toml`.
-
-### 4.2 Data setup
-
-The MC dataset is built from TriviaQA + TruthfulQA. If `data/exp7_mc_dataset.jsonl` does not exist, Exp7 will create it when run. For Exp14, you need `data/exp14_reasons.jsonl` or `data/exp14_reasons_assertive_v2.jsonl` (see `src.exp14.generate_reasons`).
-
-### 4.3 Running experiments
-
-Commands assume repo root and `uv run`:
-
-**Exp7 — Lexical-fixed endorsement**
+For the original experiments:
 
 ```bash
-uv run python -m src.exp7.run_lexical_fixed --model meta-llama/Llama-3.1-8B-Instruct --output-dir results/exp7
+uv sync --frozen
+uv run python -m src.exp16.run_steering_test --help
 ```
 
-**Exp8 — Speaker tags (authority hierarchy)**
+Model experiments require a suitable NVIDIA GPU and model access. The rebuttal runner targets a single H200 with a CUDA 12.8-compatible driver. CPU tests do not download model weights or reproduce the paper's numerical results.
+
+## Data and reproducibility
+
+Prepare the fixed multiple-choice dataset before running experiments:
 
 ```bash
-uv run python -m src.exp8.run_speaker_tags --mc-dataset-path data/exp7_mc_dataset.jsonl --output-dir results/exp8_speakers
+python3 scripts/prepare_trivia_data.py --download
 ```
 
-**Exp9 — Instruction override**
+This downloads a pinned version of the public [SycophancyEval](https://github.com/meg-tong/sycophancy-eval) answer dataset and rebuilds `data/exp7_mc_dataset.jsonl` with the original label-randomization seed. Both files are checksum-verified. To use an existing download instead:
 
 ```bash
-uv run python -m src.exp9.run_instruction_override --mc-dataset-path data/exp7_mc_dataset.jsonl --output-dir results/exp9
+python3 scripts/prepare_trivia_data.py --raw-path /path/to/answer.jsonl
 ```
 
-**Exp10 — Correct endorsement (selectivity)**
+The repository includes compact result summaries, recorded split IDs, configurations, and the small assistant vectors required by the rebuttal configs. Activation dumps, model weights, raw generation logs, and local credentials are excluded. Upstream datasets and models remain subject to their own terms.
+
+See the [experiment guide](docs/reproduction.md) for the code-to-experiment map, required artifacts, and the distinction between probability-margin and generated-answer evaluations. Older result folders record different runs and should not be treated as interchangeable estimates.
+
+## Attribution patching and CAA
+
+After preparing the data, validate the Qwen configuration without loading a model:
 
 ```bash
-uv run python -m src.exp10.run_correct_endorse --mc-dataset-path data/exp7_mc_dataset.jsonl --output-dir results/exp10
+uv run --project rebuttal --frozen qwen-rebuttal prepare \
+  --repo-root . --output-root /tmp/persona-vectors-prepare
 ```
 
-**Exp11 — Inverted-prior test** (requires Exp10 results)
+On the GPU host, export `HF_TOKEN` through your shell or secret manager, then run:
 
 ```bash
-uv run python -m src.exp11.analyze_inverted_prior  # uses exp10 results
+REBUTTAL_OUTPUT_ROOT=/path/outside/the/repo/results \
+  bash rebuttal/run_qwen_h200.sh
 ```
 
-**Exp12 — Temporal dynamics**
+The runner executes tests before the experiments. Its default `reviewer-run` command covers attribution patching, controls, robustness checks, CAA tuning, and a generated-answer check. The separate `head-to-head` command compares authority removal with tuned CAA on matched generated-answer evaluations. Configurations for Qwen3.5, GPT-OSS, and OLMo-3.1 are under `rebuttal/configs/`; commands and hardware requirements are documented in the [pipeline README](rebuttal/README.md).
 
-```bash
-uv run python -m src.exp12.run_persistence_washout --mc-dataset-path data/exp7_mc_dataset.jsonl --output-dir results/exp12
-uv run python -m src.exp12.run_repeated_endorsement --mc-dataset-path data/exp7_mc_dataset.jsonl --output-dir results/exp12_k
+## Repository layout
+
+| Path | Contents |
+| --- | --- |
+| `src/` | Original behavioral, intervention, transfer, and analysis code |
+| `rebuttal/` | Later experiments, pinned model configs, and unit tests |
+| `scripts/` | Data preparation, run scripts, and analysis helpers |
+| `config/` | Original model and experiment configurations |
+| `neurips-results/`, `causal-deconfound/`, `wang-pareto-results/` | Archived compact results and run metadata |
+| `external/` | Third-party evaluation code and the SYCON submodule |
+| `docs/` | Reproduction guide and historical research notes |
+| `paper/`, `neurips_2026.tex` | Historical manuscript sources, not the current preprint |
+
+The numbered `src/exp*` directories retain their original names because scripts and saved manifests refer to them. The experiment guide identifies the relevant modules without changing those paths.
+
+## Citation and contact
+
+Until the preprint has a public identifier, this entry cites the repository:
+
+```bibtex
+@misc{kumar2026authoritybiascode,
+  author = {Kumar, Abhinav Rajeev and Chopra, Paras},
+  title = {Authority Bias in Language Models: Source Deference and User Agreement Are Not Interchangeable},
+  year = {2026},
+  howpublished = {Research code},
+  url = {https://github.com/Lossfunk/persona-vectors}
+}
 ```
 
-**Exp13 — Signal strength**
-
-```bash
-uv run python -m src.exp13.run_signal_strength
-```
-
-**Exp14 — Evidence quality**
-
-```bash
-uv run python -m src.exp14.run_evidence_quality --mc-dataset-path data/exp7_mc_dataset.jsonl --reasons-path data/exp14_reasons_assertive_v2.jsonl --output-dir new-phase-results/exp14
-```
-
-### 4.4 Paper figures
-
-```bash
-uv run python -m src.paper_figures.fig_endorsement
-uv run python -m src.paper_figures.fig_authority
-uv run python -m src.paper_figures.fig_selectivity
-# etc.
-```
-
-Output paths are typically under `new-phase-results/figures/` or `new-phase-results/figures/paper/`.
-
----
-
-## 5. Quickstart
-
-Minimal run to see endorsement effects:
-
-```bash
-uv sync
-uv run python -m src.exp7.run_lexical_fixed --model meta-llama/Llama-3.1-8B-Instruct --num-questions 20 --output-dir results/exp7
-uv run python -m src.exp7.analyze_results --results-dir results/exp7
-```
-
-This will create the MC dataset (if missing), run a small lexical-fixed experiment, and produce summary outputs.
-
----
-
-## 6. Key Definitions
-
-- **effect_wrong_I0**: Wrong-endorsement effect with no instruction.
-- **r_w, r_c**: Relative suppression of wrong vs correct endorsement under instruction.
-- **dr = r_w − r_c**: Differential suppression; positive = truth-tracking, negative = prior-consistency.
-- **m_N0 < 0**: Model's neutral prior is wrong (confidently wrong slice).
-- **tau_gap**: Kendall tau(correct) − tau(wrong); positive = truth-sensitive evidence scaling.
-
+For questions about the experiments, open an issue or contact [Abhinav Rajeev Kumar](mailto:abhinav.kumar@lossfunk.com). The repository uses evaluation resources from SycophancyEval, SYCON-Bench, CAA, and other upstream projects; their references and notices are retained in the corresponding code and directories.

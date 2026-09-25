@@ -4,6 +4,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
 OUTPUT_ROOT="${REBUTTAL_OUTPUT_ROOT:-/home/rebuttal-results}"
+CONFIG="${REBUTTAL_CONFIG:-${SCRIPT_DIR}/configs/qwen_h200.json}"
+RUN_COMMAND="${REBUTTAL_COMMAND:-reviewer-run}"
 
 if [[ -z "${HF_TOKEN:-}" ]]; then
   echo "HF_TOKEN must be set; anonymous model access is not permitted." >&2
@@ -41,7 +43,7 @@ uv run --project "${SCRIPT_DIR}" --extra gpu --extra test --frozen \
   pytest "${SCRIPT_DIR}/tests"
 
 uv run --project "${SCRIPT_DIR}" --extra gpu --extra test --frozen \
-  qwen-rebuttal reviewer-run \
+  qwen-rebuttal "${RUN_COMMAND}" \
   --repo-root "${REPO_ROOT}" \
-  --config "${SCRIPT_DIR}/configs/qwen_h200.json" \
+  --config "${CONFIG}" \
   --output-root "${OUTPUT_ROOT}"
