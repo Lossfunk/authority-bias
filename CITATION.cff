@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "Please cite this repository if you use the code."
+message: "Please cite the paper below if you use this code."
 type: software
 license: MIT
 title: "Authority Bias in Language Models: Source Deference and User Agreement Are Not Interchangeable"
@@ -11,3 +11,16 @@ authors:
     given-names: Paras
     affiliation: Lossfunk
 repository-code: "https://github.com/Lossfunk/authority-bias"
+preferred-citation:
+  type: conference-paper
+  title: "Authority Bias in Language Models: Source Deference and User Agreement Are Not Interchangeable"
+  authors:
+    - family-names: Kumar
+      given-names: Abhinav Rajeev
+      affiliation: Lossfunk
+    - family-names: Chopra
+      given-names: Paras
+      affiliation: Lossfunk
+  collection-title: "Advances in Neural Information Processing Systems"
+  year: 2026
+  url: "https://github.com/Lossfunk/authority-bias"
