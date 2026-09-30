@@ -1,5 +1,11 @@
 # Authority Bias in Large Language Models
 
+[![arXiv](https://img.shields.io/badge/arXiv-2609.37616-b31b1b)](https://arxiv.org/abs/2609.37616)
+[![Python](https://img.shields.io/badge/python-3.12-blue)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+[![NeurIPS 2026 Poster](https://img.shields.io/badge/NeurIPS-2026%20Poster-684B9E)](https://arxiv.org/abs/2609.37616)
+[![Website](https://img.shields.io/badge/Website-authority--bias.vercel.app-green)](https://authority-bias.vercel.app/)
+
 **Accepted at NeurIPS 2026 (Main Conference, Poster).**
 
 ![Figure 1. Verified-source and user cues have different effects on wrong-answer rates.](assets/figure-1.png)
@@ -10,7 +16,7 @@
 
 Research code for **Authority Bias in Language Models: Source Deference and User Agreement Are Not Interchangeable**, by Abhinav Rajeev Kumar and Paras Chopra, Lossfunk.
 
-[Project page](https://authority-bias.vercel.app/)
+[Paper](https://arxiv.org/abs/2609.37616) | [Project page](https://authority-bias.vercel.app/)
 
 Language models can abandon a correct answer when a prompt says a "verified" source disagrees. We study whether this source deference differs from agreement with a user, and whether an activation direction can control it.
 
@@ -85,7 +91,7 @@ These tests check the implementation and input handling; they do not reproduce G
   title = {Authority Bias in Language Models: Source Deference and User Agreement Are Not Interchangeable},
   booktitle = {Advances in Neural Information Processing Systems},
   year = {2026},
-  url = {https://github.com/Lossfunk/authority-bias}
+  url = {https://arxiv.org/abs/2609.37616}
 }
 ```
 
